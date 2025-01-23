@@ -10,12 +10,12 @@ export class Role {
   name: string;
 
   @Field({ nullable: true })
-  description: string | null;
+  description?: string | null;
 
-  @Field()
+  @Field(() => Date)
   createdAt: Date;
 
-  @Field()
+  @Field(() => Date)
   updatedAt: Date;
 
   @Field(() => [User], { nullable: 'itemsAndList' })

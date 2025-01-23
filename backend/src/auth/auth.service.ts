@@ -32,4 +32,9 @@ export class AuthService {
       },
     });
   }
+
+  getUsers(): Promise<User[]> {
+    const users = this.prisma.user.findMany();
+    return users;
+  }
 }

@@ -18,19 +18,19 @@ export class User {
   @Field()
   isActive: boolean;
 
-  @Field()
+  @Field(() => Date)
   createdAt: Date;
 
-  @Field()
+  @Field(() => Date, { nullable: true })
   approvedAt?: Date | null;
 
-  @Field()
+  @Field(() => Date)
   updatedAt: Date;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   createdBy?: number | null;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   approvedBy?: number | null;
 
   @Field()

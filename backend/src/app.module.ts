@@ -8,6 +8,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AuthService } from './auth/auth.service';
 import { join } from 'path';
 import { Request } from 'express';
+import { DateScalar } from './scalars/date.scalar';
 
 @Module({
   imports: [
@@ -33,6 +34,6 @@ import { Request } from 'express';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, DateScalar],
 })
 export class AppModule {}

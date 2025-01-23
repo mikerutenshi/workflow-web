@@ -1,0 +1,39 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  isActive: Boolean!
+  createdAt: Date!
+  approvedAt: Date
+  updatedAt: Date!
+  createdBy: Float
+  approvedBy: Float
+  roleId: Float!
+  createdUsers: [User]
+  approvedUsers: [User]
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type Query {
+  getUsers: [User!]!
+}
+
+type Mutation {
+  createUser(data: CreateUserDto!): User!
+}
+
+input CreateUserDto {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+  createdBy: Float!
+  roleId: Float!
+}
