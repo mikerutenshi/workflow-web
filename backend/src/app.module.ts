@@ -9,6 +9,7 @@ import { AuthService } from './auth/auth.service';
 import { join } from 'path';
 import { Request } from 'express';
 import { DateScalar } from './scalars/date.scalar';
+import { authenticateUserByRequest } from './auth/auth.middleware';
 
 @Module({
   imports: [
@@ -26,9 +27,8 @@ import { DateScalar } from './scalars/date.scalar';
           credentials: true,
         },
         context: async ({ req }: { req: Request }) => {
-          // Later we'll load user to the context based on jwt cookie
-          // const user = await authenticateUserByRequest(authService, req)
-          // return { req, user }
+          const user = await authenticateUserByRequest(authService, req);
+          return { req, user };
         },
       }),
     }),

@@ -33,6 +33,9 @@ export class User {
   @Field(() => Number, { nullable: true })
   approvedBy?: number | null;
 
+  @Field(() => Role)
+  role: Role;
+
   @Field()
   roleId: number;
 

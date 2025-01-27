@@ -9,7 +9,7 @@ export class Role {
   @Field()
   name: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   description?: string | null;
 
   @Field(() => Date)
@@ -18,6 +18,6 @@ export class Role {
   @Field(() => Date)
   updatedAt: Date;
 
-  @Field(() => [User], { nullable: 'itemsAndList' })
-  users: User[] | null;
+  // @Field(() => [User], { nullable: 'itemsAndList' })
+  // users: User[] | null;
 }

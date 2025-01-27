@@ -2,22 +2,50 @@ import { Scalar, CustomScalar } from '@nestjs/graphql';
 import { Kind } from 'graphql';
 
 @Scalar('Date', () => Date)
-export class DateScalar implements CustomScalar<number | null, Date | null> {
+export class DateScalar implements CustomScalar<string | null, Date | null> {
   description = 'Date custom scalar type';
 
-  parseValue(value: number | null): Date | null {
-    return value ? new Date(value) : null; // value from the client
+  serialize(value: Date | null): string | null {
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+
+    if (value === null) {
+      return null;
+    }
+
+    throw new Error('Date scalar value must be an instance of Date or null');
   }
 
-  serialize(value: Date | null): number | null {
-    return value ? value.getTime() : null; // value sent to the client
+  parseValue(value: string | null): Date | null {
+    if (value === null) {
+      return null;
+    }
+
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date format');
+    }
+
+    return date;
   }
 
   parseLiteral(ast: any): Date | null {
-    if (ast.kind === Kind.INT) {
-      return new Date(+ast.value, 10); // ast value is always in string format
-    } else {
+    if (ast.kind === Kind.STRING) {
+      const date = new Date(ast.value);
+
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date format');
+      }
+
+      return date;
+    }
+
+    if (ast.kind === Kind.NULL) {
       return null;
     }
+
+    throw new Error('Date scalar value must be a string or null');
   }
 }

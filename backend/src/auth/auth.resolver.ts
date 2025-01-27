@@ -1,7 +1,12 @@
-import { Query, Mutation, Resolver, Args } from '@nestjs/graphql';
+import { Query, Mutation, Resolver, Args, Context } from '@nestjs/graphql';
 import { User } from 'src/models/user.model';
+import { Prisma, User as UserModel } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
+import { SignInDto } from './dto/signIn.dto';
+import { Request } from 'express';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from './guards/auth.guard';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -14,6 +19,35 @@ export class AuthResolver {
 
   @Query(() => [User])
   getUsers(): Promise<User[]> {
-    return this.authService.getUsers();
+    // type UsersWithRole = Prisma.PromiseReturnType<
+    //   typeof this.authService.getUsers
+    // >;
+    const users = this.authService.getUsers();
+    return users;
+  }
+
+  @Mutation(() => User)
+  async signIn(
+    @Args('data') data: SignInDto,
+    @Context('req') req: Request,
+  ): Promise<User> {
+    const { user, accessToken } = await this.authService.signIn(data);
+    req.res?.cookie('jwt', accessToken, { httpOnly: true });
+    return user;
+  }
+
+  @Mutation(() => User)
+  async signOut(
+    @Context('req') req: Request,
+    @Context('user') user: User,
+  ): Promise<User> {
+    req.res?.clearCookie('jwt', { httpOnly: true });
+    return user;
+  }
+
+  @UseGuards(AuthGuard)
+  @Query(() => User)
+  async me(@Context('user') user: User): Promise<User> {
+    return user;
   }
 }

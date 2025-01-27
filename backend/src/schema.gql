@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Role {
+  id: ID!
+  name: String!
+  description: String
+  createdAt: Date!
+  updatedAt: Date!
+}
+
 type User {
   id: ID!
   email: String!
@@ -13,6 +21,7 @@ type User {
   updatedAt: Date!
   createdBy: Float
   approvedBy: Float
+  role: Role!
   roleId: Float!
   createdUsers: [User]
   approvedUsers: [User]
@@ -23,10 +32,13 @@ scalar Date
 
 type Query {
   getUsers: [User!]!
+  me: User!
 }
 
 type Mutation {
   createUser(data: CreateUserDto!): User!
+  signIn(data: SignInDto!): User!
+  signOut: User!
 }
 
 input CreateUserDto {
@@ -36,4 +48,9 @@ input CreateUserDto {
   lastName: String!
   createdBy: Float!
   roleId: Float!
+}
+
+input SignInDto {
+  email: String!
+  password: String!
 }
