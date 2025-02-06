@@ -19,7 +19,7 @@ import { authenticateUserByRequest } from './auth/auth.middleware';
       driver: ApolloDriver,
       imports: [AuthModule],
       inject: [AuthService],
-      useFactory: async (authService: AuthService) => ({
+      useFactory: (authService: AuthService) => ({
         playground: true,
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         cors: {

@@ -10,7 +10,42 @@
       "name": "Attach to NestJS",
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "restart": true,
-      "port": 9229
+      "port": 9229,
+      "localRoot": "${workspaceFolder}/backend"
+    },
+    {
+      "type": "firefox",
+      "request": "launch",
+      "name": "Firefox",
+      "reAttach": true,
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/frontend",
+      "firefoxExecutable": "D:\\Program Files\\Mozilla Firefox\\firefox.exe",
+      "pathMappings": [
+        {
+          "url": "http://localhost:3000/_nuxt/plugins",
+          "path": "${workspaceFolder}/frontend/plugins"
+        },
+        {
+          "url": "http://localhost:3000/_nuxt/components",
+          "path": "${workspaceFolder}/frontend/components"
+        }
+      ]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Nuxt Server",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "port": 9229,
+      "localRoot": "${workspaceFolder}/frontend",
+      "restart": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Fullstack Nuxt",
+      "configurations": ["Nuxt Server", "Firefox"]
     }
   ]
 }
