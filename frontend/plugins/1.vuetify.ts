@@ -11,10 +11,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     directives,
     icons: {
       defaultSet: "mdi",
-      aliases,
-      sets: {
-        mdi,
-      },
     },
     defaults: {
       VTextField: {
