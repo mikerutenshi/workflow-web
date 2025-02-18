@@ -12,13 +12,17 @@ const parseCookieHeader = (value?: string) => {
     }, {});
 };
 
-const addHeadersPlugin = (cookie?: string) => (opContext: any) => {
-  opContext.credentials = "include";
-  const cookiesParsed = parseCookieHeader(cookie);
-  if (cookiesParsed.jwt) {
-    opContext.headers.Authorization = `Bearer ${cookiesParsed.jwt}`;
-  }
-};
+const addHeadersPlugin =
+  //prettier-ignore
+  (cookie?: string) => (
+  ({ opContext }: { opContext: any }) => {
+    opContext.credentials = "include";
+    const cookiesParsed = parseCookieHeader(cookie);
+    if (cookiesParsed.jwt) {
+      console.log(`jwt ${cookiesParsed.jwt}`);
+      opContext.headers.Authorization = `Bearer ${cookiesParsed.jwt}`;
+    }
+  });
 
 export default defineNuxtPlugin((nuxtApp) => {
   const baseUrl = nuxtApp.$config.public.baseUrl as string;
@@ -30,4 +34,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   });
 
   nuxtApp.vueApp.use(client);
+  // nuxtApp.provide("villus", client);
 });

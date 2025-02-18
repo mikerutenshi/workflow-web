@@ -1,6 +1,6 @@
 <template>
   <v-container class="translucent-background">
-    <v-form @submit="execute({ data: form })">
+    <v-form @submit.prevent="execute({ data: form })">
       <v-alert v-if="error" type="error">
         {{ error }}
       </v-alert>

@@ -37,7 +37,7 @@
       "request": "attach",
       "name": "Nuxt Server",
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
-      "port": 9229,
+      "port": 9230,
       "localRoot": "${workspaceFolder}/frontend",
       "restart": true
     }

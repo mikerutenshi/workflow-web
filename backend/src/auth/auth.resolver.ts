@@ -32,7 +32,10 @@ export class AuthResolver {
     @Context('req') req: Request,
   ): Promise<User> {
     const { user, accessToken } = await this.authService.signIn(data);
-    req.res?.cookie('jwt', accessToken, { httpOnly: true });
+    req.res?.cookie('jwt', accessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+    });
     return user;
   }
 
@@ -41,7 +44,10 @@ export class AuthResolver {
     @Context('req') req: Request,
     @Context('user') user: User,
   ): Promise<User> {
-    req.res?.clearCookie('jwt', { httpOnly: true });
+    req.res?.clearCookie('jwt', {
+      httpOnly: true,
+      sameSite: 'lax',
+    });
     return user;
   }
 
