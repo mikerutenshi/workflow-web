@@ -34,5 +34,4 @@ export default defineNuxtPlugin((nuxtApp) => {
   });
 
   nuxtApp.vueApp.use(client);
-  // nuxtApp.provide("villus", client);
 });

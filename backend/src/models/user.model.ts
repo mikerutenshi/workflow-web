@@ -5,43 +5,31 @@ import { Role } from './role.model';
 export class User {
   @Field(() => ID)
   id: number;
-
   @Field()
   email: string;
-
   @Field()
   firstName: string;
-
   @Field()
   lastName: string;
-
   @Field()
   isActive: boolean;
-
-  @Field(() => Date)
-  createdAt: Date;
-
-  @Field(() => Date, { nullable: true })
-  approvedAt?: Date | null;
-
-  @Field(() => Date)
-  updatedAt: Date;
-
-  @Field(() => Number, { nullable: true })
-  createdBy?: number | null;
-
-  @Field(() => Number, { nullable: true })
-  approvedBy?: number | null;
-
   @Field(() => Role)
   role: Role;
 
-  @Field()
-  roleId: number;
-
-  @Field(() => [User], { nullable: 'itemsAndList' })
-  createdUsers?: User[] | null;
-
-  @Field(() => [User], { nullable: 'itemsAndList' })
-  approvedUsers?: User[] | null;
+  @Field(() => Date, { nullable: true })
+  approvedAt?: Date;
+  @Field({ nullable: true })
+  approvedBy?: number;
+  @Field(() => Date)
+  createdAt: Date;
+  @Field({ nullable: true })
+  createdBy?: number;
+  @Field(() => Date)
+  updatedAt: Date;
+  @Field({ nullable: true })
+  updatedBy?: number;
+  @Field(() => [User])
+  createdUsers: User[];
+  @Field(() => [User])
+  approvedUsers: User[];
 }

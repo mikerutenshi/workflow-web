@@ -14,32 +14,109 @@ datasource db {
 }
 
 model Role {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                Int             @id @default(autoincrement())
+  name              String          @unique
+  description       String?
+  clearanceLevel    Int
 
-  users       User[]
+  users             User[]
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  password    String
-  firstName   String
-  lastName    String
-  isActive    Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  approvedAt  DateTime?  
-  updatedAt   DateTime  @updatedAt
-  createdBy   Int?
-  approvedBy  Int?
-  roleId      Int
+  id                Int             @id @default(autoincrement())
+  email             String          @unique
+  password          String
+  firstName         String
+  lastName          String
+  isActive          Boolean         @default(false)
+  roleId            Int
 
-  role          Role      @relation(fields: [roleId], references: [id])
-  creator       User?     @relation("CreatedBy", fields: [createdBy], references: [id])
-  createdUsers  User[]    @relation("CreatedBy")
-  approver      User?     @relation("ApprovedBy", fields: [approvedBy], references: [id])
-  approvedUsers User[]    @relation("ApprovedBy")
+  approvedAt        DateTime?  
+  approvedBy        Int?
+  createdAt         DateTime        @default(now())
+  createdBy         Int?
+  updatedAt         DateTime        @updatedAt
+  updatedBy         Int?
+
+  role              Role            @relation(fields: [roleId], references: [id])
+  creator           User?           @relation("CreatedBy", fields: [createdBy], references: [id])
+  createdUsers      User[]          @relation("CreatedBy")
+  approver          User?           @relation("ApprovedBy", fields: [approvedBy], references: [id])
+  approvedUsers     User[]          @relation("ApprovedBy")
+}
+
+model Color {
+  id                Int             @id @default(autoincrement())
+  name              String          @unique
+  hexCode           Int
+
+  productColors     ProductColors[]
+}
+
+enum Gender {
+  MEN
+  WOMEN
+  KIDS  
+}
+
+model ProductCategory {
+  id                Int             @id @default(autoincrement())
+  name              String
+  gender            Gender
+
+  products          Product[]
+}
+
+model ProductGroup {
+  id                Int             @id @default(autoincrement())
+  name              String
+  skuNumeric        Int
+  products          Product[]
+
+  labourCost        LabourCost?
+}
+
+model Product {
+  id                Int             @id @default(autoincrement())
+  sku               String
+  name              String?
+  productGroupId    Int
+  productCategoryId Int
+
+  createdAt         DateTime        @default(now())
+  createdBy         Int
+  updatedAt         DateTime        @updatedAt
+  updatedBy         Int
+
+  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
+  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
+  productColors     ProductColors[]
+}
+
+model ProductColors {
+  productId         Int
+  product           Product         @relation(fields: [productId], references: [id])
+  colorId           Int
+  color             Color           @relation(fields: [colorId], references: [id])
+  order             Int           
+  @@id([productId, colorId])
+}
+
+model LabourCost {
+  id                Int             @id @default(autoincrement())
+  skuNumeric        Int
+  drawingUpper      Int
+  drawingLining     Int
+  stitchingUpper    Int
+  stitchingOutsole  Int?
+  stitchingInsole   Int?
+  lasting           Int
+  productGroupId    Int             @unique
+
+  createdAt         DateTime        @default(now())
+  createdBy         Int
+  updatedAt         DateTime        @updatedAt
+  updatedBy         Int
+
+  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
