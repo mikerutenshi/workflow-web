@@ -12,6 +12,7 @@ async function main() {
     create: {
       name: 'Admin',
       description: "Programmer's role",
+      clearanceLevel: 5,
     },
   });
 
@@ -21,6 +22,7 @@ async function main() {
     create: {
       name: 'User',
       description: "Regular user's role",
+      clearanceLevel: 0,
     },
   });
 
