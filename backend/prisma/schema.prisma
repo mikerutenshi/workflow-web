@@ -64,42 +64,45 @@ model ProductCategory {
   name              String
   gender            Gender
 
-  products          Product[]
+  productGroups     ProductGroup[]
 }
 
 model ProductGroup {
   id                Int             @id @default(autoincrement())
-  name              String
   skuNumeric        Int
+  productCategoryId Int
+  name              String?
   products          Product[]
 
   labourCost        LabourCost?
+
+  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
 }
 
 model Product {
   id                Int             @id @default(autoincrement())
   sku               String
-  name              String?
   productGroupId    Int
-  productCategoryId Int
 
   createdAt         DateTime        @default(now())
   createdBy         Int
   updatedAt         DateTime        @updatedAt
   updatedBy         Int
 
-  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
-  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
   productColors     ProductColors[]
+
+  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
 
 model ProductColors {
   productId         Int
-  product           Product         @relation(fields: [productId], references: [id])
   colorId           Int
-  color             Color           @relation(fields: [colorId], references: [id])
   order             Int           
+
   @@id([productId, colorId])
+
+  product           Product         @relation(fields: [productId], references: [id])
+  color             Color           @relation(fields: [colorId], references: [id])
 }
 
 model LabourCost {

@@ -6,7 +6,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { SignInDto } from './dto/signIn.dto';
 import { Request } from 'express';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Resolver(() => User)
 export class AuthResolver {
