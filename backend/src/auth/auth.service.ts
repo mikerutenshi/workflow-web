@@ -1,15 +1,18 @@
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
-import { Prisma, User } from '@prisma/client';
+// import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dto/signIn.dto';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@/models/user.model';
+import { RoleDto } from './dto/Role.dto';
+import { Role } from '@/models/role.model';
 
-const userWithRoles = Prisma.validator<Prisma.UserDefaultArgs>()({
-  include: { role: true },
-});
-type UserWithRoles = Prisma.UserGetPayload<typeof userWithRoles>;
+// const userWithRoles = Prisma.validator<Prisma.UserDefaultArgs>()({
+//   include: { role: true },
+// });
+// type UserWithRoles = Prisma.UserGetPayload<typeof userWithRoles>;
 
 @Injectable()
 export class AuthService {
@@ -17,8 +20,17 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
+  async createRole(data: RoleDto): Promise<Role> {
+    return this.prisma.role.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        clearanceLevel: data.cleareanceLevel,
+      },
+    });
+  }
 
-  async createUser(data: CreateUserDto): Promise<UserWithRoles> {
+  async createUser(data: CreateUserDto): Promise<User> {
     const password = await bcrypt.hash(data.password, 10);
 
     return this.prisma.user.create({
@@ -33,20 +45,27 @@ export class AuthService {
       },
       include: {
         role: true,
+        // createdUsers: {
+        //   select: {
+        //     id: true,
+        //   },
+        // },
+        // approvedUsers: {
+        //   select: {
+        //     id: true,
+        //   },
+        // },
       },
     });
   }
 
-  async getUsers(): Promise<UserWithRoles[]> {
-    const users = await this.prisma.user.findMany({
+  async getUsers(): Promise<User[]> {
+    return await this.prisma.user.findMany({
       include: { role: true },
     });
-    return users;
   }
 
-  async signIn(
-    data: SignInDto,
-  ): Promise<{ user: UserWithRoles; accessToken: string }> {
+  async signIn(data: SignInDto): Promise<{ user: User; accessToken: string }> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
       include: { role: true },
@@ -81,8 +100,11 @@ export class AuthService {
       if (data?.sub && !isNaN(Number(data.sub))) {
         const user = await this.prisma.user.findUnique({
           where: { id: Number(data.sub) },
+          include: {
+            role: true,
+          },
         });
-        return user || null;
+        return user;
       }
     }
     return null;

@@ -5,7 +5,7 @@ export class ProductGroup {
   @Field(() => ID)
   id: number;
   @Field()
-  name: string;
-  @Field()
   skuNumeric: number;
+  @Field(() => String, { nullable: true })
+  name: string | null;
 }

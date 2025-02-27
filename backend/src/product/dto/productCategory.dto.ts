@@ -1,10 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Gender } from '@prisma/client';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class CreateProductCategoryDto {
+export class ProductCategoryDto {
   @Field()
+  @IsNotEmpty()
   name: string;
   @Field()
   @IsEnum(Gender)

@@ -10,6 +10,7 @@ import { join } from 'path';
 import { Request } from 'express';
 import { DateScalar } from './scalars/date.scalar';
 import { authenticateUserByRequest } from './auth/auth.middleware';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { authenticateUserByRequest } from './auth/auth.middleware';
     PrismaModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [AuthModule],
+      imports: [AuthModule, ProductModule],
       inject: [AuthService],
       useFactory: (authService: AuthService) => ({
         playground: true,

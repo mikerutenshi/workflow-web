@@ -17,19 +17,25 @@ export class User {
   role: Role;
 
   @Field(() => Date, { nullable: true })
-  approvedAt?: Date;
-  @Field({ nullable: true })
-  approvedBy?: number;
+  approvedAt: Date | null;
+  @Field(() => Number, { nullable: true })
+  approvedBy: number | null;
   @Field(() => Date)
   createdAt: Date;
-  @Field({ nullable: true })
-  createdBy?: number;
+  @Field(() => Number, { nullable: true })
+  createdBy: number | null;
   @Field(() => Date)
   updatedAt: Date;
-  @Field({ nullable: true })
-  updatedBy?: number;
-  @Field(() => [User])
-  createdUsers: User[];
-  @Field(() => [User])
-  approvedUsers: User[];
+  @Field(() => Number, { nullable: true })
+  updatedBy: number | null;
+  // @Field(() => [Number])
+  // createdUsers: UserId[];
+  // @Field()
+  // approvedUsers: UserId[];
 }
+
+// @ObjectType()
+// export class UserId {
+//   @Field(() => ID)
+//   id: number;
+// }

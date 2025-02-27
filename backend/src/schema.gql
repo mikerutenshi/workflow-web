@@ -6,8 +6,7 @@ type Role {
   id: ID!
   name: String!
   description: String
-  createdAt: Date!
-  updatedAt: Date!
+  clearanceLevel: Float!
 }
 
 type User {
@@ -16,15 +15,72 @@ type User {
   firstName: String!
   lastName: String!
   isActive: Boolean!
-  createdAt: Date!
-  approvedAt: Date
-  updatedAt: Date!
-  createdBy: Float
-  approvedBy: Float
   role: Role!
-  roleId: Float!
-  createdUsers: [User]
-  approvedUsers: [User]
+  approvedAt: Date
+  approvedBy: Float
+  createdAt: Date!
+  createdBy: Float
+  updatedAt: Date!
+  updatedBy: Float
+}
+
+type ProductGroup {
+  id: ID!
+  skuNumeric: Float!
+  name: String
+}
+
+type Color {
+  id: ID!
+  name: String!
+  hexCode: String!
+}
+
+type ProductColors {
+  productId: Float!
+  colorId: Float!
+  color: Color!
+  order: Float!
+}
+
+type Product {
+  id: ID!
+  createdAt: Date!
+  createdBy: Float!
+  updatedAt: Date!
+  updatedBy: Float
+  sku: String!
+  name: String
+  productGroup: ProductGroup!
+  productColors: [ProductColors!]!
+}
+
+type ProductCategory {
+  id: ID!
+  name: String!
+  gender: Gender!
+}
+
+enum Gender {
+  MEN
+  WOMEN
+  KIDS
+}
+
+type LabourCost {
+  id: ID!
+  createdAt: Date!
+  createdBy: Float!
+  updatedAt: Date!
+  updatedBy: Float
+  skuNumeric: Float!
+  drawingUpper: Float!
+  drawingLining: Float!
+  stitchingUpper: Float!
+  stitchingOutsole: Float
+  stitchingInsole: Float
+  lasting: Float!
+  productGroup: ProductGroup!
 }
 
 """Date custom scalar type"""
@@ -33,12 +89,27 @@ scalar Date
 type Query {
   getUsers: [User!]!
   me: User!
+  getProducts: [Product!]!
+  getProductCategories: [ProductCategory!]!
+  getPrdouctGroups: ProductGroup!
+  getLabourCosts: [LabourCost!]!
 }
 
 type Mutation {
+  createRole(data: RoleDto!): Role!
   createUser(data: CreateUserDto!): User!
   signIn(data: SignInDto!): User!
   signOut: User!
+  createProduct(data: ProductDto!): Product!
+  createProductCategory(data: ProductCategoryDto!): ProductCategory!
+  createProductGroup(data: ProductGroupDto!): ProductGroup!
+  createLabourCost(data: LabourCostDto!): LabourCost!
+}
+
+input RoleDto {
+  name: String!
+  description: String
+  cleareanceLevel: Float!
 }
 
 input CreateUserDto {
@@ -46,11 +117,43 @@ input CreateUserDto {
   password: String!
   firstName: String!
   lastName: String!
-  createdBy: Float!
+  createdBy: Float
   roleId: Float!
 }
 
 input SignInDto {
   email: String!
   password: String!
+}
+
+input ProductDto {
+  sku: String!
+  productGroupId: Float!
+  createdBy: Float!
+  updatedBy: Float
+  colorIds: Float!
+}
+
+input ProductCategoryDto {
+  name: String!
+  gender: String!
+}
+
+input ProductGroupDto {
+  skuNumeric: Float!
+  productCategoryId: Float!
+  name: String
+}
+
+input LabourCostDto {
+  skuNumeric: Float!
+  drawingUpper: Float!
+  drawingLining: Float!
+  stitchingUpper: Float!
+  stitchingOutsole: Float
+  stitchingInsole: Float
+  lasting: Float!
+  productGroupId: Float!
+  createdBy: Float!
+  updatedBy: Float
 }

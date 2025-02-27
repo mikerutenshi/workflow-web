@@ -10,6 +10,6 @@ export class BaseModel {
   createdBy: number;
   @Field(() => Date)
   updatedAt: Date;
-  @Field()
-  updatedBy: number;
+  @Field(() => Number, { nullable: true })
+  updatedBy: number | null;
 }

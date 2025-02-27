@@ -1,7 +1,8 @@
-import { Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
 import { ProductGroup } from './product-group.model';
 
+@ObjectType()
 export class LabourCost extends BaseModel {
   @Field()
   skuNumeric: number;
@@ -11,10 +12,10 @@ export class LabourCost extends BaseModel {
   drawingLining: number;
   @Field()
   stitchingUpper: number;
-  @Field({ nullable: true })
-  stitchingOutsole: number;
-  @Field({ nullable: true })
-  stitchingInsole: number;
+  @Field(() => Number, { nullable: true })
+  stitchingOutsole: number | null;
+  @Field(() => Number, { nullable: true })
+  stitchingInsole: number | null;
   @Field()
   lasting: number;
   @Field(() => ProductGroup)

@@ -1,16 +1,23 @@
 import { Query, Mutation, Resolver, Args, Context } from '@nestjs/graphql';
 import { User } from 'src/models/user.model';
-import { Prisma, User as UserModel } from '@prisma/client';
+// import { Prisma, User as UserModel } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { SignInDto } from './dto/signIn.dto';
 import { Request } from 'express';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
+import { RoleDto } from './dto/Role.dto';
+import { Role } from '@/models/role.model';
 
-@Resolver(() => User)
+@Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
+
+  @Mutation(() => Role)
+  createRole(@Args('data') data: RoleDto): Promise<Role> {
+    return this.authService.createRole(data);
+  }
 
   @Mutation(() => User)
   createUser(@Args('data') data: CreateUserDto): Promise<User> {
