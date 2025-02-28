@@ -4,8 +4,8 @@ import { IsArray, IsInt, IsOptional, Matches } from 'class-validator';
 @InputType()
 export class ProductDto {
   @Field()
-  @Matches(/^[A-Z]{1,2}\d{5}-\w+(\/\w+)*$/, {
-    message: 'Format support example: A12345-black/white',
+  @Matches(/^[A-Z]{1,2}\d{5}-[a-zA-Z.]+(\/[a-zA-Z.]+)*$/, {
+    message: 'Format support example: A12345-D.Brown/White',
   })
   sku: string;
   @Field()
@@ -18,7 +18,7 @@ export class ProductDto {
   @IsOptional()
   @IsInt()
   updatedBy?: number | null;
-  @Field(() => Number)
+  @Field(() => [Number])
   @IsArray()
   @IsInt({ each: true })
   colorIds: number[];

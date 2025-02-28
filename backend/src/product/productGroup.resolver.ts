@@ -1,7 +1,14 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { ProductGroupService } from './productGroup.service';
 import { ProductGroupDto } from './dto/productGroup.dto';
-import { ProductGroup } from '@/models/product-group.model';
+import { GetProductGroup, ProductGroup } from '@/models/product-group.model';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {
@@ -14,7 +21,7 @@ export class ProductGroupResolver {
     return this.productGroupService.createProductGroup(data);
   }
 
-  @Query(() => ProductGroup)
+  @Query(() => [GetProductGroup])
   getPrdouctGroups() {
     return this.productGroupService.getProductGroups();
   }

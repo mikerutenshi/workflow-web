@@ -8,9 +8,13 @@ import { ProductCategoryService } from './productCategory.service';
 import { ProductGroupService } from './productGroup.service';
 import { LabourCostService } from './labourCost.service';
 import { PrismaModule } from '@/prisma/prisma.module';
+import { ColorResolver } from './color.resolver';
+import { ColorService } from './color.service';
 
 @Module({
   providers: [
+    ColorResolver,
+    ColorService,
     ProductResolver,
     ProductService,
     ProductCategoryResolver,

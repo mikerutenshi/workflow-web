@@ -7,8 +7,6 @@ import { ProductColors } from './product-colors.model';
 export class Product extends BaseModel {
   @Field()
   sku: string;
-  @Field({ nullable: true })
-  name?: string;
   @Field()
   productGroup: ProductGroup;
   @Field(() => [ProductColors])

@@ -6,8 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dto/signIn.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@/models/user.model';
-import { RoleDto } from './dto/Role.dto';
 import { Role } from '@/models/role.model';
+import { RoleDto } from './dto/role.dto';
 
 // const userWithRoles = Prisma.validator<Prisma.UserDefaultArgs>()({
 //   include: { role: true },

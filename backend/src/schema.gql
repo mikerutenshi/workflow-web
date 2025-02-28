@@ -24,37 +24,6 @@ type User {
   updatedBy: Float
 }
 
-type ProductGroup {
-  id: ID!
-  skuNumeric: Float!
-  name: String
-}
-
-type Color {
-  id: ID!
-  name: String!
-  hexCode: String!
-}
-
-type ProductColors {
-  productId: Float!
-  colorId: Float!
-  color: Color!
-  order: Float!
-}
-
-type Product {
-  id: ID!
-  createdAt: Date!
-  createdBy: Float!
-  updatedAt: Date!
-  updatedBy: Float
-  sku: String!
-  name: String
-  productGroup: ProductGroup!
-  productColors: [ProductColors!]!
-}
-
 type ProductCategory {
   id: ID!
   name: String!
@@ -83,15 +52,57 @@ type LabourCost {
   productGroup: ProductGroup!
 }
 
+type ProductGroup {
+  id: ID!
+  skuNumeric: Float!
+  name: String
+  productCategoryId: Float!
+}
+
+type GetProductGroup {
+  id: ID!
+  skuNumeric: Float!
+  name: String
+  productCategoryId: Float!
+  productCategory: ProductCategory!
+  products: [Product]
+  labourCost: LabourCost
+}
+
+type Color {
+  id: ID!
+  name: String!
+  hexCode: String!
+}
+
+type ProductColors {
+  productId: Float!
+  colorId: Float!
+  color: Color!
+  order: Float!
+}
+
+type Product {
+  id: ID!
+  createdAt: Date!
+  createdBy: Float!
+  updatedAt: Date!
+  updatedBy: Float
+  sku: String!
+  productGroup: ProductGroup!
+  productColors: [ProductColors!]!
+}
+
 """Date custom scalar type"""
 scalar Date
 
 type Query {
   getUsers: [User!]!
   me: User!
+  getColors: [Color!]!
   getProducts: [Product!]!
   getProductCategories: [ProductCategory!]!
-  getPrdouctGroups: ProductGroup!
+  getPrdouctGroups: [GetProductGroup!]!
   getLabourCosts: [LabourCost!]!
 }
 
@@ -100,6 +111,7 @@ type Mutation {
   createUser(data: CreateUserDto!): User!
   signIn(data: SignInDto!): User!
   signOut: User!
+  createColor(data: ColorDto!): Color!
   createProduct(data: ProductDto!): Product!
   createProductCategory(data: ProductCategoryDto!): ProductCategory!
   createProductGroup(data: ProductGroupDto!): ProductGroup!
@@ -126,12 +138,17 @@ input SignInDto {
   password: String!
 }
 
+input ColorDto {
+  name: String!
+  hexCode: String!
+}
+
 input ProductDto {
   sku: String!
   productGroupId: Float!
   createdBy: Float!
   updatedBy: Float
-  colorIds: Float!
+  colorIds: [Float!]!
 }
 
 input ProductCategoryDto {
