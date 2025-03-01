@@ -1,0 +1,88 @@
+fragment ProductCategoryFrag on ProductCategory {
+  id
+  name
+  gender
+}
+
+fragment ColorFrag on Color {
+  id
+  name
+  hexCode
+}
+
+mutation createPrdouctCategory($data: ProductCategoryDto!) {
+  createProductCategory(data: $data) {
+    ...ProductCategoryFrag
+  }
+}
+
+mutation createProductGroup($data: ProductGroupDto!) {
+  createProductGroup(data: $data) {
+    id
+    skuNumeric
+    name
+    productCategoryId
+  }
+}
+
+mutation createColor($data: ColorDto!) {
+  createColor(data: $data) {
+    ...ColorFrag
+  }
+}
+
+mutation createProduct($data: ProductDto!) {
+  createProduct(data: $data) {
+    id
+  }
+}
+
+mutation createLabourCost($data: LabourCostDto!) {
+  createLabourCost(data: $data) {
+    id
+  }
+}
+
+query getProductCategories {
+  getProductCategories {
+    ...ProductCategoryFrag
+  }
+}
+
+query getColors {
+  getColors {
+    ...ColorFrag
+  }
+}
+
+query getPrdouctGroups {
+  getPrdouctGroups {
+    id
+    skuNumeric
+    name
+    productCategory {
+      id
+      name
+      gender
+    }
+    products {
+      sku
+      productColors {
+        color {
+          name
+          hexCode
+        }
+      }
+    }
+    labourCost {
+      skuNumeric
+      drawingUpper
+      drawingLining
+      stitchingUpper
+      stitchingOutsole
+      stitchingInsole
+      lasting
+      createdBy
+    }
+  }
+}
