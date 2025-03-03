@@ -22,3 +22,16 @@ query me {
     ...AuthUser
   }
 }
+
+query getUsers {
+  getUsers {
+    id
+    email
+    firstName
+    lastName
+    createdAt
+    role {
+      name
+    }
+  }
+}

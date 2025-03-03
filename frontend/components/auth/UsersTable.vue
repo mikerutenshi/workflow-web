@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { useQuery } from "villus";
 import { ref } from "vue";
+import { GetUsersDocument } from "~/api/generated/types";
 
 const getUsers = `
   query {
@@ -34,7 +35,6 @@ const getUsers = `
       email
       firstName
       lastName
-      roleId
       createdAt
       role {
         name
@@ -43,7 +43,7 @@ const getUsers = `
   }
 `;
 const { data } = useQuery({
-  query: getUsers,
+  query: GetUsersDocument,
 });
 
 const search = ref("");

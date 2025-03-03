@@ -3,11 +3,8 @@
     <v-main>
       <v-container fluid class="pn-container">
         <v-row class="flex-column" align="center">
-          <v-col cols="4">
-            <AuthUsersTable />
-          </v-col>
-          <v-col cols="4" class="mt-8" align="center">
-            <AuthProfileCard v-if="authStore.user" />
+          <v-col cols="4" align="center">
+            <DashboardHome v-if="authStore.user" />
             <AuthSignInForm v-else />
           </v-col>
         </v-row>
@@ -31,6 +28,7 @@
 </style>
 
 <script setup lang="ts">
+import { DashboardHome } from "#components";
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 </script>

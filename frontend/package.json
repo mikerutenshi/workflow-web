@@ -8,7 +8,8 @@
     "debug": "nuxt dev --inspect=9230",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@graphql-codegen/cli": "^5.0.4",
@@ -22,10 +23,10 @@
     "sass": "^1.83.4",
     "villus": "^3.5.2",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vuetify": "^3.7.14"
   },
   "devDependencies": {
-    "vite-plugin-vuetify": "^2.0.4",
-    "vuetify": "^3.7.9"
+    "vite-plugin-vuetify": "^2.0.4"
   }
 }
