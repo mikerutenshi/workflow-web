@@ -3,7 +3,7 @@
     <v-card-title> Hi, {{ authStore.user.email }} </v-card-title>
     <v-card-text>
       <ActionCheckMe />
-      <ActionSignOut class="mt-2" />
+      <ActionLogOut class="mt-2" />
     </v-card-text>
   </v-card>
 </template>

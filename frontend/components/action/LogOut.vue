@@ -6,17 +6,17 @@
 
 <script setup lang="ts">
 import { useMutation } from "villus";
-import { SignOutDocument } from "@/api/generated/types";
 import { useAuthStore } from "@/stores/auth";
+import { LogOutDocument } from "~/api/generated/types";
 
 defineProps({
   label: {
     type: String,
-    default: "Sign Out",
+    default: "Log Out",
   },
 });
 
-const { error, execute, isFetching, isDone } = useMutation(SignOutDocument);
+const { error, execute, isFetching, isDone } = useMutation(LogOutDocument);
 
 const authStore = useAuthStore();
 watchEffect(() => {

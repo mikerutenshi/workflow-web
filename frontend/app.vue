@@ -1,16 +1,17 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container fluid class="pn-container">
+  <v-container fluid class="pn-container">
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </v-container>
+  <!-- <v-container fluid class="pn-container">
         <v-row class="flex-column" align="center">
           <v-col cols="4" align="center">
             <DashboardHome v-if="authStore.user" />
             <AuthSignInForm v-else />
           </v-col>
         </v-row>
-      </v-container>
-    </v-main>
-  </v-app>
+      </v-container> -->
 </template>
 
 <style lang="sass">
@@ -26,9 +27,3 @@
 .translucent-background
   background-color: rgba(255, 255, 255, 0.8)
 </style>
-
-<script setup lang="ts">
-import { DashboardHome } from "#components";
-import { useAuthStore } from "@/stores/auth";
-const authStore = useAuthStore();
-</script>

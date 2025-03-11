@@ -19,7 +19,7 @@ const addHeadersPlugin =
     opContext.credentials = "include";
     const cookiesParsed = parseCookieHeader(cookie);
     if (cookiesParsed.jwt) {
-      console.log(`jwt ${cookiesParsed.jwt}`);
+      console.log(`add header jwt ${cookiesParsed.jwt}`);
       opContext.headers.Authorization = `Bearer ${cookiesParsed.jwt}`;
     }
   });

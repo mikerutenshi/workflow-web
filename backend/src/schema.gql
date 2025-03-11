@@ -109,8 +109,8 @@ type Query {
 type Mutation {
   createRole(data: RoleDto!): Role!
   createUser(data: CreateUserDto!): User!
-  signIn(data: SignInDto!): User!
-  signOut: User!
+  logIn(data: LogInDto!): User!
+  logOut: User!
   createColor(data: ColorDto!): Color!
   createProduct(data: ProductDto!): Product!
   createProductCategory(data: ProductCategoryDto!): ProductCategory!
@@ -133,7 +133,7 @@ input CreateUserDto {
   roleId: Float!
 }
 
-input SignInDto {
+input LogInDto {
   email: String!
   password: String!
 }

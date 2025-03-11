@@ -5,14 +5,14 @@ fragment AuthUser on User {
   lastName
 }
 
-mutation signIn($data: SignInDto!) {
-  signIn(data: $data) {
+mutation logIn($data: LogInDto!) {
+  logIn(data: $data) {
     ...AuthUser
   }
 }
 
-mutation signOut {
-  signOut {
+mutation logOut {
+  logOut {
     ...AuthUser
   }
 }

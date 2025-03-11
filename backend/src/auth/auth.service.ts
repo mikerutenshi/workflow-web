@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
 // import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { SignInDto } from './dto/signIn.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@/models/user.model';
 import { Role } from '@/models/role.model';
 import { RoleDto } from './dto/role.dto';
+import { LogInDto } from './dto/logIn.dto';
 
 // const userWithRoles = Prisma.validator<Prisma.UserDefaultArgs>()({
 //   include: { role: true },
@@ -65,7 +65,7 @@ export class AuthService {
     });
   }
 
-  async signIn(data: SignInDto): Promise<{ user: User; accessToken: string }> {
+  async logIn(data: LogInDto): Promise<{ user: User; accessToken: string }> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
       include: { role: true },

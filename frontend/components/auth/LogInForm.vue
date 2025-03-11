@@ -1,5 +1,5 @@
 <template>
-  <v-row align="center" class="flex-column"><AuthUsersTable /> </v-row>
+  <!-- <v-row align="center" class="flex-column"><AuthUsersTable /> </v-row> -->
   <v-row align="center" class="mt-8">
     <v-container class="translucent-background">
       <v-form @submit.prevent="execute({ data: form })">
@@ -8,7 +8,7 @@
         </v-alert>
         <v-text-field v-model="form.email" label="Email" />
         <v-text-field v-model="form.password" label="Password" />
-        <v-btn :loading="isFetching" type="submit">Sign In</v-btn>
+        <v-btn :loading="isFetching" type="submit">Log In</v-btn>
       </v-form>
     </v-container>
   </v-row>
@@ -22,10 +22,9 @@
 <script setup lang="ts">
 import { useMutation } from "villus";
 import { useAuthStore } from "~/stores/auth";
-import { SignInDocument } from "~/api/generated/types";
-import { AuthProfileCard, AuthUsersTable } from "#components";
+import { LogInDocument } from "~/api/generated/types";
 
-const { data, isFetching, execute, error } = useMutation(SignInDocument);
+const { data, isFetching, execute, error } = useMutation(LogInDocument);
 const authStore = useAuthStore();
 const form = reactive({
   email: "",
@@ -33,6 +32,6 @@ const form = reactive({
 });
 
 watchEffect(() => {
-  authStore.user = data.value?.signIn || null;
+  authStore.user = data.value?.logIn || null;
 });
 </script>

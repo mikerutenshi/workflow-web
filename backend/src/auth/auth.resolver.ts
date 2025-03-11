@@ -3,7 +3,7 @@ import { User } from 'src/models/user.model';
 // import { Prisma, User as UserModel } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
-import { SignInDto } from './dto/signIn.dto';
+import { LogInDto } from './dto/logIn.dto';
 import { Request } from 'express';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
@@ -34,11 +34,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
-  async signIn(
-    @Args('data') data: SignInDto,
+  async logIn(
+    @Args('data') data: LogInDto,
     @Context('req') req: Request,
   ): Promise<User> {
-    const { user, accessToken } = await this.authService.signIn(data);
+    const { user, accessToken } = await this.authService.logIn(data);
     req.res?.cookie('jwt', accessToken, {
       httpOnly: true,
       sameSite: 'lax',
@@ -47,7 +47,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
-  async signOut(
+  async logOut(
     @Context('req') req: Request,
     @Context('user') user: User,
   ): Promise<User> {
