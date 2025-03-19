@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { LabourCostDto } from './dto/labourCost.dto';
+import { CreateLabourCostDto } from './dto/createLabourCost.dto';
 import { LabourCost } from '@/models/labour-cost.model';
 
 @Injectable()
 export class LabourCostService {
   constructor(private prisma: PrismaService) {}
 
-  async createLabourCost(data: LabourCostDto): Promise<LabourCost> {
+  async createLabourCost(data: CreateLabourCostDto): Promise<LabourCost> {
     return await this.prisma.labourCost.create({
       data: {
         skuNumeric: data.skuNumeric,

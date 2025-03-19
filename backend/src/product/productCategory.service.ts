@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ProductCategoryDto } from './dto/productCategory.dto';
+import { CreateProductCategoryDto } from './dto/createProductCategory.dto';
 import { ProductCategory } from '@/models/product-category.model ';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -8,7 +8,7 @@ export class ProductCategoryService {
   constructor(private prisma: PrismaService) {}
 
   async createProductCategory(
-    data: ProductCategoryDto,
+    data: CreateProductCategoryDto,
   ): Promise<ProductCategory> {
     return await this.prisma.productCategory.create({
       data: {

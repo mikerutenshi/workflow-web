@@ -1,5 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Color } from './color.model';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class ProductColors {
@@ -7,8 +6,6 @@ export class ProductColors {
   productId: number;
   @Field()
   colorId: number;
-  @Field(() => Color)
-  color: Color;
   @Field()
   order: number;
 }

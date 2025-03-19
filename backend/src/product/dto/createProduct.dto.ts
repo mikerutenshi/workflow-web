@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsArray, IsInt, IsOptional, Matches } from 'class-validator';
 
 @InputType()
-export class ProductDto {
+export class CreateProductDto {
   @Field()
   @Matches(/^[A-Z]{1,2}\d{5}-[a-zA-Z.]+(\/[a-zA-Z.]+)*$/, {
     message: 'Format support example: A12345-D.Brown/White',

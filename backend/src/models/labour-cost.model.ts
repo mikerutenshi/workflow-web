@@ -18,6 +18,6 @@ export class LabourCost extends BaseModel {
   stitchingInsole: number | null;
   @Field()
   lasting: number;
-  @Field(() => ProductGroup)
-  productGroup: ProductGroup;
+  @Field()
+  productGroupId: number;
 }

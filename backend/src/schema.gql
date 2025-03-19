@@ -24,6 +24,16 @@ type User {
   updatedBy: Float
 }
 
+type Product {
+  id: ID!
+  createdAt: Date!
+  createdBy: Float!
+  updatedAt: Date!
+  updatedBy: Float
+  sku: String!
+  productGroupId: Float!
+}
+
 type ProductCategory {
   id: ID!
   name: String!
@@ -34,6 +44,46 @@ enum Gender {
   MEN
   WOMEN
   KIDS
+}
+
+type ProductGroup {
+  id: ID!
+  skuNumeric: Float!
+  name: String
+  productCategoryId: Float!
+}
+
+type ProductGroupWithCategoryDto {
+  id: ID!
+  skuNumeric: Float!
+  name: String
+  productCategoryId: Float!
+  productCategory: ProductCategory!
+}
+
+type Color {
+  id: ID!
+  name: String!
+  hexCode: String!
+}
+
+type ProductColorsWithColor {
+  productId: Float!
+  colorId: Float!
+  order: Float!
+  color: Color!
+}
+
+type GetProductsDto {
+  id: ID!
+  createdAt: Date!
+  createdBy: Float!
+  updatedAt: Date!
+  updatedBy: Float
+  sku: String!
+  productGroupId: Float!
+  productGroup: ProductGroupWithCategoryDto!
+  productColors: [ProductColorsWithColor!]!
 }
 
 type LabourCost {
@@ -49,17 +99,10 @@ type LabourCost {
   stitchingOutsole: Float
   stitchingInsole: Float
   lasting: Float!
-  productGroup: ProductGroup!
+  productGroupId: Float!
 }
 
-type ProductGroup {
-  id: ID!
-  skuNumeric: Float!
-  name: String
-  productCategoryId: Float!
-}
-
-type GetProductGroup {
+type GetProductGroupsDto {
   id: ID!
   skuNumeric: Float!
   name: String
@@ -69,30 +112,6 @@ type GetProductGroup {
   labourCost: LabourCost
 }
 
-type Color {
-  id: ID!
-  name: String!
-  hexCode: String!
-}
-
-type ProductColors {
-  productId: Float!
-  colorId: Float!
-  color: Color!
-  order: Float!
-}
-
-type Product {
-  id: ID!
-  createdAt: Date!
-  createdBy: Float!
-  updatedAt: Date!
-  updatedBy: Float
-  sku: String!
-  productGroup: ProductGroup!
-  productColors: [ProductColors!]!
-}
-
 """Date custom scalar type"""
 scalar Date
 
@@ -100,9 +119,9 @@ type Query {
   getUsers: [User!]!
   me: User!
   getColors: [Color!]!
-  getProducts: [Product!]!
+  getProducts: [GetProductsDto!]!
   getProductCategories: [ProductCategory!]!
-  getPrdouctGroups: [GetProductGroup!]!
+  getProductGroups: [GetProductGroupsDto!]!
   getLabourCosts: [LabourCost!]!
 }
 
@@ -111,11 +130,11 @@ type Mutation {
   createUser(data: CreateUserDto!): User!
   logIn(data: LogInDto!): User!
   logOut: User!
-  createColor(data: ColorDto!): Color!
-  createProduct(data: ProductDto!): Product!
-  createProductCategory(data: ProductCategoryDto!): ProductCategory!
-  createProductGroup(data: ProductGroupDto!): ProductGroup!
-  createLabourCost(data: LabourCostDto!): LabourCost!
+  createColor(data: CreateColorDto!): Color!
+  createProduct(data: CreateProductDto!): Product!
+  createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
+  createProductGroup(data: CreateProductGroupDto!): ProductGroup!
+  createLabourCost(data: CreateLabourCostDto!): LabourCost!
 }
 
 input RoleDto {
@@ -138,12 +157,12 @@ input LogInDto {
   password: String!
 }
 
-input ColorDto {
+input CreateColorDto {
   name: String!
   hexCode: String!
 }
 
-input ProductDto {
+input CreateProductDto {
   sku: String!
   productGroupId: Float!
   createdBy: Float!
@@ -151,18 +170,18 @@ input ProductDto {
   colorIds: [Float!]!
 }
 
-input ProductCategoryDto {
+input CreateProductCategoryDto {
   name: String!
   gender: String!
 }
 
-input ProductGroupDto {
+input CreateProductGroupDto {
   skuNumeric: Float!
   productCategoryId: Float!
   name: String
 }
 
-input LabourCostDto {
+input CreateLabourCostDto {
   skuNumeric: Float!
   drawingUpper: Float!
   drawingLining: Float!

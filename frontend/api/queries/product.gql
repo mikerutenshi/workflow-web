@@ -10,13 +10,13 @@ fragment ColorFrag on Color {
   hexCode
 }
 
-mutation createPrdouctCategory($data: ProductCategoryDto!) {
+mutation createPrdouctCategory($data: CreateProductCategoryDto!) {
   createProductCategory(data: $data) {
     ...ProductCategoryFrag
   }
 }
 
-mutation createProductGroup($data: ProductGroupDto!) {
+mutation createProductGroup($data: CreateProductGroupDto!) {
   createProductGroup(data: $data) {
     id
     skuNumeric
@@ -25,19 +25,19 @@ mutation createProductGroup($data: ProductGroupDto!) {
   }
 }
 
-mutation createColor($data: ColorDto!) {
+mutation createColor($data: CreateColorDto!) {
   createColor(data: $data) {
     ...ColorFrag
   }
 }
 
-mutation createProduct($data: ProductDto!) {
+mutation createProduct($data: CreateProductDto!) {
   createProduct(data: $data) {
     id
   }
 }
 
-mutation createLabourCost($data: LabourCostDto!) {
+mutation createLabourCost($data: CreateLabourCostDto!) {
   createLabourCost(data: $data) {
     id
   }
@@ -55,34 +55,22 @@ query getColors {
   }
 }
 
-query getPrdouctGroups {
-  getPrdouctGroups {
+query getProducts {
+  getProducts {
     id
-    skuNumeric
-    name
-    productCategory {
+    sku
+    productGroup {
       id
-      name
-      gender
-    }
-    products {
-      sku
-      productColors {
-        color {
-          name
-          hexCode
-        }
+      skuNumeric
+      productCategory {
+        ...ProductCategoryFrag
       }
     }
-    labourCost {
-      skuNumeric
-      drawingUpper
-      drawingLining
-      stitchingUpper
-      stitchingOutsole
-      stitchingInsole
-      lasting
-      createdBy
+    productColors {
+      order
+      color {
+        ...ColorFrag
+      }
     }
   }
 }

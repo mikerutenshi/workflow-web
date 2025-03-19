@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class ProductGroupDto {
+export class CreateProductGroupDto {
   @Field()
   @IsInt()
   skuNumeric: number;

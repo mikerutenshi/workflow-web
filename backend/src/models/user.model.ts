@@ -28,14 +28,4 @@ export class User {
   updatedAt: Date;
   @Field(() => Number, { nullable: true })
   updatedBy: number | null;
-  // @Field(() => [Number])
-  // createdUsers: UserId[];
-  // @Field()
-  // approvedUsers: UserId[];
 }
-
-// @ObjectType()
-// export class UserId {
-//   @Field(() => ID)
-//   id: number;
-// }

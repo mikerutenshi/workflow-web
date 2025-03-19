@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
-import { ProductDto } from './dto/product.dto';
-import { ProductGroupDto } from './dto/productGroup.dto';
-import { ProductCategoryDto } from './dto/productCategory.dto';
-import { LabourCostDto } from './dto/labourCost.dto';
-import { ProductCategory } from '@/models/product-category.model ';
+import { CreateProductDto } from './dto/createProduct.dto';
 import { Product } from '@/models/product.model';
-import { ProductGroup } from '@/models/product-group.model';
-import { LabourCost } from '@/models/labour-cost.model';
+import { GetProductsDto } from './dto/getProducts.dto';
 
 // type NullToUndefined<T> = {
 //   [K in keyof T]: T[K] extends null
@@ -23,7 +18,7 @@ import { LabourCost } from '@/models/labour-cost.model';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  async createProduct(data: ProductDto): Promise<Product> {
+  async createProduct(data: CreateProductDto): Promise<Product> {
     try {
       return await this.prisma.$transaction(async (tx) => {
         const newProduct = await tx.product.create({
@@ -74,10 +69,14 @@ export class ProductService {
     }
   }
 
-  async getProducts(): Promise<Product[]> {
+  async getProducts(): Promise<GetProductsDto[]> {
     return await this.prisma.product.findMany({
       include: {
-        productGroup: true,
+        productGroup: {
+          include: {
+            productCategory: true,
+          },
+        },
         productColors: {
           include: {
             color: true,

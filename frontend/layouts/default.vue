@@ -8,14 +8,13 @@
       <v-app-bar-title>{{ appBarTitle }}</v-app-bar-title>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app>
+    <v-navigation-drawer v-model="drawer" temporary app>
       <v-list>
         <v-list-item
           v-for="(item, index) in navItems"
           :key="index"
           :to="item.route"
           router
-          @click.stop="closeDrawer()"
         >
           <v-list-item-title>{{ item.title }}</v-list-item-title>
           <v-avatar>
@@ -46,7 +45,7 @@ const closeDrawer = () => {
 };
 const navItems = [
   { title: 'Home', route: '/', icon: 'mdi-home' },
-  { title: 'Products', route: '/products', icon: 'mdi-eye' },
+  { title: 'Products', route: '/products', icon: 'mdi-shoe-sneaker' },
 ];
 
 const appBarTitle = computed(() => {

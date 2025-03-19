@@ -1,16 +1,8 @@
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { ProductGroup } from '@/models/product-group.model';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateProductGroupDto } from './dto/createProductGroup.dto';
 import { ProductGroupService } from './productGroup.service';
-import { ProductGroupDto } from './dto/productGroup.dto';
-import { GetProductGroup, ProductGroup } from '@/models/product-group.model';
-import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@/guards/auth.guard';
+import { GetProductGroupsDto } from './dto/getProductGroup.dto';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {
@@ -18,14 +10,14 @@ export class ProductGroupResolver {
 
   @Mutation(() => ProductGroup)
   createProductGroup(
-    @Args('data') data: ProductGroupDto,
+    @Args('data') data: CreateProductGroupDto,
   ): Promise<ProductGroup> {
     return this.productGroupService.createProductGroup(data);
   }
 
   // @UseGuards(AuthGuard)
-  @Query(() => [GetProductGroup])
-  getPrdouctGroups() {
+  @Query(() => [GetProductGroupsDto])
+  getProductGroups() {
     return this.productGroupService.getProductGroups();
   }
 }

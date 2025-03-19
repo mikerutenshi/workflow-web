@@ -72,8 +72,8 @@ model ProductGroup {
   skuNumeric        Int
   productCategoryId Int
   name              String?
-  products          Product[]
 
+  products          Product[]
   labourCost        LabourCost?
 
   productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])

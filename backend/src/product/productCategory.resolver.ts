@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductCategoryService } from './productCategory.service';
 import { ProductCategory } from '@/models/product-category.model ';
-import { ProductCategoryDto } from './dto/productCategory.dto';
+import { CreateProductCategoryDto } from './dto/createProductCategory.dto';
 
 @Resolver(() => ProductCategory)
 export class ProductCategoryResolver {
@@ -9,7 +9,7 @@ export class ProductCategoryResolver {
 
   @Mutation(() => ProductCategory)
   createProductCategory(
-    @Args('data') data: ProductCategoryDto,
+    @Args('data') data: CreateProductCategoryDto,
   ): Promise<ProductCategory> {
     return this.productCategoryService.createProductCategory(data);
   }

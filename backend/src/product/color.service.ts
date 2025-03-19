@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { ColorDto } from './dto/color.dto';
+import { CreateColorDto } from './dto/createColor.dto';
 import { Color } from '@/models/color.model';
 
 @Injectable()
 export class ColorService {
   constructor(private prisma: PrismaService) {}
 
-  createColor(data: ColorDto): Promise<Color> {
+  createColor(data: CreateColorDto): Promise<Color> {
     return this.prisma.color.create({
       data: {
         name: data.name,
