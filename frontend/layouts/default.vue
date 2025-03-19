@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar :elevation="2">
       <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
       </template>
 
       <v-app-bar-title>{{ appBarTitle }}</v-app-bar-title>
@@ -15,6 +15,7 @@
           :key="index"
           :to="item.route"
           router
+          @click.stop="closeDrawer()"
         >
           <v-list-item-title>{{ item.title }}</v-list-item-title>
           <v-avatar>
@@ -24,13 +25,15 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main class="pa-0 ma-0">
       <slot />
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
+import { useRoute } from 'vue-router';
+
 const route = useRoute();
 
 const drawer = ref(false);
@@ -38,13 +41,16 @@ const drawer = ref(false);
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
 };
+const closeDrawer = () => {
+  drawer.value = false;
+};
 const navItems = [
-  { title: "Home", route: "/", icon: "mdi-home" },
-  { title: "Products", route: "/products", icon: "mdi-eye" },
+  { title: 'Home', route: '/', icon: 'mdi-home' },
+  { title: 'Products', route: '/products', icon: 'mdi-eye' },
 ];
 
 const appBarTitle = computed(() => {
-  return route.meta.title || "Workflow App";
+  return route.meta.title || 'Workflow App';
 });
 
 useHead({
