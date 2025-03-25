@@ -1,9 +1,10 @@
+{he}
 <template>
   <div v-if="data" class="fill-screen">
     <v-data-table
       :headers="headers"
       :items="data.getProducts"
-      class="elevation-1 full-height"
+      class="elevation-1 full-height pa-4"
     >
       <template v-slot:item.productColors="{ item }">
         {{ extractColors(item.productColors) }}
@@ -18,6 +19,7 @@
   height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 .full-height {
   flex-grow: 1; /* Expand to fill available space */

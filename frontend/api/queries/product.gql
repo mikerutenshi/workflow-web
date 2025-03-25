@@ -55,6 +55,17 @@ query getColors {
   }
 }
 
+query getProductGroups {
+  getProductGroups {
+    id
+    skuNumeric
+    productCategoryId
+    productCategory {
+      ...ProductCategoryFrag
+    }
+  }
+}
+
 query getProducts {
   getProducts {
     id

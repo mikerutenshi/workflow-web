@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateProductGroupDto } from './dto/createProductGroup.dto';
 import { ProductGroupService } from './productGroup.service';
 import { GetProductGroupsDto } from './dto/getProductGroup.dto';
+import { ProductGroupWithCategoryDto } from './dto/productGroupWithCategory.dto';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {

@@ -1,11 +1,11 @@
 <template>
   <v-main>
-    <ProductTable />
+    <ProductCreateForm />
   </v-main>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'Products',
+  title: 'Create a New Product',
 });
 </script>

@@ -1,11 +1,17 @@
 <template>
   <v-app>
-    <v-app-bar :elevation="2">
+    <v-app-bar ref="appBar" :elevation="2" app>
       <template v-slot:prepend>
         <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
       </template>
 
       <v-app-bar-title>{{ appBarTitle }}</v-app-bar-title>
+
+      <template v-slot:append v-if="currentPage == 'products'">
+        <v-btn @click="navigateToProductCreate()">
+          <v-icon left>mdi-plus</v-icon> New Product</v-btn
+        >
+      </template>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary app>
@@ -32,8 +38,10 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
 const drawer = ref(false);
 
@@ -43,6 +51,11 @@ const toggleDrawer = () => {
 const closeDrawer = () => {
   drawer.value = false;
 };
+
+const navigateToProductCreate = () => {
+  router.push('products/create');
+};
+
 const navItems = [
   { title: 'Home', route: '/', icon: 'mdi-home' },
   { title: 'Products', route: '/products', icon: 'mdi-shoe-sneaker' },
@@ -50,6 +63,10 @@ const navItems = [
 
 const appBarTitle = computed(() => {
   return route.meta.title || 'Workflow App';
+});
+
+const currentPage = computed(() => {
+  return route.name;
 });
 
 useHead({
