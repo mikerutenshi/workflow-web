@@ -3,6 +3,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { Product } from '@/models/product.model';
 import { GetProductsDto } from './dto/getProducts.dto';
+import { UpdateProductDto } from './dto/updateProduct.dto';
 
 // type NullToUndefined<T> = {
 //   [K in keyof T]: T[K] extends null
@@ -36,7 +37,7 @@ export class ProductService {
             data: {
               productId,
               colorId,
-              order,
+              order: order++,
             },
           });
         }
@@ -84,5 +85,80 @@ export class ProductService {
         },
       },
     });
+  }
+
+  async deleteProduct(id: number): Promise<Boolean> {
+    await this.prisma.product.delete({
+      where: {
+        id: id,
+      },
+    });
+    return true;
+  }
+
+  async updateProduct(
+    id: number,
+    data: UpdateProductDto,
+  ): Promise<GetProductsDto> {
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        await tx.product.update({
+          where: {
+            id: id,
+          },
+          data: {
+            sku: data.sku,
+            productGroupId: data.productGroupId,
+            updatedBy: data.updatedBy,
+          },
+        });
+
+        if (data.colorIds && data.colorIds.length > 0) {
+          await tx.productColors.deleteMany({
+            where: {
+              productId: id,
+            },
+          });
+
+          let order = 1;
+          for (const colorId of data.colorIds) {
+            await tx.productColors.create({
+              data: {
+                productId: id,
+                colorId,
+                order: order++,
+              },
+            });
+          }
+        }
+
+        const result = await tx.product.findUnique({
+          where: {
+            id: id,
+          },
+          include: {
+            productGroup: {
+              include: {
+                productCategory: true,
+              },
+            },
+            productColors: {
+              include: {
+                color: true,
+              },
+            },
+          },
+        });
+
+        if (!result) {
+          throw new Error(`Product with ID ${id} not found.`);
+        }
+
+        return result;
+      });
+    } catch (error) {
+      console.error('Error updating Product and ProductColors: ', error);
+      throw error;
+    }
   }
 }

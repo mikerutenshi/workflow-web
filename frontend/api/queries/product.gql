@@ -37,6 +37,10 @@ mutation createProduct($data: CreateProductDto!) {
   }
 }
 
+mutation deleteProduct($id: ID!) {
+  deleteProduct(id: $id)
+}
+
 mutation createLabourCost($data: CreateLabourCostDto!) {
   createLabourCost(data: $data) {
     id

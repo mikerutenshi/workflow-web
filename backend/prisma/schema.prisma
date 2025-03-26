@@ -91,7 +91,7 @@ model Product {
 
   productColors     ProductColors[]
 
-  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
+  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id], onDelete: Cascade)
 }
 
 model ProductColors {

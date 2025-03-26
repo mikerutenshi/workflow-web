@@ -29,12 +29,11 @@ export class PrismaService
       ],
     });
 
-    // Listen for query events
-    this.$on('query', (e) => {
-      console.log('Query: ' + e.query);
-      console.log('Params: ' + e.params);
-      console.log('Duration: ' + e.duration + 'ms');
-    });
+    // this.$on('query', (e) => {
+    //   console.log('Query: ' + e.query);
+    //   console.log('Params: ' + e.params);
+    //   console.log('Duration: ' + e.duration + 'ms');
+    // });
   }
 
   async onModuleDestroy() {

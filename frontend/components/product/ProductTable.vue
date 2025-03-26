@@ -5,9 +5,25 @@
       :headers="headers"
       :items="data.getProducts"
       class="elevation-1 full-height pa-4"
+      item-value="id"
     >
       <template v-slot:item.productColors="{ item }">
         {{ extractColors(item.productColors) }}
+      </template>
+
+      <template v-slot:item.actions="{ item }">
+        <v-menu variant="outlined">
+          <template v-slot:activator="{ props }">
+            <v-btn icon v-bind="props" variant="text">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="deleteProduct(item)">
+              <v-list-item-title>Delete</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </v-data-table>
   </div>
@@ -27,7 +43,7 @@
 </style>
 
 <script setup lang="ts">
-import { useQuery } from 'villus';
+import { useMutation, useQuery } from 'villus';
 import {
   GetProductsDocument,
   type ProductColorsWithColor,
@@ -44,6 +60,7 @@ const headers = [
   { title: 'Category', key: 'productGroup.productCategory.name' },
   { title: 'Gender', key: 'productGroup.productCategory.gender' },
   { title: 'Colors', key: 'productColors' },
+  { titlle: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
 const extractColors = (productColors: any[]) => {
@@ -52,5 +69,34 @@ const extractColors = (productColors: any[]) => {
     stringResult += `${productColor.order}) ${productColor.color.name}, `;
   });
   return stringResult.slice(0, -2);
+};
+
+const deleteProduct = (item: any) => {
+  const { execute } = useMutation({
+    query: `
+      mutation DeleteProduct($id: ID!) {
+        deleteProduct(id: $id) {
+          success
+          message
+        }
+      }
+    `,
+  });
+
+  execute({ id: item.id })
+    .then((response) => {
+      if (response.data?.deleteProduct?.success) {
+        alert('Product deleted successfully');
+        // Optionally, refetch the product list or update the UI
+      } else {
+        alert(
+          `Failed to delete product: ${response.data?.deleteProduct?.message}`
+        );
+      }
+    })
+    .catch((error) => {
+      console.error('Error deleting product:', error);
+      alert('An error occurred while deleting the product.');
+    });
 };
 </script>
