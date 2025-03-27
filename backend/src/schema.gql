@@ -165,9 +165,9 @@ input CreateColorDto {
 
 input CreateProductDto {
   sku: String!
-  productGroupId: Float!
-  createdBy: Float!
-  colorIds: [Float!]!
+  productGroupId: ID!
+  createdBy: ID!
+  colorIds: [ID!]!
 }
 
 input CreateProductCategoryDto {

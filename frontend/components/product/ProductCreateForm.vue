@@ -8,7 +8,7 @@
         <v-text-field v-model="form.sku" label="SKU" />
 
         <v-autocomplete
-          v-model="selectedProductGroup"
+          v-model="form.productGroupId"
           label="Product Group"
           :items="formattedGroupName"
           auto-select-first
@@ -90,9 +90,9 @@ import {
 const router = useRouter();
 const form = reactive({
   sku: '',
-  productGroupId: 0,
-  colorIds: [] as number[],
-  createdBy: 0,
+  productGroupId: '',
+  colorIds: [],
+  createdBy: '',
 });
 
 const {
@@ -154,7 +154,7 @@ const onSearch = (query: string) => {
 };
 
 const authStore = useAuthStore();
-form.createdBy = +(authStore.user?.id ?? 0);
+form.createdBy = authStore.user?.id;
 
 const discardForm = () => {
   router.push('/products');
@@ -169,9 +169,8 @@ watchEffect(() => {
   }
 
   form.colorIds = selectedColors.value.map((color) => {
-    return +color.id;
+    return color.id;
   });
-  form.productGroupId = +selectedProductGroup.value;
   console.log(JSON.stringify(form));
 });
 </script>

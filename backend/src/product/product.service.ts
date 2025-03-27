@@ -25,8 +25,8 @@ export class ProductService {
         const newProduct = await tx.product.create({
           data: {
             sku: data.sku,
-            productGroupId: data.productGroupId,
-            createdBy: data.createdBy,
+            productGroupId: +data.productGroupId,
+            createdBy: +data.createdBy,
           },
         });
         const productId = newProduct.id;
@@ -36,7 +36,7 @@ export class ProductService {
           await tx.productColors.create({
             data: {
               productId,
-              colorId,
+              colorId: +colorId,
               order: order++,
             },
           });

@@ -47,9 +47,9 @@ export type CreateProductCategoryDto = {
 };
 
 export type CreateProductDto = {
-  colorIds: Array<Scalars['Float']['input']>;
-  createdBy: Scalars['Float']['input'];
-  productGroupId: Scalars['Float']['input'];
+  colorIds: Array<Scalars['ID']['input']>;
+  createdBy: Scalars['ID']['input'];
+  productGroupId: Scalars['ID']['input'];
   sku: Scalars['String']['input'];
 };
 
