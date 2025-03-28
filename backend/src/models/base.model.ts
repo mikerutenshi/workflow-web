@@ -3,13 +3,13 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class BaseModel {
   @Field(() => ID)
-  id: string;
+  id: number;
   @Field(() => Date)
   createdAt: Date;
   @Field(() => ID)
-  createdBy: string;
+  createdBy: number;
   @Field(() => Date)
   updatedAt: Date;
   @Field(() => ID, { nullable: true })
-  updatedBy: string | null;
+  updatedBy: number | null;
 }

@@ -3,7 +3,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 @ObjectType()
 export class Role {
   @Field(() => ID)
-  id: string;
+  id: number;
   @Field()
   name: string;
   @Field(() => String, { nullable: true })

@@ -62,7 +62,7 @@ async function main() {
 
   const someProductGroup = await prisma.productGroup.create({
     data: {
-      skuNumeric: 12345,
+      skuNumeric: '12345',
       productCategoryId: flatCategory.id,
       name: null,
     },
@@ -126,7 +126,6 @@ async function main() {
   await prisma.labourCost.create({
     data: {
       productGroupId: someProductGroup.id,
-      skuNumeric: 12345,
       drawingUpper: 3000,
       drawingLining: 1000,
       stitchingUpper: 4500,

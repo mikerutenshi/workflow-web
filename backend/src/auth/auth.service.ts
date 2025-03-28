@@ -38,8 +38,8 @@ export class AuthService {
         password: password,
         firstName: data.firstName,
         lastName: data.lastName,
-        roleId: data.roleId,
-        createdBy: data.createdBy,
+        roleId: +data.roleId,
+        createdBy: +data.createdBy,
         approvedAt: null,
       },
       include: {

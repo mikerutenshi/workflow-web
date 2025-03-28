@@ -10,7 +10,7 @@
         <v-autocomplete
           v-model="form.productGroupId"
           label="Product Group"
-          :items="formattedGroupName"
+          :items="productGroupOptions"
           auto-select-first
           item-value="id"
           item-title="concat"
@@ -19,11 +19,10 @@
 
         <v-combobox
           v-model="selectedColors"
-          :items="filteredColors"
+          :items="colorOptions"
           label="Select Colors"
           multiple
           chips
-          auto-select-first
           @update:search="onSearch"
           :loading="isFetchingColors"
         >
@@ -106,9 +105,6 @@ const {
   },
 });
 
-const colorOptions = ref<Color[]>([]);
-const productGroupOptions = ref<GetProductGroupsDto[]>([]);
-
 const selectedColors = ref<Color[]>([]);
 const selectedProductGroup = ref('');
 
@@ -127,11 +123,15 @@ const {
   query: GetProductGroupsDocument,
 });
 
-const formattedGroupName = computed(() => {
-  return productGroupOptions.value.map((productGroup) => ({
-    ...productGroup,
-    concat: `${productGroup.skuNumeric} (${productGroup.productCategory.gender})`,
-  }));
+const productGroupOptions = computed(() => {
+  if (productGroupsData.value) {
+    return productGroupsData.value.getProductGroups.map((productGroup) => ({
+      ...productGroup,
+      concat: `${productGroup.skuNumeric} (${productGroup.productCategory.gender})`,
+    }));
+  } else {
+    return [];
+  }
 });
 
 const remove = (index: number) => {
@@ -140,14 +140,29 @@ const remove = (index: number) => {
   }
 };
 
-const filteredColors = computed(() => {
-  if (searchQuery.value) {
-    return colorOptions.value?.filter((color) =>
-      color.name.includes(searchQuery.value)
-    );
+// The filter mechanism is broken from the library, I'm returning array correctly
+const colorOptions = computed(() => {
+  if (colorsData.value) {
+    // if (searchQuery.value) {
+    //   console.log(`getColors: ${JSON.stringify(colorsData.value.getColors)}`);
+    //   const returned = colorsData.value.getColors.filter((color) => {
+    //     const returnedValue = color.name
+    //       .toLowerCase()
+    //       .includes(searchQuery.value.toLowerCase());
+    //     return returnedValue;
+    //   });
+    //   console.log(`returned: ${JSON.stringify(returned)}`);
+    //   return returned;
+    // } else {
+    //   console.log(
+    //     `returned pure: ${JSON.stringify(colorsData.value.getColors)}`
+    //   );
+    return colorsData.value.getColors;
+    // }
   }
-  return colorOptions.value; // Return all colors if no search query
+  return [];
 });
+
 const searchQuery = ref('');
 const onSearch = (query: string) => {
   searchQuery.value = query;
@@ -160,13 +175,13 @@ const discardForm = () => {
   router.push('/products');
 };
 watchEffect(() => {
-  if (colorsData.value?.getColors) {
-    colorOptions.value = colorsData.value.getColors;
-  }
+  // if (colorsData.value?.getColors) {
+  //   colorOptions.value = colorsData.value.getColors;
+  // }
 
-  if (productGroupsData.value?.getProductGroups) {
-    productGroupOptions.value = productGroupsData.value.getProductGroups;
-  }
+  // if (productGroupsData.value?.getProductGroups) {
+  //   productGroupOptions.value = productGroupsData.value.getProductGroups;
+  // }
 
   form.colorIds = selectedColors.value.map((color) => {
     return color.id;

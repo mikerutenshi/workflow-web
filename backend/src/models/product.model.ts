@@ -6,5 +6,5 @@ export class Product extends BaseModel {
   @Field()
   sku: string;
   @Field(() => ID)
-  productGroupId: string;
+  productGroupId: number;
 }

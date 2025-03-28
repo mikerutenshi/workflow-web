@@ -108,8 +108,8 @@ export class ProductService {
           },
           data: {
             sku: data.sku,
-            productGroupId: data.productGroupId,
-            updatedBy: data.updatedBy,
+            productGroupId: +data.productGroupId,
+            updatedBy: +data.updatedBy,
           },
         });
 
@@ -125,7 +125,7 @@ export class ProductService {
             await tx.productColors.create({
               data: {
                 productId: id,
-                colorId,
+                colorId: +colorId,
                 order: order++,
               },
             });

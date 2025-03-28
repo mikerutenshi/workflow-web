@@ -25,13 +25,6 @@ export class ProductCategoryService {
   async getProductCategory(
     productCategoryId: number,
   ): Promise<ProductCategory> {
-    // const category = await this.prisma.productCategory.findFirst({
-    //   where: { productGroups: { some: { id: productGroupId } } },
-    // });
-    // if (!category) {
-    //   throw new Error('Product category not found');
-    // }
-    // return category;
     const category = await this.prisma.productCategory.findFirst({
       where: {
         id: productCategoryId,

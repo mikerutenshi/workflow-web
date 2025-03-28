@@ -11,7 +11,7 @@
         {{ extractColors(item.productColors) }}
       </template>
 
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:item.actions="{ item, index }">
         <v-menu variant="outlined">
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props" variant="text">
@@ -19,7 +19,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="deleteProduct(item)">
+            <v-list-item @click="deleteProduct(item.id, index)">
               <v-list-item-title>Delete</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -46,8 +46,11 @@
 import { useMutation, useQuery } from 'villus';
 import {
   GetProductsDocument,
+  DeleteProductDocument,
   type ProductColorsWithColor,
 } from '~/api/generated/types';
+
+// Ensure DeleteProductDocument is correctly exported in '~/api/generated/types'
 
 const { data } = useQuery({
   query: GetProductsDocument,
@@ -71,27 +74,16 @@ const extractColors = (productColors: any[]) => {
   return stringResult.slice(0, -2);
 };
 
-const deleteProduct = (item: any) => {
-  const { execute } = useMutation({
-    query: `
-      mutation DeleteProduct($id: ID!) {
-        deleteProduct(id: $id) {
-          success
-          message
-        }
-      }
-    `,
-  });
+const deleteProduct = (id: string, index) => {
+  const { execute } = useMutation(DeleteProductDocument);
 
-  execute({ id: item.id })
+  execute({ id })
     .then((response) => {
-      if (response.data?.deleteProduct?.success) {
+      if (response.data?.deleteProduct) {
         alert('Product deleted successfully');
-        // Optionally, refetch the product list or update the UI
+        data.getProducts.slice(index, 1);
       } else {
-        alert(
-          `Failed to delete product: ${response.data?.deleteProduct?.message}`
-        );
+        alert('Failed to delete product');
       }
     })
     .catch((error) => {

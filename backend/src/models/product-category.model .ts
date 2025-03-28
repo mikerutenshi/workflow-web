@@ -6,7 +6,7 @@ registerEnumType(Gender, { name: 'Gender' });
 @ObjectType()
 export class ProductCategory {
   @Field(() => ID)
-  id: string;
+  id: number;
   @Field()
   name: string;
   @Field(() => Gender)

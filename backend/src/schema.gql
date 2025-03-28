@@ -17,21 +17,21 @@ type User {
   isActive: Boolean!
   role: Role!
   approvedAt: Date
-  approvedBy: Float
+  approvedBy: ID
   createdAt: Date!
-  createdBy: Float
+  createdBy: ID
   updatedAt: Date!
-  updatedBy: Float
+  updatedBy: ID
 }
 
 type Product {
   id: ID!
   createdAt: Date!
-  createdBy: Float!
+  createdBy: ID!
   updatedAt: Date!
-  updatedBy: Float
+  updatedBy: ID
   sku: String!
-  productGroupId: Float!
+  productGroupId: ID!
 }
 
 type ProductCategory {
@@ -48,16 +48,16 @@ enum Gender {
 
 type ProductGroup {
   id: ID!
-  skuNumeric: Float!
+  skuNumeric: String!
   name: String
-  productCategoryId: Float!
+  productCategoryId: ID!
 }
 
 type ProductGroupWithCategoryDto {
   id: ID!
-  skuNumeric: Float!
+  skuNumeric: String!
   name: String
-  productCategoryId: Float!
+  productCategoryId: ID!
   productCategory: ProductCategory!
 }
 
@@ -68,8 +68,8 @@ type Color {
 }
 
 type ProductColorsWithColor {
-  productId: Float!
-  colorId: Float!
+  productId: ID!
+  colorId: ID!
   order: Float!
   color: Color!
 }
@@ -77,11 +77,11 @@ type ProductColorsWithColor {
 type GetProductsDto {
   id: ID!
   createdAt: Date!
-  createdBy: Float!
+  createdBy: ID!
   updatedAt: Date!
-  updatedBy: Float
+  updatedBy: ID
   sku: String!
-  productGroupId: Float!
+  productGroupId: ID!
   productGroup: ProductGroupWithCategoryDto!
   productColors: [ProductColorsWithColor!]!
 }
@@ -89,24 +89,23 @@ type GetProductsDto {
 type LabourCost {
   id: ID!
   createdAt: Date!
-  createdBy: Float!
+  createdBy: ID!
   updatedAt: Date!
-  updatedBy: Float
-  skuNumeric: Float!
+  updatedBy: ID
   drawingUpper: Float!
   drawingLining: Float!
   stitchingUpper: Float!
   stitchingOutsole: Float
   stitchingInsole: Float
   lasting: Float!
-  productGroupId: Float!
+  productGroupId: ID!
 }
 
 type GetProductGroupsDto {
   id: ID!
-  skuNumeric: Float!
+  skuNumeric: String!
   name: String
-  productCategoryId: Float!
+  productCategoryId: ID!
   productCategory: ProductCategory!
   products: [Product]
   labourCost: LabourCost
@@ -149,8 +148,8 @@ input CreateUserDto {
   password: String!
   firstName: String!
   lastName: String!
-  createdBy: Float
-  roleId: Float!
+  createdBy: ID
+  roleId: ID!
 }
 
 input LogInDto {
@@ -176,20 +175,18 @@ input CreateProductCategoryDto {
 }
 
 input CreateProductGroupDto {
-  skuNumeric: Float!
-  productCategoryId: Float!
+  skuNumeric: String!
+  productCategoryId: String!
   name: String
 }
 
 input CreateLabourCostDto {
-  skuNumeric: Float!
   drawingUpper: Float!
   drawingLining: Float!
   stitchingUpper: Float!
   stitchingOutsole: Float
   stitchingInsole: Float
   lasting: Float!
-  productGroupId: Float!
-  createdBy: Float!
-  updatedBy: Float
+  productGroupId: ID!
+  createdBy: String!
 }

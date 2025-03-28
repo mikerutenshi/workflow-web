@@ -12,7 +12,7 @@ export class ProductGroupService {
     return await this.prisma.productGroup.create({
       data: {
         skuNumeric: data.skuNumeric,
-        productCategoryId: data.productCategoryId,
+        productCategoryId: +data.productCategoryId,
         name: data.name,
       },
     });

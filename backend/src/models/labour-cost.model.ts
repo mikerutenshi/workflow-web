@@ -16,5 +16,5 @@ export class LabourCost extends BaseModel {
   @Field()
   lasting: number;
   @Field(() => ID)
-  productGroupId: string;
+  productGroupId: number;
 }

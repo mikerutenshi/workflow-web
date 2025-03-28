@@ -29,16 +29,14 @@ export type CreateColorDto = {
 };
 
 export type CreateLabourCostDto = {
-  createdBy: Scalars['Float']['input'];
+  createdBy: Scalars['String']['input'];
   drawingLining: Scalars['Float']['input'];
   drawingUpper: Scalars['Float']['input'];
   lasting: Scalars['Float']['input'];
-  productGroupId: Scalars['Float']['input'];
-  skuNumeric: Scalars['Float']['input'];
+  productGroupId: Scalars['ID']['input'];
   stitchingInsole?: InputMaybe<Scalars['Float']['input']>;
   stitchingOutsole?: InputMaybe<Scalars['Float']['input']>;
   stitchingUpper: Scalars['Float']['input'];
-  updatedBy?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type CreateProductCategoryDto = {
@@ -55,17 +53,17 @@ export type CreateProductDto = {
 
 export type CreateProductGroupDto = {
   name?: InputMaybe<Scalars['String']['input']>;
-  productCategoryId: Scalars['Float']['input'];
-  skuNumeric: Scalars['Float']['input'];
+  productCategoryId: Scalars['String']['input'];
+  skuNumeric: Scalars['String']['input'];
 };
 
 export type CreateUserDto = {
-  createdBy?: InputMaybe<Scalars['Float']['input']>;
+  createdBy?: InputMaybe<Scalars['ID']['input']>;
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  roleId: Scalars['Float']['input'];
+  roleId: Scalars['ID']['input'];
 };
 
 export enum Gender {
@@ -80,39 +78,38 @@ export type GetProductGroupsDto = {
   labourCost?: Maybe<LabourCost>;
   name?: Maybe<Scalars['String']['output']>;
   productCategory: ProductCategory;
-  productCategoryId: Scalars['Float']['output'];
+  productCategoryId: Scalars['ID']['output'];
   products?: Maybe<Array<Maybe<Product>>>;
-  skuNumeric: Scalars['Float']['output'];
+  skuNumeric: Scalars['String']['output'];
 };
 
 export type GetProductsDto = {
   __typename?: 'GetProductsDto';
   createdAt: Scalars['Date']['output'];
-  createdBy: Scalars['Float']['output'];
+  createdBy: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   productColors: Array<ProductColorsWithColor>;
   productGroup: ProductGroupWithCategoryDto;
-  productGroupId: Scalars['Float']['output'];
+  productGroupId: Scalars['ID']['output'];
   sku: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
-  updatedBy?: Maybe<Scalars['Float']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 export type LabourCost = {
   __typename?: 'LabourCost';
   createdAt: Scalars['Date']['output'];
-  createdBy: Scalars['Float']['output'];
+  createdBy: Scalars['ID']['output'];
   drawingLining: Scalars['Float']['output'];
   drawingUpper: Scalars['Float']['output'];
   id: Scalars['ID']['output'];
   lasting: Scalars['Float']['output'];
-  productGroupId: Scalars['Float']['output'];
-  skuNumeric: Scalars['Float']['output'];
+  productGroupId: Scalars['ID']['output'];
   stitchingInsole?: Maybe<Scalars['Float']['output']>;
   stitchingOutsole?: Maybe<Scalars['Float']['output']>;
   stitchingUpper: Scalars['Float']['output'];
   updatedAt: Scalars['Date']['output'];
-  updatedBy?: Maybe<Scalars['Float']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 export type LogInDto = {
@@ -182,12 +179,12 @@ export type MutationLogInArgs = {
 export type Product = {
   __typename?: 'Product';
   createdAt: Scalars['Date']['output'];
-  createdBy: Scalars['Float']['output'];
+  createdBy: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
-  productGroupId: Scalars['Float']['output'];
+  productGroupId: Scalars['ID']['output'];
   sku: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
-  updatedBy?: Maybe<Scalars['Float']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 export type ProductCategory = {
@@ -200,17 +197,17 @@ export type ProductCategory = {
 export type ProductColorsWithColor = {
   __typename?: 'ProductColorsWithColor';
   color: Color;
-  colorId: Scalars['Float']['output'];
+  colorId: Scalars['ID']['output'];
   order: Scalars['Float']['output'];
-  productId: Scalars['Float']['output'];
+  productId: Scalars['ID']['output'];
 };
 
 export type ProductGroup = {
   __typename?: 'ProductGroup';
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
-  productCategoryId: Scalars['Float']['output'];
-  skuNumeric: Scalars['Float']['output'];
+  productCategoryId: Scalars['ID']['output'];
+  skuNumeric: Scalars['String']['output'];
 };
 
 export type ProductGroupWithCategoryDto = {
@@ -218,8 +215,8 @@ export type ProductGroupWithCategoryDto = {
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
   productCategory: ProductCategory;
-  productCategoryId: Scalars['Float']['output'];
-  skuNumeric: Scalars['Float']['output'];
+  productCategoryId: Scalars['ID']['output'];
+  skuNumeric: Scalars['String']['output'];
 };
 
 export type Query = {
@@ -250,9 +247,9 @@ export type RoleDto = {
 export type User = {
   __typename?: 'User';
   approvedAt?: Maybe<Scalars['Date']['output']>;
-  approvedBy?: Maybe<Scalars['Float']['output']>;
+  approvedBy?: Maybe<Scalars['ID']['output']>;
   createdAt: Scalars['Date']['output'];
-  createdBy?: Maybe<Scalars['Float']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -260,7 +257,7 @@ export type User = {
   lastName: Scalars['String']['output'];
   role: Role;
   updatedAt: Scalars['Date']['output'];
-  updatedBy?: Maybe<Scalars['Float']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 export type AuthUserFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string };
@@ -303,7 +300,7 @@ export type CreateProductGroupMutationVariables = Exact<{
 }>;
 
 
-export type CreateProductGroupMutation = { __typename?: 'Mutation', createProductGroup: { __typename?: 'ProductGroup', id: string, skuNumeric: number, name?: string | null, productCategoryId: number } };
+export type CreateProductGroupMutation = { __typename?: 'Mutation', createProductGroup: { __typename?: 'ProductGroup', id: string, skuNumeric: string, name?: string | null, productCategoryId: string } };
 
 export type CreateColorMutationVariables = Exact<{
   data: CreateColorDto;
@@ -346,12 +343,12 @@ export type GetColorsQuery = { __typename?: 'Query', getColors: Array<{ __typena
 export type GetProductGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProductGroupsQuery = { __typename?: 'Query', getProductGroups: Array<{ __typename?: 'GetProductGroupsDto', id: string, skuNumeric: number, productCategoryId: number, productCategory: { __typename?: 'ProductCategory', id: string, name: string, gender: Gender } }> };
+export type GetProductGroupsQuery = { __typename?: 'Query', getProductGroups: Array<{ __typename?: 'GetProductGroupsDto', id: string, skuNumeric: string, productCategoryId: string, productCategory: { __typename?: 'ProductCategory', id: string, name: string, gender: Gender } }> };
 
 export type GetProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProductsQuery = { __typename?: 'Query', getProducts: Array<{ __typename?: 'GetProductsDto', id: string, sku: string, productGroup: { __typename?: 'ProductGroupWithCategoryDto', id: string, skuNumeric: number, productCategory: { __typename?: 'ProductCategory', id: string, name: string, gender: Gender } }, productColors: Array<{ __typename?: 'ProductColorsWithColor', order: number, color: { __typename?: 'Color', id: string, name: string, hexCode: string } }> }> };
+export type GetProductsQuery = { __typename?: 'Query', getProducts: Array<{ __typename?: 'GetProductsDto', id: string, sku: string, productGroup: { __typename?: 'ProductGroupWithCategoryDto', id: string, skuNumeric: string, productCategory: { __typename?: 'ProductCategory', id: string, name: string, gender: Gender } }, productColors: Array<{ __typename?: 'ProductColorsWithColor', order: number, color: { __typename?: 'Color', id: string, name: string, hexCode: string } }> }> };
 
 export const AuthUserFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]} as unknown as DocumentNode<AuthUserFragment, unknown>;
 export const ProductCategoryFragFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProductCategoryFrag"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProductCategory"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"gender"}}]}}]} as unknown as DocumentNode<ProductCategoryFragFragment, unknown>;

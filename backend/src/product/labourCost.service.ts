@@ -10,15 +10,14 @@ export class LabourCostService {
   async createLabourCost(data: CreateLabourCostDto): Promise<LabourCost> {
     return await this.prisma.labourCost.create({
       data: {
-        skuNumeric: data.skuNumeric,
         drawingUpper: data.drawingUpper,
         drawingLining: data.drawingLining,
         stitchingUpper: data.stitchingUpper,
         stitchingOutsole: data.stitchingOutsole,
         stitchingInsole: data.stitchingInsole,
         lasting: data.lasting,
-        createdBy: data.createdBy,
-        productGroupId: data.productGroupId,
+        createdBy: +data.createdBy,
+        productGroupId: +data.productGroupId,
       },
       include: {
         productGroup: true,
