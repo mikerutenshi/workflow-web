@@ -69,7 +69,7 @@ model ProductCategory {
 
 model ProductGroup {
   id                Int             @id @default(autoincrement())
-  skuNumeric        Int
+  skuNumeric        String
   productCategoryId Int
   name              String?
 
@@ -107,7 +107,6 @@ model ProductColors {
 
 model LabourCost {
   id                Int             @id @default(autoincrement())
-  skuNumeric        Int
   drawingUpper      Int
   drawingLining     Int
   stitchingUpper    Int

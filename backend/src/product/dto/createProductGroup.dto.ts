@@ -1,14 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateProductGroupDto {
   @Field()
-  @IsInt()
-  skuNumeric: number;
+  @IsNotEmpty()
+  skuNumeric: string;
   @Field()
-  @IsInt()
-  productCategoryId: number;
+  @IsNotEmpty()
+  productCategoryId: string;
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()

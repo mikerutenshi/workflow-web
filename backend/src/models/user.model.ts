@@ -18,14 +18,14 @@ export class User {
 
   @Field(() => Date, { nullable: true })
   approvedAt: Date | null;
-  @Field(() => Number, { nullable: true })
-  approvedBy: number | null;
+  @Field(() => ID, { nullable: true })
+  approvedBy: string | null;
   @Field(() => Date)
   createdAt: Date;
-  @Field(() => Number, { nullable: true })
-  createdBy: number | null;
+  @Field(() => ID, { nullable: true })
+  createdBy: string | null;
   @Field(() => Date)
   updatedAt: Date;
-  @Field(() => Number, { nullable: true })
-  updatedBy: number | null;
+  @Field(() => ID, { nullable: true })
+  updatedBy: string | null;
 }

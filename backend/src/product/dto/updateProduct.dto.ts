@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsArray, IsInt, Matches } from 'class-validator';
+import { Field, ID, InputType } from '@nestjs/graphql';
+import { IsArray, IsInt, IsNotEmpty, Matches } from 'class-validator';
 
 @InputType()
 export class UpdateProductDto {
@@ -9,16 +9,16 @@ export class UpdateProductDto {
   })
   sku: string;
 
-  @Field()
-  @IsInt()
-  productGroupId: number;
+  @Field(() => ID)
+  @IsNotEmpty()
+  productGroupId: string;
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => ID, { nullable: true })
   @IsInt()
-  updatedBy: number;
+  updatedBy: string;
 
-  @Field(() => [Number])
+  @Field(() => [ID])
   @IsArray()
-  @IsInt({ each: true })
-  colorIds: number[];
+  @IsNotEmpty({ each: true })
+  colorIds: string[];
 }

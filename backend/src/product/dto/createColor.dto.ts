@@ -1,10 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsHexColor, IsString } from 'class-validator';
+import { IsHexColor, IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 export class CreateColorDto {
   @Field()
   @IsString()
+  @IsNotEmpty()
   name: string;
   @Field()
   @IsHexColor()

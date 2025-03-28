@@ -1,11 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsInt, IsOptional } from 'class-validator';
+import { Field, ID, InputType } from '@nestjs/graphql';
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateLabourCostDto {
-  @Field()
-  @IsInt()
-  skuNumeric: number;
   @Field()
   @IsInt()
   drawingUpper: number;
@@ -26,14 +23,10 @@ export class CreateLabourCostDto {
   @Field()
   @IsInt()
   lasting: number;
+  @Field(() => ID)
+  @IsNotEmpty()
+  productGroupId: string;
   @Field()
-  @IsInt()
-  productGroupId: number;
-  @Field()
-  @IsInt()
-  createdBy: number;
-  @Field(() => Number, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  updatedBy?: number | null;
+  @IsNotEmpty()
+  createdBy: string;
 }
