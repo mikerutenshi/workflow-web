@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" align="center">
     <v-col cols="12" md="4" class="translucent-background">
-      <v-form class="pa-4" @submit.prevent="execute({ data: form })">
+      <v-form class="pa-4" @submit.prevent="handleSubmit">
         <v-alert v-if="formError" type="error">
           {{ formError }}
         </v-alert>
@@ -10,21 +10,23 @@
         <v-autocomplete
           v-model="form.productGroupId"
           label="Product Group"
-          :items="productGroupOptions"
           auto-select-first
           item-value="id"
           item-title="concat"
+          :items="productGroupOptions"
           :loading="isFetchingProductGroups"
         />
 
         <v-combobox
+          no-filter
           v-model="selectedColors"
-          :items="colorOptions"
           label="Select Colors"
           multiple
           chips
-          @update:search="onSearch"
+          auto-select-first
+          :items="colorOptions"
           :loading="isFetchingColors"
+          @update:search="onSearch"
         >
           <template #item="{ item, props }">
             <v-list-item v-bind="props" :title="item.value.name">
@@ -50,9 +52,9 @@
           </template>
         </v-combobox>
 
-        <v-btn @click="discardForm" color="secondary" class="mr-4"
-          >Discard</v-btn
-        >
+        <NuxtLink to="/products">
+          <v-btn color="secondary" class="mr-4">Discard</v-btn>
+        </NuxtLink>
         <v-btn :loading="isFetchingForm" type="submit" color="primary"
           >Save</v-btn
         >
@@ -77,36 +79,66 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
 import { useMutation, useQuery } from 'villus';
-import { useRouter } from 'vue-router';
 import {
+  UpdateProductDocument,
   CreateProductDocument,
   GetColorsDocument,
+  GetProductDocument,
   GetProductGroupsDocument,
   type Color,
-  type GetProductGroupsDto,
 } from '~/api/generated/types';
+import { useRoute } from 'vue-router';
 
-const router = useRouter();
-const form = reactive({
+const route = useRoute();
+const productId = route.params.id as string;
+const isEditing = ref(!!productId);
+
+interface Form {
+  sku: string;
+  productGroupId: string;
+  colorIds: string[];
+  [key: string]: any; // Index signature allows dynamic properties
+}
+const form = reactive<Form>({
   sku: '',
   productGroupId: '',
-  colorIds: [],
-  createdBy: '',
+  colorIds: [] as string[],
+});
+
+const variables = computed(() => {
+  const authStore = useAuthStore();
+  const userId = authStore.user?.id ?? '';
+
+  console.log(`IsEditing -> ${isEditing.value}`);
+  if (isEditing.value) {
+    form.updatedBy = userId;
+  } else {
+    form.createdBy = userId;
+  }
+  console.log(`FOrm -> ${JSON.stringify(form)}`);
+
+  return isEditing.value
+    ? { id: productId, data: form }
+    : { id: '', data: form };
+});
+const mutationDoc = computed(() => {
+  return isEditing.value ? UpdateProductDocument : CreateProductDocument;
 });
 
 const {
-  data: createProductData,
+  data: formData,
   isFetching: isFetchingForm,
-  execute,
+  execute: executeForm,
   error: formError,
-} = useMutation(CreateProductDocument, {
+} = useMutation(mutationDoc.value, {
   onData() {
-    router.push('/products');
+    navigateTo('/products');
   },
 });
 
-const selectedColors = ref<Color[]>([]);
-const selectedProductGroup = ref('');
+const handleSubmit = async () => {
+  await executeForm(variables.value);
+};
 
 const {
   data: colorsData,
@@ -134,55 +166,49 @@ const productGroupOptions = computed(() => {
   }
 });
 
+const searchQuery = ref('');
+const onSearch = (query: string) => {
+  searchQuery.value = query;
+};
+const selectedColors = ref<Color[]>([] as Color[]);
+const colorOptions = computed(() => {
+  if (colorsData.value) {
+    return colorsData.value.getColors.filter((color) => {
+      return color.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+    });
+  }
+  return [];
+});
+
 const remove = (index: number) => {
   if (index > -1) {
     selectedColors.value.splice(index, 1);
   }
 };
 
-// The filter mechanism is broken from the library, I'm returning array correctly
-const colorOptions = computed(() => {
-  if (colorsData.value) {
-    // if (searchQuery.value) {
-    //   console.log(`getColors: ${JSON.stringify(colorsData.value.getColors)}`);
-    //   const returned = colorsData.value.getColors.filter((color) => {
-    //     const returnedValue = color.name
-    //       .toLowerCase()
-    //       .includes(searchQuery.value.toLowerCase());
-    //     return returnedValue;
-    //   });
-    //   console.log(`returned: ${JSON.stringify(returned)}`);
-    //   return returned;
-    // } else {
-    //   console.log(
-    //     `returned pure: ${JSON.stringify(colorsData.value.getColors)}`
-    //   );
-    return colorsData.value.getColors;
-    // }
-  }
-  return [];
-});
+if (isEditing.value) {
+  useQuery({
+    query: GetProductDocument,
+    variables: { id: productId },
+    onData: (data) => {
+      const product = data.getProduct;
+      form.sku = product.sku;
+      form.productGroupId = product.productGroup.id;
+      console.log(`product => ${JSON.stringify(product)}`);
+      const colorIds = product.productColors.map((productColor) => {
+        return productColor.color.id;
+      });
+      selectedColors.value = colorOptions.value.filter((color) => {
+        return colorIds.includes(color.id);
+      });
+    },
+    onError: (error) => {
+      alert(`Get Product Error -> ${error}`);
+    },
+  });
+}
 
-const searchQuery = ref('');
-const onSearch = (query: string) => {
-  searchQuery.value = query;
-};
-
-const authStore = useAuthStore();
-form.createdBy = authStore.user?.id;
-
-const discardForm = () => {
-  router.push('/products');
-};
 watchEffect(() => {
-  // if (colorsData.value?.getColors) {
-  //   colorOptions.value = colorsData.value.getColors;
-  // }
-
-  // if (productGroupsData.value?.getProductGroups) {
-  //   productGroupOptions.value = productGroupsData.value.getProductGroups;
-  // }
-
   form.colorIds = selectedColors.value.map((color) => {
     return color.id;
   });

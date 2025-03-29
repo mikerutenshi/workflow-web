@@ -13,8 +13,8 @@ export class UpdateProductDto {
   @IsNotEmpty()
   productGroupId: string;
 
-  @Field(() => ID, { nullable: true })
-  @IsInt()
+  @Field(() => ID)
+  @IsNotEmpty()
   updatedBy: string;
 
   @Field(() => [ID])

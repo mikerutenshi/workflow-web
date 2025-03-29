@@ -19,6 +19,11 @@
             </v-btn>
           </template>
           <v-list>
+            <v-list-item>
+              <NuxtLink :to="`/products/edit/${item.id}`">
+                <v-list-item-title>Edit</v-list-item-title>
+              </NuxtLink>
+            </v-list-item>
             <v-list-item @click="deleteProduct(item.id, index)">
               <v-list-item-title>Delete</v-list-item-title>
             </v-list-item>
@@ -50,8 +55,6 @@ import {
   type ProductColorsWithColor,
 } from '~/api/generated/types';
 
-// Ensure DeleteProductDocument is correctly exported in '~/api/generated/types'
-
 const { data } = useQuery({
   query: GetProductsDocument,
 });
@@ -63,7 +66,7 @@ const headers = [
   { title: 'Category', key: 'productGroup.productCategory.name' },
   { title: 'Gender', key: 'productGroup.productCategory.gender' },
   { title: 'Colors', key: 'productColors' },
-  { titlle: '', key: 'actions', sortable: false, align: 'end' },
+  { title: '', key: 'actions', sortable: false, align: 'end' as 'end' },
 ];
 
 const extractColors = (productColors: any[]) => {
@@ -74,14 +77,14 @@ const extractColors = (productColors: any[]) => {
   return stringResult.slice(0, -2);
 };
 
-const deleteProduct = (id: string, index) => {
+const deleteProduct = (id: string, index: number) => {
   const { execute } = useMutation(DeleteProductDocument);
 
   execute({ id })
     .then((response) => {
       if (response.data?.deleteProduct) {
         alert('Product deleted successfully');
-        data.getProducts.slice(index, 1);
+        data.value?.getProducts.slice(index, 1);
       } else {
         alert('Failed to delete product');
       }

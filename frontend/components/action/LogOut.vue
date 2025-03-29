@@ -8,7 +8,6 @@
 import { useMutation } from 'villus';
 import { useAuthStore } from '@/stores/auth';
 import { LogOutDocument } from '~/api/generated/types';
-import { useRouter } from 'vue-router';
 
 defineProps({
   label: {
@@ -20,11 +19,10 @@ defineProps({
 const { error, execute, isFetching, isDone } = useMutation(LogOutDocument);
 
 const authStore = useAuthStore();
-const router = useRouter();
 watchEffect(() => {
   if (!error.value && isDone.value) {
     authStore.user = null;
-    router.push('/login');
+    navigateTo('login');
   }
 });
 </script>

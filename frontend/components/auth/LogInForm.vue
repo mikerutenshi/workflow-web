@@ -35,7 +35,6 @@
 import { useMutation } from 'villus';
 import { useAuthStore } from '~/stores/auth';
 import { LogInDocument } from '~/api/generated/types';
-import { useRouter } from 'vue-router';
 
 const { data, isFetching, execute, error } = useMutation(LogInDocument);
 
@@ -45,11 +44,11 @@ const form = reactive({
 });
 
 const authStore = useAuthStore();
-const router = useRouter();
+
 watch(data, (loginData) => {
   if (loginData?.logIn) {
     authStore.user = loginData.logIn;
-    router.push('/');
+    navigateTo('/');
   }
 });
 // watchEffect(() => {

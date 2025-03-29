@@ -8,9 +8,9 @@
       <v-app-bar-title>{{ appBarTitle }}</v-app-bar-title>
 
       <template v-slot:append v-if="currentPage == 'products'">
-        <v-btn @click="navigateToProductCreate()">
-          <v-icon left>mdi-plus</v-icon> New Product</v-btn
-        >
+        <NuxtLink to="products/create">
+          <v-btn> <v-icon left>mdi-plus</v-icon> New Product </v-btn>
+        </NuxtLink>
       </template>
     </v-app-bar>
 
@@ -41,7 +41,6 @@ import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 
 const route = useRoute();
-const router = useRouter();
 
 const drawer = ref(false);
 
@@ -50,10 +49,6 @@ const toggleDrawer = () => {
 };
 const closeDrawer = () => {
   drawer.value = false;
-};
-
-const navigateToProductCreate = () => {
-  router.push('products/create');
 };
 
 const navItems = [

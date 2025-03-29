@@ -119,6 +119,7 @@ type Query {
   me: User!
   getColors: [Color!]!
   getProducts: [GetProductsDto!]!
+  getProduct(id: ID!): GetProductsDto!
   getProductCategories: [ProductCategory!]!
   getProductGroups: [GetProductGroupsDto!]!
   getLabourCosts: [LabourCost!]!
@@ -131,6 +132,7 @@ type Mutation {
   logOut: User!
   createColor(data: CreateColorDto!): Color!
   createProduct(data: CreateProductDto!): Product!
+  updateProduct(id: ID!, data: UpdateProductDto!): Product!
   deleteProduct(id: ID!): Boolean!
   createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
   createProductGroup(data: CreateProductGroupDto!): ProductGroup!
@@ -166,6 +168,13 @@ input CreateProductDto {
   sku: String!
   productGroupId: ID!
   createdBy: ID!
+  colorIds: [ID!]!
+}
+
+input UpdateProductDto {
+  sku: String!
+  productGroupId: ID!
+  updatedBy: ID!
   colorIds: [ID!]!
 }
 

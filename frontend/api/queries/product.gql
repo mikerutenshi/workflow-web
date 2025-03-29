@@ -37,6 +37,12 @@ mutation createProduct($data: CreateProductDto!) {
   }
 }
 
+mutation updateProduct($id: ID!, $data: UpdateProductDto!) {
+  updateProduct(id: $id, data: $data) {
+    id
+  }
+}
+
 mutation deleteProduct($id: ID!) {
   deleteProduct(id: $id)
 }
@@ -85,6 +91,22 @@ query getProducts {
       order
       color {
         ...ColorFrag
+      }
+    }
+  }
+}
+
+query getProduct($id: ID!) {
+  getProduct(id: $id) {
+    id
+    sku
+    productGroup {
+      id
+    }
+    productColors {
+      order
+      color {
+        id
       }
     }
   }

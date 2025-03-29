@@ -15,6 +15,13 @@ export class ProductResolver {
   createProduct(@Args('data') data: CreateProductDto): Promise<Product> {
     return this.productService.createProduct(data);
   }
+  @Mutation(() => Product)
+  updateProduct(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('data') data: UpdateProductDto,
+  ): Promise<Product> {
+    return this.productService.updateProduct(+id, data);
+  }
 
   @UseGuards(AuthGuard)
   @Query(() => [GetProductsDto])
@@ -22,16 +29,16 @@ export class ProductResolver {
     return this.productService.getProducts();
   }
 
+  @Query(() => GetProductsDto)
+  getProduct(
+    @Args('id', { type: () => ID }) id: string,
+  ): Promise<GetProductsDto> {
+    return this.productService.getProduct(+id);
+  }
+
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   deleteProduct(@Args('id', { type: () => ID }) id: string): Promise<Boolean> {
     return this.productService.deleteProduct(+id);
-  }
-
-  updateProduct(
-    @Args('id') id: number,
-    @Args('data') data: UpdateProductDto,
-  ): Promise<GetProductsDto> {
-    return this.productService.updateProduct(id, data);
   }
 }

@@ -87,6 +87,31 @@ export class ProductService {
     });
   }
 
+  async getProduct(id: number): Promise<GetProductsDto> {
+    const result = await this.prisma.product.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        productGroup: {
+          include: {
+            productCategory: true,
+          },
+        },
+        productColors: {
+          include: {
+            color: true,
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      throw new Error(`Product with ID ${id} not found.`);
+    }
+    return result;
+  }
+
   async deleteProduct(id: number): Promise<Boolean> {
     await this.prisma.product.delete({
       where: {
