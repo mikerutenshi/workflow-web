@@ -55,8 +55,9 @@ import {
   type ProductColorsWithColor,
 } from '~/api/generated/types';
 
-const { data } = useQuery({
+const { data, execute } = useQuery({
   query: GetProductsDocument,
+  cachePolicy: 'network-only',
 });
 
 const headers = [

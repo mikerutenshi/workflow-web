@@ -2,8 +2,11 @@
   <v-row justify="center" align="center">
     <v-col cols="12" md="4" class="translucent-background">
       <v-form class="pa-4" @submit.prevent="handleSubmit">
-        <v-alert v-if="formError" type="error">
-          {{ formError }}
+        <v-alert v-if="createError" type="error">
+          {{ createError }}
+        </v-alert>
+        <v-alert v-if="updateError" type="error">
+          {{ updateError }}
         </v-alert>
         <v-text-field v-model="form.sku" label="SKU" />
 
@@ -55,8 +58,15 @@
         <NuxtLink to="/products">
           <v-btn color="secondary" class="mr-4">Discard</v-btn>
         </NuxtLink>
-        <v-btn :loading="isFetchingForm" type="submit" color="primary"
-          >Save</v-btn
+        <v-btn
+          v-if="isEditing"
+          :loading="isUpdating"
+          type="submit"
+          color="primary"
+          >Update</v-btn
+        >
+        <v-btn v-else :loading="isCreating" type="submit" color="primary"
+          >Create</v-btn
         >
       </v-form>
     </v-col>
@@ -91,7 +101,11 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const productId = route.params.id as string;
-const isEditing = ref(!!productId);
+const isEditing = ref(false);
+
+if (productId !== undefined) {
+  isEditing.value = true;
+}
 
 interface Form {
   sku: string;
@@ -105,39 +119,58 @@ const form = reactive<Form>({
   colorIds: [] as string[],
 });
 
-const variables = computed(() => {
-  const authStore = useAuthStore();
-  const userId = authStore.user?.id ?? '';
+// const variables = computed(() => {
+//   const authStore = useAuthStore();
+//   const userId = authStore.user?.id ?? '';
 
-  console.log(`IsEditing -> ${isEditing.value}`);
-  if (isEditing.value) {
-    form.updatedBy = userId;
-  } else {
-    form.createdBy = userId;
-  }
-  console.log(`FOrm -> ${JSON.stringify(form)}`);
+//   console.log(`IsEditing -> ${isEditing.value}`);
+//   if (isEditing.value) {
+//     form.updatedBy = userId;
+//   } else {
+//     form.createdBy = userId;
+//   }
+//   console.log(`FOrm -> ${JSON.stringify(form)}`);
 
-  return isEditing.value
-    ? { id: productId, data: form }
-    : { id: '', data: form };
-});
-const mutationDoc = computed(() => {
-  return isEditing.value ? UpdateProductDocument : CreateProductDocument;
-});
+//   return isEditing.value
+//     ? { id: productId, data: { ...form, updatedBy: userId } }
+//     : { id: '', data: { ...form, createdBy: userId } };
+// });
+// const mutationDoc = computed(() => {
+//   return isEditing.value ? UpdateProductDocument : CreateProductDocument;
+// });
 
 const {
-  data: formData,
-  isFetching: isFetchingForm,
-  execute: executeForm,
-  error: formError,
-} = useMutation(mutationDoc.value, {
+  data: createData,
+  isFetching: isCreating,
+  execute: executeCreate,
+  error: createError,
+} = useMutation(CreateProductDocument, {
+  onData() {
+    navigateTo('/products');
+  },
+});
+const {
+  data: updateData,
+  isFetching: isUpdating,
+  execute: executeUpdate,
+  error: updateError,
+} = useMutation(UpdateProductDocument, {
   onData() {
     navigateTo('/products');
   },
 });
 
 const handleSubmit = async () => {
-  await executeForm(variables.value);
+  const authStore = useAuthStore();
+  const userId = authStore.user?.id ?? '';
+  if (isEditing.value) {
+    await executeUpdate({
+      id: productId,
+      data: { ...form, updatedBy: userId },
+    });
+  } else {
+    await executeCreate({ data: { ...form, createdBy: userId } });
+  }
 };
 
 const {
@@ -186,27 +219,29 @@ const remove = (index: number) => {
   }
 };
 
-if (isEditing.value) {
-  useQuery({
-    query: GetProductDocument,
-    variables: { id: productId },
-    onData: (data) => {
-      const product = data.getProduct;
-      form.sku = product.sku;
-      form.productGroupId = product.productGroup.id;
-      console.log(`product => ${JSON.stringify(product)}`);
-      const colorIds = product.productColors.map((productColor) => {
-        return productColor.color.id;
-      });
-      selectedColors.value = colorOptions.value.filter((color) => {
-        return colorIds.includes(color.id);
-      });
-    },
-    onError: (error) => {
-      alert(`Get Product Error -> ${error}`);
-    },
-  });
-}
+watch([productGroupOptions, colorOptions], (newPgOpt, newCOpt) => {
+  if (newPgOpt && newCOpt && isEditing.value) {
+    useQuery({
+      query: GetProductDocument,
+      variables: { id: productId },
+      onData: (data) => {
+        const product = data.getProduct;
+        form.sku = product.sku;
+        form.productGroupId = product.productGroup.id;
+        console.log(`product => ${JSON.stringify(product)}`);
+        const colorIds = product.productColors.map((productColor) => {
+          return productColor.color.id;
+        });
+        selectedColors.value = colorOptions.value.filter((color) => {
+          return colorIds.includes(color.id);
+        });
+      },
+      onError: (error) => {
+        alert(`Get Product Error -> ${error}`);
+      },
+    });
+  }
+});
 
 watchEffect(() => {
   form.colorIds = selectedColors.value.map((color) => {
