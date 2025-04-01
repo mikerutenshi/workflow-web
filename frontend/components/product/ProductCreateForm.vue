@@ -104,6 +104,7 @@ const productId = route.params.id as string;
 const isEditing = ref(false);
 
 if (productId !== undefined) {
+  console.log(`ProductID -> ${productId}`);
   isEditing.value = true;
 }
 
@@ -146,7 +147,7 @@ const {
   error: createError,
 } = useMutation(CreateProductDocument, {
   onData() {
-    navigateTo('/products');
+    navigateTo({ path: '/products', query: { isInvalidateTable: 'true' } });
   },
 });
 const {
@@ -156,7 +157,7 @@ const {
   error: updateError,
 } = useMutation(UpdateProductDocument, {
   onData() {
-    navigateTo('/products');
+    navigateTo({ path: '/products', query: { isInvalidateTable: 'true' } });
   },
 });
 

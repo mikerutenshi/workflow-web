@@ -6,6 +6,7 @@
       :items="data.getProducts"
       class="elevation-1 full-height pa-4"
       item-value="id"
+      :sort-by="[{ key: 'id', order: 'asc' }]"
     >
       <template v-slot:item.productColors="{ item }">
         {{ extractColors(item.productColors) }}
@@ -54,10 +55,18 @@ import {
   DeleteProductDocument,
   type ProductColorsWithColor,
 } from '~/api/generated/types';
+import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 const { data, execute } = useQuery({
   query: GetProductsDocument,
-  cachePolicy: 'network-only',
+});
+
+onMounted(() => {
+  const route = useRoute();
+  const isInvalidateTable = route.query.isInvalidateTable;
+  if (isInvalidateTable) execute();
+  console.log(`Route param -> ${isInvalidateTable}`);
 });
 
 const headers = [
