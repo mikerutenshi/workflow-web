@@ -1,4 +1,3 @@
-{he}
 <template>
   <div v-if="data" class="fill-screen">
     <v-data-table
@@ -21,7 +20,7 @@
           </template>
           <v-list>
             <v-list-item>
-              <NuxtLink :to="`/products/edit/${item.id}`">
+              <NuxtLink :to="`/products/update/${item.id}`">
                 <v-list-item-title>Edit</v-list-item-title>
               </NuxtLink>
             </v-list-item>
@@ -57,6 +56,8 @@ import {
 } from '~/api/generated/types';
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import type { VDataTable } from 'vuetify/components';
+type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
 const { data, execute } = useQuery({
   query: GetProductsDocument,
@@ -69,14 +70,14 @@ onMounted(() => {
   console.log(`Route param -> ${isInvalidateTable}`);
 });
 
-const headers = [
+const headers: ReadOnlyHeaders = [
   { title: 'ID', key: 'id' },
   { title: 'SKU', key: 'sku' },
   { title: 'Product Group', key: 'productGroup.skuNumeric' },
   { title: 'Category', key: 'productGroup.productCategory.name' },
   { title: 'Gender', key: 'productGroup.productCategory.gender' },
   { title: 'Colors', key: 'productColors' },
-  { title: '', key: 'actions', sortable: false, align: 'end' as 'end' },
+  { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
 const extractColors = (productColors: any[]) => {

@@ -20,7 +20,7 @@ export class ProductResolver {
     @Args('id', { type: () => ID }) id: string,
     @Args('data') data: UpdateProductDto,
   ): Promise<Product> {
-    return this.productService.updateProduct(+id, data);
+    return this.productService.updateProduct(id, data);
   }
 
   @UseGuards(AuthGuard)
@@ -33,12 +33,12 @@ export class ProductResolver {
   getProduct(
     @Args('id', { type: () => ID }) id: string,
   ): Promise<GetProductsDto> {
-    return this.productService.getProduct(+id);
+    return this.productService.getProduct(id);
   }
 
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   deleteProduct(@Args('id', { type: () => ID }) id: string): Promise<Boolean> {
-    return this.productService.deleteProduct(+id);
+    return this.productService.deleteProduct(id);
   }
 }

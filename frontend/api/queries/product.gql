@@ -10,6 +10,20 @@ fragment ColorFrag on Color {
   hexCode
 }
 
+fragment LabourCostFrag on LabourCost {
+  id
+  drawingUpper
+  drawingLining
+  stitchingUpper
+  stitchingInsole
+  stitchingOutsole
+  lasting
+  createdBy
+  createdAt
+  updatedBy
+  updatedAt
+}
+
 mutation createPrdouctCategory($data: CreateProductCategoryDto!) {
   createProductCategory(data: $data) {
     ...ProductCategoryFrag
@@ -69,9 +83,26 @@ query getProductGroups {
   getProductGroups {
     id
     skuNumeric
-    productCategoryId
+    name
     productCategory {
       ...ProductCategoryFrag
+    }
+    labourCost {
+      ...LabourCostFrag
+    }
+  }
+}
+
+query getProductGroup($id: ID!) {
+  getProductGroup(id: $id) {
+    id
+    skuNumeric
+    name
+    productCategory {
+      ...ProductCategoryFrag
+    }
+    labourCost {
+      ...LabourCostFrag
     }
   }
 }

@@ -101,13 +101,24 @@ type LabourCost {
   productGroupId: ID!
 }
 
+type ProductWithColorDto {
+  id: ID!
+  createdAt: Date!
+  createdBy: ID!
+  updatedAt: Date!
+  updatedBy: ID
+  sku: String!
+  productGroupId: ID!
+  productColors: [ProductColorsWithColor!]!
+}
+
 type GetProductGroupsDto {
   id: ID!
   skuNumeric: String!
   name: String
   productCategoryId: ID!
   productCategory: ProductCategory!
-  products: [Product]
+  products: [ProductWithColorDto]
   labourCost: LabourCost
 }
 
@@ -122,6 +133,7 @@ type Query {
   getProduct(id: ID!): GetProductsDto!
   getProductCategories: [ProductCategory!]!
   getProductGroups: [GetProductGroupsDto!]!
+  getProductGroup(id: ID!): GetProductGroupsDto!
   getLabourCosts: [LabourCost!]!
 }
 

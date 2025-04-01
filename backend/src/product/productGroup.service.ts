@@ -24,20 +24,33 @@ export class ProductGroupService {
         productCategory: true,
         products: {
           include: {
-            productGroup: true,
-            productColors: {
-              include: {
-                color: true,
-              },
-            },
+            productColors: { include: { color: true } },
           },
         },
-        labourCost: {
-          include: {
-            productGroup: true,
-          },
-        },
+        labourCost: true,
       },
     });
+  }
+
+  async getProductGroup(id: string): Promise<GetProductGroupsDto> {
+    const result = await this.prisma.productGroup.findUnique({
+      where: {
+        id: +id,
+      },
+      include: {
+        productCategory: true,
+        products: {
+          include: {
+            productColors: { include: { color: true } },
+          },
+        },
+        labourCost: true,
+      },
+    });
+
+    if (!result) {
+      throw new Error(`Product group with ID ${id} not found.`);
+    }
+    return result;
   }
 }

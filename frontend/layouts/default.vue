@@ -38,7 +38,6 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router';
 
 const route = useRoute();
 
@@ -54,6 +53,11 @@ const closeDrawer = () => {
 const navItems = [
   { title: 'Home', route: '/', icon: 'mdi-home' },
   { title: 'Products', route: '/products', icon: 'mdi-shoe-sneaker' },
+  {
+    title: 'Production Costs',
+    route: '/labour-costs',
+    icon: 'mdi-calculator',
+  },
 ];
 
 const appBarTitle = computed(() => {
