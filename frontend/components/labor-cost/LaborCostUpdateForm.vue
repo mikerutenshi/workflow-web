@@ -15,7 +15,7 @@
         <v-text-field v-model="form.stitchingInsole" label="Stitching insole" />
         <v-text-field v-model="form.lasting" label="Lasting" />
 
-        <NuxtLink to="/labour-costs">
+        <NuxtLink to="/labor-costs">
           <v-btn color="secondary" class="mr-4">Discard</v-btn>
         </NuxtLink>
         <v-btn type="submit" color="primary">Update</v-btn>
@@ -52,17 +52,17 @@ useQuery({
     form.skuNumeric = data.getProductGroup.skuNumeric;
     form.productCategory = data.getProductGroup.productCategory.name;
     form.gender = data.getProductGroup.productCategory.gender;
-    if (data.getProductGroup.labourCost) {
-      form.drawingUpper = data.getProductGroup.labourCost.drawingUpper;
-      form.drawingLining = data.getProductGroup.labourCost.drawingLining;
-      form.stitchingUpper = data.getProductGroup.labourCost.stitchingUpper;
+    if (data.getProductGroup.laborCost) {
+      form.drawingUpper = data.getProductGroup.laborCost.drawingUpper;
+      form.drawingLining = data.getProductGroup.laborCost.drawingLining;
+      form.stitchingUpper = data.getProductGroup.laborCost.stitchingUpper;
       form.stitchingOutsole =
-        data.getProductGroup.labourCost.stitchingOutsole ?? null;
+        data.getProductGroup.laborCost.stitchingOutsole ?? null;
       form.stitchingInsole =
-        data.getProductGroup.labourCost.stitchingInsole ?? null;
-      form.lasting = data.getProductGroup.labourCost.lasting;
-      form.createdBy = data.getProductGroup.labourCost.createdBy;
-      form.updatedBy = data.getProductGroup.labourCost.updatedBy ?? null;
+        data.getProductGroup.laborCost.stitchingInsole ?? null;
+      form.lasting = data.getProductGroup.laborCost.lasting;
+      form.createdBy = data.getProductGroup.laborCost.createdBy;
+      form.updatedBy = data.getProductGroup.laborCost.updatedBy ?? null;
     }
   },
   onError: (error) => {

@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
 
 @ObjectType()
-export class LabourCost extends BaseModel {
+export class LaborCost extends BaseModel {
   @Field()
   drawingUpper: number;
   @Field()

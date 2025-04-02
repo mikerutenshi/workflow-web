@@ -86,7 +86,7 @@ type GetProductsDto {
   productColors: [ProductColorsWithColor!]!
 }
 
-type LabourCost {
+type LaborCost {
   id: ID!
   createdAt: Date!
   createdBy: ID!
@@ -119,7 +119,7 @@ type GetProductGroupsDto {
   productCategoryId: ID!
   productCategory: ProductCategory!
   products: [ProductWithColorDto]
-  labourCost: LabourCost
+  laborCost: LaborCost
 }
 
 """Date custom scalar type"""
@@ -134,7 +134,7 @@ type Query {
   getProductCategories: [ProductCategory!]!
   getProductGroups: [GetProductGroupsDto!]!
   getProductGroup(id: ID!): GetProductGroupsDto!
-  getLabourCosts: [LabourCost!]!
+  getLaborCosts: [LaborCost!]!
 }
 
 type Mutation {
@@ -148,7 +148,7 @@ type Mutation {
   deleteProduct(id: ID!): Boolean!
   createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
   createProductGroup(data: CreateProductGroupDto!): ProductGroup!
-  createLabourCost(data: CreateLabourCostDto!): LabourCost!
+  createLaborCost(data: CreateLaborCostDto!): LaborCost!
 }
 
 input RoleDto {
@@ -201,7 +201,7 @@ input CreateProductGroupDto {
   name: String
 }
 
-input CreateLabourCostDto {
+input CreateLaborCostDto {
   drawingUpper: Float!
   drawingLining: Float!
   stitchingUpper: Float!

@@ -55,7 +55,7 @@ const navItems = [
   { title: 'Products', route: '/products', icon: 'mdi-shoe-sneaker' },
   {
     title: 'Production Costs',
-    route: '/labour-costs',
+    route: '/labor-costs',
     icon: 'mdi-calculator',
   },
 ];

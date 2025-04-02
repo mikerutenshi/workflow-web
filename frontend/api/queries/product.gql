@@ -10,7 +10,7 @@ fragment ColorFrag on Color {
   hexCode
 }
 
-fragment LabourCostFrag on LabourCost {
+fragment LaborCostFrag on LaborCost {
   id
   drawingUpper
   drawingLining
@@ -61,8 +61,8 @@ mutation deleteProduct($id: ID!) {
   deleteProduct(id: $id)
 }
 
-mutation createLabourCost($data: CreateLabourCostDto!) {
-  createLabourCost(data: $data) {
+mutation createLaborCost($data: CreateLaborCostDto!) {
+  createLaborCost(data: $data) {
     id
   }
 }
@@ -87,8 +87,8 @@ query getProductGroups {
     productCategory {
       ...ProductCategoryFrag
     }
-    labourCost {
-      ...LabourCostFrag
+    laborCost {
+      ...LaborCostFrag
     }
   }
 }
@@ -101,8 +101,8 @@ query getProductGroup($id: ID!) {
     productCategory {
       ...ProductCategoryFrag
     }
-    labourCost {
-      ...LabourCostFrag
+    laborCost {
+      ...LaborCostFrag
     }
   }
 }

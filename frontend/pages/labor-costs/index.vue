@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <LabourCostTable />
+    <LaborCostTable />
   </v-main>
 </template>
 

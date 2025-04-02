@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <LabourCostUpdateForm />
+    <LaborCostUpdateForm />
   </v-main>
 </template>
 

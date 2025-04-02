@@ -16,7 +16,7 @@
           </template>
           <v-list>
             <v-list-item>
-              <NuxtLink :to="`/labour-costs/update/${item.id}`">
+              <NuxtLink :to="`/labor-costs/update/${item.id}`">
                 <v-list-item-title>Edit</v-list-item-title>
               </NuxtLink>
             </v-list-item>
@@ -70,15 +70,15 @@ const headers: ReadOnlyHeaders = [
   { title: 'Category', key: 'productCategory.name' },
   { title: 'Gender', key: 'productCategory.gender' },
   {
-    title: 'Labour Costs',
+    title: 'Labor Costs',
     align: 'center',
     children: [
-      { title: 'Drawing Upper', key: 'labourCost.drawingUpper' },
-      { title: 'Drawing Lining', key: 'labourCost.drawingLining' },
-      { title: 'Stitching Upper', key: 'labourCost.stitchingUpper' },
-      { title: 'Stitching Outsole', key: 'labourCost.stitchingOutsole' },
-      { title: 'Stitching Insole', key: 'labourCost.stitchingInsole' },
-      { title: 'Lasting', key: 'labourCost.lasting' },
+      { title: 'Drawing Upper', key: 'laborCost.drawingUpper' },
+      { title: 'Drawing Lining', key: 'laborCost.drawingLining' },
+      { title: 'Stitching Upper', key: 'laborCost.stitchingUpper' },
+      { title: 'Stitching Outsole', key: 'laborCost.stitchingOutsole' },
+      { title: 'Stitching Insole', key: 'laborCost.stitchingInsole' },
+      { title: 'Lasting', key: 'laborCost.lasting' },
     ],
   },
   { title: '', key: 'actions', sortable: false, align: 'end' },

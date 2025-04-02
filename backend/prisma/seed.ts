@@ -123,7 +123,7 @@ async function main() {
     console.error('Error creating Product and ProductColors: ', error);
   }
 
-  await prisma.labourCost.create({
+  await prisma.laborCost.create({
     data: {
       productGroupId: someProductGroup.id,
       drawingUpper: 3000,

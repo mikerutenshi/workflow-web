@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { CreateLabourCostDto } from './dto/createLabourCost.dto';
-import { LabourCost } from '@/models/labour-cost.model';
+import { CreateLaborCostDto } from './dto/createLaborCost.dto';
+import { LaborCost } from '@/models/labor-cost.model';
 
 @Injectable()
-export class LabourCostService {
+export class LaborCostService {
   constructor(private prisma: PrismaService) {}
 
-  async createLabourCost(data: CreateLabourCostDto): Promise<LabourCost> {
-    return await this.prisma.labourCost.create({
+  async createLaborCost(data: CreateLaborCostDto): Promise<LaborCost> {
+    return await this.prisma.laborCost.create({
       data: {
         drawingUpper: data.drawingUpper,
         drawingLining: data.drawingLining,
@@ -25,8 +25,8 @@ export class LabourCostService {
     });
   }
 
-  async getLabourCosts(): Promise<LabourCost[]> {
-    return await this.prisma.labourCost.findMany({
+  async getLaborCosts(): Promise<LaborCost[]> {
+    return await this.prisma.laborCost.findMany({
       include: {
         productGroup: true,
       },

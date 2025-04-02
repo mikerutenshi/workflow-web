@@ -24,7 +24,11 @@ import { ProductModule } from './product/product.module';
         playground: true,
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         cors: {
-          origin: 'http://localhost:3000',
+          origin: [
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+            'http://192.168.100.3:3000/',
+          ],
           credentials: true,
         },
         context: async ({ req }: { req: Request }) => {

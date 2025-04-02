@@ -74,7 +74,7 @@ model ProductGroup {
   name              String?
 
   products          Product[]
-  labourCost        LabourCost?
+  laborCost         LaborCost?
 
   productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
 }
@@ -105,7 +105,7 @@ model ProductColors {
   color             Color           @relation(fields: [colorId], references: [id])
 }
 
-model LabourCost {
+model LaborCost {
   id                Int             @id @default(autoincrement())
   drawingUpper      Int
   drawingLining     Int

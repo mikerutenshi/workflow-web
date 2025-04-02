@@ -2,7 +2,7 @@ import { Field, ID, InputType } from '@nestjs/graphql';
 import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 @InputType()
-export class CreateLabourCostDto {
+export class CreateLaborCostDto {
   @Field()
   @IsInt()
   drawingUpper: number;
