@@ -49,24 +49,17 @@
 
 <script setup lang="ts">
 import { useMutation, useQuery } from 'villus';
+import type { VDataTable } from 'vuetify/components';
 import {
-  GetProductsDocument,
   DeleteProductDocument,
+  GetProductsDocument,
   type ProductColorsWithColor,
 } from '~/api/generated/types';
-import { onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import type { VDataTable } from 'vuetify/components';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
 const { data, execute } = useQuery({
   query: GetProductsDocument,
-});
-
-onMounted(() => {
-  const route = useRoute();
-  const isInvalidateTable = route.query.isInvalidateTable;
-  if (isInvalidateTable) execute();
+  tags: [CACHE_PRODUCTS],
 });
 
 const headers: ReadOnlyHeaders = [

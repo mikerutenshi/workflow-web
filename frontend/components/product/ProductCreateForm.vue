@@ -59,7 +59,7 @@
           <v-btn color="secondary" class="mr-4">Discard</v-btn>
         </NuxtLink>
         <v-btn
-          v-if="isEditing"
+          v-if="productId"
           :loading="isUpdating"
           type="submit"
           color="primary"
@@ -100,45 +100,20 @@ import {
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const productId = route.params.id as string;
-const isEditing = ref(false);
+const productId = ref(route.params.id as string);
 
-if (productId !== undefined) {
-  console.log(`ProductID -> ${productId}`);
-  isEditing.value = true;
-}
+// if (productId !== undefined) {
+//   console.log(`ProductID -> ${productId}`);
+//   isEditing.value = true;
+// }
 
-interface Form {
-  sku: string;
-  productGroupId: string;
-  colorIds: string[];
-  [key: string]: any; // Index signature allows dynamic properties
-}
-const form = reactive<Form>({
+const form = reactive({
   sku: '',
   productGroupId: '',
   colorIds: [] as string[],
+  createdBy: '',
+  updatedBy: undefined as string | undefined,
 });
-
-// const variables = computed(() => {
-//   const authStore = useAuthStore();
-//   const userId = authStore.user?.id ?? '';
-
-//   console.log(`IsEditing -> ${isEditing.value}`);
-//   if (isEditing.value) {
-//     form.updatedBy = userId;
-//   } else {
-//     form.createdBy = userId;
-//   }
-//   console.log(`FOrm -> ${JSON.stringify(form)}`);
-
-//   return isEditing.value
-//     ? { id: productId, data: { ...form, updatedBy: userId } }
-//     : { id: '', data: { ...form, createdBy: userId } };
-// });
-// const mutationDoc = computed(() => {
-//   return isEditing.value ? UpdateProductDocument : CreateProductDocument;
-// });
 
 const {
   data: createData,
@@ -147,8 +122,9 @@ const {
   error: createError,
 } = useMutation(CreateProductDocument, {
   onData() {
-    navigateTo({ path: '/products', query: { isInvalidateTable: 'true' } });
+    navigateTo('/products');
   },
+  clearCacheTags: [CACHE_PRODUCTS],
 });
 const {
   data: updateData,
@@ -157,20 +133,24 @@ const {
   error: updateError,
 } = useMutation(UpdateProductDocument, {
   onData() {
-    navigateTo({ path: '/products', query: { isInvalidateTable: 'true' } });
+    navigateTo('/products');
   },
+  clearCacheTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
 });
 
 const handleSubmit = async () => {
   const authStore = useAuthStore();
   const userId = authStore.user?.id ?? '';
-  if (isEditing.value) {
+  if (productId.value) {
+    form.createdBy = userId;
+    form.updatedBy = userId;
     await executeUpdate({
-      id: productId,
-      data: { ...form, updatedBy: userId },
+      id: productId.value,
+      data: form,
     });
   } else {
-    await executeCreate({ data: { ...form, createdBy: userId } });
+    form.createdBy = userId;
+    await executeCreate({ data: form });
   }
 };
 
@@ -221,10 +201,11 @@ const remove = (index: number) => {
 };
 
 watch([productGroupOptions, colorOptions], (newPgOpt, newCOpt) => {
-  if (newPgOpt && newCOpt && isEditing.value) {
+  if (newPgOpt && newCOpt && productId.value) {
     useQuery({
       query: GetProductDocument,
-      variables: { id: productId },
+      variables: { id: productId.value },
+      tags: [CACHE_PRODUCT],
       onData: (data) => {
         const product = data.getProduct;
         form.sku = product.sku;

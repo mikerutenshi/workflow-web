@@ -3,7 +3,6 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { Product } from '@/models/product.model';
 import { GetProductsDto } from './dto/getProducts.dto';
-import { UpdateProductDto } from './dto/updateProduct.dto';
 
 // type NullToUndefined<T> = {
 //   [K in keyof T]: T[K] extends null
@@ -123,7 +122,7 @@ export class ProductService {
 
   async updateProduct(
     id: string,
-    data: UpdateProductDto,
+    data: CreateProductDto,
   ): Promise<GetProductsDto> {
     try {
       return await this.prisma.$transaction(async (tx) => {

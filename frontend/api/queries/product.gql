@@ -51,7 +51,7 @@ mutation createProduct($data: CreateProductDto!) {
   }
 }
 
-mutation updateProduct($id: ID!, $data: UpdateProductDto!) {
+mutation updateProduct($id: ID!, $data: CreateProductDto!) {
   updateProduct(id: $id, data: $data) {
     id
   }

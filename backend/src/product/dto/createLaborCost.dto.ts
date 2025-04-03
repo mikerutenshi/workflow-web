@@ -30,5 +30,6 @@ export class CreateLaborCostDto {
   @IsNotEmpty()
   createdBy: string;
   @Field(() => ID, { nullable: true })
+  @IsOptional()
   updatedBy: string | undefined;
 }

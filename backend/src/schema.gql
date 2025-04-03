@@ -144,7 +144,7 @@ type Mutation {
   logOut: User!
   createColor(data: CreateColorDto!): Color!
   createProduct(data: CreateProductDto!): Product!
-  updateProduct(id: ID!, data: UpdateProductDto!): Product!
+  updateProduct(id: ID!, data: CreateProductDto!): Product!
   deleteProduct(id: ID!): Boolean!
   createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
   createProductGroup(data: CreateProductGroupDto!): ProductGroup!
@@ -181,13 +181,7 @@ input CreateProductDto {
   sku: String!
   productGroupId: ID!
   createdBy: ID!
-  colorIds: [ID!]!
-}
-
-input UpdateProductDto {
-  sku: String!
-  productGroupId: ID!
-  updatedBy: ID!
+  updatedBy: ID
   colorIds: [ID!]!
 }
 

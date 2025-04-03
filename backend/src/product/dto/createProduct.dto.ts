@@ -1,10 +1,10 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
-import { IsArray, IsNotEmpty, Matches } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, Matches } from 'class-validator';
 
 @InputType()
 export class CreateProductDto {
   @Field()
-  @Matches(/^[A-Z]{1,2}\d{5}-[a-zA-Z.]+(\/[a-zA-Z.]+)*$/, {
+  @Matches(/^[A-Z]{1,2}\d{5}-[a-zA-Z.\s]*(\/[a-zA-Z.\s]*)*$/, {
     message: 'Format support example: A12345-D.Brown/White',
   })
   sku: string;
@@ -16,6 +16,10 @@ export class CreateProductDto {
   @Field(() => ID)
   @IsNotEmpty()
   createdBy: string;
+
+  @Field(() => ID, { nullable: true })
+  @IsOptional()
+  updatedBy: string;
 
   @Field(() => [ID])
   @IsArray()
