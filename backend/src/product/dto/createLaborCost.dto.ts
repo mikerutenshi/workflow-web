@@ -26,7 +26,9 @@ export class CreateLaborCostDto {
   @Field(() => ID)
   @IsNotEmpty()
   productGroupId: string;
-  @Field()
+  @Field(() => ID)
   @IsNotEmpty()
   createdBy: string;
+  @Field(() => ID, { nullable: true })
+  updatedBy: string | undefined;
 }

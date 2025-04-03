@@ -67,6 +67,12 @@ mutation createLaborCost($data: CreateLaborCostDto!) {
   }
 }
 
+mutation updateLaborCost($id: ID!, $data: CreateLaborCostDto!) {
+  updateLaborCost(id: $id, data: $data) {
+    id
+  }
+}
+
 query getProductCategories {
   getProductCategories {
     ...ProductCategoryFrag

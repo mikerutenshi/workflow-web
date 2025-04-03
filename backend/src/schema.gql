@@ -149,6 +149,7 @@ type Mutation {
   createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
   createProductGroup(data: CreateProductGroupDto!): ProductGroup!
   createLaborCost(data: CreateLaborCostDto!): LaborCost!
+  updateLaborCost(id: ID!, data: CreateLaborCostDto!): LaborCost!
 }
 
 input RoleDto {
@@ -209,5 +210,6 @@ input CreateLaborCostDto {
   stitchingInsole: Float
   lasting: Float!
   productGroupId: ID!
-  createdBy: String!
+  createdBy: ID!
+  updatedBy: ID
 }

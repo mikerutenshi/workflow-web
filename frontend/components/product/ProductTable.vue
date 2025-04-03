@@ -67,7 +67,6 @@ onMounted(() => {
   const route = useRoute();
   const isInvalidateTable = route.query.isInvalidateTable;
   if (isInvalidateTable) execute();
-  console.log(`Route param -> ${isInvalidateTable}`);
 });
 
 const headers: ReadOnlyHeaders = [

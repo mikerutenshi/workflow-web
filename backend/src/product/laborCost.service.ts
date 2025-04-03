@@ -19,8 +19,26 @@ export class LaborCostService {
         createdBy: +data.createdBy,
         productGroupId: +data.productGroupId,
       },
-      include: {
-        productGroup: true,
+    });
+  }
+
+  async updateLaborCost(
+    id: string,
+    data: CreateLaborCostDto,
+  ): Promise<LaborCost> {
+    return await this.prisma.laborCost.update({
+      where: {
+        id: +id,
+      },
+      data: {
+        drawingUpper: data.drawingUpper,
+        drawingLining: data.drawingLining,
+        stitchingUpper: data.stitchingUpper,
+        stitchingOutsole: data.stitchingOutsole,
+        stitchingInsole: data.stitchingInsole,
+        lasting: data.lasting,
+        createdBy: +data.createdBy,
+        productGroupId: +data.productGroupId,
       },
     });
   }

@@ -1,5 +1,5 @@
 import { LaborCost } from '@/models/labor-cost.model';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { LaborCostService } from './laborCost.service';
 import { CreateLaborCostDto } from './dto/createLaborCost.dto';
 
@@ -10,6 +10,14 @@ export class LaborCostResolver {
   @Mutation(() => LaborCost)
   createLaborCost(@Args('data') data: CreateLaborCostDto): Promise<LaborCost> {
     return this.laborCostService.createLaborCost(data);
+  }
+
+  @Mutation(() => LaborCost)
+  updateLaborCost(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('data') data: CreateLaborCostDto,
+  ): Promise<LaborCost> {
+    return this.laborCostService.updateLaborCost(id, data);
   }
 
   @Query(() => [LaborCost])

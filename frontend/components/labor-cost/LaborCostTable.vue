@@ -7,6 +7,30 @@
       item-value="id"
       :sort-by="[{ key: 'id', order: 'asc' }]"
     >
+      <template v-slot:item.laborCost.drawingUpper="{ item }">
+        {{ formatToRupiah(item.laborCost?.drawingUpper) }}
+      </template>
+
+      <template v-slot:item.laborCost.drawingLining="{ item }">
+        {{ formatToRupiah(item.laborCost?.drawingLining) }}
+      </template>
+
+      <template v-slot:item.laborCost.stitchingUpper="{ item }">
+        {{ formatToRupiah(item.laborCost?.stitchingUpper) }}
+      </template>
+
+      <template v-slot:item.laborCost.stitchingOutsole="{ item }">
+        {{ formatToRupiah(item.laborCost?.stitchingOutsole) }}
+      </template>
+
+      <template v-slot:item.laborCost.stitchingInsole="{ item }">
+        {{ formatToRupiah(item.laborCost?.stitchingInsole) }}
+      </template>
+
+      <template v-slot:item.laborCost.lasting="{ item }">
+        {{ formatToRupiah(item.laborCost?.lasting) }}
+      </template>
+
       <template v-slot:item.actions="{ item, index }">
         <v-menu variant="outlined">
           <template v-slot:activator="{ props }">
@@ -41,28 +65,19 @@
 </style>
 
 <script setup lang="ts">
-import { useMutation, useQuery } from 'villus';
-import {
-  GetProductsDocument,
-  DeleteProductDocument,
-  type ProductColorsWithColor,
-  GetProductGroupsDocument,
-} from '~/api/generated/types';
-import { onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
+import {
+  GetProductGroupsDocument,
+  type LaborCost,
+} from '~/api/generated/types';
+
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data, execute } = useQuery({
+const { data } = useQuery({
   query: GetProductGroupsDocument,
+  tags: [CACHE_PRODUCT_GROUPS],
 });
-
-// onMounted(() => {
-//   const route = useRoute();
-//   const isInvalidateTable = route.query.isInvalidateTable;
-//   if (isInvalidateTable) execute();
-//   console.log(`Route param -> ${isInvalidateTable}`);
-// });
 
 const headers: ReadOnlyHeaders = [
   { title: 'ID', key: 'id' },
@@ -84,21 +99,14 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
-// const deleteProduct = (id: string, index: number) => {
-//   const { execute } = useMutation(DeleteProductDocument);
-
-//   execute({ id })
-//     .then((response) => {
-//       if (response.data?.deleteProduct) {
-//         alert('Product deleted successfully');
-//         data.value?.getProducts.slice(index, 1);
-//       } else {
-//         alert('Failed to delete product');
-//       }
-//     })
-//     .catch((error) => {
-//       console.error('Error deleting product:', error);
-//       alert('An error occurred while deleting the product.');
-//     });
-// };
+function formatToRupiah(amount: number | null | undefined): string {
+  if (amount === undefined) return '';
+  if (amount === null) return '-';
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
 </script>
