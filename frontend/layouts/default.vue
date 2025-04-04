@@ -12,6 +12,24 @@
           <v-btn> <v-icon left>mdi-plus</v-icon> New Product </v-btn>
         </NuxtLink>
       </template>
+
+      <template v-slot:append v-if="currentPage == 'colors'">
+        <NuxtLink to="colors/create">
+          <v-btn> <v-icon left>mdi-plus</v-icon> New Color </v-btn>
+        </NuxtLink>
+      </template>
+
+      <template v-slot:append v-if="currentPage == 'product-groups'">
+        <NuxtLink to="product-groups/create">
+          <v-btn> <v-icon left>mdi-plus</v-icon> New Product Group </v-btn>
+        </NuxtLink>
+      </template>
+
+      <template v-slot:append v-if="currentPage == 'product-categories'">
+        <NuxtLink to="product-categories/create">
+          <v-btn> <v-icon left>mdi-plus</v-icon> New Product Category </v-btn>
+        </NuxtLink>
+      </template>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary app>
@@ -20,10 +38,12 @@
           <v-list-group v-if="navItem.children">
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props">
-                <v-avatar>
+                <v-avatar class="d-inline mr-4">
                   <v-icon>{{ navItem.icon }}</v-icon>
                 </v-avatar>
-                <v-list-item-title>{{ navItem.title }}</v-list-item-title>
+                <v-list-item-title class="d-inline">{{
+                  navItem.title
+                }}</v-list-item-title>
               </v-list-item>
             </template>
 
@@ -33,20 +53,24 @@
               :to="child.route"
               router
             >
-              <div class="d-flex align-center">
-                <v-avatar>
+              <div>
+                <v-avatar class="d-inline mr-4">
                   <v-icon>{{ child.icon }}</v-icon>
                 </v-avatar>
-                <v-list-item-title>{{ child.title }}</v-list-item-title>
+                <v-list-item-title class="d-inline">{{
+                  child.title
+                }}</v-list-item-title>
               </div>
             </v-list-item>
           </v-list-group>
 
           <v-list-item v-else :to="navItem.route" router>
-            <v-avatar>
+            <v-avatar class="d-inline mr-4">
               <v-icon>{{ navItem.icon }}</v-icon>
             </v-avatar>
-            <v-list-item-title>{{ navItem.title }}</v-list-item-title>
+            <v-list-item-title class="d-inline">{{
+              navItem.title
+            }}</v-list-item-title>
           </v-list-item>
         </template>
         <!-- <v-list-item
@@ -68,18 +92,6 @@
     </v-main>
   </v-app>
 </template>
-
-<style scoped>
-.d-flex {
-  display: flex;
-}
-.align-center {
-  align-items: center;
-}
-.mr-3 {
-  margin-right: 12px; /* Adjust spacing as needed */
-}
-</style>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
@@ -106,6 +118,11 @@ const navItems = [
         title: 'All Product Groups',
         route: '/product-groups',
         icon: 'mdi-basket',
+      },
+      {
+        title: 'All Product Categories',
+        route: '/product-categories',
+        icon: 'mdi-shape',
       },
       { title: 'All Colors', route: '/colors', icon: 'mdi-palette' },
     ],
