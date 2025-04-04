@@ -15,8 +15,41 @@
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary app>
-      <v-list>
-        <v-list-item
+      <v-list dense>
+        <template v-for="(navItem, index) in navItems" :key="index">
+          <v-list-group v-if="navItem.children">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props">
+                <v-avatar>
+                  <v-icon>{{ navItem.icon }}</v-icon>
+                </v-avatar>
+                <v-list-item-title>{{ navItem.title }}</v-list-item-title>
+              </v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="(child, childIndex) in navItem.children"
+              :key="childIndex"
+              :to="child.route"
+              router
+            >
+              <div class="d-flex align-center">
+                <v-avatar>
+                  <v-icon>{{ child.icon }}</v-icon>
+                </v-avatar>
+                <v-list-item-title>{{ child.title }}</v-list-item-title>
+              </div>
+            </v-list-item>
+          </v-list-group>
+
+          <v-list-item v-else :to="navItem.route" router>
+            <v-avatar>
+              <v-icon>{{ navItem.icon }}</v-icon>
+            </v-avatar>
+            <v-list-item-title>{{ navItem.title }}</v-list-item-title>
+          </v-list-item>
+        </template>
+        <!-- <v-list-item
           v-for="(item, index) in navItems"
           :key="index"
           :to="item.route"
@@ -26,7 +59,7 @@
           <v-avatar>
             <v-icon>{{ item.icon }}</v-icon>
           </v-avatar>
-        </v-list-item>
+        </v-list-item> -->
       </v-list>
     </v-navigation-drawer>
 
@@ -35,6 +68,18 @@
     </v-main>
   </v-app>
 </template>
+
+<style scoped>
+.d-flex {
+  display: flex;
+}
+.align-center {
+  align-items: center;
+}
+.mr-3 {
+  margin-right: 12px; /* Adjust spacing as needed */
+}
+</style>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
@@ -52,7 +97,19 @@ const closeDrawer = () => {
 
 const navItems = [
   { title: 'Home', route: '/', icon: 'mdi-home' },
-  { title: 'Products', route: '/products', icon: 'mdi-shoe-sneaker' },
+  {
+    title: 'Products',
+    icon: 'mdi-shoe-formal',
+    children: [
+      { title: 'All Products', route: '/products', icon: 'mdi-shoe-formal' },
+      {
+        title: 'All Product Groups',
+        route: '/product-groups',
+        icon: 'mdi-basket',
+      },
+      { title: 'All Colors', route: '/colors', icon: 'mdi-palette' },
+    ],
+  },
   {
     title: 'Production Costs',
     route: '/labor-costs',
