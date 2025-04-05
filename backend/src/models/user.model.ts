@@ -9,8 +9,8 @@ export class User {
   email: string;
   @Field()
   firstName: string;
-  @Field()
-  lastName: string;
+  @Field(() => String, { nullable: true })
+  lastName: string | null;
   @Field()
   isActive: boolean;
   @Field(() => Role)

@@ -2,21 +2,43 @@
   <v-row justify="center" align="center">
     <v-col cols="12" md="4">
       <v-form @submit.prevent="handleSubmit" class="pa-4">
-        <v-text-field v-model="header.skuNumeric" label="Product Group" />
+        <v-text-field
+          v-model="header.skuNumeric"
+          label="Product Group"
+          disabled
+        />
         <v-text-field
           v-model="header.productCategory"
           label="Product Category"
+          disabled
         />
-        <v-text-field v-model="header.gender" label="Gender" />
-        <v-text-field v-model="form.drawingUpper" label="Drawing Upper" />
-        <v-text-field v-model="form.drawingLining" label="Drawing Lining" />
-        <v-text-field v-model="form.stitchingUpper" label="Stitching Upper" />
+        <v-text-field v-model="header.gender" label="Gender" disabled />
+        <v-text-field
+          v-model="form.drawingUpper"
+          label="Drawing Upper"
+          prefix="Rp"
+        />
+        <v-text-field
+          v-model="form.drawingLining"
+          label="Drawing Lining"
+          prefix="Rp"
+        />
+        <v-text-field
+          v-model="form.stitchingUpper"
+          label="Stitching Upper"
+          prefix="Rp"
+        />
         <v-text-field
           v-model="form.stitchingOutsole"
           label="Stitching Outsole"
+          prefix="Rp"
         />
-        <v-text-field v-model="form.stitchingInsole" label="Stitching insole" />
-        <v-text-field v-model="form.lasting" label="Lasting" />
+        <v-text-field
+          v-model="form.stitchingInsole"
+          label="Stitching insole"
+          prefix="Rp"
+        />
+        <v-text-field v-model="form.lasting" label="Lasting" prefix="Rp" />
 
         <NuxtLink to="/labor-costs">
           <v-btn color="secondary" class="mr-4">Discard</v-btn>

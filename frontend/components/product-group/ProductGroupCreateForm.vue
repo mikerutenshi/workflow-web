@@ -30,11 +30,15 @@
 <script setup lang="ts">
 import { useMutation } from 'villus';
 import { CreateProductGroupDocument } from '~/api/generated/types';
+import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore();
+const userId = authStore.user?.id ?? '';
 const form = reactive({
   skuNumeric: '',
   name: '',
   productCategoryId: '',
+  createdBy: userId,
 });
 const { execute, error, isFetching } = useMutation(CreateProductGroupDocument, {
   onData() {

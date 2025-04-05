@@ -1,0 +1,28 @@
+fragment Artisan on Artisan {
+  id
+  firstName
+  lastName
+  jobs
+}
+
+mutation createArtisan($data: CreateArtisanDto!) {
+  createArtisan(data: $data) {
+    id
+  }
+}
+
+mutation updateArtisan($id: ID!, $data: CreateArtisanDto!) {
+  updateArtisan(id: $id, data: $data) {
+    id
+  }
+}
+
+mutation deleteArtisan($id: ID!) {
+  deleteArtisan(id: $id)
+}
+
+query getArtisans {
+  getArtisans {
+    ...Artisan
+  }
+}

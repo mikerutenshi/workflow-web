@@ -30,6 +30,12 @@
           <v-btn> <v-icon left>mdi-plus</v-icon> New Product Category </v-btn>
         </NuxtLink>
       </template>
+
+      <template v-slot:append v-if="currentPage == 'artisans'">
+        <NuxtLink to="artisans/create">
+          <v-btn> <v-icon left>mdi-plus</v-icon> New Artisan </v-btn>
+        </NuxtLink>
+      </template>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary app>
@@ -131,6 +137,11 @@ const navItems = [
     title: 'Production Costs',
     route: '/labor-costs',
     icon: 'mdi-calculator',
+  },
+  {
+    title: 'Artisans',
+    route: '/artisans',
+    icon: 'mdi-face-man',
   },
 ];
 

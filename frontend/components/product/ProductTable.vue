@@ -88,7 +88,7 @@ const deleteProduct = (id: string, index: number) => {
   execute({ id })
     .then((response) => {
       if (response.data?.deleteProduct) {
-        executeGetProducts();
+        data.value?.getProducts.splice(index, 1);
         alert('Product deleted successfully');
       } else {
         alert('Failed to delete product');

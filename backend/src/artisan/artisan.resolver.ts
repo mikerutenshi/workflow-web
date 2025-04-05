@@ -9,12 +9,12 @@ import { Artisan } from '@/models/artisan.model';
 export class ArtisanResolver {
   constructor(private artisanService: ArtisanService) {}
 
-  @Mutation()
+  @Mutation(() => Artisan)
   createArtisan(@Args('data') data: CreateArtisanDto): Promise<Artisan> {
     return this.artisanService.createArtisan(data);
   }
-  @Mutation()
-  updateProduct(
+  @Mutation(() => Artisan)
+  updateArtisan(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
     @Args('data') data: CreateArtisanDto,
   ): Promise<Artisan> {
@@ -22,8 +22,8 @@ export class ArtisanResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query()
-  getProducts(): Promise<Artisan[]> {
+  @Query(() => [Artisan])
+  getArtisans(): Promise<Artisan[]> {
     return this.artisanService.getArtisans();
   }
 

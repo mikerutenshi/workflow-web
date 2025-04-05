@@ -27,7 +27,7 @@ model User {
   email             String          @unique
   password          String
   firstName         String
-  lastName          String
+  lastName          String?
   isActive          Boolean         @default(false)
   roleId            Int
 
@@ -140,7 +140,7 @@ enum Job {
 model Artisan {
   id                Int             @id @default(autoincrement())
   firstName         String
-  lastName          String
+  lastName          String?
   jobs              Job[]
 
   createdBy         Int

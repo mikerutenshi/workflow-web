@@ -6,23 +6,29 @@ import { IsInt, IsOptional, Min } from 'class-validator';
 export class CreateLaborCostDto {
   @Field()
   @IsInt()
+  @Min(100)
   drawingUpper: number;
   @Field()
   @IsInt()
+  @Min(100)
   drawingLining: number;
   @Field()
   @IsInt()
+  @Min(100)
   stitchingUpper: number;
   @Field(() => Number, { nullable: true })
   @IsOptional()
   @IsInt()
+  @Min(100)
   stitchingOutsole: number | null;
   @Field(() => Number, { nullable: true })
   @IsOptional()
   @IsInt()
+  @Min(100)
   stitchingInsole: number | null;
   @Field()
   @IsInt()
+  @Min(100)
   lasting: number;
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

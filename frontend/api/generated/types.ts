@@ -16,11 +16,31 @@ export type Scalars = {
   Date: { input: any; output: any; }
 };
 
+export type Artisan = {
+  __typename?: 'Artisan';
+  createdAt: Scalars['Date']['output'];
+  createdBy: Scalars['ID']['output'];
+  firstName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  jobs: Array<Job>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['Date']['output'];
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
 export type Color = {
   __typename?: 'Color';
   hexCode: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+};
+
+export type CreateArtisanDto = {
+  createdBy: Scalars['ID']['input'];
+  firstName: Scalars['String']['input'];
+  jobs: Array<Job>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  updatedBy?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type CreateColorDto = {
@@ -56,7 +76,7 @@ export type CreateProductDto = {
 export type CreateProductGroupDto = {
   createdBy: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
-  productCategoryId: Scalars['String']['input'];
+  productCategoryId: Scalars['ID']['input'];
   skuNumeric: Scalars['String']['input'];
   updatedBy?: InputMaybe<Scalars['ID']['input']>;
 };
@@ -65,7 +85,7 @@ export type CreateUserDto = {
   createdBy?: InputMaybe<Scalars['ID']['input']>;
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
-  lastName: Scalars['String']['input'];
+  lastName?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   roleId: Scalars['ID']['input'];
 };
@@ -104,6 +124,15 @@ export type GetProductsDto = {
   updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
+export enum Job {
+  InsoleStitcher = 'INSOLE_STITCHER',
+  Laster = 'LASTER',
+  LiningDrawer = 'LINING_DRAWER',
+  OutsoleStitcher = 'OUTSOLE_STITCHER',
+  UpperDrawer = 'UPPER_DRAWER',
+  UPperStitcher = 'uPPER_STITCHER'
+}
+
 export type LaborCost = {
   __typename?: 'LaborCost';
   createdAt: Scalars['Date']['output'];
@@ -127,6 +156,7 @@ export type LogInDto = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createArtisan: Artisan;
   createColor: Color;
   createLaborCost: LaborCost;
   createProduct: Product;
@@ -134,11 +164,18 @@ export type Mutation = {
   createProductGroup: ProductGroup;
   createRole: Role;
   createUser: User;
+  deleteArtisan: Scalars['Boolean']['output'];
   deleteProduct: Scalars['Boolean']['output'];
   logIn: User;
   logOut: User;
+  updateArtisan: Artisan;
   updateLaborCost: LaborCost;
   updateProduct: Product;
+};
+
+
+export type MutationCreateArtisanArgs = {
+  data: CreateArtisanDto;
 };
 
 
@@ -177,6 +214,11 @@ export type MutationCreateUserArgs = {
 };
 
 
+export type MutationDeleteArtisanArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationDeleteProductArgs = {
   id: Scalars['ID']['input'];
 };
@@ -184,6 +226,12 @@ export type MutationDeleteProductArgs = {
 
 export type MutationLogInArgs = {
   data: LogInDto;
+};
+
+
+export type MutationUpdateArtisanArgs = {
+  data: CreateArtisanDto;
+  id: Scalars['ID']['input'];
 };
 
 
@@ -263,6 +311,7 @@ export type ProductWithColorDto = {
 
 export type Query = {
   __typename?: 'Query';
+  getArtisans: Array<Artisan>;
   getColors: Array<Color>;
   getLaborCosts: Array<LaborCost>;
   getProduct: GetProductsDto;
@@ -308,35 +357,64 @@ export type User = {
   firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
-  lastName: Scalars['String']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
   role: Role;
   updatedAt: Scalars['Date']['output'];
   updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
-export type AuthUserFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string };
+export type ArtisanFragment = { __typename?: 'Artisan', id: string, firstName: string, lastName?: string | null, jobs: Array<Job> };
+
+export type CreateArtisanMutationVariables = Exact<{
+  data: CreateArtisanDto;
+}>;
+
+
+export type CreateArtisanMutation = { __typename?: 'Mutation', createArtisan: { __typename?: 'Artisan', id: string } };
+
+export type UpdateArtisanMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  data: CreateArtisanDto;
+}>;
+
+
+export type UpdateArtisanMutation = { __typename?: 'Mutation', updateArtisan: { __typename?: 'Artisan', id: string } };
+
+export type DeleteArtisanMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteArtisanMutation = { __typename?: 'Mutation', deleteArtisan: boolean };
+
+export type GetArtisansQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetArtisansQuery = { __typename?: 'Query', getArtisans: Array<{ __typename?: 'Artisan', id: string, firstName: string, lastName?: string | null, jobs: Array<Job> }> };
+
+export type AuthUserFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName?: string | null };
 
 export type LogInMutationVariables = Exact<{
   data: LogInDto;
 }>;
 
 
-export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string } };
+export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, email: string, firstName: string, lastName?: string | null } };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogOutMutation = { __typename?: 'Mutation', logOut: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string } };
+export type LogOutMutation = { __typename?: 'Mutation', logOut: { __typename?: 'User', id: string, email: string, firstName: string, lastName?: string | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, email: string, firstName: string, lastName?: string | null } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', getUsers: Array<{ __typename?: 'User', id: string, email: string, firstName: string, lastName: string, createdAt: any, role: { __typename?: 'Role', name: string } }> };
+export type GetUsersQuery = { __typename?: 'Query', getUsers: Array<{ __typename?: 'User', id: string, email: string, firstName: string, lastName?: string | null, createdAt: any, role: { __typename?: 'Role', name: string } }> };
 
 export type ProductCategoryFragFragment = { __typename?: 'ProductCategory', id: string, name: string, gender: Gender };
 
@@ -436,10 +514,15 @@ export type GetProductQueryVariables = Exact<{
 
 export type GetProductQuery = { __typename?: 'Query', getProduct: { __typename?: 'GetProductsDto', id: string, sku: string, productGroup: { __typename?: 'ProductGroupWithCategoryDto', id: string }, productColors: Array<{ __typename?: 'ProductColorsWithColor', order: number, color: { __typename?: 'Color', id: string } }> } };
 
+export const ArtisanFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Artisan"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artisan"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"jobs"}}]}}]} as unknown as DocumentNode<ArtisanFragment, unknown>;
 export const AuthUserFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]} as unknown as DocumentNode<AuthUserFragment, unknown>;
 export const ProductCategoryFragFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProductCategoryFrag"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProductCategory"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"gender"}}]}}]} as unknown as DocumentNode<ProductCategoryFragFragment, unknown>;
 export const ColorFragFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ColorFrag"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Color"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"hexCode"}}]}}]} as unknown as DocumentNode<ColorFragFragment, unknown>;
 export const LaborCostFragFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LaborCostFrag"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LaborCost"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"drawingUpper"}},{"kind":"Field","name":{"kind":"Name","value":"drawingLining"}},{"kind":"Field","name":{"kind":"Name","value":"stitchingUpper"}},{"kind":"Field","name":{"kind":"Name","value":"stitchingInsole"}},{"kind":"Field","name":{"kind":"Name","value":"stitchingOutsole"}},{"kind":"Field","name":{"kind":"Name","value":"lasting"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<LaborCostFragFragment, unknown>;
+export const CreateArtisanDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createArtisan"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateArtisanDto"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createArtisan"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateArtisanMutation, CreateArtisanMutationVariables>;
+export const UpdateArtisanDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateArtisan"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateArtisanDto"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateArtisan"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateArtisanMutation, UpdateArtisanMutationVariables>;
+export const DeleteArtisanDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteArtisan"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteArtisan"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteArtisanMutation, DeleteArtisanMutationVariables>;
+export const GetArtisansDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getArtisans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getArtisans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Artisan"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Artisan"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artisan"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"jobs"}}]}}]} as unknown as DocumentNode<GetArtisansQuery, GetArtisansQueryVariables>;
 export const LogInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"logIn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LogInDto"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logIn"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthUser"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]} as unknown as DocumentNode<LogInMutation, LogInMutationVariables>;
 export const LogOutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"logOut"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logOut"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthUser"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]} as unknown as DocumentNode<LogOutMutation, LogOutMutationVariables>;
 export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AuthUser"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;

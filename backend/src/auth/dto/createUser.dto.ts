@@ -20,9 +20,10 @@ export class CreateUserDto {
   @Field()
   @IsAlphanumeric()
   firstName: string;
-  @Field()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsAlphanumeric()
-  lastName: string;
+  lastName: string | undefined;
   @Field(() => ID, { nullable: true })
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))

@@ -7,7 +7,7 @@ export class CreateProductGroupDto {
   @Field()
   @IsNotEmpty()
   skuNumeric: string;
-  @Field()
+  @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)

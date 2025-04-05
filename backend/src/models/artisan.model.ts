@@ -8,8 +8,8 @@ registerEnumType(Job, { name: 'Job' });
 export class Artisan extends BaseModel {
   @Field()
   firstName: string;
-  @Field()
-  lastName: string;
+  @Field(() => String, { nullable: true })
+  lastName: string | null;
   @Field(() => [Job])
   jobs: Job[];
 }

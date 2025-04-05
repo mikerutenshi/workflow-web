@@ -14,10 +14,11 @@ export class CreateArtisanDto {
   @Field()
   @IsAlphanumeric()
   firstName: string;
-  @Field()
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsAlphanumeric()
-  lastName: string;
-  @Field()
+  lastName: string | undefined;
+  @Field(() => [Job])
   @IsEnum(Job, { each: true })
   jobs: Job[];
   @Field(() => ID)
