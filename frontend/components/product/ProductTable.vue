@@ -57,7 +57,7 @@ import {
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data, execute } = useQuery({
+const { data, execute: executeGetProducts } = useQuery({
   query: GetProductsDocument,
   tags: [CACHE_PRODUCTS],
 });
@@ -81,13 +81,15 @@ const extractColors = (productColors: any[]) => {
 };
 
 const deleteProduct = (id: string, index: number) => {
-  const { execute } = useMutation(DeleteProductDocument);
+  const { execute } = useMutation(DeleteProductDocument, {
+    clearCacheTags: [CACHE_PRODUCTS],
+  });
 
   execute({ id })
     .then((response) => {
       if (response.data?.deleteProduct) {
+        executeGetProducts();
         alert('Product deleted successfully');
-        data.value?.getProducts.slice(index, 1);
       } else {
         alert('Failed to delete product');
       }

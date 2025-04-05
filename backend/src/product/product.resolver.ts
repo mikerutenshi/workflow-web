@@ -1,7 +1,7 @@
 import { AuthGuard } from '@/guards/auth.guard';
 import { Product } from '@/models/product.model';
-import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver, ID } from '@nestjs/graphql';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { GetProductsDto } from './dto/getProducts.dto';
 import { ProductService } from './product.service';
@@ -16,7 +16,7 @@ export class ProductResolver {
   }
   @Mutation(() => Product)
   updateProduct(
-    @Args('id', { type: () => ID }) id: string,
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
     @Args('data') data: CreateProductDto,
   ): Promise<Product> {
     return this.productService.updateProduct(id, data);
@@ -30,14 +30,16 @@ export class ProductResolver {
 
   @Query(() => GetProductsDto)
   getProduct(
-    @Args('id', { type: () => ID }) id: string,
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
   ): Promise<GetProductsDto> {
     return this.productService.getProduct(id);
   }
 
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
-  deleteProduct(@Args('id', { type: () => ID }) id: string): Promise<Boolean> {
+  deleteProduct(
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+  ): Promise<Boolean> {
     return this.productService.deleteProduct(id);
   }
 }

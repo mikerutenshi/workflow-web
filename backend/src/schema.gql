@@ -26,10 +26,10 @@ type User {
 
 type Product {
   id: ID!
-  createdAt: Date!
   createdBy: ID!
-  updatedAt: Date!
   updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
   sku: String!
   productGroupId: ID!
 }
@@ -48,6 +48,10 @@ enum Gender {
 
 type ProductGroup {
   id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
   skuNumeric: String!
   name: String
   productCategoryId: ID!
@@ -55,6 +59,10 @@ type ProductGroup {
 
 type ProductGroupWithCategoryDto {
   id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
   skuNumeric: String!
   name: String
   productCategoryId: ID!
@@ -76,10 +84,10 @@ type ProductColorsWithColor {
 
 type GetProductsDto {
   id: ID!
-  createdAt: Date!
   createdBy: ID!
-  updatedAt: Date!
   updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
   sku: String!
   productGroupId: ID!
   productGroup: ProductGroupWithCategoryDto!
@@ -88,10 +96,10 @@ type GetProductsDto {
 
 type LaborCost {
   id: ID!
-  createdAt: Date!
   createdBy: ID!
-  updatedAt: Date!
   updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
   drawingUpper: Float!
   drawingLining: Float!
   stitchingUpper: Float!
@@ -103,10 +111,10 @@ type LaborCost {
 
 type ProductWithColorDto {
   id: ID!
-  createdAt: Date!
   createdBy: ID!
-  updatedAt: Date!
   updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
   sku: String!
   productGroupId: ID!
   productColors: [ProductColorsWithColor!]!
@@ -114,6 +122,10 @@ type ProductWithColorDto {
 
 type GetProductGroupsDto {
   id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
   skuNumeric: String!
   name: String
   productCategoryId: ID!
@@ -192,8 +204,10 @@ input CreateProductCategoryDto {
 
 input CreateProductGroupDto {
   skuNumeric: String!
-  productCategoryId: String!
+  productCategoryId: Float!
   name: String
+  createdBy: ID!
+  updatedBy: ID
 }
 
 input CreateLaborCostDto {

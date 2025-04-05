@@ -54,9 +54,11 @@ export type CreateProductDto = {
 };
 
 export type CreateProductGroupDto = {
+  createdBy: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   productCategoryId: Scalars['String']['input'];
   skuNumeric: Scalars['String']['input'];
+  updatedBy?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type CreateUserDto = {
@@ -76,6 +78,8 @@ export enum Gender {
 
 export type GetProductGroupsDto = {
   __typename?: 'GetProductGroupsDto';
+  createdAt: Scalars['Date']['output'];
+  createdBy: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   laborCost?: Maybe<LaborCost>;
   name?: Maybe<Scalars['String']['output']>;
@@ -83,6 +87,8 @@ export type GetProductGroupsDto = {
   productCategoryId: Scalars['ID']['output'];
   products?: Maybe<Array<Maybe<ProductWithColorDto>>>;
   skuNumeric: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 export type GetProductsDto = {
@@ -220,19 +226,27 @@ export type ProductColorsWithColor = {
 
 export type ProductGroup = {
   __typename?: 'ProductGroup';
+  createdAt: Scalars['Date']['output'];
+  createdBy: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
   productCategoryId: Scalars['ID']['output'];
   skuNumeric: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 export type ProductGroupWithCategoryDto = {
   __typename?: 'ProductGroupWithCategoryDto';
+  createdAt: Scalars['Date']['output'];
+  createdBy: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
   productCategory: ProductCategory;
   productCategoryId: Scalars['ID']['output'];
   skuNumeric: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 export type ProductWithColorDto = {

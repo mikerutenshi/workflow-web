@@ -12,8 +12,9 @@ export class ProductGroupService {
     return await this.prisma.productGroup.create({
       data: {
         skuNumeric: data.skuNumeric,
-        productCategoryId: +data.productCategoryId,
+        productCategoryId: data.productCategoryId,
         name: data.name,
+        createdBy: data.createdBy,
       },
     });
   }
@@ -32,10 +33,10 @@ export class ProductGroupService {
     });
   }
 
-  async getProductGroup(id: string): Promise<GetProductGroupsDto> {
+  async getProductGroup(id: number): Promise<GetProductGroupsDto> {
     const result = await this.prisma.productGroup.findUnique({
       where: {
-        id: +id,
+        id: id,
       },
       include: {
         productCategory: true,

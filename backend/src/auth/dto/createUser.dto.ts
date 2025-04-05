@@ -1,11 +1,12 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
+import { Transform } from 'class-transformer';
 import {
   IsAlpha,
   IsEmail,
   IsInt,
-  IsNotEmpty,
   IsOptional,
   IsStrongPassword,
+  Min
 } from 'class-validator';
 
 @InputType()
@@ -24,9 +25,13 @@ export class CreateUserDto {
   lastName: string;
   @Field(() => ID, { nullable: true })
   @IsOptional()
-  @IsNotEmpty()
-  createdBy: string;
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
+  @Min(1)
+  createdBy: number | null;
   @Field(() => ID)
-  @IsNotEmpty()
-  roleId: string;
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
+  @Min(1)
+  roleId: number;
 }

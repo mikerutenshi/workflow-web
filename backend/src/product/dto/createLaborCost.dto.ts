@@ -1,5 +1,6 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
-import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsInt, IsOptional, Min } from 'class-validator';
 
 @InputType()
 export class CreateLaborCostDto {
@@ -24,12 +25,19 @@ export class CreateLaborCostDto {
   @IsInt()
   lasting: number;
   @Field(() => ID)
-  @IsNotEmpty()
-  productGroupId: string;
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
+  @Min(1)
+  productGroupId: number;
   @Field(() => ID)
-  @IsNotEmpty()
-  createdBy: string;
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
+  @Min(1)
+  createdBy: number;
   @Field(() => ID, { nullable: true })
   @IsOptional()
-  updatedBy: string | undefined;
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
+  @Min(1)
+  updatedBy: number | undefined;
 }

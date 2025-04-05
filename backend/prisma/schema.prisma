@@ -31,12 +31,12 @@ model User {
   isActive          Boolean         @default(false)
   roleId            Int
 
-  approvedAt        DateTime?  
+  createdBy         Int?
+  updatedBy         Int?
   approvedBy        Int?
   createdAt         DateTime        @default(now())
-  createdBy         Int?
   updatedAt         DateTime        @updatedAt
-  updatedBy         Int?
+  approvedAt        DateTime?  
 
   role              Role            @relation(fields: [roleId], references: [id])
   creator           User?           @relation("CreatedBy", fields: [createdBy], references: [id])
@@ -73,6 +73,11 @@ model ProductGroup {
   productCategoryId Int
   name              String?
 
+  createdAt         DateTime        @default(now())
+  createdBy         Int
+  updatedAt         DateTime        @updatedAt
+  updatedBy         Int?
+
   products          Product[]
   laborCost         LaborCost?
 
@@ -84,10 +89,10 @@ model Product {
   sku               String
   productGroupId    Int
 
-  createdAt         DateTime        @default(now())
   createdBy         Int
-  updatedAt         DateTime        @updatedAt
   updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 
   productColors     ProductColors[]
 
@@ -115,10 +120,31 @@ model LaborCost {
   lasting           Int
   productGroupId    Int             @unique
 
-  createdAt         DateTime        @default(now())
   createdBy         Int
-  updatedAt         DateTime        @updatedAt
   updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 
   productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
+}
+
+enum Job {
+  UPPER_DRAWER
+  LINING_DRAWER
+  uPPER_STITCHER
+  OUTSOLE_STITCHER
+  INSOLE_STITCHER
+  LASTER
+}
+
+model Artisan {
+  id                Int             @id @default(autoincrement())
+  firstName         String
+  lastName          String
+  jobs              Job[]
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }

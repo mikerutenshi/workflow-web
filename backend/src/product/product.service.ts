@@ -24,8 +24,8 @@ export class ProductService {
         const newProduct = await tx.product.create({
           data: {
             sku: data.sku,
-            productGroupId: +data.productGroupId,
-            createdBy: +data.createdBy,
+            productGroupId: data.productGroupId,
+            createdBy: data.createdBy,
           },
         });
         const productId = newProduct.id;
@@ -35,7 +35,7 @@ export class ProductService {
           await tx.productColors.create({
             data: {
               productId,
-              colorId: +colorId,
+              colorId: colorId,
               order: order++,
             },
           });
@@ -86,10 +86,10 @@ export class ProductService {
     });
   }
 
-  async getProduct(id: string): Promise<GetProductsDto> {
+  async getProduct(id: number): Promise<GetProductsDto> {
     const result = await this.prisma.product.findUnique({
       where: {
-        id: +id,
+        id: id,
       },
       include: {
         productGroup: {
@@ -111,36 +111,36 @@ export class ProductService {
     return result;
   }
 
-  async deleteProduct(id: string): Promise<Boolean> {
+  async deleteProduct(id: number): Promise<Boolean> {
     await this.prisma.product.delete({
       where: {
-        id: +id,
+        id: id,
       },
     });
     return true;
   }
 
   async updateProduct(
-    id: string,
+    id: number,
     data: CreateProductDto,
   ): Promise<GetProductsDto> {
     try {
       return await this.prisma.$transaction(async (tx) => {
         await tx.product.update({
           where: {
-            id: +id,
+            id: id,
           },
           data: {
             sku: data.sku,
-            productGroupId: +data.productGroupId,
-            updatedBy: +data.updatedBy,
+            productGroupId: data.productGroupId,
+            updatedBy: data.updatedBy,
           },
         });
 
         if (data.colorIds && data.colorIds.length > 0) {
           await tx.productColors.deleteMany({
             where: {
-              productId: +id,
+              productId: id,
             },
           });
 
@@ -148,8 +148,8 @@ export class ProductService {
           for (const colorId of data.colorIds) {
             await tx.productColors.create({
               data: {
-                productId: +id,
-                colorId: +colorId,
+                productId: id,
+                colorId: colorId,
                 order: order++,
               },
             });
@@ -158,7 +158,7 @@ export class ProductService {
 
         const result = await tx.product.findUnique({
           where: {
-            id: +id,
+            id: id,
           },
           include: {
             productGroup: {

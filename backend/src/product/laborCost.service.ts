@@ -16,19 +16,19 @@ export class LaborCostService {
         stitchingOutsole: data.stitchingOutsole,
         stitchingInsole: data.stitchingInsole,
         lasting: data.lasting,
-        createdBy: +data.createdBy,
-        productGroupId: +data.productGroupId,
+        createdBy: data.createdBy,
+        productGroupId: data.productGroupId,
       },
     });
   }
 
   async updateLaborCost(
-    id: string,
+    id: number,
     data: CreateLaborCostDto,
   ): Promise<LaborCost> {
     return await this.prisma.laborCost.update({
       where: {
-        id: +id,
+        id: id,
       },
       data: {
         drawingUpper: data.drawingUpper,
@@ -37,8 +37,8 @@ export class LaborCostService {
         stitchingOutsole: data.stitchingOutsole,
         stitchingInsole: data.stitchingInsole,
         lasting: data.lasting,
-        createdBy: +data.createdBy,
-        productGroupId: +data.productGroupId,
+        createdBy: data.createdBy,
+        productGroupId: data.productGroupId,
       },
     });
   }

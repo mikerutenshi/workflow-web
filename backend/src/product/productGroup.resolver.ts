@@ -1,9 +1,9 @@
 import { ProductGroup } from '@/models/product-group.model';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateProductGroupDto } from './dto/createProductGroup.dto';
-import { ProductGroupService } from './productGroup.service';
 import { GetProductGroupsDto } from './dto/getProductGroup.dto';
-import { ProductGroupWithCategoryDto } from './dto/productGroupWithCategory.dto';
+import { ProductGroupService } from './productGroup.service';
+import { ParseIntPipe } from '@nestjs/common';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {
@@ -23,7 +23,7 @@ export class ProductGroupResolver {
   }
 
   @Query(() => GetProductGroupsDto)
-  getProductGroup(@Args('id', { type: () => ID }) id: string) {
+  getProductGroup(@Args('id', { type: () => ID }, ParseIntPipe) id: number) {
     return this.productGroupService.getProductGroup(id);
   }
 }

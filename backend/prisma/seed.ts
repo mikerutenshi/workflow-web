@@ -65,6 +65,7 @@ async function main() {
       skuNumeric: '12345',
       productCategoryId: flatCategory.id,
       name: null,
+      createdBy: standardUser.id,
     },
   });
 
@@ -126,9 +127,9 @@ async function main() {
   await prisma.laborCost.create({
     data: {
       productGroupId: someProductGroup.id,
-      drawingUpper: 3000,
-      drawingLining: 1000,
-      stitchingUpper: 4500,
+      drawingUpper: 1000,
+      drawingLining: 500,
+      stitchingUpper: 10000,
       stitchingOutsole: null,
       stitchingInsole: null,
       lasting: 5000,
