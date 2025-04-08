@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col cols="12" md="4">
+    <v-col md="4">
       <v-form class="pa-4" @submit.prevent="handleSubmit">
         <v-alert v-if="createError" type="error">
           {{ createError }}
@@ -10,58 +10,86 @@
         </v-alert>
         <v-text-field v-model="form.sku" label="SKU" />
 
-        <v-autocomplete
-          v-model="form.productGroupId"
-          label="Product Group"
-          auto-select-first
-          item-value="id"
-          item-title="skuNumeric"
-          :items="productGroupsData?.getProductGroups"
-          :loading="isFetchingProductGroups"
-        >
-          <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :subtitle="item.raw.productCategory.gender"
-              :title="item.raw.skuNumeric"
-            ></v-list-item>
-          </template>
-        </v-autocomplete>
-
-        <v-autocomplete
-          no-filter
-          v-model="selectedColors"
-          label="Select Colors"
-          multiple
-          chips
-          auto-select-first
-          :items="filteredColors"
-          :loading="isFetchingColors"
-          @update:search="onSearch"
-        >
-          <template #item="{ item, props }">
-            <v-list-item v-bind="props" :title="item.value.name">
-              <template #prepend>
-                <div
-                  class="color-box"
-                  :style="{ backgroundColor: item.value.hexCode }"
-                />
+        <v-row>
+          <v-col cols="10" md="11">
+            <v-autocomplete
+              v-model="form.productGroupId"
+              label="Product Group"
+              auto-select-first
+              item-value="id"
+              item-title="skuNumeric"
+              :items="productGroupsData?.getProductGroups"
+              :loading="isFetchingProductGroups"
+            >
+              <template v-slot:item="{ props, item }">
+                <v-list-item
+                  v-bind="props"
+                  :subtitle="item.raw.productCategory.gender"
+                  :title="item.raw.skuNumeric"
+                ></v-list-item>
               </template>
-            </v-list-item>
-          </template>
+            </v-autocomplete>
+          </v-col>
+          <v-col cols="2" md="1" class="d-flex justify-end">
+            <NuxtLink to="/product-groups/create">
+              <v-btn icon="mdi-plus" color="primary"></v-btn>
+            </NuxtLink>
+          </v-col>
+        </v-row>
 
-          <template #chip="{ item, index }">
-            <v-chip @click="remove(index)">
-              <template #prepend>
-                <div
-                  :style="{ backgroundColor: item.value.hexCode }"
-                  class="color-box"
-                ></div>
+        <v-row align="center">
+          <v-col cols="10" md="11">
+            <v-autocomplete
+              no-filter
+              v-model="selectedColors"
+              label="Select Colors"
+              multiple
+              chips
+              auto-select-first
+              :items="filteredColors"
+              :loading="isFetchingColors"
+              @update:search="onSearch"
+            >
+              <template #item="{ item, props }">
+                <v-list-item v-bind="props" :title="item.value.name">
+                  <template #prepend>
+                    <div
+                      class="color-box"
+                      :style="{ backgroundColor: item.value.hexCode }"
+                    />
+                  </template>
+                  <template #append>
+                    <NuxtLink to="/colors/create">
+                      <v-btn
+                        color="primary"
+                        icon="mdi-pencil"
+                        size="small"
+                        variant="text"
+                      ></v-btn>
+                    </NuxtLink>
+                  </template>
+                </v-list-item>
               </template>
-              <span>{{ item.value.name }}</span>
-            </v-chip>
-          </template>
-        </v-autocomplete>
+
+              <template #chip="{ item, index }">
+                <v-chip @click="remove(index)">
+                  <template #prepend>
+                    <div
+                      :style="{ backgroundColor: item.value.hexCode }"
+                      class="color-box"
+                    ></div>
+                  </template>
+                  <span>{{ item.value.name }}</span>
+                </v-chip>
+              </template>
+            </v-autocomplete>
+          </v-col>
+          <v-col cols="2" md="1" class="d-flex justify-end">
+            <NuxtLink to="/colors/create">
+              <v-btn icon="mdi-plus" color="primary"></v-btn>
+            </NuxtLink>
+          </v-col>
+        </v-row>
 
         <NuxtLink to="/products">
           <v-btn color="secondary" class="mr-4">Discard</v-btn>

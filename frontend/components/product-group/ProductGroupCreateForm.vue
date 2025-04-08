@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col cols="12" md="4" class="translucent-background">
-      <v-form class="pt-4" @submit.prevent="execute({ data: form })">
+      <v-form class="pa-4" @submit.prevent="execute({ data: form })">
         <v-alert v-if="error" type="error">
           {{
             error.graphqlErrors?.[0]?.extensions?.['originalError'] ??
@@ -29,9 +29,9 @@
         </v-autocomplete>
 
         <div class="mt-4">
-          <NuxtLink to="/product-groups">
-            <v-btn color="secondary" class="mr-4">Discard</v-btn>
-          </NuxtLink>
+          <v-btn color="secondary" class="mr-4" @click.stop="goPrevious"
+            >Discard</v-btn
+          >
           <v-btn :loading="isFetching" type="submit" color="primary"
             >Create</v-btn
           >
@@ -47,8 +47,10 @@ import {
   GetProductCategoriesDocument,
 } from '~/api/generated/types';
 import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
+const router = useRouter();
 const userId = authStore.user?.id ?? '';
 const form = reactive({
   skuNumeric: '',
@@ -58,7 +60,8 @@ const form = reactive({
 });
 const { execute, error, isFetching } = useMutation(CreateProductGroupDocument, {
   onData() {
-    navigateTo('/product-groups');
+    goPrevious();
+    // navigateTo('/product-groups');
   },
   clearCacheTags: [CACHE_PRODUCT_GROUPS],
 });
@@ -72,6 +75,9 @@ const {
 });
 const handleSubmit = () => {
   // todo
+};
+const goPrevious = () => {
+  router.go(-1);
 };
 
 watchEffect(() => {

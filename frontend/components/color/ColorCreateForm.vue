@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col cols="12" md="4" class="translucent-background">
-      <v-form class="pt-4" @submit.prevent="execute({ data: form })">
+      <v-form class="pa-4" @submit.prevent="execute({ data: form })">
         <v-alert v-if="error" type="error">
           {{
             error.graphqlErrors?.[0]?.extensions?.['originalError'] ??
@@ -20,9 +20,9 @@
         </v-sheet>
 
         <div class="mt-4">
-          <NuxtLink to="/colors">
-            <v-btn color="secondary" class="mr-4">Discard</v-btn>
-          </NuxtLink>
+          <v-btn color="secondary" class="mr-4" @click.stop="goPrevious"
+            >Discard</v-btn
+          >
           <v-btn :loading="isFetching" type="submit" color="primary"
             >Create</v-btn
           >
@@ -32,9 +32,15 @@
   </v-row>
 </template>
 <script setup lang="ts">
-import { useMutation } from 'villus';
+import { useMutation, useQuery } from 'villus';
 import { CreateColorDocument } from '~/api/generated/types';
+import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+const router = useRouter();
+
+const colorId = ref(route.params.id as string);
 const form = reactive({
   name: '',
   hexCode: '',
@@ -47,7 +53,13 @@ const { execute, error, isFetching } = useMutation(CreateColorDocument, {
 const handleSubmit = () => {
   // todo
 };
+const goPrevious = () => {
+  router.go(-1);
+};
 
+if (colorId.value) {
+  // todo
+}
 watchEffect(() => {
   console.log(JSON.stringify(form));
 });

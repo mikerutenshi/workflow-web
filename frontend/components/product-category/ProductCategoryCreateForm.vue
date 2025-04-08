@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col cols="12" md="4" class="translucent-background">
-      <v-form class="pt-4" @submit.prevent="execute({ data: form })">
+      <v-form class="pa-4" @submit.prevent="execute({ data: form })">
         <v-alert v-if="error" type="error">
           {{
             error.graphqlErrors?.[0]?.extensions?.['originalError'] ??
