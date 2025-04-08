@@ -3,9 +3,9 @@
     <v-data-table
       :headers="headers"
       :items="data.getProducts"
-      class="elevation-1 full-height pa-4"
       item-value="id"
       :sort-by="[{ key: 'id', order: 'asc' }]"
+      class="flex-grow-1"
     >
       <template v-slot:item.productColors="{ item }">
         {{ extractColors(item.productColors) }}
@@ -41,9 +41,6 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
-}
-.full-height {
-  flex-grow: 1; /* Expand to fill available space */
 }
 </style>
 

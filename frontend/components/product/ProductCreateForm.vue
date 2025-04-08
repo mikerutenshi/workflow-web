@@ -15,19 +15,27 @@
           label="Product Group"
           auto-select-first
           item-value="id"
-          item-title="concat"
-          :items="productGroupOptions"
+          item-title="skuNumeric"
+          :items="productGroupsData?.getProductGroups"
           :loading="isFetchingProductGroups"
-        />
+        >
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :subtitle="item.raw.productCategory.gender"
+              :title="item.raw.skuNumeric"
+            ></v-list-item>
+          </template>
+        </v-autocomplete>
 
-        <v-combobox
+        <v-autocomplete
           no-filter
           v-model="selectedColors"
           label="Select Colors"
           multiple
           chips
           auto-select-first
-          :items="colorOptions"
+          :items="filteredColors"
           :loading="isFetchingColors"
           @update:search="onSearch"
         >
@@ -53,7 +61,7 @@
               <span>{{ item.value.name }}</span>
             </v-chip>
           </template>
-        </v-combobox>
+        </v-autocomplete>
 
         <NuxtLink to="/products">
           <v-btn color="secondary" class="mr-4">Discard</v-btn>
@@ -98,14 +106,10 @@ import {
   type Color,
 } from '~/api/generated/types';
 import { useRoute } from 'vue-router';
+import { CACHE_COLORS } from '~/utils/cache-tags';
 
 const route = useRoute();
 const productId = ref(route.params.id as string);
-
-// if (productId !== undefined) {
-//   console.log(`ProductID -> ${productId}`);
-//   isEditing.value = true;
-// }
 
 const form = reactive({
   sku: '',
@@ -160,6 +164,10 @@ const {
   error: colorsError,
 } = useQuery({
   query: GetColorsDocument,
+  tags: [CACHE_COLORS],
+  onData: (data) => {
+    console.log(`onDataColors -> ${JSON.stringify(data.getColors)}`);
+  },
 });
 const {
   data: productGroupsData,
@@ -167,17 +175,7 @@ const {
   error: productGroupsError,
 } = useQuery({
   query: GetProductGroupsDocument,
-});
-
-const productGroupOptions = computed(() => {
-  if (productGroupsData.value) {
-    return productGroupsData.value.getProductGroups.map((productGroup) => ({
-      ...productGroup,
-      concat: `${productGroup.skuNumeric} (${productGroup.productCategory.gender})`,
-    }));
-  } else {
-    return [];
-  }
+  tags: [CACHE_PRODUCT_GROUPS],
 });
 
 const searchQuery = ref('');
@@ -185,7 +183,7 @@ const onSearch = (query: string) => {
   searchQuery.value = query;
 };
 const selectedColors = ref<Color[]>([] as Color[]);
-const colorOptions = computed(() => {
+const filteredColors = computed(() => {
   if (colorsData.value) {
     return colorsData.value.getColors.filter((color) => {
       return color.name.toLowerCase().includes(searchQuery.value.toLowerCase());
@@ -200,30 +198,27 @@ const remove = (index: number) => {
   }
 };
 
-watch([productGroupOptions, colorOptions], (newPgOpt, newCOpt) => {
-  if (newPgOpt && newCOpt && productId.value) {
-    useQuery({
-      query: GetProductDocument,
-      variables: { id: productId.value },
-      tags: [CACHE_PRODUCT],
-      onData: (data) => {
-        const product = data.getProduct;
-        form.sku = product.sku;
-        form.productGroupId = product.productGroup.id;
-        console.log(`product => ${JSON.stringify(product)}`);
-        const colorIds = product.productColors.map((productColor) => {
-          return productColor.color.id;
-        });
-        selectedColors.value = colorOptions.value.filter((color) => {
-          return colorIds.includes(color.id);
-        });
-      },
-      onError: (error) => {
-        alert(`Get Product Error -> ${error}`);
-      },
-    });
-  }
-});
+if (productId.value) {
+  useQuery({
+    query: GetProductDocument,
+    variables: { id: productId.value },
+    tags: [CACHE_PRODUCT],
+    onData: (data) => {
+      const product = data.getProduct;
+      form.sku = product.sku;
+      form.productGroupId = product.productGroup.id;
+      const colorIds = product.productColors.map((productColor) => {
+        return productColor.color.id;
+      });
+      selectedColors.value = filteredColors.value.filter((color) => {
+        return colorIds.includes(color.id);
+      });
+    },
+    onError: (error) => {
+      alert(`Get Product Error -> ${error}`);
+    },
+  });
+}
 
 watchEffect(() => {
   form.colorIds = selectedColors.value.map((color) => {

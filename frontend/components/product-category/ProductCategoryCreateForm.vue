@@ -9,7 +9,14 @@
           }}
         </v-alert>
         <v-text-field v-model="form.name" label="Name" />
-        <v-text-field v-model="form.gender" label="Gender" />
+        <v-autocomplete
+          v-model="form.gender"
+          label="Gender"
+          auto-select-first
+          item-value="id"
+          item-title="name"
+          :items="genders"
+        />
 
         <div class="mt-4">
           <NuxtLink to="/product-categories">
@@ -31,12 +38,14 @@ const form = reactive({
   name: '',
   gender: '',
 });
+const genders = ref(['MEN', 'WOMEN', 'KIDS']);
 const { execute, error, isFetching } = useMutation(
   CreatePrdouctCategoryDocument,
   {
     onData() {
       navigateTo('/product-categories');
     },
+    clearCacheTags: [CACHE_PRODUCT_CATEGORIES],
   }
 );
 const handleSubmit = () => {

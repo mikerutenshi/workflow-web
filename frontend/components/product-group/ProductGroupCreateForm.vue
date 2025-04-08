@@ -10,10 +10,23 @@
         </v-alert>
         <v-text-field v-model="form.skuNumeric" label="Sku Numeric" />
         <v-text-field v-model="form.name" label="Name" />
-        <v-text-field
+        <v-autocomplete
           v-model="form.productCategoryId"
-          label="Product Category ID"
-        />
+          label="Product Category"
+          auto-select-first
+          item-value="id"
+          item-title="name"
+          :items="data?.getProductCategories"
+          :loading="isFetchingQuery"
+        >
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :subtitle="item.raw.gender"
+              :title="item.raw.name"
+            ></v-list-item>
+          </template>
+        </v-autocomplete>
 
         <div class="mt-4">
           <NuxtLink to="/product-groups">
@@ -28,8 +41,11 @@
   </v-row>
 </template>
 <script setup lang="ts">
-import { useMutation } from 'villus';
-import { CreateProductGroupDocument } from '~/api/generated/types';
+import { useMutation, useQuery } from 'villus';
+import {
+  CreateProductGroupDocument,
+  GetProductCategoriesDocument,
+} from '~/api/generated/types';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
@@ -44,6 +60,15 @@ const { execute, error, isFetching } = useMutation(CreateProductGroupDocument, {
   onData() {
     navigateTo('/product-groups');
   },
+  clearCacheTags: [CACHE_PRODUCT_GROUPS],
+});
+const {
+  data,
+  error: queryError,
+  isFetching: isFetchingQuery,
+} = useQuery({
+  query: GetProductCategoriesDocument,
+  tags: [CACHE_PRODUCT_CATEGORIES],
 });
 const handleSubmit = () => {
   // todo
