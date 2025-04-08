@@ -75,7 +75,7 @@ const headers: ReadOnlyHeaders = [
 const extractColors = (productColors: any[]) => {
   let stringResult = '';
   (productColors as ProductColorsWithColor[]).forEach((productColor) => {
-    stringResult += `${productColor.order}) ${productColor.color.name}, `;
+    stringResult += `${productColor.order}. ${productColor.color.name}, `;
   });
   return stringResult.slice(0, -2);
 };

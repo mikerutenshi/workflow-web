@@ -30,8 +30,8 @@ export class ProductService {
         });
         const productId = newProduct.id;
 
+        let order = 1;
         for (const colorId of data.colorIds) {
-          let order = 1;
           await tx.productColors.create({
             data: {
               productId,
