@@ -53,89 +53,89 @@ async function main() {
     },
   });
 
-  const flatCategory = await prisma.productCategory.create({
-    data: {
-      name: 'Flat',
-      gender: 'WOMEN',
-    },
-  });
+  // const flatCategory = await prisma.productCategory.create({
+  //   data: {
+  //     name: 'Flat',
+  //     gender: 'WOMEN',
+  //   },
+  // });
 
-  const someProductGroup = await prisma.productGroup.create({
-    data: {
-      skuNumeric: '12345',
-      productCategoryId: flatCategory.id,
-      name: null,
-      createdBy: standardUser.id,
-    },
-  });
+  // const someProductGroup = await prisma.productGroup.create({
+  //   data: {
+  //     skuNumeric: '12345',
+  //     productCategoryId: flatCategory.id,
+  //     name: null,
+  //     createdBy: standardUser.id,
+  //   },
+  // });
 
-  const darkBrownColor = await prisma.color.upsert({
-    where: { name: 'Dark Brown' },
-    update: {},
-    create: { name: 'Dark Brown', hexCode: '#654321' },
-  });
+  // const darkBrownColor = await prisma.color.upsert({
+  //   where: { name: 'Dark Brown' },
+  //   update: {},
+  //   create: { name: 'Dark Brown', hexCode: '#654321' },
+  // });
 
-  const lightBrownColor = await prisma.color.upsert({
-    where: { name: 'light Brown' },
-    update: {},
-    create: { name: 'Light Brown', hexCode: '#b5651d' },
-  });
+  // const lightBrownColor = await prisma.color.upsert({
+  //   where: { name: 'light Brown' },
+  //   update: {},
+  //   create: { name: 'Light Brown', hexCode: '#b5651d' },
+  // });
 
-  try {
-    await prisma.$transaction(async (tx) => {
-      const newProduct = await tx.product.create({
-        data: {
-          sku: 'A12345-D.Brown/L.Brown',
-          productGroupId: someProductGroup.id,
-          createdBy: standardUser.id,
-        },
-      });
+  // try {
+  //   await prisma.$transaction(async (tx) => {
+  //     const newProduct = await tx.product.create({
+  //       data: {
+  //         sku: 'A12345-D.Brown/L.Brown',
+  //         productGroupId: someProductGroup.id,
+  //         createdBy: standardUser.id,
+  //       },
+  //     });
 
-      await tx.productColors.upsert({
-        where: {
-          productId_colorId: {
-            productId: newProduct.id,
-            colorId: darkBrownColor.id,
-          },
-        },
-        update: {},
-        create: {
-          productId: newProduct.id,
-          colorId: darkBrownColor.id,
-          order: 1,
-        },
-      });
-      await tx.productColors.upsert({
-        where: {
-          productId_colorId: {
-            productId: newProduct.id,
-            colorId: lightBrownColor.id,
-          },
-        },
-        update: {},
-        create: {
-          productId: newProduct.id,
-          colorId: lightBrownColor.id,
-          order: 2,
-        },
-      });
-    });
-  } catch (error) {
-    console.error('Error creating Product and ProductColors: ', error);
-  }
+  //     await tx.productColors.upsert({
+  //       where: {
+  //         productId_colorId: {
+  //           productId: newProduct.id,
+  //           colorId: darkBrownColor.id,
+  //         },
+  //       },
+  //       update: {},
+  //       create: {
+  //         productId: newProduct.id,
+  //         colorId: darkBrownColor.id,
+  //         order: 1,
+  //       },
+  //     });
+  //     await tx.productColors.upsert({
+  //       where: {
+  //         productId_colorId: {
+  //           productId: newProduct.id,
+  //           colorId: lightBrownColor.id,
+  //         },
+  //       },
+  //       update: {},
+  //       create: {
+  //         productId: newProduct.id,
+  //         colorId: lightBrownColor.id,
+  //         order: 2,
+  //       },
+  //     });
+  //   });
+  // } catch (error) {
+  //   console.error('Error creating Product and ProductColors: ', error);
+  // }
 
-  await prisma.laborCost.create({
-    data: {
-      productGroupId: someProductGroup.id,
-      drawingUpper: 1000,
-      drawingLining: 500,
-      stitchingUpper: 10000,
-      stitchingOutsole: null,
-      stitchingInsole: null,
-      lasting: 5000,
-      createdBy: standardUser.id,
-    },
-  });
+  // await prisma.laborCost.create({
+  //   data: {
+  //     productGroupId: someProductGroup.id,
+  //     drawingUpper: 1000,
+  //     drawingLining: 500,
+  //     stitchingUpper: 10000,
+  //     stitchingOutsole: null,
+  //     stitchingInsole: null,
+  //     lasting: 5000,
+  //     createdBy: standardUser.id,
+  //   },
+  // });
 
   console.log('Seeding is complete');
 }
