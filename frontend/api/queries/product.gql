@@ -45,6 +45,16 @@ mutation createColor($data: CreateColorDto!) {
   }
 }
 
+mutation updateColor($id: ID!, $data: CreateColorDto!) {
+  updateColor(id: $id, data: $data) {
+    id
+  }
+}
+
+mutation deleteColor($id: ID!) {
+  deleteColor(id: $id)
+}
+
 mutation createProduct($data: CreateProductDto!) {
   createProduct(data: $data) {
     id
@@ -81,6 +91,12 @@ query getProductCategories {
 
 query getColors {
   getColors {
+    ...ColorFrag
+  }
+}
+
+query getColor($id: ID!) {
+  getColor(id: $id) {
     ...ColorFrag
   }
 }

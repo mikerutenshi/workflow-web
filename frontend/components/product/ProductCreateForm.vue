@@ -59,7 +59,7 @@
                     />
                   </template>
                   <template #append>
-                    <NuxtLink to="/colors/create">
+                    <NuxtLink :to="`/colors/update/${item.raw.id}`">
                       <v-btn
                         color="primary"
                         icon="mdi-pencil"

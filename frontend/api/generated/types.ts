@@ -178,10 +178,12 @@ export type Mutation = {
   createRole: Role;
   createUser: User;
   deleteArtisan: Scalars['Boolean']['output'];
+  deleteColor: Scalars['Boolean']['output'];
   deleteProduct: Scalars['Boolean']['output'];
   logIn: User;
   logOut: User;
   updateArtisan: Artisan;
+  updateColor: Color;
   updateLaborCost: LaborCost;
   updateProduct: Product;
 };
@@ -222,6 +224,10 @@ export type MutationDeleteArtisanArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type MutationDeleteColorArgs = {
+  id: Scalars['ID']['input'];
+};
+
 export type MutationDeleteProductArgs = {
   id: Scalars['ID']['input'];
 };
@@ -232,6 +238,11 @@ export type MutationLogInArgs = {
 
 export type MutationUpdateArtisanArgs = {
   data: CreateArtisanDto;
+  id: Scalars['ID']['input'];
+};
+
+export type MutationUpdateColorArgs = {
+  data: CreateColorDto;
   id: Scalars['ID']['input'];
 };
 
@@ -311,6 +322,7 @@ export type ProductWithColorDto = {
 export type Query = {
   __typename?: 'Query';
   getArtisans: Array<Artisan>;
+  getColor: Color;
   getColors: Array<Color>;
   getLaborCosts: Array<LaborCost>;
   getProduct: GetProductsDto;
@@ -320,6 +332,10 @@ export type Query = {
   getProducts: Array<GetProductsDto>;
   getUsers: Array<User>;
   me: User;
+};
+
+export type QueryGetColorArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type QueryGetProductArgs = {
@@ -545,6 +561,25 @@ export type CreateColorMutation = {
   };
 };
 
+export type UpdateColorMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  data: CreateColorDto;
+}>;
+
+export type UpdateColorMutation = {
+  __typename?: 'Mutation';
+  updateColor: { __typename?: 'Color'; id: string };
+};
+
+export type DeleteColorMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+export type DeleteColorMutation = {
+  __typename?: 'Mutation';
+  deleteColor: boolean;
+};
+
 export type CreateProductMutationVariables = Exact<{
   data: CreateProductDto;
 }>;
@@ -616,6 +651,15 @@ export type GetColorsQuery = {
     name: string;
     hexCode: string;
   }>;
+};
+
+export type GetColorQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+export type GetColorQuery = {
+  __typename?: 'Query';
+  getColor: { __typename?: 'Color'; id: string; name: string; hexCode: string };
 };
 
 export type GetProductGroupsQueryVariables = Exact<{ [key: string]: never }>;
@@ -1446,6 +1490,109 @@ export const CreateColorDocument = {
     },
   ],
 } as unknown as DocumentNode<CreateColorMutation, CreateColorMutationVariables>;
+export const UpdateColorDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'updateColor' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'data' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'CreateColorDto' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'updateColor' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'data' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'data' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<UpdateColorMutation, UpdateColorMutationVariables>;
+export const DeleteColorDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'deleteColor' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'deleteColor' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<DeleteColorMutation, DeleteColorMutationVariables>;
 export const CreateProductDocument = {
   kind: 'Document',
   definitions: [
@@ -1815,6 +1962,70 @@ export const GetColorsDocument = {
     },
   ],
 } as unknown as DocumentNode<GetColorsQuery, GetColorsQueryVariables>;
+export const GetColorDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'getColor' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'getColor' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ColorFrag' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ColorFrag' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Color' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'hexCode' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetColorQuery, GetColorQueryVariables>;
 export const GetProductGroupsDocument = {
   kind: 'Document',
   definitions: [

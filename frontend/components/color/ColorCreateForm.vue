@@ -1,11 +1,17 @@
 <template>
   <v-row justify="center">
     <v-col cols="12" md="4" class="translucent-background">
-      <v-form class="pa-4" @submit.prevent="execute({ data: form })">
-        <v-alert v-if="error" type="error">
+      <v-form class="pa-4" @submit.prevent="handleSubmit">
+        <v-alert v-if="createError" type="error">
           {{
-            error.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            error.message
+            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            createError.message
+          }}
+        </v-alert>
+        <v-alert v-if="updateError" type="error">
+          {{
+            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            updateError.message
           }}
         </v-alert>
         <v-text-field v-model="form.name" label="Name" />
@@ -19,12 +25,27 @@
           ></v-color-picker>
         </v-sheet>
 
-        <div class="mt-4">
-          <v-btn color="secondary" class="mr-4" @click.stop="goPrevious"
+        <div class="d-flex mt-4">
+          <v-btn color="secondary" class="mr-4" @click="goPrevious"
             >Discard</v-btn
           >
-          <v-btn :loading="isFetching" type="submit" color="primary"
+          <v-btn
+            v-if="colorId"
+            :loading="isUpdating"
+            type="submit"
+            color="primary"
+            >Update</v-btn
+          >
+          <v-btn v-else :loading="isCreating" type="submit" color="primary"
             >Create</v-btn
+          >
+          <v-btn
+            v-if="colorId"
+            type="button"
+            color="error"
+            class="ml-auto"
+            @click="executeDelete({ id: colorId })"
+            >Delete</v-btn
           >
         </div>
       </v-form>
@@ -33,7 +54,12 @@
 </template>
 <script setup lang="ts">
 import { useMutation, useQuery } from 'villus';
-import { CreateColorDocument } from '~/api/generated/types';
+import {
+  CreateColorDocument,
+  DeleteColorDocument,
+  GetColorDocument,
+  UpdateColorDocument,
+} from '~/api/generated/types';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 
@@ -45,21 +71,61 @@ const form = reactive({
   name: '',
   hexCode: '',
 });
-const { execute, error, isFetching } = useMutation(CreateColorDocument, {
+
+const {
+  execute: executeCreate,
+  error: createError,
+  isFetching: isCreating,
+} = useMutation(CreateColorDocument, {
   onData() {
-    navigateTo('/colors');
+    goPrevious();
   },
 });
-const handleSubmit = () => {
-  // todo
-};
+const {
+  execute: executeUpdate,
+  error: updateError,
+  isFetching: isUpdating,
+} = useMutation(UpdateColorDocument, {
+  onData() {
+    goPrevious();
+  },
+  clearCacheTags: [CACHE_COLORS, CACHE_COLOR],
+});
+const { execute: executeDelete } = useMutation(DeleteColorDocument, {
+  clearCacheTags: [CACHE_COLORS],
+  onData() {
+    goPrevious();
+  },
+  onError(err) {
+    alert(`Error while deleting color -> ${err}`);
+  },
+});
+
+if (colorId.value) {
+  useQuery({
+    query: GetColorDocument,
+    variables: { id: colorId.value },
+    tags: [CACHE_COLOR],
+    onData(colorData) {
+      if (colorData.getColor) {
+        form.name = colorData.getColor.name;
+        form.hexCode = colorData.getColor.hexCode;
+      }
+    },
+  });
+}
+
 const goPrevious = () => {
   router.go(-1);
 };
+const handleSubmit = () => {
+  if (colorId.value) {
+    executeUpdate({ id: colorId.value, data: form });
+  } else {
+    executeCreate({ data: form });
+  }
+};
 
-if (colorId.value) {
-  // todo
-}
 watchEffect(() => {
   console.log(JSON.stringify(form));
 });

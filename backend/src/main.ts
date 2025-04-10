@@ -9,9 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3001;
-  const dbUrl = configService.get<string>('DATABASE_URL');
-  console.log(`dbUrl -> ${dbUrl}`);
-  console.log(`env -> ${process.env.NODE_ENV}`);
+  console.log(`Env -> ${process.env.NODE_ENV}`);
 
   app.use(cookieParser());
   app.useGlobalPipes(
@@ -31,16 +29,16 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  try {
-    // console.log('Running Prisma db push...');
-    // execSync('npx prisma db push', { stdio: 'inherit' });
+  // try {
+  // console.log('Running Prisma db push...');
+  // execSync('npx prisma db push', { stdio: 'inherit' });
 
-    console.log('Running Prisma db seed...');
-    execSync('npx prisma db seed', { stdio: 'inherit' });
+  //   console.log('Running Prisma db seed...');
+  //   execSync('npx prisma db seed', { stdio: 'inherit' });
 
-    console.log('Prisma setup completed.');
-  } catch (error) {
-    console.error('Error executing Prisma commands:', error);
-  }
+  //   console.log('Prisma setup completed.');
+  // } catch (error) {
+  //   console.error('Error executing Prisma commands:', error);
+  // }
 }
 bootstrap();

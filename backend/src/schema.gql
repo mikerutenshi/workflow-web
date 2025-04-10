@@ -161,6 +161,7 @@ type Query {
   getUsers: [User!]!
   me: User!
   getColors: [Color!]!
+  getColor(id: ID!): Color!
   getProducts: [GetProductsDto!]!
   getProduct(id: ID!): GetProductsDto!
   getProductCategories: [ProductCategory!]!
@@ -176,6 +177,8 @@ type Mutation {
   logIn(data: LogInDto!): User!
   logOut: User!
   createColor(data: CreateColorDto!): Color!
+  updateColor(id: ID!, data: CreateColorDto!): Color!
+  deleteColor(id: ID!): Boolean!
   createProduct(data: CreateProductDto!): Product!
   updateProduct(id: ID!, data: CreateProductDto!): Product!
   deleteProduct(id: ID!): Boolean!
