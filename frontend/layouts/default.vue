@@ -38,18 +38,17 @@
       </template>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" temporary app>
-      <v-list dense>
+    <v-navigation-drawer v-model="drawer" app width="280" temporary>
+      <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
           <v-list-group v-if="navItem.children">
             <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props">
-                <v-avatar class="d-inline mr-4">
-                  <v-icon>{{ navItem.icon }}</v-icon>
-                </v-avatar>
-                <v-list-item-title class="d-inline">{{
-                  navItem.title
-                }}</v-list-item-title>
+              <v-list-item
+                v-bind="props"
+                :title="navItem.title"
+                :prepend-icon="navItem.icon"
+                slim
+              >
               </v-list-item>
             </template>
 
@@ -58,38 +57,23 @@
               :key="childIndex"
               :to="child.route"
               router
+              :title="child.title"
+              :prepend-icon="child.icon"
+              slim
             >
-              <div>
-                <v-avatar class="d-inline mr-4">
-                  <v-icon>{{ child.icon }}</v-icon>
-                </v-avatar>
-                <v-list-item-title class="d-inline">{{
-                  child.title
-                }}</v-list-item-title>
-              </div>
             </v-list-item>
           </v-list-group>
 
-          <v-list-item v-else :to="navItem.route" router>
-            <v-avatar class="d-inline mr-4">
-              <v-icon>{{ navItem.icon }}</v-icon>
-            </v-avatar>
-            <v-list-item-title class="d-inline">{{
-              navItem.title
-            }}</v-list-item-title>
+          <v-list-item
+            v-else
+            :to="navItem.route"
+            router
+            :title="navItem.title"
+            :prepend-icon="navItem.icon"
+            slim
+          >
           </v-list-item>
         </template>
-        <!-- <v-list-item
-          v-for="(item, index) in navItems"
-          :key="index"
-          :to="item.route"
-          router
-        >
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-          <v-avatar>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-avatar>
-        </v-list-item> -->
       </v-list>
     </v-navigation-drawer>
 
@@ -117,21 +101,8 @@ const navItems = [
   { title: 'Home', route: '/', icon: 'mdi-home' },
   {
     title: 'Products',
+    route: '/products',
     icon: 'mdi-shoe-formal',
-    children: [
-      { title: 'All Products', route: '/products', icon: 'mdi-shoe-formal' },
-      {
-        title: 'All Product Groups',
-        route: '/product-groups',
-        icon: 'mdi-basket',
-      },
-      {
-        title: 'All Product Categories',
-        route: '/product-categories',
-        icon: 'mdi-shape',
-      },
-      { title: 'All Colors', route: '/colors', icon: 'mdi-palette' },
-    ],
   },
   {
     title: 'Production Costs',
@@ -142,6 +113,23 @@ const navItems = [
     title: 'Artisans',
     route: '/artisans',
     icon: 'mdi-face-man',
+  },
+  {
+    title: 'Utility',
+    icon: 'mdi-tools',
+    children: [
+      {
+        title: 'Product Groups',
+        route: '/product-groups',
+        icon: 'mdi-basket',
+      },
+      {
+        title: 'Product Categories',
+        route: '/product-categories',
+        icon: 'mdi-shape',
+      },
+      { title: 'Colors', route: '/colors', icon: 'mdi-palette' },
+    ],
   },
 ];
 
