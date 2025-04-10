@@ -51,7 +51,4 @@ watch(data, (loginData) => {
     navigateTo('/');
   }
 });
-// watchEffect(() => {
-//   authStore.user = data.value?.logIn || null;
-// });
 </script>

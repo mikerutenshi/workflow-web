@@ -10,7 +10,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - 3001:3001
+      - 3006:3001
     networks:
       - workflow-network
   frontend:
@@ -22,7 +22,7 @@ services:
     depends_on:
       - backend
     ports:
-      - 3000:3000
+      - 3005:3000
     networks:
       - workflow-network
     #fix nitro worker eaddrinuse

@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt build --dotenv .env.staging",
     "start": "node .output/server/index.mjs",
-    "dev": "nuxt dev",
-    "debug": "nuxt dev --inspect=9230",
+    "dev": "nuxt dev --dotenv .env.development",
+    "debug": "nuxt dev --inspect=9230 --dotenv .env.development",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
