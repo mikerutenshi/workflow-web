@@ -12,9 +12,13 @@ import { DateScalar } from './scalars/date.scalar';
 import { authenticateUserByRequest } from './auth/auth.middleware';
 import { ProductModule } from './product/product.module';
 import { ArtisanModule } from './artisan/artisan.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+    }),
     AuthModule,
     PrismaModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({

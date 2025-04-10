@@ -15,7 +15,13 @@ FROM base AS staging
 RUN npm install
 COPY . .
 EXPOSE 3001
-CMD /wait && npm start
+CMD ["/bin/sh", "-c", "/wait && npm run start:staging"]
+
+FROM base AS production
+RUN npm install
+COPY . .
+EXPOSE 3001
+CMD ["/bin/sh", "-c", "/wait && npm run start"]
 
 # COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 # ENTRYPOINT ["docker-entrypoint.sh"]

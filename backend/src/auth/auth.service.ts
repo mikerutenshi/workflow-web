@@ -77,10 +77,7 @@ export class AuthService {
       );
 
       if (isPasswordCorrect) {
-        const accessToken = this.jwtService.sign(
-          { sub: user.id },
-          { expiresIn: '30 days' },
-        );
+        const accessToken = this.jwtService.sign({ sub: user.id });
 
         return { user, accessToken };
       } else {
