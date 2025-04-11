@@ -266,9 +266,19 @@ if (productId.value) {
       const colorIds = product.productColors.map((productColor) => {
         return productColor.color.id;
       });
-      selectedColors.value = filteredColors.value.filter((color) => {
-        return colorIds.includes(color.id);
-      });
+
+      // selectedColors.value = filteredColors.value.filter((color) => {
+      //   return colorIds.includes(color.id);
+      // });
+      const colors = colorIds
+        .map((id) => {
+          const matched = filteredColors.value.find((color) => {
+            return color.id == id;
+          });
+          return matched ? { ...matched } : null;
+        })
+        .filter((color): color is Color => color !== null);
+      selectedColors.value = colors;
     },
     onError: (error) => {
       alert(`Get Product Error -> ${error}`);

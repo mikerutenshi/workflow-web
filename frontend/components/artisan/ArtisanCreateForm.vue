@@ -57,6 +57,7 @@ import {
   CreateArtisanDocument,
   DeleteArtisanDocument,
   GetArtisanDocument,
+  Job,
   UpdateArtisanDocument,
 } from '~/api/generated/types';
 import { useRoute } from 'vue-router';
@@ -70,7 +71,7 @@ const errorMessage = ref('');
 const form = reactive({
   firstName: '',
   lastName: undefined as string | undefined,
-  jobs: [] as string[],
+  jobs: [] as Job[],
   createdBy: userId,
   updatedBy: undefined as string | undefined,
 });
