@@ -165,6 +165,7 @@ type Query {
   getProducts: [GetProductsDto!]!
   getProduct(id: ID!): GetProductsDto!
   getProductCategories: [ProductCategory!]!
+  getProductCategory(id: ID!): ProductCategory!
   getProductGroups: [GetProductGroupsDto!]!
   getProductGroup(id: ID!): GetProductGroupsDto!
   getLaborCosts: [LaborCost!]!
@@ -183,6 +184,8 @@ type Mutation {
   updateProduct(id: ID!, data: CreateProductDto!): Product!
   deleteProduct(id: ID!): Boolean!
   createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
+  updateProductCategory(id: ID!, data: CreateProductCategoryDto!): ProductCategory!
+  deleteProductCategory(id: ID!): Boolean!
   createProductGroup(data: CreateProductGroupDto!): ProductGroup!
   updateProductGroup(id: ID!, data: CreateProductGroupDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!

@@ -17,6 +17,12 @@ export class ProductCategoryService {
       },
     });
   }
+  updateProductCategory(
+    id: number,
+    data: CreateProductCategoryDto,
+  ): Promise<ProductCategory> {
+    return this.prisma.productCategory.update({ where: { id }, data });
+  }
 
   async getProductCategories(): Promise<ProductCategory[]> {
     return await this.prisma.productCategory.findMany();
@@ -35,5 +41,16 @@ export class ProductCategoryService {
       throw new Error('Product category not found');
     }
     return category;
+  }
+
+  async deleteProductCategory(id: number): Promise<Boolean> {
+    const productCategory = await this.prisma.productGroup.delete({
+      where: { id },
+    });
+
+    if (!productCategory)
+      throw Error(`Delete product category with ID ${id} failed.`);
+
+    return true;
   }
 }

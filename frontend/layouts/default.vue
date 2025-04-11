@@ -38,7 +38,7 @@
       </template>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app width="280" temporary>
+    <v-navigation-drawer v-model="drawer" app rail expand-on-hover>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
           <v-list-group v-if="navItem.children">
@@ -114,23 +114,23 @@ const navItems = [
     route: '/artisans',
     icon: 'mdi-face-man',
   },
-  {
-    title: 'Utility',
-    icon: 'mdi-tools',
-    children: [
-      {
-        title: 'Product Groups',
-        route: '/product-groups',
-        icon: 'mdi-basket',
-      },
-      {
-        title: 'Product Categories',
-        route: '/product-categories',
-        icon: 'mdi-shape',
-      },
-      { title: 'Colors', route: '/colors', icon: 'mdi-palette' },
-    ],
-  },
+  // {
+  //   title: 'Utility',
+  //   icon: 'mdi-tools',
+  //   children: [
+  //     {
+  //       title: 'Product Groups',
+  //       route: '/product-groups',
+  //       icon: 'mdi-basket',
+  //     },
+  //     {
+  //       title: 'Product Categories',
+  //       route: '/product-categories',
+  //       icon: 'mdi-shape',
+  //     },
+  //     { title: 'Colors', route: '/colors', icon: 'mdi-palette' },
+  //   ],
+  // },
 ];
 
 const appBarTitle = computed(() => {

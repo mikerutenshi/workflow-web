@@ -8,32 +8,59 @@
             createError.message
           }}
         </v-alert>
+        <v-alert v-if="updateError" type="error">
+          {{
+            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            updateError.message
+          }}
+        </v-alert>
         <v-text-field v-model="form.skuNumeric" label="Sku Numeric" />
         <v-text-field v-model="form.name" label="Name" />
-        <v-autocomplete
-          v-model="form.productCategoryId"
-          label="Product Category"
-          auto-select-first
-          item-value="id"
-          item-title="name"
-          :items="data?.getProductCategories"
-          :loading="isFetchingQuery"
-        >
-          <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :subtitle="item.raw.gender"
-              :title="item.raw.name"
-            ></v-list-item>
-          </template>
-        </v-autocomplete>
 
-        <div class="mt-4">
+        <v-row>
+          <v-col cols="10" md="11">
+            <v-autocomplete
+              v-model="form.productCategoryId"
+              label="Product Category"
+              auto-select-first
+              item-value="id"
+              item-title="name"
+              :items="data?.getProductCategories"
+              :loading="isFetchingQuery"
+            >
+              <template v-slot:item="{ props, item }">
+                <v-list-item
+                  v-bind="props"
+                  :subtitle="item.raw.gender"
+                  :title="item.raw.name"
+                >
+                  <template #append>
+                    <NuxtLink :to="`/product-categories/update/${item.raw.id}`">
+                      <v-btn
+                        color="primary"
+                        icon="mdi-pencil"
+                        size="small"
+                        variant="text"
+                      ></v-btn>
+                    </NuxtLink>
+                  </template>
+                </v-list-item>
+              </template>
+            </v-autocomplete>
+          </v-col>
+          <v-col cols="2" md="1" class="ml-auto">
+            <NuxtLink to="/product-categories/create">
+              <v-btn icon="mdi-plus" color="primary"></v-btn>
+            </NuxtLink>
+          </v-col>
+        </v-row>
+
+        <div class="d-flex mt-4">
           <v-btn color="secondary" class="mr-4" @click="goPrevious"
             >Discard</v-btn
           >
           <v-btn
-            v-if="!pGId"
+            v-if="!productGroupId"
             :loading="isCreating"
             type="submit"
             color="primary"
@@ -41,6 +68,14 @@
           >
           <v-btn v-else :loading="isUpdating" type="submit" color="primary"
             >Update</v-btn
+          >
+          <v-btn
+            v-if="productGroupId"
+            type="button"
+            color="error"
+            class="ml-auto"
+            @click="executeDelete({ id: productGroupId })"
+            >Delete</v-btn
           >
         </div>
       </v-form>
@@ -51,6 +86,7 @@
 import { useMutation, useQuery } from 'villus';
 import {
   CreateProductGroupDocument,
+  DeleteProductGroupDocument,
   GetProductCategoriesDocument,
   GetProductGroupDocument,
   UpdateProductGroupDocument,
@@ -60,7 +96,7 @@ import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const pGId = ref(route.params.id as string);
+const productGroupId = ref(route.params.id as string);
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -101,18 +137,27 @@ const {
   query: GetProductCategoriesDocument,
   tags: [CACHE_PRODUCT_CATEGORIES],
 });
+const { execute: executeDelete } = useMutation(DeleteProductGroupDocument, {
+  clearCacheTags: [CACHE_PRODUCT_GROUPS],
+  onData() {
+    goPrevious();
+  },
+  onError(err) {
+    alert(`Error while deleting product group -> ${err}`);
+  },
+});
 const handleSubmit = () => {
-  if (pGId.value) {
-    executeUpdate({ id: pGId.value, data: form });
+  if (productGroupId.value) {
+    executeUpdate({ id: productGroupId.value, data: form });
   } else {
     executeCreate({ data: form });
   }
 };
 
-if (pGId.value) {
+if (productGroupId.value) {
   useQuery({
     query: GetProductGroupDocument,
-    variables: { id: pGId.value },
+    variables: { id: productGroupId.value },
     onData(data) {
       const pg = data.getProductGroup;
       form.skuNumeric = pg.skuNumeric;
@@ -125,7 +170,7 @@ if (pGId.value) {
     },
     tags: [CACHE_PRODUCT_GROUP],
   });
-  form.updatedBy = pGId.value;
+  form.updatedBy = productGroupId.value;
 }
 const goPrevious = () => {
   router.go(-1);

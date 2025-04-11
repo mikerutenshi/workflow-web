@@ -29,6 +29,14 @@ mutation createPrdouctCategory($data: CreateProductCategoryDto!) {
     ...ProductCategoryFrag
   }
 }
+mutation updateProductCategory($id: ID!, $data: CreateProductCategoryDto!) {
+  updateProductCategory(id: $id, data: $data) {
+    id
+  }
+}
+mutation deleteProductCategory($id: ID!) {
+  deleteProductCategory(id: $id)
+}
 
 mutation createProductGroup($data: CreateProductGroupDto!) {
   createProductGroup(data: $data) {
@@ -93,6 +101,11 @@ mutation updateLaborCost($id: ID!, $data: CreateLaborCostDto!) {
 
 query getProductCategories {
   getProductCategories {
+    ...ProductCategoryFrag
+  }
+}
+query getProductCategory($id: ID!) {
+  getProductCategory(id: $id) {
     ...ProductCategoryFrag
   }
 }

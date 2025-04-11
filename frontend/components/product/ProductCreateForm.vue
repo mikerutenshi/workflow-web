@@ -102,19 +102,29 @@
           </v-col>
         </v-row>
 
-        <NuxtLink to="/products">
-          <v-btn color="secondary" class="mr-4">Discard</v-btn>
-        </NuxtLink>
-        <v-btn
-          v-if="productId"
-          :loading="isUpdating"
-          type="submit"
-          color="primary"
-          >Update</v-btn
-        >
-        <v-btn v-else :loading="isCreating" type="submit" color="primary"
-          >Create</v-btn
-        >
+        <div class="d-flex mt-4">
+          <NuxtLink to="/products">
+            <v-btn color="secondary" class="mr-4">Discard</v-btn>
+          </NuxtLink>
+          <v-btn
+            v-if="productId"
+            :loading="isUpdating"
+            type="submit"
+            color="primary"
+            >Update</v-btn
+          >
+          <v-btn v-else :loading="isCreating" type="submit" color="primary"
+            >Create</v-btn
+          >
+          <v-btn
+            v-if="productId"
+            type="button"
+            color="error"
+            class="ml-auto"
+            @click="executeDelete({ id: productId })"
+            >Delete</v-btn
+          >
+        </div>
       </v-form>
     </v-col>
   </v-row>
@@ -143,6 +153,7 @@ import {
   GetProductDocument,
   GetProductGroupsDocument,
   type Color,
+  DeleteProductDocument,
 } from '~/api/generated/types';
 import { useRoute } from 'vue-router';
 import { CACHE_COLORS } from '~/utils/cache-tags';
@@ -179,6 +190,15 @@ const {
     navigateTo('/products');
   },
   clearCacheTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
+});
+const { execute: executeDelete } = useMutation(DeleteProductDocument, {
+  clearCacheTags: [CACHE_PRODUCTS],
+  onData() {
+    navigateTo('/products');
+  },
+  onError(err) {
+    alert(`Error while deleting product -> ${err}`);
+  },
 });
 
 const handleSubmit = async () => {

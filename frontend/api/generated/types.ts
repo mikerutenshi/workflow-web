@@ -180,6 +180,7 @@ export type Mutation = {
   deleteArtisan: Scalars['Boolean']['output'];
   deleteColor: Scalars['Boolean']['output'];
   deleteProduct: Scalars['Boolean']['output'];
+  deleteProductCategory: Scalars['Boolean']['output'];
   deleteProductGroup: Scalars['Boolean']['output'];
   logIn: User;
   logOut: User;
@@ -187,6 +188,7 @@ export type Mutation = {
   updateColor: Color;
   updateLaborCost: LaborCost;
   updateProduct: Product;
+  updateProductCategory: ProductCategory;
   updateProductGroup: ProductGroup;
 };
 
@@ -234,6 +236,10 @@ export type MutationDeleteProductArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type MutationDeleteProductCategoryArgs = {
+  id: Scalars['ID']['input'];
+};
+
 export type MutationDeleteProductGroupArgs = {
   id: Scalars['ID']['input'];
 };
@@ -259,6 +265,11 @@ export type MutationUpdateLaborCostArgs = {
 
 export type MutationUpdateProductArgs = {
   data: CreateProductDto;
+  id: Scalars['ID']['input'];
+};
+
+export type MutationUpdateProductCategoryArgs = {
+  data: CreateProductCategoryDto;
   id: Scalars['ID']['input'];
 };
 
@@ -338,6 +349,7 @@ export type Query = {
   getLaborCosts: Array<LaborCost>;
   getProduct: GetProductsDto;
   getProductCategories: Array<ProductCategory>;
+  getProductCategory: ProductCategory;
   getProductGroup: GetProductGroupsDto;
   getProductGroups: Array<GetProductGroupsDto>;
   getProducts: Array<GetProductsDto>;
@@ -350,6 +362,10 @@ export type QueryGetColorArgs = {
 };
 
 export type QueryGetProductArgs = {
+  id: Scalars['ID']['input'];
+};
+
+export type QueryGetProductCategoryArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -543,6 +559,25 @@ export type CreatePrdouctCategoryMutation = {
   };
 };
 
+export type UpdateProductCategoryMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  data: CreateProductCategoryDto;
+}>;
+
+export type UpdateProductCategoryMutation = {
+  __typename?: 'Mutation';
+  updateProductCategory: { __typename?: 'ProductCategory'; id: string };
+};
+
+export type DeleteProductCategoryMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+export type DeleteProductCategoryMutation = {
+  __typename?: 'Mutation';
+  deleteProductCategory: boolean;
+};
+
 export type CreateProductGroupMutationVariables = Exact<{
   data: CreateProductGroupDto;
 }>;
@@ -669,6 +704,20 @@ export type GetProductCategoriesQuery = {
     name: string;
     gender: Gender;
   }>;
+};
+
+export type GetProductCategoryQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+export type GetProductCategoryQuery = {
+  __typename?: 'Query';
+  getProductCategory: {
+    __typename?: 'ProductCategory';
+    id: string;
+    name: string;
+    gender: Gender;
+  };
 };
 
 export type GetColorsQueryVariables = Exact<{ [key: string]: never }>;
@@ -1398,6 +1447,115 @@ export const CreatePrdouctCategoryDocument = {
   CreatePrdouctCategoryMutation,
   CreatePrdouctCategoryMutationVariables
 >;
+export const UpdateProductCategoryDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'updateProductCategory' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'data' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'CreateProductCategoryDto' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'updateProductCategory' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'data' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'data' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateProductCategoryMutation,
+  UpdateProductCategoryMutationVariables
+>;
+export const DeleteProductCategoryDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'deleteProductCategory' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'deleteProductCategory' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DeleteProductCategoryMutation,
+  DeleteProductCategoryMutationVariables
+>;
 export const CreateProductGroupDocument = {
   kind: 'Document',
   definitions: [
@@ -2058,6 +2216,73 @@ export const GetProductCategoriesDocument = {
 } as unknown as DocumentNode<
   GetProductCategoriesQuery,
   GetProductCategoriesQueryVariables
+>;
+export const GetProductCategoryDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'getProductCategory' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'getProductCategory' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ProductCategoryFrag' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ProductCategoryFrag' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'ProductCategory' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'gender' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetProductCategoryQuery,
+  GetProductCategoryQueryVariables
 >;
 export const GetColorsDocument = {
   kind: 'Document',
