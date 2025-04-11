@@ -38,6 +38,14 @@ mutation createProductGroup($data: CreateProductGroupDto!) {
     productCategoryId
   }
 }
+mutation updateProductGroup($id: ID!, $data: CreateProductGroupDto!) {
+  updateProductGroup(id: $id, data: $data) {
+    id
+  }
+}
+mutation deleteProductGroup($id: ID!) {
+  deleteProductGroup(id: $id)
+}
 
 mutation createColor($data: CreateColorDto!) {
   createColor(data: $data) {
@@ -126,6 +134,8 @@ query getProductGroup($id: ID!) {
     laborCost {
       ...LaborCostFrag
     }
+    createdBy
+    updatedBy
   }
 }
 

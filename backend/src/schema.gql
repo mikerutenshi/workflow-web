@@ -184,6 +184,8 @@ type Mutation {
   deleteProduct(id: ID!): Boolean!
   createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
   createProductGroup(data: CreateProductGroupDto!): ProductGroup!
+  updateProductGroup(id: ID!, data: CreateProductGroupDto!): ProductGroup!
+  deleteProductGroup(id: ID!): Boolean!
   createLaborCost(data: CreateLaborCostDto!): LaborCost!
   updateLaborCost(id: ID!, data: CreateLaborCostDto!): LaborCost!
   createArtisan(data: CreateArtisanDto!): Artisan!

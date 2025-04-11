@@ -1,11 +1,11 @@
 <template>
   <v-row justify="center">
     <v-col cols="12" md="4" class="translucent-background">
-      <v-form class="pa-4" @submit.prevent="execute({ data: form })">
-        <v-alert v-if="error" type="error">
+      <v-form class="pa-4" @submit.prevent="handleSubmit">
+        <v-alert v-if="createError" type="error">
           {{
-            error.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            error.message
+            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            createError.message
           }}
         </v-alert>
         <v-text-field v-model="form.skuNumeric" label="Sku Numeric" />
@@ -29,11 +29,18 @@
         </v-autocomplete>
 
         <div class="mt-4">
-          <v-btn color="secondary" class="mr-4" @click.stop="goPrevious"
+          <v-btn color="secondary" class="mr-4" @click="goPrevious"
             >Discard</v-btn
           >
-          <v-btn :loading="isFetching" type="submit" color="primary"
+          <v-btn
+            v-if="!pGId"
+            :loading="isCreating"
+            type="submit"
+            color="primary"
             >Create</v-btn
+          >
+          <v-btn v-else :loading="isUpdating" type="submit" color="primary"
+            >Update</v-btn
           >
         </div>
       </v-form>
@@ -45,9 +52,15 @@ import { useMutation, useQuery } from 'villus';
 import {
   CreateProductGroupDocument,
   GetProductCategoriesDocument,
+  GetProductGroupDocument,
+  UpdateProductGroupDocument,
 } from '~/api/generated/types';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const pGId = ref(route.params.id as string);
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -57,13 +70,28 @@ const form = reactive({
   name: '',
   productCategoryId: '',
   createdBy: userId,
+  updatedBy: undefined as string | undefined,
 });
-const { execute, error, isFetching } = useMutation(CreateProductGroupDocument, {
+
+const {
+  execute: executeCreate,
+  error: createError,
+  isFetching: isCreating,
+} = useMutation(CreateProductGroupDocument, {
   onData() {
     goPrevious();
-    // navigateTo('/product-groups');
   },
   clearCacheTags: [CACHE_PRODUCT_GROUPS],
+});
+const {
+  execute: executeUpdate,
+  error: updateError,
+  isFetching: isUpdating,
+} = useMutation(UpdateProductGroupDocument, {
+  onData() {
+    goPrevious();
+  },
+  clearCacheTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
 });
 const {
   data,
@@ -74,8 +102,31 @@ const {
   tags: [CACHE_PRODUCT_CATEGORIES],
 });
 const handleSubmit = () => {
-  // todo
+  if (pGId.value) {
+    executeUpdate({ id: pGId.value, data: form });
+  } else {
+    executeCreate({ data: form });
+  }
 };
+
+if (pGId.value) {
+  useQuery({
+    query: GetProductGroupDocument,
+    variables: { id: pGId.value },
+    onData(data) {
+      const pg = data.getProductGroup;
+      form.skuNumeric = pg.skuNumeric;
+      if (pg.name) form.name;
+      form.productCategoryId = pg.productCategory.id;
+      form.createdBy = pg.createdBy;
+    },
+    onError(err) {
+      alert(`Get Product Group  Error -> ${err}`);
+    },
+    tags: [CACHE_PRODUCT_GROUP],
+  });
+  form.updatedBy = pGId.value;
+}
 const goPrevious = () => {
   router.go(-1);
 };

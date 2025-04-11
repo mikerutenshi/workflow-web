@@ -19,6 +19,13 @@ export class ProductGroupService {
     });
   }
 
+  updateProductGroup(
+    id: number,
+    data: CreateProductGroupDto,
+  ): Promise<ProductGroup> {
+    return this.prisma.productGroup.update({ where: { id }, data });
+  }
+
   async getProductGroups(): Promise<GetProductGroupsDto[]> {
     return await this.prisma.productGroup.findMany({
       include: {
@@ -53,5 +60,16 @@ export class ProductGroupService {
       throw new Error(`Product group with ID ${id} not found.`);
     }
     return result;
+  }
+
+  async deleteProductGroup(id: number): Promise<Boolean> {
+    const productGroup = await this.prisma.productGroup.delete({
+      where: { id },
+    });
+
+    if (!productGroup)
+      throw Error(`Delete product group with ID ${id} failed.`);
+
+    return true;
   }
 }

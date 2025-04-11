@@ -26,7 +26,18 @@
                   v-bind="props"
                   :subtitle="item.raw.productCategory.gender"
                   :title="item.raw.skuNumeric"
-                ></v-list-item>
+                >
+                  <template #append>
+                    <NuxtLink :to="`/product-groups/update/${item.raw.id}`">
+                      <v-btn
+                        color="primary"
+                        icon="mdi-pencil"
+                        size="small"
+                        variant="text"
+                      ></v-btn>
+                    </NuxtLink>
+                  </template>
+                </v-list-item>
               </template>
             </v-autocomplete>
           </v-col>
@@ -193,9 +204,6 @@ const {
 } = useQuery({
   query: GetColorsDocument,
   tags: [CACHE_COLORS],
-  onData: (data) => {
-    console.log(`onDataColors -> ${JSON.stringify(data.getColors)}`);
-  },
 });
 const {
   data: productGroupsData,

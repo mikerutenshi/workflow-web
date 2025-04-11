@@ -26,5 +26,5 @@ export class CreateProductGroupDto {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  updatedBy: number;
+  updatedBy: number | undefined;
 }

@@ -180,12 +180,14 @@ export type Mutation = {
   deleteArtisan: Scalars['Boolean']['output'];
   deleteColor: Scalars['Boolean']['output'];
   deleteProduct: Scalars['Boolean']['output'];
+  deleteProductGroup: Scalars['Boolean']['output'];
   logIn: User;
   logOut: User;
   updateArtisan: Artisan;
   updateColor: Color;
   updateLaborCost: LaborCost;
   updateProduct: Product;
+  updateProductGroup: ProductGroup;
 };
 
 export type MutationCreateArtisanArgs = {
@@ -232,6 +234,10 @@ export type MutationDeleteProductArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type MutationDeleteProductGroupArgs = {
+  id: Scalars['ID']['input'];
+};
+
 export type MutationLogInArgs = {
   data: LogInDto;
 };
@@ -253,6 +259,11 @@ export type MutationUpdateLaborCostArgs = {
 
 export type MutationUpdateProductArgs = {
   data: CreateProductDto;
+  id: Scalars['ID']['input'];
+};
+
+export type MutationUpdateProductGroupArgs = {
+  data: CreateProductGroupDto;
   id: Scalars['ID']['input'];
 };
 
@@ -547,6 +558,25 @@ export type CreateProductGroupMutation = {
   };
 };
 
+export type UpdateProductGroupMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  data: CreateProductGroupDto;
+}>;
+
+export type UpdateProductGroupMutation = {
+  __typename?: 'Mutation';
+  updateProductGroup: { __typename?: 'ProductGroup'; id: string };
+};
+
+export type DeleteProductGroupMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+export type DeleteProductGroupMutation = {
+  __typename?: 'Mutation';
+  deleteProductGroup: boolean;
+};
+
 export type CreateColorMutationVariables = Exact<{
   data: CreateColorDto;
 }>;
@@ -705,6 +735,8 @@ export type GetProductGroupQuery = {
     id: string;
     skuNumeric: string;
     name?: string | null;
+    createdBy: string;
+    updatedBy?: string | null;
     productCategory: {
       __typename?: 'ProductCategory';
       id: string;
@@ -1422,6 +1454,115 @@ export const CreateProductGroupDocument = {
 } as unknown as DocumentNode<
   CreateProductGroupMutation,
   CreateProductGroupMutationVariables
+>;
+export const UpdateProductGroupDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'updateProductGroup' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'data' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'CreateProductGroupDto' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'updateProductGroup' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'data' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'data' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateProductGroupMutation,
+  UpdateProductGroupMutationVariables
+>;
+export const DeleteProductGroupDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'deleteProductGroup' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'deleteProductGroup' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DeleteProductGroupMutation,
+  DeleteProductGroupMutationVariables
 >;
 export const CreateColorDocument = {
   kind: 'Document',
@@ -2187,6 +2328,8 @@ export const GetProductGroupDocument = {
                     ],
                   },
                 },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdBy' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'updatedBy' } },
               ],
             },
           },
