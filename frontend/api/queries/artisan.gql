@@ -3,6 +3,8 @@ fragment Artisan on Artisan {
   firstName
   lastName
   jobs
+  createdBy
+  updatedBy
 }
 
 mutation createArtisan($data: CreateArtisanDto!) {
@@ -23,6 +25,12 @@ mutation deleteArtisan($id: ID!) {
 
 query getArtisans {
   getArtisans {
+    ...Artisan
+  }
+}
+
+query getArtisan($id: ID!) {
+  getArtisan(id: $id) {
     ...Artisan
   }
 }

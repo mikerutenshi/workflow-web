@@ -1,12 +1,9 @@
 <template>
   <v-row justify="center">
     <v-col cols="12" md="4">
-      <v-form class="pa-4" @submit.prevent="execute({ data: form })">
-        <v-alert v-if="error" type="error">
-          {{
-            error.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            error.message
-          }}
+      <v-form class="pa-4" @submit.prevent="handleSubmit">
+        <v-alert v-if="errorMessage" type="error">
+          {{ errorMessage }}
         </v-alert>
         <v-text-field v-model="form.firstName" label="First Name" />
         <v-text-field
@@ -26,12 +23,27 @@
           item-value="id"
         ></v-combobox>
 
-        <div class="mt-4">
+        <div class="d-flex mt-4">
           <NuxtLink to="/artisans">
             <v-btn color="secondary" class="mr-4">Discard</v-btn>
           </NuxtLink>
-          <v-btn :loading="isFetching" type="submit" color="primary"
+          <v-btn
+            v-if="!artisanId"
+            :loading="isCreating"
+            type="submit"
+            color="primary"
             >Create</v-btn
+          >
+          <v-btn v-else :loading="isUpdating" type="submit" color="primary"
+            >Update</v-btn
+          >
+          <v-btn
+            v-if="artisanId"
+            type="button"
+            color="error"
+            class="ml-auto"
+            @click="executeDelete({ id: artisanId })"
+            >Delete</v-btn
           >
         </div>
       </v-form>
@@ -40,35 +52,93 @@
 </template>
 
 <script setup lang="ts">
-import { useMutation } from 'villus';
-import { CreateArtisanDocument } from '~/api/generated/types';
+import { useMutation, useQuery } from 'villus';
+import {
+  CreateArtisanDocument,
+  DeleteArtisanDocument,
+  GetArtisanDocument,
+  UpdateArtisanDocument,
+} from '~/api/generated/types';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+const artisanId = ref(route.params.id as string);
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
-const jobOptions = ref([
-  { id: 'UPPER_DRAWER', title: 'Upper Drawer' },
-  { id: 'LINING_DRAWER', title: 'Lining Drawer' },
-  { id: 'uPPER_STITCHER', title: 'Upper stitcher' },
-  { id: 'OUTSOLE_STITCHER', title: 'Outsole Stitcher' },
-  { id: 'INSOLE_STITCHER', title: 'Insole Stitcher' },
-  { id: 'LASTER', title: 'Laster' },
-]);
-
+const jobOptions = ref(JOB_OPTIONS);
+const errorMessage = ref('');
 const form = reactive({
   firstName: '',
   lastName: undefined as string | undefined,
-  jobs: [],
+  jobs: [] as string[],
   createdBy: userId,
+  updatedBy: undefined as string | undefined,
 });
-const { execute, error, isFetching } = useMutation(CreateArtisanDocument, {
+const { execute: executeCreate, isFetching: isCreating } = useMutation(
+  CreateArtisanDocument,
+  {
+    onData() {
+      navigateTo('/artisans');
+    },
+    onError(err) {
+      errorMessage.value =
+        (err.graphqlErrors?.[0]?.extensions?.['originalError'] as string) ??
+        err.message;
+    },
+    clearCacheTags: [CACHE_ARTISANS],
+  }
+);
+const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
+  UpdateArtisanDocument,
+  {
+    onData() {
+      navigateTo('/artisans');
+    },
+    onError(err) {
+      errorMessage.value =
+        (err.graphqlErrors?.[0]?.extensions?.['originalError'] as string) ??
+        err.message;
+    },
+    clearCacheTags: [CACHE_ARTISANS, CACHE_ARTISAN],
+  }
+);
+const { execute: executeDelete } = useMutation(DeleteArtisanDocument, {
+  clearCacheTags: [CACHE_ARTISANS],
   onData() {
     navigateTo('/artisans');
   },
-  clearCacheTags: [CACHE_ARTISANS],
+  onError(err) {
+    alert(`Error while deleting artisan -> ${err}`);
+  },
 });
 const onBlur = () => {
   form.lastName = form.lastName === '' ? undefined : form.lastName;
 };
+
+if (artisanId.value) {
+  useQuery({
+    query: GetArtisanDocument,
+    variables: { id: artisanId.value },
+    tags: [CACHE_ARTISAN],
+    onData(artisanData) {
+      const artisan = artisanData.getArtisan;
+      if (artisan) {
+        form.firstName = artisan.firstName;
+        if (artisan.lastName) form.lastName = artisan.lastName;
+        form.jobs = artisan.jobs;
+        form.createdBy = artisan.createdBy;
+        form.updatedBy = userId;
+      }
+    },
+  });
+}
+function handleSubmit() {
+  if (artisanId.value) {
+    executeUpdate({ id: artisanId.value, data: form });
+  } else {
+    executeCreate({ data: form });
+  }
+}
 
 watchEffect(() => {
   console.log(JSON.stringify(form));

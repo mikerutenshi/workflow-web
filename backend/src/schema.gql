@@ -170,6 +170,7 @@ type Query {
   getProductGroup(id: ID!): GetProductGroupsDto!
   getLaborCosts: [LaborCost!]!
   getArtisans: [Artisan!]!
+  getArtisan(id: ID!): Artisan!
 }
 
 type Mutation {

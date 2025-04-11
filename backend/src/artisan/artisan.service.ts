@@ -36,6 +36,13 @@ export class ArtisanService {
     return await this.prisma.artisan.findMany();
   }
 
+  async getArtisan(id: number): Promise<Artisan> {
+    const artisan = await this.prisma.artisan.findUnique({ where: { id } });
+    if (!artisan) throw new Error(`Artisan with ID ${id} not found.`);
+
+    return artisan;
+  }
+
   async deleteArtisan(id: number): Promise<Boolean> {
     await this.prisma.artisan.delete({
       where: {

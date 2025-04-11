@@ -27,6 +27,13 @@ export class ArtisanResolver {
     return this.artisanService.getArtisans();
   }
 
+  @Query(() => Artisan)
+  getArtisan(
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+  ): Promise<Artisan> {
+    return this.artisanService.getArtisan(id);
+  }
+
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   deleteArtisan(
