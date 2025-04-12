@@ -80,6 +80,7 @@ const {
   onData() {
     goPrevious();
   },
+  clearCacheTags: [CACHE_COLORS],
 });
 const {
   execute: executeUpdate,

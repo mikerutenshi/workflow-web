@@ -32,7 +32,7 @@ export class ProductService {
 
         let order = 1;
         for (const colorId of data.colorIds) {
-          await tx.productColors.create({
+          await tx.colorToProduct.create({
             data: {
               productId,
               colorId: colorId,
@@ -138,7 +138,7 @@ export class ProductService {
         });
 
         if (data.colorIds && data.colorIds.length > 0) {
-          await tx.productColors.deleteMany({
+          await tx.colorToProduct.deleteMany({
             where: {
               productId: id,
             },
@@ -146,7 +146,7 @@ export class ProductService {
 
           let order = 1;
           for (const colorId of data.colorIds) {
-            await tx.productColors.create({
+            await tx.colorToProduct.create({
               data: {
                 productId: id,
                 colorId: colorId,

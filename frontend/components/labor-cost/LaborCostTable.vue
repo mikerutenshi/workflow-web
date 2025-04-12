@@ -32,7 +32,7 @@
       </template>
 
       <template v-slot:item.actions="{ item, index }">
-        <v-menu variant="outlined">
+        <!-- <v-menu variant="outlined">
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props" variant="text">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -45,7 +45,10 @@
               </NuxtLink>
             </v-list-item>
           </v-list>
-        </v-menu>
+        </v-menu> -->
+        <NuxtLink :to="`/labor-costs/update/${item.id}`">
+          <v-btn color="primary" icon="mdi-pencil" variant="text"></v-btn>
+        </NuxtLink>
       </template>
     </v-data-table>
   </div>

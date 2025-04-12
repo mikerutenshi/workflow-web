@@ -50,7 +50,7 @@ model Color {
   name              String          @unique
   hexCode           String
 
-  productColors     ProductColors[]
+  productColors     ColorToProduct[]
 }
 
 enum Gender {
@@ -94,12 +94,13 @@ model Product {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
-  productColors     ProductColors[]
+  productColors     ColorToProduct[]
+  work              Work[]
 
   productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
 
-model ProductColors {
+model ColorToProduct {
   productId         Int
   colorId           Int
   order             Int           
@@ -129,12 +130,12 @@ model LaborCost {
 }
 
 enum Job {
-  UPPER_DRAWER
-  LINING_DRAWER
-  uPPER_STITCHER
-  OUTSOLE_STITCHER
-  INSOLE_STITCHER
-  LASTER
+  UPPER_DRAW
+  LINING_DRAW
+  uPPER_STITCH
+  OUTSOLE_STITCH
+  INSOLE_STITCH
+  LAST
 }
 
 model Artisan {
@@ -142,9 +143,60 @@ model Artisan {
   firstName         String
   lastName          String?
   jobs              Job[]
+  tasks             Task[]
 
   createdBy         Int
   updatedBy         Int?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+}
+
+model Work {
+  id                Int             @id @default(autoincrement())
+  date              DateTime
+  spkNo             Int             
+  productId         Int             
+  workSizes         SizeToWork[]
+  tasks             Task[]
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  product           Product         @relation(fields: [productId], references: [id])
+}
+
+model Task {
+  id                Int             @id @default(autoincrement())
+  workId            Int
+  type              Job
+  artisanId         Int?
+  doneAt            DateTime?
+
+  work              Work            @relation(fields: [workId], references: [id])
+  artisan           Artisan?        @relation(fields: [artisanId], references: [id])
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model Size {
+  id                Int             @id @default(autoincrement())
+  eu                String
+  us                String?
+  uk                String?
+  workSizes         SizeToWork[]
+}
+
+model SizeToWork {
+  @@id([workId, sizeId])
+  workId            Int
+  sizeId            Int
+  quantity          Int
+
+  work              Work            @relation(fields: [workId], references: [id])
+  size              Size            @relation(fields: [sizeId], references: [id])
 }

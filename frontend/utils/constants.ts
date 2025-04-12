@@ -1,8 +1,8 @@
 export const JOB_OPTIONS = [
-  { id: 'UPPER_DRAWER', title: 'Upper Drawer' },
-  { id: 'LINING_DRAWER', title: 'Lining Drawer' },
-  { id: 'uPPER_STITCHER', title: 'Upper stitcher' },
-  { id: 'OUTSOLE_STITCHER', title: 'Outsole Stitcher' },
-  { id: 'INSOLE_STITCHER', title: 'Insole Stitcher' },
-  { id: 'LASTER', title: 'Laster' },
+  { id: 'UPPER_DRAW', title: 'Upper Drawer' },
+  { id: 'LINING_DRAW', title: 'Lining Drawer' },
+  { id: 'uPPER_STITCH', title: 'Upper stitcher' },
+  { id: 'OUTSOLE_STITCH', title: 'Outsole Stitcher' },
+  { id: 'INSOLE_STITCH', title: 'Insole Stitcher' },
+  { id: 'LAST', title: 'Laster' },
 ];

@@ -12,7 +12,7 @@ async function main() {
     create: {
       name: 'Admin',
       description: "Programmer's role",
-      clearanceLevel: 5,
+      clearanceLevel: 0,
     },
   });
 
@@ -22,7 +22,7 @@ async function main() {
     create: {
       name: 'User',
       description: "Regular user's role",
-      clearanceLevel: 0,
+      clearanceLevel: 5,
     },
   });
 
@@ -50,6 +50,7 @@ async function main() {
       roleId: userRole.id,
       password: password,
       createdBy: adminUser.id,
+      isActive: true,
     },
   });
 
