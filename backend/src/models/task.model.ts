@@ -8,8 +8,8 @@ export class Task extends BaseModel {
   workId: number;
   @Field(() => Job)
   type: Job;
-  @Field(() => ID)
-  artisanId: number;
+  @Field(() => ID, { nullable: true })
+  artisanId: number | null;
   @Field(() => Date, { nullable: true })
   doneAt: Date | null;
 }

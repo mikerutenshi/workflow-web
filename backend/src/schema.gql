@@ -178,6 +178,31 @@ type SizeToWork {
   size: Size!
 }
 
+type Task {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  workId: ID!
+  type: Job!
+  artisanId: ID
+  doneAt: Date
+}
+
+type WorkWithTasks {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  date: Date!
+  orderNo: Float!
+  productId: ID!
+  sizes: [SizeToWork!]!
+  tasks: [Task!]!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -195,8 +220,8 @@ type Query {
   getLaborCosts: [LaborCost!]!
   getArtisans: [Artisan!]!
   getArtisan(id: ID!): Artisan!
-  getWork(id: ID!): Work!
-  getWorks: [Work!]!
+  getWork(id: ID!): WorkWithTasks!
+  getWorks: [WorkWithTasks!]!
   getSize(id: ID!): Size!
   getSizes: [Size!]!
 }

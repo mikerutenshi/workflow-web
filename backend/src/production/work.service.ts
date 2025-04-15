@@ -4,30 +4,108 @@ import { Injectable } from '@nestjs/common';
 import { CreateWorkDto } from './dto/createWork.dto';
 import { Size } from '@/models/size.model';
 import { UpdateWorkDto } from './dto/updateWork.dto';
+import { LaborCost } from '@/models/labor-cost.model';
+import { Job } from '@prisma/client';
+import { WorkWithTasks } from '@/models/workWithTasks.model';
 
 @Injectable()
 export class WorkService {
   constructor(private prisma: PrismaService) {}
 
   createWork(data: CreateWorkDto): Promise<Work> {
-    return this.prisma.work.create({
-      data: {
-        ...data,
-        sizes: {
-          create: data.sizes.map((size) => ({
-            size: { connect: { id: size.id } },
-            quantity: size.quantity,
-          })),
-        },
-      },
-      include: {
-        sizes: {
-          select: {
-            size: true,
-            quantity: true,
+    return this.prisma.$transaction(async (tx) => {
+      const work = await tx.work.create({
+        data: {
+          ...data,
+          sizes: {
+            create: data.sizes.map((size) => ({
+              size: { connect: { id: size.id } },
+              quantity: size.quantity,
+            })),
           },
         },
-      },
+        include: {
+          product: {
+            include: {
+              productGroup: {
+                include: {
+                  laborCost: {
+                    select: {
+                      drawingUpper: true,
+                      drawingLining: true,
+                      stitchingUpper: true,
+                      stitchingOutsole: true,
+                      stitchingInsole: true,
+                      lasting: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          sizes: {
+            select: {
+              size: true,
+              quantity: true,
+            },
+          },
+        },
+      });
+
+      await tx.task.create({
+        data: {
+          workId: work.id,
+          type: Job.UPPER_DRAW,
+          createdBy: data.createdBy,
+        },
+      });
+      await tx.task.create({
+        data: {
+          workId: work.id,
+          type: Job.LINING_DRAW,
+          createdBy: data.createdBy,
+        },
+      });
+      await tx.task.create({
+        data: {
+          workId: work.id,
+          type: Job.uPPER_STITCH,
+          createdBy: data.createdBy,
+        },
+      });
+      await tx.task.create({
+        data: {
+          workId: work.id,
+          type: Job.LAST,
+          createdBy: data.createdBy,
+        },
+      });
+
+      const outsoleStitch =
+        work.product.productGroup.laborCost?.stitchingOutsole;
+      const insoleStitch = work.product.productGroup.laborCost?.stitchingInsole;
+
+      if (outsoleStitch) {
+        await tx.task.create({
+          data: {
+            workId: work.id,
+            type: Job.OUTSOLE_STITCH,
+            createdBy: data.createdBy,
+          },
+        });
+      }
+
+      if (insoleStitch) {
+        await tx.task.create({
+          data: {
+            workId: work.id,
+            type: Job.INSOLE_STITCH,
+            createdBy: data.createdBy,
+          },
+        });
+      }
+
+      return work;
     });
   }
 
@@ -55,7 +133,7 @@ export class WorkService {
     });
   }
 
-  async getWork(id: number): Promise<Work> {
+  async getWork(id: number): Promise<WorkWithTasks> {
     const work = await this.prisma.work.findUnique({
       where: { id },
       include: {
@@ -65,6 +143,7 @@ export class WorkService {
             quantity: true,
           },
         },
+        tasks: true,
       },
     });
     if (!work) {
@@ -73,16 +152,19 @@ export class WorkService {
     return work;
   }
 
-  getWorks(): Promise<Work[]> {
+  getWorks(): Promise<WorkWithTasks[]> {
     return this.prisma.work.findMany({
-      include: { sizes: { select: { size: true, quantity: true } } },
+      include: {
+        sizes: { select: { size: true, quantity: true } },
+        tasks: true,
+      },
     });
   }
 
   async deleteWork(id: number): Promise<Boolean> {
-    const work = this.prisma.work.delete({ where: { id } });
+    const work = await this.prisma.work.delete({ where: { id } });
 
     if (!work) throw new Error(`Delete work with ID ${id} failed.`);
-    return true;
+    return !!work;
   }
 }
