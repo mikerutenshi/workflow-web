@@ -13,6 +13,7 @@ import { authenticateUserByRequest } from './auth/auth.middleware';
 import { ProductModule } from './product/product.module';
 import { ArtisanModule } from './artisan/artisan.module';
 import { ConfigModule } from '@nestjs/config';
+import { ProductionModule } from './production/production.module';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { ConfigModule } from '@nestjs/config';
     PrismaModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [AuthModule, ProductModule, ArtisanModule],
+      imports: [AuthModule, ProductModule, ArtisanModule, ProductionModule],
       inject: [AuthService],
       useFactory: (authService: AuthService) => ({
         playground: true,

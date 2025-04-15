@@ -154,6 +154,30 @@ enum Job {
   LAST
 }
 
+type Size {
+  id: ID!
+  eu: String!
+  us: String
+  uk: String
+}
+
+type Work {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  date: Date!
+  orderNo: Float!
+  productId: ID!
+  sizes: [SizeToWork!]!
+}
+
+type SizeToWork {
+  quantity: Float!
+  size: Size!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -171,6 +195,10 @@ type Query {
   getLaborCosts: [LaborCost!]!
   getArtisans: [Artisan!]!
   getArtisan(id: ID!): Artisan!
+  getWork(id: ID!): Work!
+  getWorks: [Work!]!
+  getSize(id: ID!): Size!
+  getSizes: [Size!]!
 }
 
 type Mutation {
@@ -195,6 +223,12 @@ type Mutation {
   createArtisan(data: CreateArtisanDto!): Artisan!
   updateArtisan(id: ID!, data: CreateArtisanDto!): Artisan!
   deleteArtisan(id: ID!): Boolean!
+  createWork(data: CreateWorkDto!): Work!
+  updateWork(id: ID!, data: UpdateWorkDto!): Work!
+  deleteWork(id: ID!): Boolean!
+  createSize(data: CreateSizeDto!): Size!
+  updateSize(id: ID!, data: CreateSizeDto!): Size!
+  deleteSize(id: ID!): Boolean!
 }
 
 input RoleDto {
@@ -261,4 +295,32 @@ input CreateArtisanDto {
   jobs: [Job!]!
   createdBy: ID!
   updatedBy: ID
+}
+
+input CreateWorkDto {
+  date: Date!
+  orderNo: Float!
+  productId: ID!
+  sizes: [SizeToWorkDto!]!
+  createdBy: ID!
+}
+
+input SizeToWorkDto {
+  id: ID!
+  quantity: Float!
+}
+
+input UpdateWorkDto {
+  date: Date!
+  orderNo: Float!
+  productId: ID!
+  sizes: [SizeToWorkDto!]!
+  createdBy: ID!
+  updatedBy: ID!
+}
+
+input CreateSizeDto {
+  eu: String!
+  us: String
+  uk: String
 }

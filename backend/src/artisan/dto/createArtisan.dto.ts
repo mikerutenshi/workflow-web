@@ -1,7 +1,14 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Job } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Matches, Min } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  Matches,
+  Min,
+} from 'class-validator';
 
 @InputType()
 export class CreateArtisanDto {
@@ -13,6 +20,7 @@ export class CreateArtisanDto {
   @Matches(/^[A-Za-z]+(\s[A-Za-z]+)*$/)
   lastName: string | undefined;
   @Field(() => [Job])
+  @IsArray()
   @IsEnum(Job, { each: true })
   jobs: Job[];
   @Field(() => ID)

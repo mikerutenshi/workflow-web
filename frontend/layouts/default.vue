@@ -100,6 +100,11 @@ const closeDrawer = () => {
 const navItems = [
   { title: 'Home', route: '/', icon: 'mdi-home' },
   {
+    title: 'Production Status',
+    route: '/production',
+    icon: 'mdi-chart-timeline',
+  },
+  {
     title: 'Products',
     route: '/products',
     icon: 'mdi-shoe-formal',

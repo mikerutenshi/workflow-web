@@ -154,9 +154,9 @@ model Artisan {
 model Work {
   id                Int             @id @default(autoincrement())
   date              DateTime
-  spkNo             Int             
+  orderNo           Int             
   productId         Int             
-  workSizes         SizeToWork[]
+  sizes             SizeToWork[]
   tasks             Task[]
 
   createdBy         Int
@@ -188,7 +188,7 @@ model Size {
   eu                String
   us                String?
   uk                String?
-  workSizes         SizeToWork[]
+  works             SizeToWork[]
 }
 
 model SizeToWork {
