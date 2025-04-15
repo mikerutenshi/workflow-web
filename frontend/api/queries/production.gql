@@ -1,0 +1,87 @@
+fragment Size on Size {
+  id
+  eu
+  us
+  uk
+}
+
+fragment Task on Task {
+  id
+  type
+  doneAt
+  artisanId
+}
+
+fragment WorkWithTasks on WorkWithTasks {
+  id
+  date
+  orderNo
+  productId
+  sizes {
+    size {
+      ...Size
+    }
+    quantity
+  }
+  tasks {
+    ...Task
+  }
+  createdBy
+  updatedBy
+}
+
+mutation createSize($data: CreateSizeDto!) {
+  createSize(data: $data) {
+    id
+  }
+}
+
+mutation updateSize($id: ID!, $data: CreateSizeDto!) {
+  updateSize(id: $id, data: $data) {
+    id
+  }
+}
+
+mutation deleteSize($id: ID!) {
+  deleteSize(id: $id)
+}
+
+query getSizes {
+  getSizes {
+    ...Size
+  }
+}
+
+query getSize($id: ID!) {
+  getSize(id: $id) {
+    ...Size
+  }
+}
+
+mutation createWork($data: CreateWorkDto!) {
+  createWork(data: $data) {
+    id
+  }
+}
+
+mutation updateWork($id: ID!, $data: UpdateWorkDto!) {
+  updateWork(id: $id, data: $data) {
+    id
+  }
+}
+
+mutation deleteWork($id: ID!) {
+  deleteWork(id: $id)
+}
+
+query getWorks {
+  getWorks {
+    ...WorkWithTasks
+  }
+}
+
+query getWork($id: ID!) {
+  getWork(id: $id) {
+    ...WorkWithTasks
+  }
+}

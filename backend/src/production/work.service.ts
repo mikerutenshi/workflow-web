@@ -69,7 +69,7 @@ export class WorkService {
       await tx.task.create({
         data: {
           workId: work.id,
-          type: Job.uPPER_STITCH,
+          type: Job.UPPER_STITCH,
           createdBy: data.createdBy,
         },
       });

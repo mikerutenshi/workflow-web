@@ -7,33 +7,12 @@
 
       <v-app-bar-title>{{ appBarTitle }}</v-app-bar-title>
 
-      <template v-slot:append v-if="currentPage == 'products'">
-        <NuxtLink to="products/create">
-          <v-btn> <v-icon left>mdi-plus</v-icon> New Product </v-btn>
-        </NuxtLink>
-      </template>
-
-      <template v-slot:append v-if="currentPage == 'colors'">
-        <NuxtLink to="colors/create">
-          <v-btn> <v-icon left>mdi-plus</v-icon> New Color </v-btn>
-        </NuxtLink>
-      </template>
-
-      <template v-slot:append v-if="currentPage == 'product-groups'">
-        <NuxtLink to="product-groups/create">
-          <v-btn> <v-icon left>mdi-plus</v-icon> New Product Group </v-btn>
-        </NuxtLink>
-      </template>
-
-      <template v-slot:append v-if="currentPage == 'product-categories'">
-        <NuxtLink to="product-categories/create">
-          <v-btn> <v-icon left>mdi-plus</v-icon> New Product Category </v-btn>
-        </NuxtLink>
-      </template>
-
-      <template v-slot:append v-if="currentPage == 'artisans'">
-        <NuxtLink to="artisans/create">
-          <v-btn> <v-icon left>mdi-plus</v-icon> New Artisan </v-btn>
+      <template
+        v-slot:append
+        v-if="currentPage && pagesWithCreate.includes(currentPage as string)"
+      >
+        <NuxtLink :to="createBtn.route">
+          <v-btn> <v-icon left>mdi-plus</v-icon> {{ createBtn.title }} </v-btn>
         </NuxtLink>
       </template>
     </v-app-bar>
@@ -89,6 +68,10 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 
 const drawer = ref(false);
+const createBtn = reactive({
+  title: '',
+  route: '',
+});
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
@@ -101,7 +84,7 @@ const navItems = [
   { title: 'Home', route: '/', icon: 'mdi-home' },
   {
     title: 'Production Status',
-    route: '/production',
+    route: '/works',
     icon: 'mdi-chart-timeline',
   },
   {
@@ -146,7 +129,70 @@ const currentPage = computed(() => {
   return route.name;
 });
 
-useHead({
-  title: appBarTitle.value,
-});
+const pagesWithCreate = [
+  'products',
+  'colors',
+  'product-groups',
+  'product-categories',
+  'artisans',
+  'works',
+];
+
+watch(
+  () => route.name,
+  (newName) => {
+    switch (newName) {
+      case 'products': {
+        createBtn.route = 'products/create';
+        createBtn.title = 'New Product';
+        break;
+      }
+
+      case 'colors': {
+        createBtn.route = 'colors/create';
+        createBtn.title = 'New Color';
+        break;
+      }
+
+      case 'product-groups': {
+        createBtn.route = 'product-groups/create';
+        createBtn.title = 'New Product Group';
+        break;
+      }
+
+      case 'product-categories': {
+        createBtn.route = 'product-categories/create';
+        createBtn.title = 'New Product Category';
+        break;
+      }
+
+      case 'artisans': {
+        createBtn.route = 'artisans/create';
+        createBtn.title = 'New Artisan';
+        break;
+      }
+
+      case 'works': {
+        createBtn.route = 'works/create';
+        createBtn.title = 'New Work';
+        break;
+      }
+
+      default:
+        createBtn.route = '';
+        createBtn.title = '';
+        break;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => appBarTitle.value,
+  (newTitle) => {
+    useHead({
+      title: newTitle,
+    });
+  }
+);
 </script>
