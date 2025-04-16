@@ -23,7 +23,7 @@
   </v-container>
 </template>
 
-<style lang="sass">
+<style scoped lang="sass">
 .translucent-background
   background-color:$translucent-background
 

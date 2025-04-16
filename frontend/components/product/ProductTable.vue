@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data" class="fill-screen">
+  <div v-if="data" class="wf-fill-screen">
     <v-data-table
       :headers="headers"
       :items="data.getProducts"
@@ -38,15 +38,6 @@
   <div v-else>Loading...</div>
 </template>
 
-<style scoped>
-.fill-screen {
-  height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-}
-</style>
-
 <script setup lang="ts">
 import { useMutation, useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
@@ -57,7 +48,7 @@ import {
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data, execute: executeGetProducts } = useQuery({
+const { data } = useQuery({
   query: GetProductsDocument,
   tags: [CACHE_PRODUCTS],
 });

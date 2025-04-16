@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data" class="fill-screen">
+  <div v-if="data" class="wf-fill-screen">
     <v-data-table
       :headers="headers"
       :items="data.getWorks"
@@ -36,10 +36,9 @@
   <div v-else>Loading...</div>
 </template>
 
-<style scoped>
-.v-chip.v-chip--disabled {
-  opacity: 1;
-}
+<style scoped lang="sass">
+.v-chip.v-chip--disabled
+  opacity: 1
 </style>
 
 <script setup lang="ts">

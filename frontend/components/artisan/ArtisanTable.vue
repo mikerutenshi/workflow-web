@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data" class="fill-screen">
+  <div v-if="data" class="wf-fill-screen">
     <v-data-table
       :headers="headers"
       :items="data.getArtisans"
@@ -19,18 +19,6 @@
   </div>
   <div v-else>Loading...</div>
 </template>
-
-<style scoped>
-.fill-screen {
-  height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-}
-.full-height {
-  flex-grow: 1; /* Expand to fill available space */
-}
-</style>
 
 <script setup lang="ts">
 import { useQuery } from 'villus';

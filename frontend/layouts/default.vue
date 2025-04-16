@@ -20,7 +20,7 @@
     <v-navigation-drawer v-model="drawer" app rail expand-on-hover>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
-          <v-list-group v-if="navItem.children">
+          <!-- <v-list-group v-if="navItem.children">
             <template v-slot:activator="{ props }">
               <v-list-item
                 v-bind="props"
@@ -41,10 +41,9 @@
               slim
             >
             </v-list-item>
-          </v-list-group>
+          </v-list-group> -->
 
           <v-list-item
-            v-else
             :to="navItem.route"
             router
             :title="navItem.title"
