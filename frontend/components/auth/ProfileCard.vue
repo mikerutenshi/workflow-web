@@ -1,8 +1,13 @@
 <template>
   <v-card v-if="authStore.user" width="400">
-    <v-card-title> Hi, {{ authStore.user.email }} </v-card-title>
+    <v-card-title class="text-center">
+      Hi, {{ `${authStore.user.firstName} ${authStore.user.lastName}` }}
+    </v-card-title>
     <v-card-text>
-      <ActionCheckMe />
+      <!-- <ActionCheckMe /> -->
+      <v-list class="text-center">
+        <v-list-item> {{ `Email: ${authStore.user.email}` }}</v-list-item>
+      </v-list>
       <ActionLogOut class="mt-2" />
     </v-card-text>
   </v-card>

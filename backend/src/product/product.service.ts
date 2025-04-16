@@ -18,55 +18,21 @@ import { GetProductsDto } from './dto/getProducts.dto';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  async createProduct(data: CreateProductDto): Promise<Product> {
-    try {
-      return await this.prisma.$transaction(async (tx) => {
-        const newProduct = await tx.product.create({
-          data: {
-            sku: data.sku,
-            productGroupId: data.productGroupId,
-            createdBy: data.createdBy,
-          },
-        });
-        const productId = newProduct.id;
-
-        let order = 1;
-        for (const colorId of data.colorIds) {
-          await tx.colorToProduct.create({
-            data: {
-              productId,
-              colorId: colorId,
-              order: order++,
-            },
-          });
-        }
-
-        const resultProduct = await tx.product.findUnique({
-          where: {
-            id: productId,
-          },
-          include: {
-            productGroup: true,
-            productColors: {
-              include: {
-                color: true,
-              },
-            },
-          },
-        });
-
-        if (!resultProduct) {
-          throw new Error(
-            `Product with ID ${productId} not found after creation.`,
-          );
-        }
-
-        return resultProduct;
-      });
-    } catch (error) {
-      console.error('Error creating Product and ProductColors: ', error);
-      throw error;
-    }
+  createProduct(data: CreateProductDto): Promise<Product> {
+    let order = 1;
+    return this.prisma.product.create({
+      data: {
+        sku: data.sku,
+        productGroupId: data.productGroupId,
+        createdBy: data.createdBy,
+        productColors: {
+          create: data.colorIds.map((colorId) => ({
+            color: { connect: { id: colorId } },
+            order: order++,
+          })),
+        },
+      },
+    });
   }
 
   async getProducts(): Promise<GetProductsDto[]> {
@@ -80,6 +46,9 @@ export class ProductService {
         productColors: {
           include: {
             color: true,
+          },
+          orderBy: {
+            order: 'asc',
           },
         },
       },
@@ -101,6 +70,9 @@ export class ProductService {
           include: {
             color: true,
           },
+          orderBy: {
+            order: 'asc',
+          },
         },
       },
     });
@@ -120,69 +92,22 @@ export class ProductService {
     return true;
   }
 
-  async updateProduct(
-    id: number,
-    data: CreateProductDto,
-  ): Promise<GetProductsDto> {
-    try {
-      return await this.prisma.$transaction(async (tx) => {
-        await tx.product.update({
-          where: {
-            id: id,
-          },
-          data: {
-            sku: data.sku,
-            productGroupId: data.productGroupId,
-            updatedBy: data.updatedBy,
-          },
-        });
-
-        if (data.colorIds && data.colorIds.length > 0) {
-          await tx.colorToProduct.deleteMany({
-            where: {
-              productId: id,
-            },
-          });
-
-          let order = 1;
-          for (const colorId of data.colorIds) {
-            await tx.colorToProduct.create({
-              data: {
-                productId: id,
-                colorId: colorId,
-                order: order++,
-              },
-            });
-          }
-        }
-
-        const result = await tx.product.findUnique({
-          where: {
-            id: id,
-          },
-          include: {
-            productGroup: {
-              include: {
-                productCategory: true,
-              },
-            },
-            productColors: {
-              include: {
-                color: true,
-              },
-            },
-          },
-        });
-
-        if (!result) {
-          throw new Error(`Product with ID ${id} not found.`);
-        }
-
-        return result;
-      });
-    } catch (error) {
-      console.error('Error updating Product and ProductColors: ', error);
-      throw error;
-    }
+  updateProduct(id: number, data: CreateProductDto): Promise<Product> {
+    let order = 1;
+    return this.prisma.product.update({
+      where: { id },
+      data: {
+        sku: data.sku,
+        productGroupId: data.productGroupId,
+        createdBy: data.createdBy,
+        productColors: {
+          deleteMany: { productId: id },
+          create: data.colorIds.map((colorId) => ({
+            color: { connect: { id: colorId } },
+            order: order++,
+          })),
+        },
+      },
+    });
   }
 }

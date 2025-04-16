@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Gender, PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient({
@@ -26,7 +26,8 @@ async function main() {
     },
   });
 
-  const password = await hash('KataKunci>2025', 10);
+  const password = await hash('KataKunci2025', 10);
+
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@email.com' },
     update: {},
@@ -40,7 +41,7 @@ async function main() {
     },
   });
 
-  const standardUser = await prisma.user.upsert({
+  const user = await prisma.user.upsert({
     where: { email: 'user@email.com' },
     update: {},
     create: {
@@ -54,89 +55,83 @@ async function main() {
     },
   });
 
-  // const flatCategory = await prisma.productCategory.create({
-  //   data: {
-  //     name: 'Flat',
-  //     gender: 'WOMEN',
-  //   },
-  // });
+  await prisma.user.upsert({
+    where: { email: 'yomeifung@gmail.com' },
+    update: {},
+    create: {
+      email: 'yomeifung@gmail.com',
+      firstName: 'Mei Fung',
+      lastName: 'Yo',
+      roleId: userRole.id,
+      password: password,
+      createdBy: adminUser.id,
+      isActive: true,
+    },
+  });
 
-  // const someProductGroup = await prisma.productGroup.create({
-  //   data: {
-  //     skuNumeric: '12345',
-  //     productCategoryId: flatCategory.id,
-  //     name: null,
-  //     createdBy: standardUser.id,
-  //   },
-  // });
+  let heelsCategory = await prisma.productCategory.findFirst({
+    where: { name: 'Heels' },
+  });
 
-  // const darkBrownColor = await prisma.color.upsert({
-  //   where: { name: 'Dark Brown' },
-  //   update: {},
-  //   create: { name: 'Dark Brown', hexCode: '#654321' },
-  // });
+  if (!heelsCategory) {
+    heelsCategory = await prisma.productCategory.create({
+      data: {
+        name: 'Heels',
+        gender: Gender.WOMEN,
+      },
+    });
+  }
 
-  // const lightBrownColor = await prisma.color.upsert({
-  //   where: { name: 'light Brown' },
-  //   update: {},
-  //   create: { name: 'Light Brown', hexCode: '#b5651d' },
-  // });
+  let productGroup603 = await prisma.productGroup.findFirst({
+    where: { skuNumeric: '00603' },
+  });
 
-  // try {
-  //   await prisma.$transaction(async (tx) => {
-  //     const newProduct = await tx.product.create({
-  //       data: {
-  //         sku: 'A12345-D.Brown/L.Brown',
-  //         productGroupId: someProductGroup.id,
-  //         createdBy: standardUser.id,
-  //       },
-  //     });
+  if (!productGroup603) {
+    productGroup603 = await prisma.productGroup.create({
+      data: {
+        skuNumeric: '00603',
+        productCategoryId: heelsCategory.id,
+        name: 'Aviana',
+        createdBy: user.id,
+      },
+    });
+  }
 
-  //     await tx.productColors.upsert({
-  //       where: {
-  //         productId_colorId: {
-  //           productId: newProduct.id,
-  //           colorId: darkBrownColor.id,
-  //         },
-  //       },
-  //       update: {},
-  //       create: {
-  //         productId: newProduct.id,
-  //         colorId: darkBrownColor.id,
-  //         order: 1,
-  //       },
-  //     });
-  //     await tx.productColors.upsert({
-  //       where: {
-  //         productId_colorId: {
-  //           productId: newProduct.id,
-  //           colorId: lightBrownColor.id,
-  //         },
-  //       },
-  //       update: {},
-  //       create: {
-  //         productId: newProduct.id,
-  //         colorId: lightBrownColor.id,
-  //         order: 2,
-  //       },
-  //     });
-  //   });
-  // } catch (error) {
-  //   console.error('Error creating Product and ProductColors: ', error);
-  // }
+  const darkBrownColor = await prisma.color.upsert({
+    where: { name: 'Dark Brown' },
+    update: {},
+    create: { name: 'Dark Brown', hexCode: '#654321' },
+  });
 
-  // await prisma.laborCost.create({
-  //   data: {
-  //     productGroupId: someProductGroup.id,
-  //     drawingUpper: 1000,
-  //     drawingLining: 500,
-  //     stitchingUpper: 10000,
-  //     stitchingOutsole: null,
-  //     stitchingInsole: null,
-  //     lasting: 5000,
-  //     createdBy: standardUser.id,
-  //   },
-  // });
+  const lightBrownColor = await prisma.color.upsert({
+    where: { name: 'Light Brown' },
+    update: {},
+    create: { name: 'Light Brown', hexCode: '#b5651d' },
+  });
+
+  let product603 = await prisma.product.findFirst({
+    where: {
+      sku: 'B00603-L.Brown/D.Brown',
+    },
+  });
+
+  if (!product603) {
+    let colorIds = [lightBrownColor.id, darkBrownColor.id];
+    let order = 1;
+    product603 = await prisma.product.create({
+      data: {
+        sku: 'B00603-L.Brown/D.Brown',
+        productGroupId: productGroup603.id,
+        createdBy: user.id,
+        productColors: {
+          create: colorIds.map((colorId) => ({
+            color: { connect: { id: colorId } },
+            order: order++,
+          })),
+        },
+      },
+    });
+  }
 
   console.log('Seeding is complete');
 }
