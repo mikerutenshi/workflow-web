@@ -44,10 +44,7 @@ export class WorkService {
             },
           },
           sizes: {
-            select: {
-              size: true,
-              quantity: true,
-            },
+            include: { size: true },
           },
         },
       });
@@ -124,9 +121,8 @@ export class WorkService {
       },
       include: {
         sizes: {
-          select: {
+          include: {
             size: true,
-            quantity: true,
           },
         },
       },
@@ -138,9 +134,8 @@ export class WorkService {
       where: { id },
       include: {
         sizes: {
-          select: {
+          include: {
             size: true,
-            quantity: true,
           },
         },
         tasks: true,
@@ -155,7 +150,7 @@ export class WorkService {
   getWorks(): Promise<WorkWithTasks[]> {
     return this.prisma.work.findMany({
       include: {
-        sizes: { select: { size: true, quantity: true } },
+        sizes: { include: { size: true } },
         tasks: true,
       },
     });

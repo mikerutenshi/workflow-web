@@ -16,10 +16,10 @@ export class Work extends BaseModel {
 
 @ObjectType()
 class SizeToWork {
-  // @Field(() => ID)
-  // workId: number;
-  // @Field(() => ID)
-  // sizeId: number;
+  @Field(() => ID)
+  workId: number;
+  @Field(() => ID)
+  sizeId: number;
   @Field()
   quantity: number;
   @Field(() => Size)
