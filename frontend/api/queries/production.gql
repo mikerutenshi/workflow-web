@@ -26,6 +26,9 @@ fragment WorkWithTasks on WorkWithTasks {
   tasks {
     ...Task
   }
+  product {
+    sku
+  }
   createdBy
   updatedBy
 }

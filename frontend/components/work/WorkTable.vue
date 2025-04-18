@@ -7,6 +7,9 @@
       :sort-by="[{ key: 'id', order: 'asc' }]"
       class="flex-grow-1"
     >
+      <template v-slot:item.date="{ item }">
+        {{ formatLocalDate(item.date) }}
+      </template>
       <template v-slot:item.sizes="{ item }">
         <v-chip-group>
           <v-chip v-for="size in item.sizes" variant="outlined" disabled>
@@ -18,7 +21,7 @@
       <template v-slot:item.tasks="{ item }">
         <v-list density="compact">
           <v-list-item v-for="task in item.tasks" :title="task.type">
-            {{ `By: ${task.artisanId} At: ${task.doneAt}` }}
+            {{ `By: ${task.artisanId ?? '-'} At: ${task.doneAt ?? '-'}` }}
             <template v-slot:prepend>
               <v-icon icon="mdi-checkbox-blank"></v-icon>
             </template>
@@ -58,9 +61,13 @@ const headers: ReadOnlyHeaders = [
   { title: 'ID', key: 'id' },
   { title: 'Date', key: 'date' },
   { title: 'SPK', key: 'orderNo' },
-  { title: 'Product ID', key: 'productId' },
+  { title: 'SKU', key: 'product.sku' },
   { title: 'Size | Quantity', key: 'sizes' },
   { title: 'Tasks', key: 'tasks' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
+
+function formatLocalDate(utcDate: string) {
+  return new Date(utcDate).toLocaleDateString();
+}
 </script>

@@ -1,12 +1,10 @@
 import { Work } from '@/models/work.model';
+import { WorkWithTasks } from '@/models/workWithTasks.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateWorkDto } from './dto/createWork.dto';
-import { Size } from '@/models/size.model';
-import { UpdateWorkDto } from './dto/updateWork.dto';
-import { LaborCost } from '@/models/labor-cost.model';
 import { Job } from '@prisma/client';
-import { WorkWithTasks } from '@/models/workWithTasks.model';
+import { CreateWorkDto } from './dto/createWork.dto';
+import { UpdateWorkDto } from './dto/updateWork.dto';
 
 @Injectable()
 export class WorkService {
@@ -139,6 +137,7 @@ export class WorkService {
           },
         },
         tasks: true,
+        product: true,
       },
     });
     if (!work) {
@@ -152,6 +151,7 @@ export class WorkService {
       include: {
         sizes: { include: { size: true } },
         tasks: true,
+        product: true,
       },
     });
   }

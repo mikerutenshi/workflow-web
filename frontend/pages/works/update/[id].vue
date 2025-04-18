@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <ProductCreateForm />
+    <WorkCreateForm />
   </v-main>
 </template>
 

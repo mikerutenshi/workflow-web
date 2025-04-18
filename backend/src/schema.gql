@@ -203,6 +203,7 @@ type WorkWithTasks {
   productId: ID!
   sizes: [SizeToWork!]!
   tasks: [Task!]!
+  product: Product!
 }
 
 """Date custom scalar type"""

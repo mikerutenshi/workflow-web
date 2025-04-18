@@ -100,7 +100,13 @@
           </NuxtLink>
           <v-btn v-if="workId" type="submit" color="primary">Update</v-btn>
           <v-btn v-else type="submit" color="primary">Create</v-btn>
-          <v-btn v-if="workId" type="button" color="error" class="ml-auto">
+          <v-btn
+            v-if="workId"
+            type="button"
+            color="error"
+            class="ml-auto"
+            @click="executeDelete({ id: workId })"
+          >
             Delete
           </v-btn>
         </div>
@@ -115,8 +121,11 @@ import { useMutation, useQuery } from 'villus';
 import { useRoute } from 'vue-router';
 import {
   CreateWorkDocument,
+  DeleteWorkDocument,
   GetProductsDocument,
   GetSizesDocument,
+  GetWorkDocument,
+  UpdateWorkDocument,
   type Size,
   type SizeToWorkDto,
 } from '~/api/generated/types';
@@ -153,6 +162,24 @@ const { execute: executeCreate } = useMutation(CreateWorkDocument, {
     errorMessages.value += err;
   },
 });
+const { execute: executeUpdate } = useMutation(UpdateWorkDocument, {
+  clearCacheTags: [CACHE_WORK, CACHE_WORKS],
+  onData() {
+    navigateTo('/works');
+  },
+  onError(err) {
+    errorMessages.value += err;
+  },
+});
+const { execute: executeDelete } = useMutation(DeleteWorkDocument, {
+  clearCacheTags: [CACHE_WORKS],
+  onData() {
+    navigateTo('/works');
+  },
+  onError(err) {
+    errorMessages.value += err;
+  },
+});
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
@@ -178,8 +205,40 @@ const errorMessages = ref('');
 const handleSubmit = () => {
   if (!workId.value) {
     executeCreate({ data: form });
+  } else {
+    executeUpdate({ id: workId.value, data: { ...form, updatedBy: userId } });
   }
 };
+
+if (workId.value) {
+  useQuery({
+    query: GetWorkDocument,
+    variables: { id: workId.value },
+    tags: [CACHE_WORK],
+    onData(data) {
+      const work = data.getWork;
+      date.value = new Date(work.date);
+      form.orderNo = work.orderNo;
+      form.productId = work.productId;
+      sizes.value = work.sizes.map((item) => ({
+        id: item.size.id,
+        eu: item.size.eu,
+      }));
+      work.sizes.forEach((item) => {
+        const sizeInTable = sizesTable.find((size) => size.id === item.size.id);
+        if (sizeInTable) {
+          sizeInTable.quantity = item.quantity;
+        } else {
+          sizesTable.push({
+            id: item.size.id,
+            title: item.size.eu,
+            quantity: item.quantity,
+          });
+        }
+      });
+    },
+  });
+}
 
 watchEffect(() => {
   form.date = dateInIso.value;
