@@ -14,46 +14,64 @@
         />
         <v-text-field v-model="header.gender" label="Gender" disabled />
         <v-text-field
-          v-model="masked.drawingUpper"
           label="Drawing Upper"
           prefix="Rp"
-          v-maska="options"
-          @maska="onDrawUpperMask"
+          :model-value="mask.masked(form.drawingUpper)"
+          @update:model-value="
+            (val) => (form.drawingUpper = +mask.unmasked(val))
+          "
         />
         <v-text-field
-          v-model="masked.drawingLining"
           label="Drawing Lining"
           prefix="Rp"
-          v-maska="options"
-          @maska="onDrawLiningMask"
+          :model-value="mask.masked(form.drawingLining)"
+          @update:model-value="
+            (val) => (form.drawingLining = +mask.unmasked(val))
+          "
         />
         <v-text-field
-          v-model="masked.stitchingUpper"
           label="Stitching Upper"
           prefix="Rp"
-          v-maska="options"
-          @maska="onStitchUpperMask"
+          :model-value="mask.masked(form.stitchingUpper)"
+          @update:model-value="
+            (val) => (form.stitchingUpper = +mask.unmasked(val))
+          "
         />
         <v-text-field
-          v-model="masked.stitchingOutsole"
           label="Stitching Outsole"
           prefix="Rp"
-          v-maska="options"
-          @maska="onStitchOutsoleMask"
+          :model-value="
+            form.stitchingOutsole === 0 || form.stitchingOutsole === null
+              ? ''
+              : mask.masked(form.stitchingOutsole)
+          "
+          @update:model-value="
+            (val) =>
+              val === ''
+                ? (form.stitchingOutsole = null)
+                : (form.stitchingOutsole = +mask.unmasked(val))
+          "
         />
         <v-text-field
-          v-model="masked.stitchingInsole"
           label="Stitching insole"
           prefix="Rp"
-          v-maska="options"
-          @maska="onStitchInsoleMask"
+          :model-value="
+            form.stitchingInsole === 0 || form.stitchingInsole === null
+              ? ''
+              : mask.masked(form.stitchingInsole)
+          "
+          @update:model-value="
+            (val) =>
+              val === ''
+                ? (form.stitchingInsole = null)
+                : (form.stitchingInsole = +mask.unmasked(val))
+          "
         />
         <v-text-field
-          v-model="masked.lasting"
           label="Lasting"
           prefix="Rp"
-          v-maska="options"
-          @maska="onLastMask"
+          :model-value="mask.masked(form.lasting)"
+          @update:model-value="(val) => (form.lasting = +mask.unmasked(val))"
         />
 
         <NuxtLink to="/labor-costs">
@@ -67,7 +85,12 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { type MaskaDetail, type MaskInputOptions } from 'maska';
+import {
+  Mask,
+  MaskInput,
+  type MaskaDetail,
+  type MaskInputOptions,
+} from 'maska';
 import { useMutation, useQuery } from 'villus';
 import { useRoute } from 'vue-router';
 import {
@@ -99,15 +122,6 @@ const form = reactive({
   updatedBy: undefined as string | undefined,
 });
 
-const masked = reactive({
-  drawingUpper: '',
-  drawingLining: '',
-  stitchingUpper: '',
-  stitchingOutsole: null as string | null,
-  stitchingInsole: null as string | null,
-  lasting: '',
-});
-
 useQuery({
   query: GetProductGroupDocument,
   variables: { id: productGroupId },
@@ -119,18 +133,6 @@ useQuery({
 
     if (data.getProductGroup.laborCost) {
       laborCostId.value = data.getProductGroup.laborCost.id;
-
-      masked.drawingUpper =
-        data.getProductGroup.laborCost.drawingUpper.toString();
-      masked.drawingLining =
-        data.getProductGroup.laborCost.drawingLining.toString();
-      masked.stitchingUpper =
-        data.getProductGroup.laborCost.stitchingUpper.toString();
-      masked.stitchingOutsole =
-        data.getProductGroup.laborCost.stitchingOutsole?.toString() ?? null;
-      masked.stitchingInsole =
-        data.getProductGroup.laborCost.stitchingInsole?.toString() ?? null;
-      masked.lasting = data.getProductGroup.laborCost.lasting.toString();
 
       form.drawingUpper = data.getProductGroup.laborCost.drawingUpper;
       form.drawingLining = data.getProductGroup.laborCost.drawingLining;
@@ -193,31 +195,12 @@ const options: MaskInputOptions = {
     9: { pattern: /[0-9]/, repeated: true },
   },
   reversed: true,
-  // onMaska: (detail: MaskaDetail) =>
-  //   console.log(`Unmasked -> ${detail.unmasked}`),
+  onMaska: (detail: MaskaDetail) => {
+    console.log(`Completed -> ${detail.unmasked}`);
+  },
 };
 
-const onDrawUpperMask = (event: CustomEvent<MaskaDetail>) => {
-  if (event.detail.unmasked !== '') form.drawingUpper = +event.detail.unmasked;
-};
-const onDrawLiningMask = (event: CustomEvent<MaskaDetail>) => {
-  if (event.detail.unmasked !== '') form.drawingLining = +event.detail.unmasked;
-};
-const onStitchUpperMask = (event: CustomEvent<MaskaDetail>) => {
-  if (event.detail.unmasked !== '')
-    form.stitchingUpper = +event.detail.unmasked;
-};
-const onStitchOutsoleMask = (event: CustomEvent<MaskaDetail>) => {
-  if (event.detail.unmasked !== '')
-    form.stitchingOutsole = +event.detail.unmasked;
-};
-const onStitchInsoleMask = (event: CustomEvent<MaskaDetail>) => {
-  if (event.detail.unmasked !== '')
-    form.stitchingInsole = +event.detail.unmasked;
-};
-const onLastMask = (event: CustomEvent<MaskaDetail>) => {
-  if (event.detail.unmasked !== '') form.lasting = +event.detail.unmasked;
-};
+const mask = new Mask(options);
 
 watchEffect(() => {
   console.log(JSON.stringify(form));
