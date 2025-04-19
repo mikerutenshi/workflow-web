@@ -8,7 +8,7 @@
 
         <v-date-input
           label="Date"
-          v-model="date"
+          v-model="form.date"
           variant="outlined"
         ></v-date-input>
 
@@ -46,7 +46,7 @@
         </v-autocomplete>
 
         <v-card class="mb-4">
-          <v-card-title>Fill in quantities</v-card-title>
+          <v-card-title>Fill in Quantities</v-card-title>
           <v-data-table
             :headers="sizeHeaders"
             :items="sizesTable"
@@ -60,53 +60,6 @@
                 label="Quantity"
                 type="number"
               />
-            </template>
-          </v-data-table>
-        </v-card>
-
-        <v-card class="mt-4">
-          <v-card-title>Fill in artisans</v-card-title>
-          <v-data-table
-            :headers="taskHeaders"
-            :items="tasksTable"
-            hide-default-footer
-            editable
-          >
-            <template v-slot:item.type="{ item }">
-              {{ renderJob(item.type) }}
-            </template>
-
-            <template #item.doneAt="{ item }">
-              <v-date-input
-                label="Done At"
-                v-model="item.doneAt"
-                variant="outlined"
-              ></v-date-input>
-            </template>
-
-            <template #item.artisan="{ item }">
-              <v-autocomplete
-                label="Artisan"
-                auto-select-first
-                item-value="id"
-                item-title="firstName"
-                :items="
-                  artisansData?.getArtisans.filter((artisan) => {
-                    return artisan.jobs.includes(item.type);
-                  })
-                "
-                :loading="isFetchingArtisans"
-                v-model="item.artisan"
-                clearable
-              >
-                <template #item="{ props, item }">
-                  <v-list-item
-                    v-bind="props"
-                    :title="`${item.raw.firstName} ${item.raw.lastName}`"
-                    :subtitle="renderJobs(item.raw.jobs)"
-                  ></v-list-item>
-                </template>
-              </v-autocomplete>
             </template>
           </v-data-table>
         </v-card>
@@ -152,10 +105,6 @@ import {
 
 const route = useRoute();
 const workId = ref(route.params.id as string);
-const date = ref(new Date());
-const dateInIso = computed(() => {
-  return date.value ? new Date(date.value).toISOString() : '';
-});
 
 const { data: productsData, isFetching: isFetchingProducts } = useQuery({
   query: GetProductsDocument,
@@ -164,10 +113,6 @@ const { data: productsData, isFetching: isFetchingProducts } = useQuery({
 const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
   query: GetSizesDocument,
   tags: [CACHE_SIZES],
-});
-const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
-  query: GetArtisansDocument,
-  tags: [CACHE_ARTISANS],
 });
 const { execute: executeCreate } = useMutation(CreateWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
@@ -200,51 +145,20 @@ const { execute: executeDelete } = useMutation(DeleteWorkDocument, {
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 const form = reactive({
-  date: '',
+  date: null as Date | null,
   orderNo: 0,
   productId: '',
   sizes: [] as SizeToWorkDto[],
   createdBy: userId,
   updatedBy: undefined as string | undefined,
 });
-const tasksForm = reactive([
-  {
-    workId: '',
-    type: '' as Job,
-    artisanId: '',
-    doneAt: '',
-    createdBy: '',
-    updatedBy: '',
-  },
-]);
 const sizes = ref<Size[]>([]);
 const sizesTable = reactive<
   Array<{ id: string; title: string; quantity: number }>
 >([]);
-const tasksTable = reactive([
-  {
-    workId: '',
-    type: '' as Job,
-    artisan: null as {
-      id: string;
-      firstName: string;
-      lastName: string | null | undefined;
-      jobs: Job[];
-    } | null,
-    doneAt: null as Date | null,
-    createdBy: '',
-    updatedBy: '',
-  },
-]);
-
 const sizeHeaders = ref([
   { title: 'Size', key: 'title' },
   { title: 'Quantity', key: 'quantity' },
-]);
-const taskHeaders = ref([
-  { title: 'Task', key: 'type' },
-  { title: 'Artisan', key: 'artisan' },
-  { title: 'Done At', key: 'doneAt' },
 ]);
 
 const errorMessages = ref('');
@@ -263,7 +177,7 @@ if (workId.value) {
     tags: [CACHE_WORK],
     onData(data) {
       const work = data.getWork;
-      date.value = new Date(work.date);
+      form.date = new Date(work.date);
       form.orderNo = work.orderNo;
       form.productId = work.productId;
       sizes.value = work.sizes.map((item) => ({
@@ -282,46 +196,11 @@ if (workId.value) {
           });
         }
       });
-      tasksTable.splice(
-        0,
-        tasksTable.length,
-        ...work.tasks.map((task) => ({
-          workId: workId.value,
-          type: task.type,
-          artisan: task.artisan
-            ? {
-                id: task.artisan.id,
-                firstName: task.artisan.firstName,
-                lastName: task.artisan.lastName,
-                jobs: task.artisan.jobs,
-              }
-            : null,
-          doneAt: task.doneAt ? new Date(task.doneAt) : null,
-          createdBy: task.createdBy,
-          updatedBy: userId,
-        }))
-      );
     },
   });
 }
 
-watch(
-  () => tasksTable,
-  (newTasks) => {
-    newTasks.forEach((task) => {
-      if (task.artisan && !task.doneAt) {
-        task.doneAt = new Date();
-      } else if (!task.artisan && task.doneAt) {
-        task.doneAt = null;
-      }
-    });
-  },
-  { deep: true }
-);
-
 watchEffect(() => {
-  form.date = dateInIso.value;
-
   sizesTable.splice(
     0,
     sizesTable.length,
@@ -341,6 +220,5 @@ watchEffect(() => {
   }));
 
   console.log(`Form -> ${JSON.stringify(form)}`);
-  console.log(`Tasks Table -> ${JSON.stringify(tasksTable)}`);
 });
 </script>

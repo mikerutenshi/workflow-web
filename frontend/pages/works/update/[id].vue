@@ -1,6 +1,7 @@
 <template>
   <v-main>
     <WorkCreateForm />
+    <TaskUpdateForm />
   </v-main>
 </template>
 
