@@ -38,16 +38,4 @@ const headers: ReadOnlyHeaders = [
   { title: 'Jobs', key: 'jobs' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
-function renderJobs(jobs: string[]) {
-  let stringResult = '';
-  const jobTitles = jobs.map((jobId) => {
-    const job = JOB_OPTIONS.find((item) => item.id === jobId);
-    return job?.title;
-  });
-  jobTitles.forEach((title) => {
-    stringResult += `${title}, `;
-  });
-
-  return stringResult.slice(0, -2);
-}
 </script>

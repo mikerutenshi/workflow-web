@@ -180,7 +180,7 @@ type SizeToWork {
   size: Size!
 }
 
-type Task {
+type TaskWithArtisan {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -190,6 +190,7 @@ type Task {
   type: Job!
   artisanId: ID
   doneAt: Date
+  artisan: Artisan
 }
 
 type WorkWithTasks {
@@ -202,7 +203,7 @@ type WorkWithTasks {
   orderNo: Float!
   productId: ID!
   sizes: [SizeToWork!]!
-  tasks: [Task!]!
+  tasks: [TaskWithArtisan!]!
   product: Product!
 }
 

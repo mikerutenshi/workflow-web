@@ -6,26 +6,6 @@
           {{ errorMessages }}
         </v-alert>
 
-        <!-- <v-menu
-          v-model="menu"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          max-width="290px"
-          min-width="290px"
-        >
-          <template #activator="{ props }">
-            <v-text-field
-              label="Date"
-              readonly
-              v-bind="props"
-              v-model="form.date"
-              prepend-inner-icon="mdi-calendar"
-            ></v-text-field>
-          </template>
-
-          <v-date-picker v-model="date" @input="menu = false"></v-date-picker>
-        </v-menu> -->
         <v-date-input
           label="Date"
           v-model="date"
@@ -65,34 +45,71 @@
           </template>
         </v-autocomplete>
 
-        <!-- <v-row>
-          <v-col cols="9" md="10"> -->
-        <v-data-table
-          :headers="headers"
-          :items="sizesTable"
-          class="elevation-1"
-          editable
-          hide-default-footer
-        >
-          <!-- <template #item.id="{ item }">
-                <v-text-field v-model="item.title" label="Size" />
-              </template> -->
-          <template #item.quantity="{ item }">
-            <v-text-field
-              v-model.number="item.quantity"
-              label="Quantity"
-              type="number"
-            />
-          </template>
-          <!-- <template #no-data>
-            <v-btn @click="addRow">Add Row</v-btn>
-          </template> -->
-        </v-data-table>
-        <!-- </v-col> -->
-        <!-- <v-col cols="3" md="2" class="d-flex align-end justify-end">
-            <v-btn icon="mdi-plus" color="primary" @click="addRow"></v-btn>
-          </v-col>
-        </v-row> -->
+        <v-card class="mb-4">
+          <v-card-title>Fill in quantities</v-card-title>
+          <v-data-table
+            :headers="sizeHeaders"
+            :items="sizesTable"
+            class="elevation-1"
+            editable
+            hide-default-footer
+          >
+            <template #item.quantity="{ item }">
+              <v-text-field
+                v-model.number="item.quantity"
+                label="Quantity"
+                type="number"
+              />
+            </template>
+          </v-data-table>
+        </v-card>
+
+        <v-card class="mt-4">
+          <v-card-title>Fill in artisans</v-card-title>
+          <v-data-table
+            :headers="taskHeaders"
+            :items="tasksTable"
+            hide-default-footer
+            editable
+          >
+            <template v-slot:item.type="{ item }">
+              {{ renderJob(item.type) }}
+            </template>
+
+            <template #item.doneAt="{ item }">
+              <v-date-input
+                label="Done At"
+                v-model="item.doneAt"
+                variant="outlined"
+              ></v-date-input>
+            </template>
+
+            <template #item.artisan="{ item }">
+              <v-autocomplete
+                label="Artisan"
+                auto-select-first
+                item-value="id"
+                item-title="firstName"
+                :items="
+                  artisansData?.getArtisans.filter((artisan) => {
+                    return artisan.jobs.includes(item.type);
+                  })
+                "
+                :loading="isFetchingArtisans"
+                v-model="item.artisan"
+                clearable
+              >
+                <template #item="{ props, item }">
+                  <v-list-item
+                    v-bind="props"
+                    :title="`${item.raw.firstName} ${item.raw.lastName}`"
+                    :subtitle="renderJobs(item.raw.jobs)"
+                  ></v-list-item>
+                </template>
+              </v-autocomplete>
+            </template>
+          </v-data-table>
+        </v-card>
 
         <div class="d-flex mt-4">
           <NuxtLink to="/works">
@@ -122,10 +139,13 @@ import { useRoute } from 'vue-router';
 import {
   CreateWorkDocument,
   DeleteWorkDocument,
+  GetArtisansDocument,
   GetProductsDocument,
   GetSizesDocument,
   GetWorkDocument,
+  Job,
   UpdateWorkDocument,
+  type Artisan,
   type Size,
   type SizeToWorkDto,
 } from '~/api/generated/types';
@@ -137,21 +157,17 @@ const dateInIso = computed(() => {
   return date.value ? new Date(date.value).toISOString() : '';
 });
 
-const {
-  data: productsData,
-  isFetching: isFetchingProducts,
-  error: productsError,
-} = useQuery({
+const { data: productsData, isFetching: isFetchingProducts } = useQuery({
   query: GetProductsDocument,
   tags: [CACHE_PRODUCTS],
 });
-const {
-  data: sizesData,
-  isFetching: isFetchingSizes,
-  error: sizesError,
-} = useQuery({
+const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
   query: GetSizesDocument,
   tags: [CACHE_SIZES],
+});
+const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
+  query: GetArtisansDocument,
+  tags: [CACHE_ARTISANS],
 });
 const { execute: executeCreate } = useMutation(CreateWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
@@ -191,14 +207,44 @@ const form = reactive({
   createdBy: userId,
   updatedBy: undefined as string | undefined,
 });
+const tasksForm = reactive([
+  {
+    workId: '',
+    type: '' as Job,
+    artisanId: '',
+    doneAt: '',
+    createdBy: '',
+    updatedBy: '',
+  },
+]);
 const sizes = ref<Size[]>([]);
 const sizesTable = reactive<
   Array<{ id: string; title: string; quantity: number }>
 >([]);
+const tasksTable = reactive([
+  {
+    workId: '',
+    type: '' as Job,
+    artisan: null as {
+      id: string;
+      firstName: string;
+      lastName: string | null | undefined;
+      jobs: Job[];
+    } | null,
+    doneAt: null as Date | null,
+    createdBy: '',
+    updatedBy: '',
+  },
+]);
 
-const headers = ref([
+const sizeHeaders = ref([
   { title: 'Size', key: 'title' },
   { title: 'Quantity', key: 'quantity' },
+]);
+const taskHeaders = ref([
+  { title: 'Task', key: 'type' },
+  { title: 'Artisan', key: 'artisan' },
+  { title: 'Done At', key: 'doneAt' },
 ]);
 
 const errorMessages = ref('');
@@ -236,9 +282,42 @@ if (workId.value) {
           });
         }
       });
+      tasksTable.splice(
+        0,
+        tasksTable.length,
+        ...work.tasks.map((task) => ({
+          workId: workId.value,
+          type: task.type,
+          artisan: task.artisan
+            ? {
+                id: task.artisan.id,
+                firstName: task.artisan.firstName,
+                lastName: task.artisan.lastName,
+                jobs: task.artisan.jobs,
+              }
+            : null,
+          doneAt: task.doneAt ? new Date(task.doneAt) : null,
+          createdBy: task.createdBy,
+          updatedBy: userId,
+        }))
+      );
     },
   });
 }
+
+watch(
+  () => tasksTable,
+  (newTasks) => {
+    newTasks.forEach((task) => {
+      if (task.artisan && !task.doneAt) {
+        task.doneAt = new Date();
+      } else if (!task.artisan && task.doneAt) {
+        task.doneAt = null;
+      }
+    });
+  },
+  { deep: true }
+);
 
 watchEffect(() => {
   form.date = dateInIso.value;
@@ -260,6 +339,8 @@ watchEffect(() => {
     id: item.id,
     quantity: item.quantity,
   }));
+
   console.log(`Form -> ${JSON.stringify(form)}`);
+  console.log(`Tasks Table -> ${JSON.stringify(tasksTable)}`);
 });
 </script>

@@ -5,11 +5,18 @@ fragment Size on Size {
   uk
 }
 
-fragment Task on Task {
+fragment TaskWithArtisan on TaskWithArtisan {
   id
   type
   doneAt
-  artisanId
+  createdBy
+  updatedBy
+  artisan {
+    id
+    firstName
+    lastName
+    jobs
+  }
 }
 
 fragment WorkWithTasks on WorkWithTasks {
@@ -24,7 +31,7 @@ fragment WorkWithTasks on WorkWithTasks {
     quantity
   }
   tasks {
-    ...Task
+    ...TaskWithArtisan
   }
   product {
     sku

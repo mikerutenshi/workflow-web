@@ -136,7 +136,7 @@ export class WorkService {
             size: true,
           },
         },
-        tasks: true,
+        tasks: { include: { artisan: true } },
         product: true,
       },
     });
@@ -150,7 +150,7 @@ export class WorkService {
     return this.prisma.work.findMany({
       include: {
         sizes: { include: { size: true } },
-        tasks: true,
+        tasks: { include: { artisan: true } },
         product: true,
       },
     });
