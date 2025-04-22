@@ -7,16 +7,19 @@ fragment Size on Size {
 
 fragment TaskWithArtisan on TaskWithArtisan {
   id
-  type
-  doneAt
   createdBy
   updatedBy
+  workId
+  type
   artisan {
     id
     firstName
     lastName
     jobs
+    createdBy
+    updatedBy
   }
+  doneAt
 }
 
 fragment WorkWithTasks on WorkWithTasks {
@@ -32,6 +35,24 @@ fragment WorkWithTasks on WorkWithTasks {
   }
   tasks {
     ...TaskWithArtisan
+  }
+  product {
+    sku
+  }
+  createdBy
+  updatedBy
+}
+
+fragment Work on WorkWithTasks {
+  id
+  date
+  orderNo
+  productId
+  sizes {
+    size {
+      ...Size
+    }
+    quantity
   }
   product {
     sku
@@ -92,6 +113,18 @@ query getWorks {
 
 query getWork($id: ID!) {
   getWork(id: $id) {
-    ...WorkWithTasks
+    ...Work
+  }
+}
+
+query getTasks($workId: ID!) {
+  getTasks(workId: $workId) {
+    ...TaskWithArtisan
+  }
+}
+
+mutation updateTasks($data: [UpdateTaskDto!]!) {
+  updateTasks(data: $data) {
+    id
   }
 }

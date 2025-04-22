@@ -1,7 +1,14 @@
 <template>
   <v-row justify="center" align="center">
     <v-col md="4">
-      <v-form class="pa-4" @submit.prevent="handleSubmit">
+      <v-form
+        class="pa-4"
+        @submit.prevent="
+          executeUpdate({
+            data: form,
+          })
+        "
+      >
         <v-alert v-if="errorMessages" type="error">
           {{ errorMessages }}
         </v-alert>
@@ -10,7 +17,7 @@
           <v-card-title>Fill in Artisans</v-card-title>
           <v-data-table
             :headers="taskHeaders"
-            :items="tasksForm"
+            :items="displayForm"
             hide-default-footer
             editable
           >
@@ -40,6 +47,7 @@
                 :loading="isFetchingArtisans"
                 v-model="item.artisan"
                 clearable
+                return-object
               >
                 <template #item="{ props, item }">
                   <v-list-item
@@ -66,13 +74,15 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery } from 'villus';
+import { useAuthStore } from '#imports';
+import { useMutation, useQuery } from 'villus';
 import {
   GetArtisansDocument,
-  GetWorkDocument,
+  GetTasksDocument,
   Job,
+  UpdateTasksDocument,
+  type UpdateTaskDto,
 } from '~/api/generated/types';
-import { useAuthStore } from '#imports';
 
 const route = useRoute();
 const workId = ref(route.params.id as string);
@@ -83,21 +93,47 @@ const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   query: GetArtisansDocument,
   tags: [CACHE_ARTISANS],
 });
-const tasksForm = reactive([
+const { execute: executeUpdate } = useMutation(UpdateTasksDocument, {
+  clearCacheTags: [CACHE_WORKS, CACHE_TASKS],
+  onData() {
+    navigateTo('/works');
+  },
+  onError(err) {
+    errorMessages.value += err;
+  },
+});
+
+const displayForm = reactive([
   {
-    workId: '',
+    id: '',
     type: '' as Job,
     artisan: null as {
       id: string;
       firstName: string;
       lastName: string | null | undefined;
       jobs: Job[];
+      createdBy: string;
+      updatedBy?: string | null | undefined;
     } | null,
     doneAt: null as Date | null,
-    createdBy: '',
     updatedBy: '',
   },
 ]);
+
+const form = computed<UpdateTaskDto[]>(() => {
+  const result = displayForm.map((item) => ({
+    id: item.id,
+    artisanId: item.artisan?.id ?? null,
+    doneAt: item.doneAt,
+    updatedBy: userId,
+  }));
+
+  console.log(
+    'Computed `form` recalculated based on displayForm:',
+    JSON.stringify(result)
+  );
+  return result;
+});
 
 const taskHeaders = ref([
   { title: 'Task', key: 'type' },
@@ -106,22 +142,19 @@ const taskHeaders = ref([
 ]);
 
 const errorMessages = ref('');
-const handleSubmit = () => {
-  // executeUpdate({ id: workId.value, data: { ...form, updatedBy: userId } });
-};
 
 if (workId.value) {
   useQuery({
-    query: GetWorkDocument,
-    variables: { id: workId.value },
-    tags: [CACHE_WORK],
+    query: GetTasksDocument,
+    variables: { workId: workId.value },
+    tags: [CACHE_TASKS],
     onData(data) {
-      const work = data.getWork;
-      tasksForm.splice(
+      const tasks = data.getTasks;
+      displayForm.splice(
         0,
-        tasksForm.length,
-        ...work.tasks.map((task) => ({
-          workId: workId.value,
+        displayForm.length,
+        ...tasks.map((task) => ({
+          id: task.id,
           type: task.type,
           artisan: task.artisan
             ? {
@@ -129,10 +162,11 @@ if (workId.value) {
                 firstName: task.artisan.firstName,
                 lastName: task.artisan.lastName,
                 jobs: task.artisan.jobs,
+                createdBy: task.artisan.createdBy,
+                updatedBy: task.artisan.updatedBy,
               }
             : null,
           doneAt: task.doneAt ? new Date(task.doneAt) : null,
-          createdBy: task.createdBy,
           updatedBy: userId,
         }))
       );
@@ -141,7 +175,7 @@ if (workId.value) {
 }
 
 watch(
-  () => tasksForm,
+  () => displayForm,
   (newTasks) => {
     newTasks.forEach((task) => {
       if (task.artisan && !task.doneAt) {
@@ -155,6 +189,6 @@ watch(
 );
 
 watchEffect(() => {
-  console.log(`Tasks Table -> ${JSON.stringify(tasksForm)}`);
+  console.log(`Tasks Table -> ${JSON.stringify(displayForm)}`);
 });
 </script>

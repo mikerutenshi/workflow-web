@@ -21,7 +21,11 @@
       <template v-slot:item.tasks="{ item }">
         <v-list density="compact">
           <v-list-item v-for="task in item.tasks" :title="task.type">
-            {{ `By: ${task.artisanId ?? '-'} At: ${task.doneAt ?? '-'}` }}
+            {{
+              `By: ${task.artisan?.firstName ?? '-'} ${
+                task.artisan?.lastName ?? ''
+              } At: ${task.doneAt ?? '-'}`
+            }}
             <template v-slot:prepend>
               <v-icon icon="mdi-checkbox-blank"></v-icon>
             </template>

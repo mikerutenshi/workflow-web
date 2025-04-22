@@ -228,6 +228,7 @@ type Query {
   getWorks: [WorkWithTasks!]!
   getSize(id: ID!): Size!
   getSizes: [Size!]!
+  getTasks(workId: ID!): [TaskWithArtisan!]!
 }
 
 type Mutation {
@@ -258,6 +259,7 @@ type Mutation {
   createSize(data: CreateSizeDto!): Size!
   updateSize(id: ID!, data: CreateSizeDto!): Size!
   deleteSize(id: ID!): Boolean!
+  updateTasks(data: [UpdateTaskDto!]!): [TaskWithArtisan!]!
 }
 
 input RoleDto {
@@ -352,4 +354,11 @@ input CreateSizeDto {
   eu: String!
   us: String
   uk: String
+}
+
+input UpdateTaskDto {
+  artisanId: ID
+  doneAt: Date
+  id: ID!
+  updatedBy: ID!
 }

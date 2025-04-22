@@ -4,9 +4,18 @@ import { SizeService } from './size.service';
 import { WorkResolver } from './work.resolver';
 import { WorkService } from './work.service';
 import { PrismaModule } from '@/prisma/prisma.module';
+import { TaskResolver } from './task.resolver';
+import { TaskService } from './task.service';
 
 @Module({
-  providers: [WorkService, SizeService, WorkResolver, SizeResolver],
+  providers: [
+    WorkResolver,
+    WorkService,
+    SizeResolver,
+    SizeService,
+    TaskResolver,
+    TaskService,
+  ],
   imports: [PrismaModule],
 })
 export class ProductionModule {}
