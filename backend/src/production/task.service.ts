@@ -14,10 +14,7 @@ export class TaskService {
         this.prisma.task.update({
           where: { id: +task.id },
           data: {
-            artisanId:
-              task.artisanId !== null && task.artisanId !== undefined
-                ? +task.artisanId
-                : null,
+            artisanId: task.artisanId !== null ? +task.artisanId : null,
             doneAt: task.doneAt,
             updatedBy: +task.updatedBy,
           },
