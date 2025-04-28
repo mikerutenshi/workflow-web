@@ -1,14 +1,14 @@
 import { ProductGroup } from '@/models/product-group.model';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { CreateProductGroupDto } from './dto/createProductGroup.dto';
-import { GetProductGroupsDto } from './dto/getProductGroup.dto';
+import { ProductGroupCreateDto } from './dto/product-group-create.dto';
+import { ProductGroupGetDto } from './dto/product-group-get.dto';
 
 @Injectable()
 export class ProductGroupService {
   constructor(private prisma: PrismaService) {}
 
-  async createProductGroup(data: CreateProductGroupDto): Promise<ProductGroup> {
+  async createProductGroup(data: ProductGroupCreateDto): Promise<ProductGroup> {
     return await this.prisma.productGroup.create({
       data: {
         skuNumeric: data.skuNumeric,
@@ -21,12 +21,12 @@ export class ProductGroupService {
 
   updateProductGroup(
     id: number,
-    data: CreateProductGroupDto,
+    data: ProductGroupCreateDto,
   ): Promise<ProductGroup> {
     return this.prisma.productGroup.update({ where: { id }, data });
   }
 
-  async getProductGroups(): Promise<GetProductGroupsDto[]> {
+  async getProductGroups(): Promise<ProductGroupGetDto[]> {
     return await this.prisma.productGroup.findMany({
       include: {
         productCategory: true,
@@ -40,7 +40,7 @@ export class ProductGroupService {
     });
   }
 
-  async getProductGroup(id: number): Promise<GetProductGroupsDto> {
+  async getProductGroup(id: number): Promise<ProductGroupGetDto> {
     const result = await this.prisma.productGroup.findUnique({
       where: {
         id: id,

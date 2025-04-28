@@ -1,8 +1,9 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Size } from '@/models/size.model';
+import { Field, InputType, OmitType } from '@nestjs/graphql';
 import { IsNotEmpty, IsOptional } from 'class-validator';
 
 @InputType()
-export class CreateSizeDto {
+export class SizeCreateDto {
   @Field()
   @IsNotEmpty()
   eu: string;

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ProductCategory } from '@/models/product-category.model ';
 import { PrismaService } from 'nestjs-prisma';
-import { CreateArtisanDto } from './dto/createArtisan.dto';
+import { ArtisanCreateDto } from './dto/artisan-create';
 import { Artisan } from '@/models/artisan.model';
 
 @Injectable()
 export class ArtisanService {
   constructor(private prisma: PrismaService) {}
 
-  async createArtisan(data: CreateArtisanDto): Promise<Artisan> {
+  async createArtisan(data: ArtisanCreateDto): Promise<Artisan> {
     return await this.prisma.artisan.create({
       data: {
         firstName: data.firstName,
@@ -19,7 +19,7 @@ export class ArtisanService {
     });
   }
 
-  async updateArtisan(id: number, data: CreateArtisanDto): Promise<Artisan> {
+  async updateArtisan(id: number, data: ArtisanCreateDto): Promise<Artisan> {
     return await this.prisma.artisan.update({
       where: { id: id },
       data: {

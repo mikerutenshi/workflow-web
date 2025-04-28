@@ -1,19 +1,19 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Size } from '@/models/size.model';
-import { CreateSizeDto } from './dto/createSize.dto';
+import { SizeCreateDto } from './dto/size-create-dto.js';
 
 @Injectable()
 export class SizeService {
   constructor(private prisma: PrismaService) {}
 
-  createSize(data: CreateSizeDto): Promise<Size> {
+  createSize(data: SizeCreateDto): Promise<Size> {
     return this.prisma.size.create({
       data,
     });
   }
 
-  updateSize(id: number, data: CreateSizeDto): Promise<Size> {
+  updateSize(id: number, data: SizeCreateDto): Promise<Size> {
     return this.prisma.size.update({ where: { id }, data });
   }
 

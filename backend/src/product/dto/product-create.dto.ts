@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsArray, IsInt, IsOptional, Matches, Min } from 'class-validator';
 
 @InputType()
-export class CreateProductDto {
+export class ProductCreateDto {
   @Field()
   @Matches(/^[A-Z]{1,2}\d{5}-[a-zA-Z.\s]*(\/[a-zA-Z.\s]*)*$/, {
     message: 'Format support example: A12345-D.Brown/White',

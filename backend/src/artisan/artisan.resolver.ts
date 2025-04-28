@@ -2,7 +2,7 @@ import { AuthGuard } from '@/guards/auth.guard';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ArtisanService } from './artisan.service';
-import { CreateArtisanDto } from './dto/createArtisan.dto';
+import { ArtisanCreateDto } from './dto/artisan-create';
 import { Artisan } from '@/models/artisan.model';
 
 @Resolver(() => Artisan)
@@ -10,13 +10,13 @@ export class ArtisanResolver {
   constructor(private artisanService: ArtisanService) {}
 
   @Mutation(() => Artisan)
-  createArtisan(@Args('data') data: CreateArtisanDto): Promise<Artisan> {
+  createArtisan(@Args('data') data: ArtisanCreateDto): Promise<Artisan> {
     return this.artisanService.createArtisan(data);
   }
   @Mutation(() => Artisan)
   updateArtisan(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Args('data') data: CreateArtisanDto,
+    @Args('data') data: ArtisanCreateDto,
   ): Promise<Artisan> {
     return this.artisanService.updateArtisan(id, data);
   }

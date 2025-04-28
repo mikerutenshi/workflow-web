@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-import { Size } from './size.model';
+import { SizeToWork } from './size-to-work.model';
 
 @ObjectType()
 export class Work extends BaseModel {
@@ -12,16 +12,4 @@ export class Work extends BaseModel {
   productId: number;
   @Field(() => [SizeToWork])
   sizes: SizeToWork[];
-}
-
-@ObjectType()
-class SizeToWork {
-  @Field(() => ID)
-  workId: number;
-  @Field(() => ID)
-  sizeId: number;
-  @Field()
-  quantity: number;
-  @Field(() => Size)
-  size: Size;
 }

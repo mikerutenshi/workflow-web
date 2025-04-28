@@ -1,7 +1,7 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductCategoryService } from './productCategory.service';
 import { ProductCategory } from '@/models/product-category.model ';
-import { CreateProductCategoryDto } from './dto/createProductCategory.dto';
+import { ProductCategoryCreateDto } from './dto/product-category-create.dto';
 import { ParseIntPipe } from '@nestjs/common';
 
 @Resolver(() => ProductCategory)
@@ -10,7 +10,7 @@ export class ProductCategoryResolver {
 
   @Mutation(() => ProductCategory)
   createProductCategory(
-    @Args('data') data: CreateProductCategoryDto,
+    @Args('data') data: ProductCategoryCreateDto,
   ): Promise<ProductCategory> {
     return this.productCategoryService.createProductCategory(data);
   }
@@ -18,7 +18,7 @@ export class ProductCategoryResolver {
   @Mutation(() => ProductCategory)
   updateProductCategory(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Args('data') data: CreateProductCategoryDto,
+    @Args('data') data: ProductCategoryCreateDto,
   ): Promise<ProductCategory> {
     return this.productCategoryService.updateProductCategory(id, data);
   }

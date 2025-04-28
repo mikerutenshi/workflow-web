@@ -2,7 +2,7 @@ import { Query, Mutation, Resolver, Args, Context } from '@nestjs/graphql';
 import { User } from 'src/models/user.model';
 // import { Prisma, User as UserModel } from '@prisma/client';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from './dto/createUser.dto';
+import { UserCreateDto } from './dto/user-create.dto';
 import { LogInDto } from './dto/logIn.dto';
 import { Request } from 'express';
 import { UseGuards } from '@nestjs/common';
@@ -20,7 +20,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
-  createUser(@Args('data') data: CreateUserDto): Promise<User> {
+  createUser(@Args('data') data: UserCreateDto): Promise<User> {
     return this.authService.createUser(data);
   }
 

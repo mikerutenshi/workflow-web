@@ -9,7 +9,7 @@ export class Artisan extends BaseModel {
   @Field()
   firstName: string;
   @Field(() => String, { nullable: true })
-  lastName: string | null;
+  lastName?: string | null;
   @Field(() => [Job])
   jobs: Job[];
 }

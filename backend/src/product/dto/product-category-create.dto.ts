@@ -3,7 +3,7 @@ import { Gender } from '@prisma/client';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class CreateProductCategoryDto {
+export class ProductCategoryCreateDto {
   @Field()
   @IsNotEmpty()
   name: string;

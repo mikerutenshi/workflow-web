@@ -57,7 +57,7 @@ type ProductGroup {
   productCategoryId: ID!
 }
 
-type ProductGroupWithCategoryDto {
+type ProductGroupWithCategory {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -75,14 +75,14 @@ type Color {
   hexCode: String!
 }
 
-type ProductColorsWithColor {
+type ColorToProductWithColor {
   productId: ID!
   colorId: ID!
   order: Float!
   color: Color!
 }
 
-type GetProductsDto {
+type ProductGetDto {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -90,8 +90,8 @@ type GetProductsDto {
   updatedAt: Date!
   sku: String!
   productGroupId: ID!
-  productGroup: ProductGroupWithCategoryDto!
-  productColors: [ProductColorsWithColor!]!
+  productGroup: ProductGroupWithCategory!
+  productColors: [ColorToProductWithColor!]!
 }
 
 type LaborCost {
@@ -109,7 +109,7 @@ type LaborCost {
   productGroupId: ID!
 }
 
-type ProductWithColorDto {
+type ProductWithColors {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -117,10 +117,10 @@ type ProductWithColorDto {
   updatedAt: Date!
   sku: String!
   productGroupId: ID!
-  productColors: [ProductColorsWithColor!]!
+  productColors: [ColorToProductWithColor!]!
 }
 
-type GetProductGroupsDto {
+type ProductGroupGetDto {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -130,7 +130,7 @@ type GetProductGroupsDto {
   name: String
   productCategoryId: ID!
   productCategory: ProductCategory!
-  products: [ProductWithColorDto]
+  products: [ProductWithColors]
   laborCost: LaborCost
 }
 
@@ -161,6 +161,13 @@ type Size {
   uk: String
 }
 
+type SizeToWork {
+  workId: ID!
+  sizeId: ID!
+  quantity: Float!
+  size: Size!
+}
+
 type Work {
   id: ID!
   createdBy: ID!
@@ -171,13 +178,6 @@ type Work {
   orderNo: Float!
   productId: ID!
   sizes: [SizeToWork!]!
-}
-
-type SizeToWork {
-  workId: ID!
-  sizeId: ID!
-  quantity: Float!
-  size: Size!
 }
 
 type TaskWithArtisan {
@@ -207,6 +207,68 @@ type WorkWithTasks {
   product: Product!
 }
 
+type ProductGroupDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  skuNumeric: String!
+  name: String
+  productCategoryId: ID!
+  productCategory: ProductCategory!
+  laborCost: LaborCost
+}
+
+type ProductWithGroupDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  sku: String!
+  productGroupId: ID!
+  productGroup: ProductGroupDto!
+}
+
+type WorkWithProductDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  date: Date!
+  orderNo: Float!
+  productId: ID!
+  sizes: [SizeToWork!]!
+  product: ProductWithGroupDto!
+}
+
+type TaskWithWorkDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  workId: ID!
+  type: Job!
+  artisanId: ID
+  doneAt: Date
+  work: WorkWithProductDto!
+}
+
+type PayrollGetDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  firstName: String!
+  lastName: String
+  jobs: [Job!]!
+  tasks: [TaskWithWorkDto!]!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -215,12 +277,12 @@ type Query {
   me: User!
   getColors: [Color!]!
   getColor(id: ID!): Color!
-  getProducts: [GetProductsDto!]!
-  getProduct(id: ID!): GetProductsDto!
+  getProducts: [ProductGetDto!]!
+  getProduct(id: ID!): ProductGetDto!
   getProductCategories: [ProductCategory!]!
   getProductCategory(id: ID!): ProductCategory!
-  getProductGroups: [GetProductGroupsDto!]!
-  getProductGroup(id: ID!): GetProductGroupsDto!
+  getProductGroups: [ProductGroupGetDto!]!
+  getProductGroup(id: ID!): ProductGroupGetDto!
   getLaborCosts: [LaborCost!]!
   getArtisans: [Artisan!]!
   getArtisan(id: ID!): Artisan!
@@ -229,37 +291,38 @@ type Query {
   getSize(id: ID!): Size!
   getSizes: [Size!]!
   getTasks(workId: ID!): [TaskWithArtisan!]!
+  getPayroll: [PayrollGetDto!]!
 }
 
 type Mutation {
   createRole(data: RoleDto!): Role!
-  createUser(data: CreateUserDto!): User!
+  createUser(data: UserCreateDto!): User!
   logIn(data: LogInDto!): User!
   logOut: User!
-  createColor(data: CreateColorDto!): Color!
-  updateColor(id: ID!, data: CreateColorDto!): Color!
+  createColor(data: ColorCreateDto!): Color!
+  updateColor(id: ID!, data: ColorCreateDto!): Color!
   deleteColor(id: ID!): Boolean!
-  createProduct(data: CreateProductDto!): Product!
-  updateProduct(id: ID!, data: CreateProductDto!): Product!
+  createProduct(data: ProductCreateDto!): Product!
+  updateProduct(id: ID!, data: ProductCreateDto!): Product!
   deleteProduct(id: ID!): Boolean!
-  createProductCategory(data: CreateProductCategoryDto!): ProductCategory!
-  updateProductCategory(id: ID!, data: CreateProductCategoryDto!): ProductCategory!
+  createProductCategory(data: ProductCategoryCreateDto!): ProductCategory!
+  updateProductCategory(id: ID!, data: ProductCategoryCreateDto!): ProductCategory!
   deleteProductCategory(id: ID!): Boolean!
-  createProductGroup(data: CreateProductGroupDto!): ProductGroup!
-  updateProductGroup(id: ID!, data: CreateProductGroupDto!): ProductGroup!
+  createProductGroup(data: ProductGroupCreateDto!): ProductGroup!
+  updateProductGroup(id: ID!, data: ProductGroupCreateDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!
-  createLaborCost(data: CreateLaborCostDto!): LaborCost!
-  updateLaborCost(id: ID!, data: CreateLaborCostDto!): LaborCost!
-  createArtisan(data: CreateArtisanDto!): Artisan!
-  updateArtisan(id: ID!, data: CreateArtisanDto!): Artisan!
+  createLaborCost(data: LaborCostCreateDto!): LaborCost!
+  updateLaborCost(id: ID!, data: LaborCostCreateDto!): LaborCost!
+  createArtisan(data: ArtisanCreateDto!): Artisan!
+  updateArtisan(id: ID!, data: ArtisanCreateDto!): Artisan!
   deleteArtisan(id: ID!): Boolean!
-  createWork(data: CreateWorkDto!): Work!
-  updateWork(id: ID!, data: UpdateWorkDto!): Work!
+  createWork(data: WorkCreateDto!): Work!
+  updateWork(id: ID!, data: WorkUpdateDto!): Work!
   deleteWork(id: ID!): Boolean!
-  createSize(data: CreateSizeDto!): Size!
-  updateSize(id: ID!, data: CreateSizeDto!): Size!
+  createSize(data: SizeCreateDto!): Size!
+  updateSize(id: ID!, data: SizeCreateDto!): Size!
   deleteSize(id: ID!): Boolean!
-  updateTasks(data: [UpdateTaskDto!]!): [TaskWithArtisan!]!
+  updateTasks(data: [TaskUpdateDto!]!): [TaskWithArtisan!]!
 }
 
 input RoleDto {
@@ -268,7 +331,7 @@ input RoleDto {
   cleareanceLevel: Float!
 }
 
-input CreateUserDto {
+input UserCreateDto {
   email: String!
   password: String!
   firstName: String!
@@ -282,12 +345,12 @@ input LogInDto {
   password: String!
 }
 
-input CreateColorDto {
+input ColorCreateDto {
   name: String!
   hexCode: String!
 }
 
-input CreateProductDto {
+input ProductCreateDto {
   sku: String!
   productGroupId: ID!
   createdBy: ID!
@@ -295,12 +358,12 @@ input CreateProductDto {
   colorIds: [ID!]!
 }
 
-input CreateProductCategoryDto {
+input ProductCategoryCreateDto {
   name: String!
   gender: String!
 }
 
-input CreateProductGroupDto {
+input ProductGroupCreateDto {
   skuNumeric: String!
   productCategoryId: ID!
   name: String
@@ -308,7 +371,7 @@ input CreateProductGroupDto {
   updatedBy: ID
 }
 
-input CreateLaborCostDto {
+input LaborCostCreateDto {
   drawingUpper: Float!
   drawingLining: Float!
   stitchingUpper: Float!
@@ -320,7 +383,7 @@ input CreateLaborCostDto {
   updatedBy: ID
 }
 
-input CreateArtisanDto {
+input ArtisanCreateDto {
   firstName: String!
   lastName: String
   jobs: [Job!]!
@@ -328,35 +391,35 @@ input CreateArtisanDto {
   updatedBy: ID
 }
 
-input CreateWorkDto {
+input WorkCreateDto {
   date: Date!
   orderNo: Float!
   productId: ID!
-  sizes: [SizeToWorkDto!]!
+  sizes: [SizeToWorkCreateDto!]!
   createdBy: ID!
 }
 
-input SizeToWorkDto {
+input SizeToWorkCreateDto {
   id: ID!
   quantity: Float!
 }
 
-input UpdateWorkDto {
+input WorkUpdateDto {
   date: Date!
   orderNo: Float!
   productId: ID!
-  sizes: [SizeToWorkDto!]!
+  sizes: [SizeToWorkCreateDto!]!
   createdBy: ID!
   updatedBy: ID!
 }
 
-input CreateSizeDto {
+input SizeCreateDto {
   eu: String!
   us: String
   uk: String
 }
 
-input UpdateTaskDto {
+input TaskUpdateDto {
   artisanId: ID
   doneAt: Date
   id: ID!

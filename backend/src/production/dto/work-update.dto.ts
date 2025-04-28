@@ -1,10 +1,10 @@
-import { SizeToWorkDto } from '@/production/dto/sizeToWork.dto';
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
 import { IsDate, IsInt, Min, ValidateNested } from 'class-validator';
+import { SizeToWorkCreateDto } from './size-to-work-create.dto';
 
 @InputType()
-export class UpdateWorkDto {
+export class WorkUpdateDto {
   @Field(() => Date)
   @IsDate()
   date: Date;
@@ -18,10 +18,10 @@ export class UpdateWorkDto {
   @Min(1)
   productId: number;
 
-  @Field(() => [SizeToWorkDto])
-  @Type(() => SizeToWorkDto)
+  @Field(() => [SizeToWorkCreateDto])
+  @Type(() => SizeToWorkCreateDto)
   @ValidateNested({ each: true })
-  sizes: SizeToWorkDto[];
+  sizes: SizeToWorkCreateDto[];
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

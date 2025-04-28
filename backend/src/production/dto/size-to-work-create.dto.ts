@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsInt, Min } from 'class-validator';
 
 @InputType()
-export class SizeToWorkDto {
+export class SizeToWorkCreateDto {
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()

@@ -1,24 +1,24 @@
 import { Work } from '@/models/work.model';
 import { ParseIntPipe } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateWorkDto } from './dto/createWork.dto';
+import { WorkCreateDto } from './dto/work-create.dto';
 import { WorkService } from './work.service';
-import { UpdateWorkDto } from './dto/updateWork.dto';
-import { WorkWithTasks } from '@/models/workWithTasks.model';
+import { WorkUpdateDto } from './dto/work-update.dto';
+import { WorkWithTasks } from '@/models/work-with-tasks.model';
 
 @Resolver(() => Work)
 export class WorkResolver {
   constructor(private workService: WorkService) {}
 
   @Mutation(() => Work)
-  createWork(@Args('data') data: CreateWorkDto): Promise<Work> {
+  createWork(@Args('data') data: WorkCreateDto): Promise<Work> {
     return this.workService.createWork(data);
   }
 
   @Mutation(() => Work)
   updateWork(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Args('data') data: UpdateWorkDto,
+    @Args('data') data: WorkUpdateDto,
   ): Promise<Work> {
     return this.workService.updateWork(id, data);
   }

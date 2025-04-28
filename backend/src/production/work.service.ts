@@ -1,16 +1,16 @@
 import { Work } from '@/models/work.model';
-import { WorkWithTasks } from '@/models/workWithTasks.model';
+import { WorkWithTasks } from '@/models/work-with-tasks.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Job } from '@prisma/client';
-import { CreateWorkDto } from './dto/createWork.dto';
-import { UpdateWorkDto } from './dto/updateWork.dto';
+import { WorkCreateDto } from './dto/work-create.dto';
+import { WorkUpdateDto } from './dto/work-update.dto';
 
 @Injectable()
 export class WorkService {
   constructor(private prisma: PrismaService) {}
 
-  createWork(data: CreateWorkDto): Promise<Work> {
+  createWork(data: WorkCreateDto): Promise<Work> {
     return this.prisma.$transaction(async (tx) => {
       const work = await tx.work.create({
         data: {
@@ -104,7 +104,7 @@ export class WorkService {
     });
   }
 
-  updateWork(id: number, data: UpdateWorkDto): Promise<Work> {
+  updateWork(id: number, data: WorkUpdateDto): Promise<Work> {
     return this.prisma.work.update({
       where: { id },
       data: {

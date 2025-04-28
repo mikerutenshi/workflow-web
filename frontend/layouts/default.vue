@@ -101,6 +101,11 @@ const navItems = [
     route: '/artisans',
     icon: 'mdi-face-man',
   },
+  {
+    title: 'Payroll',
+    route: '/payroll',
+    icon: 'mdi-cash-register',
+  },
   // {
   //   title: 'Utility',
   //   icon: 'mdi-tools',
@@ -139,8 +144,8 @@ const pagesWithCreate = [
 
 watch(
   () => route.name,
-  (newName) => {
-    switch (newName) {
+  (routeName) => {
+    switch (routeName) {
       case 'products': {
         createBtn.route = 'products/create';
         createBtn.title = 'New Product';

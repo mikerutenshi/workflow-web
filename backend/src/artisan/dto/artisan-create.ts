@@ -1,22 +1,17 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
+import { Job } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import {
-  IsEmail,
+  IsArray,
+  IsEnum,
   IsInt,
   IsOptional,
   Matches,
   Min,
-  MinLength,
 } from 'class-validator';
 
 @InputType()
-export class CreateUserDto {
-  @Field()
-  @IsEmail()
-  email: string;
-  @Field()
-  @MinLength(8)
-  password: string;
+export class ArtisanCreateDto {
   @Field()
   @Matches(/^[A-Za-z]+(\s[A-Za-z]+)*$/)
   firstName: string;
@@ -24,15 +19,19 @@ export class CreateUserDto {
   @IsOptional()
   @Matches(/^[A-Za-z]+(\s[A-Za-z]+)*$/)
   lastName: string | undefined;
+  @Field(() => [Job])
+  @IsArray()
+  @IsEnum(Job, { each: true })
+  jobs: Job[];
+  @Field(() => ID)
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
+  @Min(1)
+  createdBy: number;
   @Field(() => ID, { nullable: true })
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  createdBy: number | null;
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  roleId: number;
+  updatedBy: number | undefined;
 }

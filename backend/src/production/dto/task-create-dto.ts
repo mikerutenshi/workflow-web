@@ -4,7 +4,7 @@ import { Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsOptional, Min } from 'class-validator';
 
 @InputType()
-export class CreateTaskDto {
+export class TaskCreateDto {
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)

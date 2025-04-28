@@ -1,9 +1,9 @@
 import { Color } from '@/models/color.model';
-import { ProductColors } from '@/models/product-colors.model';
+import { ColorToProduct } from '@/models/color-to-product.model';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class ProductColorsWithColor extends ProductColors {
+export class ColorToProductWithColor extends ColorToProduct {
   @Field(() => Color)
   color: Color;
 }

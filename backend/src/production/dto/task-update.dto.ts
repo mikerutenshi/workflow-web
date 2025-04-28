@@ -1,10 +1,9 @@
 import { Field, ID, InputType, PickType } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
 import { IsDate, IsOptional, Min } from 'class-validator';
-import { CreateTaskDto } from './createTask.dto';
 
 @InputType()
-export class UpdateTaskDto {
+export class TaskUpdateDto {
   @Field(() => ID, { nullable: true })
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)

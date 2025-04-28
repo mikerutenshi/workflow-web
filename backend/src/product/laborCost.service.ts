@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'nestjs-prisma';
-import { CreateLaborCostDto } from './dto/createLaborCost.dto';
+import { PrismaService } from '@/prisma/prisma.service';
+import { LaborCostCreateDto } from './dto/labor-cost-create.dto';
 import { LaborCost } from '@/models/labor-cost.model';
 
 @Injectable()
 export class LaborCostService {
   constructor(private prisma: PrismaService) {}
 
-  async createLaborCost(data: CreateLaborCostDto): Promise<LaborCost> {
+  async createLaborCost(data: LaborCostCreateDto): Promise<LaborCost> {
     return await this.prisma.laborCost.create({
       data: {
         drawingUpper: data.drawingUpper,
@@ -24,7 +24,7 @@ export class LaborCostService {
 
   async updateLaborCost(
     id: number,
-    data: CreateLaborCostDto,
+    data: LaborCostCreateDto,
   ): Promise<LaborCost> {
     return await this.prisma.laborCost.update({
       where: {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
-import { CreateProductDto } from './dto/createProduct.dto';
+import { ProductCreateDto } from './dto/product-create.dto';
 import { Product } from '@/models/product.model';
-import { GetProductsDto } from './dto/getProducts.dto';
+import { ProductGetDto } from './dto/product-get.dto';
 
 // type NullToUndefined<T> = {
 //   [K in keyof T]: T[K] extends null
@@ -18,7 +18,7 @@ import { GetProductsDto } from './dto/getProducts.dto';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  createProduct(data: CreateProductDto): Promise<Product> {
+  createProduct(data: ProductCreateDto): Promise<Product> {
     let order = 1;
     return this.prisma.product.create({
       data: {
@@ -35,7 +35,7 @@ export class ProductService {
     });
   }
 
-  async getProducts(): Promise<GetProductsDto[]> {
+  async getProducts(): Promise<ProductGetDto[]> {
     return await this.prisma.product.findMany({
       include: {
         productGroup: {
@@ -55,7 +55,7 @@ export class ProductService {
     });
   }
 
-  async getProduct(id: number): Promise<GetProductsDto> {
+  async getProduct(id: number): Promise<ProductGetDto> {
     const result = await this.prisma.product.findUnique({
       where: {
         id: id,
@@ -92,7 +92,7 @@ export class ProductService {
     return true;
   }
 
-  updateProduct(id: number, data: CreateProductDto): Promise<Product> {
+  updateProduct(id: number, data: ProductCreateDto): Promise<Product> {
     let order = 1;
     return this.prisma.product.update({
       where: { id },

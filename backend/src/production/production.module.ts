@@ -6,6 +6,8 @@ import { WorkService } from './work.service';
 import { PrismaModule } from '@/prisma/prisma.module';
 import { TaskResolver } from './task.resolver';
 import { TaskService } from './task.service';
+import { PayrollResolver } from './payroll.resolver';
+import { PayrollService } from './payroll.service';
 
 @Module({
   providers: [
@@ -15,6 +17,8 @@ import { TaskService } from './task.service';
     SizeService,
     TaskResolver,
     TaskService,
+    PayrollResolver,
+    PayrollService,
   ],
   imports: [PrismaModule],
 })

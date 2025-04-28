@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, Min } from 'class-validator';
 
 @InputType()
-export class CreateLaborCostDto {
+export class LaborCostCreateDto {
   @Field()
   @IsInt()
   @Min(100)
