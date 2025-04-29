@@ -11,96 +11,19 @@ export class WorkService {
   constructor(private prisma: PrismaService) {}
 
   createWork(data: WorkCreateDto): Promise<Work> {
-    return this.prisma.$transaction(async (tx) => {
-      const work = await tx.work.create({
-        data: {
-          ...data,
-          sizes: {
-            create: data.sizes.map((size) => ({
-              size: { connect: { id: size.id } },
-              quantity: size.quantity,
-            })),
-          },
+    return this.prisma.work.create({
+      data: {
+        ...data,
+        sizes: {
+          create: data.sizes.map((size) => ({
+            size: { connect: { id: size.id } },
+            quantity: size.quantity,
+          })),
         },
-        include: {
-          product: {
-            include: {
-              productGroup: {
-                include: {
-                  laborCost: {
-                    select: {
-                      drawingUpper: true,
-                      drawingLining: true,
-                      stitchingUpper: true,
-                      stitchingOutsole: true,
-                      stitchingInsole: true,
-                      lasting: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          sizes: {
-            include: { size: true },
-          },
-        },
-      });
-
-      await tx.task.create({
-        data: {
-          workId: work.id,
-          type: Job.UPPER_DRAW,
-          createdBy: data.createdBy,
-        },
-      });
-      await tx.task.create({
-        data: {
-          workId: work.id,
-          type: Job.LINING_DRAW,
-          createdBy: data.createdBy,
-        },
-      });
-      await tx.task.create({
-        data: {
-          workId: work.id,
-          type: Job.UPPER_STITCH,
-          createdBy: data.createdBy,
-        },
-      });
-      await tx.task.create({
-        data: {
-          workId: work.id,
-          type: Job.LAST,
-          createdBy: data.createdBy,
-        },
-      });
-
-      const outsoleStitch =
-        work.product.productGroup.laborCost?.stitchingOutsole;
-      const insoleStitch = work.product.productGroup.laborCost?.stitchingInsole;
-
-      if (outsoleStitch) {
-        await tx.task.create({
-          data: {
-            workId: work.id,
-            type: Job.OUTSOLE_STITCH,
-            createdBy: data.createdBy,
-          },
-        });
-      }
-
-      if (insoleStitch) {
-        await tx.task.create({
-          data: {
-            workId: work.id,
-            type: Job.INSOLE_STITCH,
-            createdBy: data.createdBy,
-          },
-        });
-      }
-
-      return work;
+      },
+      include: {
+        sizes: { include: { size: true } },
+      },
     });
   }
 

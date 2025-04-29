@@ -1,6 +1,6 @@
 import type { Job } from '~/api/generated/types';
 
-export function renderJobs(jobs: Job[]): string {
+function renderJobs(jobs: Job[]): string {
   let stringResult = '';
   const jobTitles = jobs.map((key) => {
     const job = JOB_OPTIONS.find((item) => item.id === key);
@@ -13,7 +13,36 @@ export function renderJobs(jobs: Job[]): string {
   return stringResult.slice(0, -2);
 }
 
-export function renderJob(job: Job): string {
+function renderJob(job: Job): string {
   const found = JOB_OPTIONS.find((item) => item.id === job);
   return found?.title ?? '';
 }
+
+function formatToRupiah(amount: number | null | undefined): string {
+  if (amount === undefined) return '';
+  if (amount === null) return '-';
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+function formatRupiah(amount: number | null | undefined): string {
+  if (amount === undefined) return '';
+  if (amount === null) return '-';
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+function parseRupiah(rupiah: string): number {
+  // Hapus semua karakter kecuali digit dan koma
+  const cleaned = rupiah.replace(/[^0-9,]/g, '').replace(',', '.'); // Ganti koma dengan titik untuk desimal
+  return parseFloat(cleaned);
+}
+
+export { renderJob, renderJobs, formatRupiah, parseRupiah };

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ProductCategory } from '@/models/product-category.model ';
 import { PrismaService } from 'nestjs-prisma';
-import { ArtisanCreateDto } from './dto/artisan-create';
+import { ArtisanCreateDto } from './dto/artisan-create.dto';
 import { Artisan } from '@/models/artisan.model';
 
 @Injectable()

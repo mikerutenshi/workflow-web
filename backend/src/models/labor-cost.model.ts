@@ -1,20 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
+import { Job } from '@prisma/client';
 
 @ObjectType()
 export class LaborCost extends BaseModel {
   @Field()
-  drawingUpper: number;
+  type: Job;
   @Field()
-  drawingLining: number;
-  @Field()
-  stitchingUpper: number;
-  @Field(() => Number, { nullable: true })
-  stitchingOutsole: number | null;
-  @Field(() => Number, { nullable: true })
-  stitchingInsole: number | null;
-  @Field()
-  lasting: number;
+  cost: number;
   @Field(() => ID)
   productGroupId: number;
 }

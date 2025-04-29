@@ -2,7 +2,7 @@ import { AuthGuard } from '@/guards/auth.guard';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ArtisanService } from './artisan.service';
-import { ArtisanCreateDto } from './dto/artisan-create';
+import { ArtisanCreateDto } from './dto/artisan-create.dto';
 import { Artisan } from '@/models/artisan.model';
 
 @Resolver(() => Artisan)

@@ -7,13 +7,13 @@ fragment Artisan on Artisan {
   updatedBy
 }
 
-mutation createArtisan($data: CreateArtisanDto!) {
+mutation createArtisan($data: ArtisanCreateDto!) {
   createArtisan(data: $data) {
     id
   }
 }
 
-mutation updateArtisan($id: ID!, $data: CreateArtisanDto!) {
+mutation updateArtisan($id: ID!, $data: ArtisanCreateDto!) {
   updateArtisan(id: $id, data: $data) {
     id
   }

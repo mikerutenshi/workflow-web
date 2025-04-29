@@ -10,6 +10,6 @@ export class ProductGroupGetDto extends ProductGroup {
   productCategory: ProductCategory;
   @Field(() => [ProductWithColors], { nullable: 'itemsAndList' })
   products: ProductWithColors[];
-  @Field(() => LaborCost, { nullable: true })
-  laborCost: LaborCost | null;
+  @Field(() => [LaborCost], { nullable: 'itemsAndList' })
+  laborCosts: LaborCost[];
 }

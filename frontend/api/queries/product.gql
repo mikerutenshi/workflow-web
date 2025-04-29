@@ -12,24 +12,20 @@ fragment ColorFrag on Color {
 
 fragment LaborCostFrag on LaborCost {
   id
-  drawingUpper
-  drawingLining
-  stitchingUpper
-  stitchingInsole
-  stitchingOutsole
-  lasting
+  type
+  cost
   createdBy
   createdAt
   updatedBy
   updatedAt
 }
 
-mutation createPrdouctCategory($data: CreateProductCategoryDto!) {
+mutation createPrdouctCategory($data: ProductCategoryCreateDto!) {
   createProductCategory(data: $data) {
     ...ProductCategoryFrag
   }
 }
-mutation updateProductCategory($id: ID!, $data: CreateProductCategoryDto!) {
+mutation updateProductCategory($id: ID!, $data: ProductCategoryCreateDto!) {
   updateProductCategory(id: $id, data: $data) {
     id
   }
@@ -38,7 +34,7 @@ mutation deleteProductCategory($id: ID!) {
   deleteProductCategory(id: $id)
 }
 
-mutation createProductGroup($data: CreateProductGroupDto!) {
+mutation createProductGroup($data: ProductGroupCreateDto!) {
   createProductGroup(data: $data) {
     id
     skuNumeric
@@ -46,7 +42,7 @@ mutation createProductGroup($data: CreateProductGroupDto!) {
     productCategoryId
   }
 }
-mutation updateProductGroup($id: ID!, $data: CreateProductGroupDto!) {
+mutation updateProductGroup($id: ID!, $data: ProductGroupCreateDto!) {
   updateProductGroup(id: $id, data: $data) {
     id
   }
@@ -55,13 +51,13 @@ mutation deleteProductGroup($id: ID!) {
   deleteProductGroup(id: $id)
 }
 
-mutation createColor($data: CreateColorDto!) {
+mutation createColor($data: ColorCreateDto!) {
   createColor(data: $data) {
     ...ColorFrag
   }
 }
 
-mutation updateColor($id: ID!, $data: CreateColorDto!) {
+mutation updateColor($id: ID!, $data: ColorCreateDto!) {
   updateColor(id: $id, data: $data) {
     id
   }
@@ -71,13 +67,13 @@ mutation deleteColor($id: ID!) {
   deleteColor(id: $id)
 }
 
-mutation createProduct($data: CreateProductDto!) {
+mutation createProduct($data: ProductCreateDto!) {
   createProduct(data: $data) {
     id
   }
 }
 
-mutation updateProduct($id: ID!, $data: CreateProductDto!) {
+mutation updateProduct($id: ID!, $data: ProductCreateDto!) {
   updateProduct(id: $id, data: $data) {
     id
   }
@@ -87,14 +83,8 @@ mutation deleteProduct($id: ID!) {
   deleteProduct(id: $id)
 }
 
-mutation createLaborCost($data: CreateLaborCostDto!) {
-  createLaborCost(data: $data) {
-    id
-  }
-}
-
-mutation updateLaborCost($id: ID!, $data: CreateLaborCostDto!) {
-  updateLaborCost(id: $id, data: $data) {
+mutation upsertLaborCosts($data: [LaborCostUpsertDto!]!) {
+  upsertLaborCosts(data: $data) {
     id
   }
 }
@@ -130,7 +120,7 @@ query getProductGroups {
     productCategory {
       ...ProductCategoryFrag
     }
-    laborCost {
+    laborCosts {
       ...LaborCostFrag
     }
   }
@@ -144,7 +134,7 @@ query getProductGroup($id: ID!) {
     productCategory {
       ...ProductCategoryFrag
     }
-    laborCost {
+    laborCosts {
       ...LaborCostFrag
     }
     createdBy

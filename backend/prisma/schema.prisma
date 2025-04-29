@@ -79,7 +79,7 @@ model ProductGroup {
   updatedBy         Int?
 
   products          Product[]
-  laborCost         LaborCost?
+  laborCosts        LaborCost[]
 
   productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
 }
@@ -111,15 +111,22 @@ model ColorToProduct {
   color             Color           @relation(fields: [colorId], references: [id])
 }
 
+enum Job {
+  DRAW_UPPER
+  DRAW_LINING
+  STITCH_UPPER
+  STITCH_OUTSOLE
+  STITCH_INSOLE
+  LAST
+}
+
 model LaborCost {
   id                Int             @id @default(autoincrement())
-  drawingUpper      Int
-  drawingLining     Int
-  stitchingUpper    Int
-  stitchingOutsole  Int?
-  stitchingInsole   Int?
-  lasting           Int
-  productGroupId    Int             @unique
+  type              Job
+  cost              Int
+  productGroupId    Int             
+
+  @@unique([productGroupId, type])
 
   createdBy         Int
   updatedBy         Int?
@@ -127,15 +134,6 @@ model LaborCost {
   updatedAt         DateTime        @updatedAt
 
   productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
-}
-
-enum Job {
-  UPPER_DRAW
-  LINING_DRAW
-  UPPER_STITCH
-  OUTSOLE_STITCH
-  INSOLE_STITCH
-  LAST
 }
 
 model Artisan {

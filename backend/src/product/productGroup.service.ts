@@ -35,7 +35,7 @@ export class ProductGroupService {
             productColors: { include: { color: true } },
           },
         },
-        laborCost: true,
+        laborCosts: true,
       },
     });
   }
@@ -52,7 +52,7 @@ export class ProductGroupService {
             productColors: { include: { color: true } },
           },
         },
-        laborCost: true,
+        laborCosts: true,
       },
     });
 

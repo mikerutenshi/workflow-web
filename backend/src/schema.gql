@@ -100,12 +100,8 @@ type LaborCost {
   updatedBy: ID
   createdAt: Date!
   updatedAt: Date!
-  drawingUpper: Float!
-  drawingLining: Float!
-  stitchingUpper: Float!
-  stitchingOutsole: Float
-  stitchingInsole: Float
-  lasting: Float!
+  type: String!
+  cost: Float!
   productGroupId: ID!
 }
 
@@ -131,7 +127,7 @@ type ProductGroupGetDto {
   productCategoryId: ID!
   productCategory: ProductCategory!
   products: [ProductWithColors]
-  laborCost: LaborCost
+  laborCosts: [LaborCost]
 }
 
 type Artisan {
@@ -146,11 +142,11 @@ type Artisan {
 }
 
 enum Job {
-  UPPER_DRAW
-  LINING_DRAW
-  UPPER_STITCH
-  OUTSOLE_STITCH
-  INSOLE_STITCH
+  DRAW_UPPER
+  DRAW_LINING
+  STITCH_UPPER
+  STITCH_OUTSOLE
+  STITCH_INSOLE
   LAST
 }
 
@@ -311,8 +307,7 @@ type Mutation {
   createProductGroup(data: ProductGroupCreateDto!): ProductGroup!
   updateProductGroup(id: ID!, data: ProductGroupCreateDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!
-  createLaborCost(data: LaborCostCreateDto!): LaborCost!
-  updateLaborCost(id: ID!, data: LaborCostCreateDto!): LaborCost!
+  upsertLaborCosts(data: [LaborCostUpsertDto!]!): [LaborCost!]!
   createArtisan(data: ArtisanCreateDto!): Artisan!
   updateArtisan(id: ID!, data: ArtisanCreateDto!): Artisan!
   deleteArtisan(id: ID!): Boolean!
@@ -371,16 +366,12 @@ input ProductGroupCreateDto {
   updatedBy: ID
 }
 
-input LaborCostCreateDto {
-  drawingUpper: Float!
-  drawingLining: Float!
-  stitchingUpper: Float!
-  stitchingOutsole: Float
-  stitchingInsole: Float
-  lasting: Float!
+input LaborCostUpsertDto {
+  type: Job!
+  cost: Float!
   productGroupId: ID!
   createdBy: ID!
-  updatedBy: ID
+  updatedBy: ID!
 }
 
 input ArtisanCreateDto {

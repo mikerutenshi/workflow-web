@@ -18,7 +18,7 @@ export class PayrollService {
                 product: {
                   include: {
                     productGroup: {
-                      include: { productCategory: true, laborCost: true },
+                      include: { productCategory: true, laborCosts: true },
                     },
                   },
                 },

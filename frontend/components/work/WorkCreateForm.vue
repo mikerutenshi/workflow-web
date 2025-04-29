@@ -100,7 +100,7 @@ import {
   UpdateWorkDocument,
   type Artisan,
   type Size,
-  type SizeToWorkDto,
+  type SizeToWorkCreateDto,
 } from '~/api/generated/types';
 
 const route = useRoute();
@@ -148,7 +148,7 @@ const form = reactive({
   date: null as Date | null,
   orderNo: 0,
   productId: '',
-  sizes: [] as SizeToWorkDto[],
+  sizes: [] as SizeToWorkCreateDto[],
   createdBy: userId,
   updatedBy: undefined as string | undefined,
 });

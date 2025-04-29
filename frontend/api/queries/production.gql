@@ -61,13 +61,13 @@ fragment Work on WorkWithTasks {
   updatedBy
 }
 
-mutation createSize($data: CreateSizeDto!) {
+mutation createSize($data: SizeCreateDto!) {
   createSize(data: $data) {
     id
   }
 }
 
-mutation updateSize($id: ID!, $data: CreateSizeDto!) {
+mutation updateSize($id: ID!, $data: SizeCreateDto!) {
   updateSize(id: $id, data: $data) {
     id
   }
@@ -89,13 +89,13 @@ query getSize($id: ID!) {
   }
 }
 
-mutation createWork($data: CreateWorkDto!) {
+mutation createWork($data: WorkCreateDto!) {
   createWork(data: $data) {
     id
   }
 }
 
-mutation updateWork($id: ID!, $data: UpdateWorkDto!) {
+mutation updateWork($id: ID!, $data: WorkUpdateDto!) {
   updateWork(id: $id, data: $data) {
     id
   }
@@ -123,7 +123,7 @@ query getTasks($workId: ID!) {
   }
 }
 
-mutation updateTasks($data: [UpdateTaskDto!]!) {
+mutation updateTasks($data: [TaskUpdateDto!]!) {
   updateTasks(data: $data) {
     id
   }

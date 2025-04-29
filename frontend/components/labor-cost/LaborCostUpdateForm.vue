@@ -14,64 +14,64 @@
         />
         <v-text-field v-model="header.gender" label="Gender" disabled />
         <v-text-field
-          label="Drawing Upper"
+          label="Draw Upper"
           prefix="Rp"
-          :model-value="mask.masked(form.drawingUpper)"
+          :model-value="mask.masked(costs.drawUpper)"
           @update:model-value="
-            (val) => (form.drawingUpper = +mask.unmasked(val))
+            (val) => {
+              costs.drawUpper = val;
+            }
           "
         />
         <v-text-field
-          label="Drawing Lining"
+          label="Draw Lining"
           prefix="Rp"
-          :model-value="mask.masked(form.drawingLining)"
+          :model-value="mask.masked(costs.drawLining)"
           @update:model-value="
-            (val) => (form.drawingLining = +mask.unmasked(val))
+            (val) => {
+              costs.drawLining = val;
+            }
           "
         />
         <v-text-field
-          label="Stitching Upper"
+          label="Stitch Upper"
           prefix="Rp"
-          :model-value="mask.masked(form.stitchingUpper)"
+          :model-value="mask.masked(costs.stitchUpper)"
           @update:model-value="
-            (val) => (form.stitchingUpper = +mask.unmasked(val))
+            (val) => {
+              costs.stitchUpper = val;
+            }
           "
         />
         <v-text-field
-          label="Stitching Outsole"
+          label="Last"
           prefix="Rp"
-          :model-value="
-            form.stitchingOutsole === 0 || form.stitchingOutsole === null
-              ? ''
-              : mask.masked(form.stitchingOutsole)
-          "
+          :model-value="mask.masked(costs.last)"
           @update:model-value="
-            (val) =>
-              val === ''
-                ? (form.stitchingOutsole = null)
-                : (form.stitchingOutsole = +mask.unmasked(val))
+            (val) => {
+              costs.last = val;
+            }
           "
         />
         <v-text-field
-          label="Stitching insole"
+          label="Stitch Outsole"
           prefix="Rp"
-          :model-value="
-            form.stitchingInsole === 0 || form.stitchingInsole === null
-              ? ''
-              : mask.masked(form.stitchingInsole)
-          "
+          :model-value="mask.masked(costs.stitchOutsole)"
           @update:model-value="
-            (val) =>
-              val === ''
-                ? (form.stitchingInsole = null)
-                : (form.stitchingInsole = +mask.unmasked(val))
+            (val) => {
+              costs.stitchOutsole = val;
+            }
           "
         />
         <v-text-field
-          label="Lasting"
+          label="Stitch Insole"
           prefix="Rp"
-          :model-value="mask.masked(form.lasting)"
-          @update:model-value="(val) => (form.lasting = +mask.unmasked(val))"
+          :model-value="mask.masked(costs.stitchInsole)"
+          @update:model-value="
+            (val) => {
+              costs.stitchInsole = val;
+            }
+          "
         />
 
         <NuxtLink to="/labor-costs">
@@ -94,32 +94,34 @@ import {
 import { useMutation, useQuery } from 'villus';
 import { useRoute } from 'vue-router';
 import {
-  CreateLaborCostDocument,
   GetProductGroupDocument,
-  UpdateLaborCostDocument,
+  Job,
+  UpsertLaborCostsDocument,
+  type LaborCostUpsertDto,
 } from '~/api/generated/types';
 
 const route = useRoute();
 const productGroupId = route.params.id as string;
-const laborCostId = ref('');
-const submitBtnValue = computed(() => {
-  return laborCostId.value ? 'Update' : 'Create';
-});
+const authStore = useAuthStore();
+const userId = authStore.user?.id ?? '';
+
 const header = reactive({
   skuNumeric: '',
   productCategory: '',
   gender: '',
 });
-const form = reactive({
-  drawingUpper: 0,
-  drawingLining: 0,
-  stitchingUpper: 0,
-  stitchingOutsole: null as number | null,
-  stitchingInsole: null as number | null,
-  lasting: 0,
-  productGroupId: '',
-  createdBy: '',
-  updatedBy: undefined as string | undefined,
+const form = reactive([] as LaborCostUpsertDto[]);
+const costs = reactive({
+  drawUpper: '',
+  drawLining: '',
+  stitchUpper: '',
+  stitchOutsole: '',
+  stitchInsole: '',
+  last: '',
+});
+
+const submitBtnValue = computed(() => {
+  return form.values.length > 0 ? 'Update' : 'Create';
 });
 
 useQuery({
@@ -129,57 +131,34 @@ useQuery({
     header.skuNumeric = data.getProductGroup.skuNumeric;
     header.productCategory = data.getProductGroup.productCategory.name;
     header.gender = data.getProductGroup.productCategory.gender;
-    form.productGroupId = data.getProductGroup.id;
 
-    if (data.getProductGroup.laborCost) {
-      laborCostId.value = data.getProductGroup.laborCost.id;
+    const laborCosts = data.getProductGroup.laborCosts ?? [];
 
-      form.drawingUpper = data.getProductGroup.laborCost.drawingUpper;
-      form.drawingLining = data.getProductGroup.laborCost.drawingLining;
-      form.stitchingUpper = data.getProductGroup.laborCost.stitchingUpper;
-      form.stitchingOutsole =
-        data.getProductGroup.laborCost.stitchingOutsole ?? null;
-      form.stitchingInsole =
-        data.getProductGroup.laborCost.stitchingInsole ?? null;
-      form.lasting = data.getProductGroup.laborCost.lasting;
-
-      form.createdBy = data.getProductGroup.laborCost.createdBy;
-      form.updatedBy = data.getProductGroup.laborCost.updatedBy ?? undefined;
+    if (laborCosts.length > 0) {
+      form.splice(
+        0,
+        form.length,
+        ...laborCosts.map((laborCost) => ({
+          type: laborCost?.type as Job,
+          cost: laborCost?.cost ?? 0,
+          productGroupId: productGroupId,
+          createdBy: laborCost?.createdBy ?? '',
+          updatedBy: laborCost?.updatedBy ?? '',
+        }))
+      );
     }
   },
   onError: (error) => {
-    alert(`Get Product Error -> ${error}`);
+    alert(`Get Product Group Error -> ${error}`);
   },
   tags: [CACHE_PRODUCT_GROUP],
 });
 
 const handleSubmit = async () => {
-  const authStore = useAuthStore();
-  const userId = authStore.user?.id ?? '';
-
-  if (laborCostId.value) {
-    form.updatedBy = userId;
-    console.log(`IsEditing -> ${laborCostId.value}`);
-    console.log(`Update form -> ${JSON.stringify(form)}`);
-    await executeUpdate({ id: laborCostId.value, data: form });
-  } else {
-    form.createdBy = userId;
-    console.log(`Create form -> ${JSON.stringify(form)}`);
-    await executeCreate({ data: form });
-  }
+  await execute({ data: form });
 };
 
-const { execute: executeUpdate } = useMutation(UpdateLaborCostDocument, {
-  clearCacheTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
-  onData() {
-    navigateTo('/labor-costs');
-  },
-  onError(err) {
-    alert(err);
-  },
-});
-
-const { execute: executeCreate } = useMutation(CreateLaborCostDocument, {
+const { execute } = useMutation(UpsertLaborCostsDocument, {
   clearCacheTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
   onData() {
     navigateTo('/labor-costs');
@@ -202,7 +181,42 @@ const options: MaskInputOptions = {
 
 const mask = new Mask(options);
 
+watch(costs, (newCosts) => {
+  let newDrawUpper = parseRupiah(newCosts.drawUpper);
+  let newDrawLining = parseRupiah(newCosts.drawLining);
+  let newStitchUpper = parseRupiah(newCosts.stitchUpper);
+  let newStitchOutsole = parseRupiah(newCosts.stitchOutsole);
+  let newStitchInsole = parseRupiah(newCosts.stitchInsole);
+  let newLast = parseRupiah(newCosts.last);
+
+  updateFormCost(newDrawUpper, Job.DrawUpper);
+  updateFormCost(newDrawLining, Job.DrawLining);
+  updateFormCost(newStitchUpper, Job.StitchUpper);
+  updateFormCost(newStitchOutsole, Job.StitchOutsole);
+  updateFormCost(newStitchInsole, Job.StitchInsole);
+  updateFormCost(newLast, Job.Last);
+});
 watchEffect(() => {
   console.log(JSON.stringify(form));
 });
+
+function updateFormCost(cost: number, type: Job) {
+  let foundItem = form.find((item) => item.type === type);
+  if (cost > 0 && !Number.isNaN(cost)) {
+    if (foundItem) {
+      foundItem.cost = cost;
+    } else {
+      const object = {
+        type,
+        cost,
+        productGroupId: productGroupId,
+        createdBy: userId,
+        updatedBy: userId,
+      };
+      form.push(object);
+    }
+  } else if (foundItem) {
+    form.splice(form.indexOf(foundItem), 1);
+  }
+}
 </script>

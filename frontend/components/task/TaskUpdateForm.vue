@@ -81,7 +81,7 @@ import {
   GetTasksDocument,
   Job,
   UpdateTasksDocument,
-  type UpdateTaskDto,
+  type TaskUpdateDto,
 } from '~/api/generated/types';
 
 const route = useRoute();
@@ -120,7 +120,7 @@ const displayForm = reactive([
   },
 ]);
 
-const form = computed<UpdateTaskDto[]>(() => {
+const form = computed<TaskUpdateDto[]>(() => {
   const result = displayForm.map((item) => ({
     id: item.id,
     artisanId: item.artisan?.id ?? null,

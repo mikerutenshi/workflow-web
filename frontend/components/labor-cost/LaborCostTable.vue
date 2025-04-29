@@ -7,28 +7,57 @@
       item-value="id"
       :sort-by="[{ key: 'id', order: 'asc' }]"
     >
-      <template v-slot:item.laborCost.drawingUpper="{ item }">
-        {{ formatToRupiah(item.laborCost?.drawingUpper) }}
+      <template v-slot:item.drawUpper="{ item }">
+        {{
+          formatRupiah(
+            item.laborCosts?.find((found) => found?.type === JOB.DRAW_UPPER)
+              ?.cost
+          ) ?? ''
+        }}
       </template>
 
-      <template v-slot:item.laborCost.drawingLining="{ item }">
-        {{ formatToRupiah(item.laborCost?.drawingLining) }}
+      <template v-slot:item.drawLining="{ item }">
+        {{
+          formatRupiah(
+            item.laborCosts?.find((found) => found?.type === JOB.DRAW_LINING)
+              ?.cost
+          ) ?? ''
+        }}
       </template>
 
-      <template v-slot:item.laborCost.stitchingUpper="{ item }">
-        {{ formatToRupiah(item.laborCost?.stitchingUpper) }}
+      <template v-slot:item.stitchUpper="{ item }">
+        {{
+          formatRupiah(
+            item.laborCosts?.find((found) => found?.type === JOB.STITCH_UPPER)
+              ?.cost
+          ) ?? ''
+        }}
       </template>
 
-      <template v-slot:item.laborCost.stitchingOutsole="{ item }">
-        {{ formatToRupiah(item.laborCost?.stitchingOutsole) }}
+      <template v-slot:item.stitchOutsole="{ item }">
+        {{
+          formatRupiah(
+            item.laborCosts?.find((found) => found?.type === JOB.STITCH_OUTSOLE)
+              ?.cost
+          ) ?? ''
+        }}
       </template>
 
-      <template v-slot:item.laborCost.stitchingInsole="{ item }">
-        {{ formatToRupiah(item.laborCost?.stitchingInsole) }}
+      <template v-slot:item.stitchInsole="{ item }">
+        {{
+          formatRupiah(
+            item.laborCosts?.find((found) => found?.type === JOB.STITCH_INSOLE)
+              ?.cost
+          ) ?? ''
+        }}
       </template>
 
-      <template v-slot:item.laborCost.lasting="{ item }">
-        {{ formatToRupiah(item.laborCost?.lasting) }}
+      <template v-slot:item.last="{ item }">
+        {{
+          formatRupiah(
+            item.laborCosts?.find((found) => found?.type === JOB.LAST)?.cost
+          ) ?? ''
+        }}
       </template>
 
       <template v-slot:item.actions="{ item, index }">
@@ -56,6 +85,7 @@
 </template>
 
 <script setup lang="ts">
+import { compileString } from 'sass';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import {
@@ -79,25 +109,14 @@ const headers: ReadOnlyHeaders = [
     title: 'Labor Costs',
     align: 'center',
     children: [
-      { title: 'Drawing Upper', key: 'laborCost.drawingUpper' },
-      { title: 'Drawing Lining', key: 'laborCost.drawingLining' },
-      { title: 'Stitching Upper', key: 'laborCost.stitchingUpper' },
-      { title: 'Stitching Outsole', key: 'laborCost.stitchingOutsole' },
-      { title: 'Stitching Insole', key: 'laborCost.stitchingInsole' },
-      { title: 'Lasting', key: 'laborCost.lasting' },
+      { title: 'Draw Upper', key: 'drawUpper' },
+      { title: 'Draw Lining', key: 'drawLining' },
+      { title: 'Stitch Upper', key: 'stitchUpper' },
+      { title: 'Stitch Outsole', key: 'stitchOutsole' },
+      { title: 'Stitch Insole', key: 'stitchInsole' },
+      { title: 'Last', key: 'last' },
     ],
   },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
-
-function formatToRupiah(amount: number | null | undefined): string {
-  if (amount === undefined) return '';
-  if (amount === null) return '-';
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
 </script>
