@@ -10,10 +10,12 @@ export class LaborCostResolver {
 
   @Mutation(() => [LaborCost])
   upsertLaborCosts(
+    @Args('productGroupId', { type: () => ID }, ParseIntPipe)
+    productGroupId: number,
     @Args('data', { type: () => [LaborCostUpsertDto] })
     data: LaborCostUpsertDto[],
   ): Promise<LaborCost[]> {
-    return this.laborCostService.upsertLaborCosts(data);
+    return this.laborCostService.upsertLaborCosts(productGroupId, data);
   }
 
   @Query(() => [LaborCost])

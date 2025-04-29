@@ -83,8 +83,8 @@ mutation deleteProduct($id: ID!) {
   deleteProduct(id: $id)
 }
 
-mutation upsertLaborCosts($data: [LaborCostUpsertDto!]!) {
-  upsertLaborCosts(data: $data) {
+mutation upsertLaborCosts($productGroupId: ID!, $data: [LaborCostUpsertDto!]!) {
+  upsertLaborCosts(productGroupId: $productGroupId, data: $data) {
     id
   }
 }

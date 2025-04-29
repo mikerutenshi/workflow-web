@@ -307,7 +307,7 @@ type Mutation {
   createProductGroup(data: ProductGroupCreateDto!): ProductGroup!
   updateProductGroup(id: ID!, data: ProductGroupCreateDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!
-  upsertLaborCosts(data: [LaborCostUpsertDto!]!): [LaborCost!]!
+  upsertLaborCosts(productGroupId: ID!, data: [LaborCostUpsertDto!]!): [LaborCost!]!
   createArtisan(data: ArtisanCreateDto!): Artisan!
   updateArtisan(id: ID!, data: ArtisanCreateDto!): Artisan!
   deleteArtisan(id: ID!): Boolean!

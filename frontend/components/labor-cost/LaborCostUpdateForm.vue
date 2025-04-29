@@ -97,6 +97,7 @@ import {
   GetProductGroupDocument,
   Job,
   UpsertLaborCostsDocument,
+  type LaborCost,
   type LaborCostUpsertDto,
 } from '~/api/generated/types';
 
@@ -135,17 +136,12 @@ useQuery({
     const laborCosts = data.getProductGroup.laborCosts ?? [];
 
     if (laborCosts.length > 0) {
-      form.splice(
-        0,
-        form.length,
-        ...laborCosts.map((laborCost) => ({
-          type: laborCost?.type as Job,
-          cost: laborCost?.cost ?? 0,
-          productGroupId: productGroupId,
-          createdBy: laborCost?.createdBy ?? '',
-          updatedBy: laborCost?.updatedBy ?? '',
-        }))
-      );
+      updateCosts('drawUpper', Job.DrawUpper, laborCosts);
+      updateCosts('drawLining', Job.DrawLining, laborCosts);
+      updateCosts('stitchUpper', Job.StitchUpper, laborCosts);
+      updateCosts('last', Job.Last, laborCosts);
+      updateCosts('stitchOutsole', Job.StitchOutsole, laborCosts);
+      updateCosts('stitchInsole', Job.StitchInsole, laborCosts);
     }
   },
   onError: (error) => {
@@ -155,7 +151,7 @@ useQuery({
 });
 
 const handleSubmit = async () => {
-  await execute({ data: form });
+  await execute({ productGroupId, data: form });
 };
 
 const { execute } = useMutation(UpsertLaborCostsDocument, {
@@ -174,9 +170,7 @@ const options: MaskInputOptions = {
     9: { pattern: /[0-9]/, repeated: true },
   },
   reversed: true,
-  onMaska: (detail: MaskaDetail) => {
-    console.log(`Completed -> ${detail.unmasked}`);
-  },
+  onMaska: (detail: MaskaDetail) => {},
 };
 
 const mask = new Mask(options);
@@ -189,18 +183,18 @@ watch(costs, (newCosts) => {
   let newStitchInsole = parseRupiah(newCosts.stitchInsole);
   let newLast = parseRupiah(newCosts.last);
 
-  updateFormCost(newDrawUpper, Job.DrawUpper);
-  updateFormCost(newDrawLining, Job.DrawLining);
-  updateFormCost(newStitchUpper, Job.StitchUpper);
-  updateFormCost(newStitchOutsole, Job.StitchOutsole);
-  updateFormCost(newStitchInsole, Job.StitchInsole);
-  updateFormCost(newLast, Job.Last);
+  updateForm(newDrawUpper, Job.DrawUpper);
+  updateForm(newDrawLining, Job.DrawLining);
+  updateForm(newStitchUpper, Job.StitchUpper);
+  updateForm(newStitchOutsole, Job.StitchOutsole);
+  updateForm(newStitchInsole, Job.StitchInsole);
+  updateForm(newLast, Job.Last);
 });
 watchEffect(() => {
   console.log(JSON.stringify(form));
 });
 
-function updateFormCost(cost: number, type: Job) {
+function updateForm(cost: number, type: Job) {
   let foundItem = form.find((item) => item.type === type);
   if (cost > 0 && !Number.isNaN(cost)) {
     if (foundItem) {
@@ -218,5 +212,10 @@ function updateFormCost(cost: number, type: Job) {
   } else if (foundItem) {
     form.splice(form.indexOf(foundItem), 1);
   }
+}
+
+function updateCosts(field: keyof typeof costs, type: Job, array: any[]) {
+  let found = array.find((find) => find?.type === type);
+  if (found) costs[field] = found.cost.toString();
 }
 </script>

@@ -7,30 +7,60 @@ import { LaborCost } from '@/models/labor-cost.model';
 export class LaborCostService {
   constructor(private prisma: PrismaService) {}
 
-  async upsertLaborCosts(data: LaborCostUpsertDto[]): Promise<LaborCost[]> {
-    const queries = data.map((item) => {
-      const now = new Date();
-      return this.prisma.laborCost.upsert({
-        where: {
-          productGroupId_type: {
-            productGroupId: Number(item.productGroupId) ?? 0,
-            type: item.type,
-          },
-        },
-        create: {
-          type: item.type,
-          cost: item.cost,
-          productGroupId: Number(item.productGroupId) ?? 0,
-          createdBy: Number(item.createdBy) ?? 0,
-        },
-        update: {
-          cost: item.cost,
-          updatedBy: Number(item.updatedBy) ?? 0,
-          updatedAt: now,
-        },
+  async upsertLaborCosts(
+    productGroupId: number,
+    data: LaborCostUpsertDto[],
+  ): Promise<LaborCost[]> {
+    try {
+      return this.prisma.$transaction(async (tx) => {
+        let upsertCosts: Promise<LaborCost[]> = Promise.resolve([]);
+
+        if (data.length == 0) {
+          await tx.laborCost.deleteMany({ where: { productGroupId } });
+        } else {
+          let databaseCosts = await tx.laborCost.findMany({
+            where: { productGroupId },
+          });
+
+          databaseCosts.map(async (cost) => {
+            let found = data.find((item) => item.type === cost.type);
+            if (!found) {
+              await tx.laborCost.delete({ where: { id: cost.id } });
+            }
+          });
+
+          upsertCosts = Promise.all(
+            data.map((item) => {
+              const now = new Date();
+              return tx.laborCost.upsert({
+                where: {
+                  productGroupId_type: {
+                    productGroupId: productGroupId,
+                    type: item.type,
+                  },
+                },
+                create: {
+                  type: item.type,
+                  cost: item.cost,
+                  productGroupId: productGroupId,
+                  createdBy: Number(item.createdBy) ?? 0,
+                },
+                update: {
+                  cost: item.cost,
+                  updatedBy: Number(item.updatedBy) ?? 0,
+                  updatedAt: now,
+                },
+              });
+            }),
+          );
+        }
+
+        return upsertCosts;
       });
-    });
-    return await this.prisma.$transaction(queries);
+    } catch (err) {
+      console.log(`Error -> ${err}`);
+      throw err;
+    }
   }
 
   async getLaborCosts(): Promise<LaborCost[]> {
