@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -183,9 +184,9 @@ model Task {
 
 model Size {
   id                Int             @id @default(autoincrement())
-  eu                String
-  us                String?
-  uk                String?
+  eu                String          @unique
+  us                String?         @unique
+  uk                String?         @unique
   works             SizeToWork[]
 }
 
@@ -195,6 +196,6 @@ model SizeToWork {
   sizeId            Int
   quantity          Int
 
-  work              Work            @relation(fields: [workId], references: [id])
+  work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
 }

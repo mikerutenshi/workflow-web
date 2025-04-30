@@ -22,12 +22,12 @@ export class LaborCostService {
             where: { productGroupId },
           });
 
-          databaseCosts.map(async (cost) => {
-            let found = data.find((item) => item.type === cost.type);
+          for (const databaseCost of databaseCosts) {
+            let found = data.find((item) => item.type === databaseCost.type);
             if (!found) {
-              await tx.laborCost.delete({ where: { id: cost.id } });
+              await tx.laborCost.delete({ where: { id: databaseCost.id } });
             }
-          });
+          }
 
           upsertCosts = Promise.all(
             data.map((item) => {

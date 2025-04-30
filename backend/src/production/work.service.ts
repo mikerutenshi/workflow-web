@@ -10,20 +10,45 @@ import { WorkUpdateDto } from './dto/work-update.dto';
 export class WorkService {
   constructor(private prisma: PrismaService) {}
 
-  createWork(data: WorkCreateDto): Promise<Work> {
-    return this.prisma.work.create({
-      data: {
-        ...data,
-        sizes: {
-          create: data.sizes.map((size) => ({
-            size: { connect: { id: size.id } },
-            quantity: size.quantity,
-          })),
+  async createWork(data: WorkCreateDto): Promise<Work> {
+    return this.prisma.$transaction(async (tx) => {
+      const createdWork = await tx.work.create({
+        data: {
+          ...data,
+          sizes: {
+            create: data.sizes.map((size) => ({
+              size: { connect: { id: size.id } },
+              quantity: size.quantity,
+            })),
+          },
         },
-      },
-      include: {
-        sizes: { include: { size: true } },
-      },
+        include: {
+          sizes: { include: { size: true } },
+        },
+      });
+
+      const laborCosts = await tx.laborCost.findMany({
+        include: {
+          productGroup: {
+            include: { products: { where: { id: data.productId } } },
+          },
+        },
+        relationLoadStrategy: 'join',
+      });
+
+      if (laborCosts.length > 0) {
+        for (const laborCost of laborCosts) {
+          await tx.task.create({
+            data: {
+              workId: createdWork.id,
+              type: laborCost.type,
+              createdBy: data.createdBy,
+            },
+          });
+        }
+      }
+
+      return createdWork;
     });
   }
 
@@ -58,6 +83,7 @@ export class WorkService {
           include: {
             size: true,
           },
+          orderBy: { size: { eu: 'asc' } },
         },
         tasks: { include: { artisan: true } },
         product: true,
@@ -72,7 +98,7 @@ export class WorkService {
   getWorks(): Promise<WorkWithTasks[]> {
     return this.prisma.work.findMany({
       include: {
-        sizes: { include: { size: true } },
+        sizes: { include: { size: true }, orderBy: { size: { eu: 'asc' } } },
         tasks: { include: { artisan: true } },
         product: true,
       },
