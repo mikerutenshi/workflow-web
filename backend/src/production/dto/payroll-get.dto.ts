@@ -11,8 +11,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 class ProductGroupDto extends ProductGroup {
   @Field(() => ProductCategory)
   productCategory: ProductCategory;
-  @Field(() => LaborCost, { nullable: true })
-  laborCost?: LaborCost | null;
+  @Field(() => [LaborCost])
+  laborCosts: LaborCost[];
 }
 
 @ObjectType()
@@ -31,10 +31,18 @@ class WorkWithProductDto extends Work {
 class TaskWithWorkDto extends Task {
   @Field(() => WorkWithProductDto)
   work: WorkWithProductDto;
+  @Field()
+  totalQuantity: number;
+  @Field()
+  taskCost: number;
+  @Field()
+  payable: number;
 }
 
 @ObjectType()
 export class PayrollGetDto extends Artisan {
   @Field(() => [TaskWithWorkDto])
   tasks: TaskWithWorkDto[];
+  @Field()
+  totalPayable: number;
 }

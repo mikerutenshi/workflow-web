@@ -213,7 +213,7 @@ type ProductGroupDto {
   name: String
   productCategoryId: ID!
   productCategory: ProductCategory!
-  laborCost: LaborCost
+  laborCosts: [LaborCost!]!
 }
 
 type ProductWithGroupDto {
@@ -251,6 +251,9 @@ type TaskWithWorkDto {
   artisanId: ID
   doneAt: Date
   work: WorkWithProductDto!
+  totalQuantity: Float!
+  taskCost: Float!
+  payable: Float!
 }
 
 type PayrollGetDto {
@@ -263,6 +266,7 @@ type PayrollGetDto {
   lastName: String
   jobs: [Job!]!
   tasks: [TaskWithWorkDto!]!
+  totalPayable: Float!
 }
 
 """Date custom scalar type"""

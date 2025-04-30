@@ -7,8 +7,8 @@ import { Product } from '@/models/product.model';
 export class PayrollService {
   constructor(private prisma: PrismaService) {}
 
-  getPayroll(): Promise<PayrollGetDto[]> {
-    return this.prisma.artisan.findMany({
+  async getPayroll(): Promise<PayrollGetDto[]> {
+    const artisans = await this.prisma.artisan.findMany({
       include: {
         tasks: {
           include: {
@@ -28,6 +28,41 @@ export class PayrollService {
         },
       },
     });
+
+    let payroll: PayrollGetDto[] = [];
+    payroll = artisans.map((artisan) => {
+      return {
+        ...artisan,
+        tasks: artisan.tasks.map((task) => {
+          const totalQuantity = task.work.sizes.reduce(
+            (sum, workSize) => sum + workSize.quantity,
+            0,
+          );
+          const taskCost =
+            task.work.product.productGroup.laborCosts.find(
+              (laborCost) => laborCost.type === task.type,
+            )?.cost || 0;
+
+          const payable = totalQuantity * taskCost;
+          return {
+            ...task,
+            totalQuantity,
+            taskCost,
+            payable,
+          };
+        }),
+        totalPayable: 0,
+      };
+    });
+
+    for (const artisan of payroll) {
+      artisan.totalPayable = artisan.tasks.reduce(
+        (sum, task) => sum + task.payable,
+        0,
+      );
+    }
+
+    return payroll;
   }
 
   getPayrollSummary() {

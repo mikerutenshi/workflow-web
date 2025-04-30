@@ -28,9 +28,12 @@ export class WorkService {
       });
 
       const laborCosts = await tx.laborCost.findMany({
-        include: {
+        select: {
+          type: true,
           productGroup: {
-            include: { products: { where: { id: data.productId } } },
+            select: {
+              products: { select: { id: true }, where: { id: data.productId } },
+            },
           },
         },
         relationLoadStrategy: 'join',
