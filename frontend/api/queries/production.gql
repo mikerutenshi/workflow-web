@@ -128,3 +128,40 @@ mutation updateTasks($data: [TaskUpdateDto!]!) {
     id
   }
 }
+
+query getPayroll {
+  getPayroll {
+    artisans {
+      firstName
+      lastName
+      tasks {
+        payablePerTask
+        costPerTask
+        quantityPerTask
+        type
+        work {
+          sizes {
+            size {
+              eu
+            }
+            quantity
+          }
+          product {
+            sku
+            productGroup {
+              skuNumeric
+              laborCosts {
+                type
+                cost
+              }
+            }
+          }
+        }
+      }
+      payablePerArtisan
+      quantityPerArtisan
+    }
+    totalPayable
+    totalQuantity
+  }
+}

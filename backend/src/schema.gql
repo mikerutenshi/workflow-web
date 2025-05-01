@@ -203,7 +203,7 @@ type WorkWithTasks {
   product: Product!
 }
 
-type ProductGroupDto {
+type ProductGroupWithLaborCosts {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -216,7 +216,7 @@ type ProductGroupDto {
   laborCosts: [LaborCost!]!
 }
 
-type ProductWithGroupDto {
+type ProductWithProductGroup {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -224,10 +224,10 @@ type ProductWithGroupDto {
   updatedAt: Date!
   sku: String!
   productGroupId: ID!
-  productGroup: ProductGroupDto!
+  productGroup: ProductGroupWithLaborCosts!
 }
 
-type WorkWithProductDto {
+type WorkWithProduct {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -237,10 +237,10 @@ type WorkWithProductDto {
   orderNo: Float!
   productId: ID!
   sizes: [SizeToWork!]!
-  product: ProductWithGroupDto!
+  product: ProductWithProductGroup!
 }
 
-type TaskWithWorkDto {
+type TaskWithWork {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -250,13 +250,13 @@ type TaskWithWorkDto {
   type: Job!
   artisanId: ID
   doneAt: Date
-  work: WorkWithProductDto!
-  totalQuantity: Float!
-  taskCost: Float!
-  payable: Float!
+  work: WorkWithProduct!
+  quantityPerTask: Float!
+  costPerTask: Float!
+  payablePerTask: Float!
 }
 
-type PayrollGetDto {
+type ArtisanWithTasks {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -265,8 +265,15 @@ type PayrollGetDto {
   firstName: String!
   lastName: String
   jobs: [Job!]!
-  tasks: [TaskWithWorkDto!]!
+  tasks: [TaskWithWork!]!
+  payablePerArtisan: Float!
+  quantityPerArtisan: Float!
+}
+
+type PayrollGetDto {
   totalPayable: Float!
+  totalQuantity: Float!
+  artisans: [ArtisanWithTasks!]!
 }
 
 """Date custom scalar type"""
@@ -291,7 +298,7 @@ type Query {
   getSize(id: ID!): Size!
   getSizes: [Size!]!
   getTasks(workId: ID!): [TaskWithArtisan!]!
-  getPayroll: [PayrollGetDto!]!
+  getPayroll: PayrollGetDto!
 }
 
 type Mutation {

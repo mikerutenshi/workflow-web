@@ -14,3 +14,4 @@ export const CACHE_SIZE = 'CACHE_SIZE';
 export const CACHE_SIZES = 'CACHE_SIZES';
 export const CACHE_TASK = 'CACHE_TASK';
 export const CACHE_TASKS = 'CACHE_TASKS';
+export const CACHE_PAYROLL = 'CACHE_PAYROLL';

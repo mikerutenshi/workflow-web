@@ -36,6 +36,21 @@ export type ArtisanCreateDto = {
   updatedBy?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type ArtisanWithTasks = {
+  __typename?: 'ArtisanWithTasks';
+  createdAt: Scalars['Date']['output'];
+  createdBy: Scalars['ID']['output'];
+  firstName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  jobs: Array<Job>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  payablePerArtisan: Scalars['Float']['output'];
+  quantityPerArtisan: Scalars['Float']['output'];
+  tasks: Array<TaskWithWork>;
+  updatedAt: Scalars['Date']['output'];
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
 export type Color = {
   __typename?: 'Color';
   hexCode: Scalars['String']['output'];
@@ -267,15 +282,9 @@ export type MutationUpsertLaborCostsArgs = {
 
 export type PayrollGetDto = {
   __typename?: 'PayrollGetDto';
-  createdAt: Scalars['Date']['output'];
-  createdBy: Scalars['ID']['output'];
-  firstName: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  jobs: Array<Job>;
-  lastName?: Maybe<Scalars['String']['output']>;
-  tasks: Array<TaskWithWorkDto>;
-  updatedAt: Scalars['Date']['output'];
-  updatedBy?: Maybe<Scalars['ID']['output']>;
+  artisans: Array<ArtisanWithTasks>;
+  totalPayable: Scalars['Float']['output'];
+  totalQuantity: Scalars['Float']['output'];
 };
 
 export type Product = {
@@ -342,20 +351,6 @@ export type ProductGroupCreateDto = {
   updatedBy?: InputMaybe<Scalars['ID']['input']>;
 };
 
-export type ProductGroupDto = {
-  __typename?: 'ProductGroupDto';
-  createdAt: Scalars['Date']['output'];
-  createdBy: Scalars['ID']['output'];
-  id: Scalars['ID']['output'];
-  laborCost?: Maybe<LaborCost>;
-  name?: Maybe<Scalars['String']['output']>;
-  productCategory: ProductCategory;
-  productCategoryId: Scalars['ID']['output'];
-  skuNumeric: Scalars['String']['output'];
-  updatedAt: Scalars['Date']['output'];
-  updatedBy?: Maybe<Scalars['ID']['output']>;
-};
-
 export type ProductGroupGetDto = {
   __typename?: 'ProductGroupGetDto';
   createdAt: Scalars['Date']['output'];
@@ -384,6 +379,20 @@ export type ProductGroupWithCategory = {
   updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
+export type ProductGroupWithLaborCosts = {
+  __typename?: 'ProductGroupWithLaborCosts';
+  createdAt: Scalars['Date']['output'];
+  createdBy: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  laborCosts: Array<LaborCost>;
+  name?: Maybe<Scalars['String']['output']>;
+  productCategory: ProductCategory;
+  productCategoryId: Scalars['ID']['output'];
+  skuNumeric: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
 export type ProductWithColors = {
   __typename?: 'ProductWithColors';
   createdAt: Scalars['Date']['output'];
@@ -396,12 +405,12 @@ export type ProductWithColors = {
   updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
-export type ProductWithGroupDto = {
-  __typename?: 'ProductWithGroupDto';
+export type ProductWithProductGroup = {
+  __typename?: 'ProductWithProductGroup';
   createdAt: Scalars['Date']['output'];
   createdBy: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
-  productGroup: ProductGroupDto;
+  productGroup: ProductGroupWithLaborCosts;
   productGroupId: Scalars['ID']['output'];
   sku: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
@@ -415,7 +424,7 @@ export type Query = {
   getColor: Color;
   getColors: Array<Color>;
   getLaborCosts: Array<LaborCost>;
-  getPayroll: Array<PayrollGetDto>;
+  getPayroll: PayrollGetDto;
   getProduct: ProductGetDto;
   getProductCategories: Array<ProductCategory>;
   getProductCategory: ProductCategory;
@@ -533,17 +542,20 @@ export type TaskWithArtisan = {
   workId: Scalars['ID']['output'];
 };
 
-export type TaskWithWorkDto = {
-  __typename?: 'TaskWithWorkDto';
+export type TaskWithWork = {
+  __typename?: 'TaskWithWork';
   artisanId?: Maybe<Scalars['ID']['output']>;
+  costPerTask: Scalars['Float']['output'];
   createdAt: Scalars['Date']['output'];
   createdBy: Scalars['ID']['output'];
   doneAt?: Maybe<Scalars['Date']['output']>;
   id: Scalars['ID']['output'];
+  payablePerTask: Scalars['Float']['output'];
+  quantityPerTask: Scalars['Float']['output'];
   type: Job;
   updatedAt: Scalars['Date']['output'];
   updatedBy?: Maybe<Scalars['ID']['output']>;
-  work: WorkWithProductDto;
+  work: WorkWithProduct;
   workId: Scalars['ID']['output'];
 };
 
@@ -602,14 +614,14 @@ export type WorkUpdateDto = {
   updatedBy: Scalars['ID']['input'];
 };
 
-export type WorkWithProductDto = {
-  __typename?: 'WorkWithProductDto';
+export type WorkWithProduct = {
+  __typename?: 'WorkWithProduct';
   createdAt: Scalars['Date']['output'];
   createdBy: Scalars['ID']['output'];
   date: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
   orderNo: Scalars['Float']['output'];
-  product: ProductWithGroupDto;
+  product: ProductWithProductGroup;
   productId: Scalars['ID']['output'];
   sizes: Array<SizeToWork>;
   updatedAt: Scalars['Date']['output'];
@@ -931,6 +943,11 @@ export type UpdateTasksMutationVariables = Exact<{
 
 export type UpdateTasksMutation = { __typename?: 'Mutation', updateTasks: Array<{ __typename?: 'TaskWithArtisan', id: string }> };
 
+export type GetPayrollQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPayrollQuery = { __typename?: 'Query', getPayroll: { __typename?: 'PayrollGetDto', totalPayable: number, totalQuantity: number, artisans: Array<{ __typename?: 'ArtisanWithTasks', firstName: string, lastName?: string | null, payablePerArtisan: number, quantityPerArtisan: number, tasks: Array<{ __typename?: 'TaskWithWork', payablePerTask: number, costPerTask: number, quantityPerTask: number, type: Job, work: { __typename?: 'WorkWithProduct', sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', eu: string } }>, product: { __typename?: 'ProductWithProductGroup', sku: string, productGroup: { __typename?: 'ProductGroupWithLaborCosts', skuNumeric: string, laborCosts: Array<{ __typename?: 'LaborCost', type: string, cost: number }> } } } }> }> } };
+
 export const ArtisanFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Artisan"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artisan"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"jobs"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}}]}}]} as unknown as DocumentNode<ArtisanFragment, unknown>;
 export const AuthUserFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]} as unknown as DocumentNode<AuthUserFragment, unknown>;
 export const ProductCategoryFragFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProductCategoryFrag"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProductCategory"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"gender"}}]}}]} as unknown as DocumentNode<ProductCategoryFragFragment, unknown>;
@@ -982,3 +999,4 @@ export const GetWorksDocument = {"kind":"Document","definitions":[{"kind":"Opera
 export const GetWorkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getWork"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getWork"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Work"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Size"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Size"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"eu"}},{"kind":"Field","name":{"kind":"Name","value":"us"}},{"kind":"Field","name":{"kind":"Name","value":"uk"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Work"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkWithTasks"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"orderNo"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"sizes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"size"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Size"}}]}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}},{"kind":"Field","name":{"kind":"Name","value":"product"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sku"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}}]}}]} as unknown as DocumentNode<GetWorkQuery, GetWorkQueryVariables>;
 export const GetTasksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getTasks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTasks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskWithArtisan"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskWithArtisan"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TaskWithArtisan"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"workId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"artisan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"jobs"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}}]}},{"kind":"Field","name":{"kind":"Name","value":"doneAt"}}]}}]} as unknown as DocumentNode<GetTasksQuery, GetTasksQueryVariables>;
 export const UpdateTasksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateTasks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TaskUpdateDto"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTasks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateTasksMutation, UpdateTasksMutationVariables>;
+export const GetPayrollDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPayroll"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getPayroll"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"artisans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"payablePerTask"}},{"kind":"Field","name":{"kind":"Name","value":"costPerTask"}},{"kind":"Field","name":{"kind":"Name","value":"quantityPerTask"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"work"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sizes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"size"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eu"}}]}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}},{"kind":"Field","name":{"kind":"Name","value":"product"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sku"}},{"kind":"Field","name":{"kind":"Name","value":"productGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skuNumeric"}},{"kind":"Field","name":{"kind":"Name","value":"laborCosts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"cost"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"payablePerArtisan"}},{"kind":"Field","name":{"kind":"Name","value":"quantityPerArtisan"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalPayable"}},{"kind":"Field","name":{"kind":"Name","value":"totalQuantity"}}]}}]}}]} as unknown as DocumentNode<GetPayrollQuery, GetPayrollQueryVariables>;

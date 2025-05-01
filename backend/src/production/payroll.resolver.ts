@@ -6,8 +6,8 @@ import { PayrollGetDto } from './dto/payroll-get.dto';
 export class PayrollResolver {
   constructor(private service: PayrollService) {}
 
-  @Query(() => [PayrollGetDto])
-  getPayroll(): Promise<PayrollGetDto[]> {
+  @Query(() => PayrollGetDto)
+  getPayroll(): Promise<PayrollGetDto> {
     return this.service.getPayroll();
   }
 }

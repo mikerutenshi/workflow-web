@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <span>Payroll Page</span>
+    <PayrollTable />
   </v-main>
 </template>
 

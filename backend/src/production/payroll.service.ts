@@ -7,7 +7,7 @@ import { Product } from '@/models/product.model';
 export class PayrollService {
   constructor(private prisma: PrismaService) {}
 
-  async getPayroll(): Promise<PayrollGetDto[]> {
+  async getPayroll(): Promise<PayrollGetDto> {
     const artisans = await this.prisma.artisan.findMany({
       include: {
         tasks: {
@@ -29,38 +29,54 @@ export class PayrollService {
       },
     });
 
-    let payroll: PayrollGetDto[] = [];
-    payroll = artisans.map((artisan) => {
+    let payroll: PayrollGetDto = new PayrollGetDto();
+
+    payroll.artisans = artisans.map((artisan) => {
       return {
         ...artisan,
         tasks: artisan.tasks.map((task) => {
-          const totalQuantity = task.work.sizes.reduce(
+          const quantityPerTask = task.work.sizes.reduce(
             (sum, workSize) => sum + workSize.quantity,
             0,
           );
-          const taskCost =
+          const costPerTask =
             task.work.product.productGroup.laborCosts.find(
               (laborCost) => laborCost.type === task.type,
             )?.cost || 0;
 
-          const payable = totalQuantity * taskCost;
+          const payablePerTask = quantityPerTask * costPerTask;
+
           return {
             ...task,
-            totalQuantity,
-            taskCost,
-            payable,
+            quantityPerTask,
+            costPerTask,
+            payablePerTask,
           };
         }),
-        totalPayable: 0,
+        payablePerArtisan: 0,
+        quantityPerArtisan: 0,
       };
     });
 
-    for (const artisan of payroll) {
-      artisan.totalPayable = artisan.tasks.reduce(
-        (sum, task) => sum + task.payable,
+    for (const artisan of payroll.artisans) {
+      artisan.payablePerArtisan = artisan.tasks.reduce(
+        (sum, task) => sum + task.payablePerTask,
+        0,
+      );
+      artisan.quantityPerArtisan = artisan.tasks.reduce(
+        (sum, task) => sum + task.quantityPerTask,
         0,
       );
     }
+
+    payroll.totalPayable = payroll.artisans.reduce(
+      (sum, artisan) => sum + artisan.payablePerArtisan,
+      0,
+    );
+    payroll.totalQuantity = payroll.artisans.reduce(
+      (sum, artisan) => sum + artisan.quantityPerArtisan,
+      0,
+    );
 
     return payroll;
   }

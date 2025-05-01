@@ -8,7 +8,7 @@ import { Work } from '@/models/work.model';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-class ProductGroupDto extends ProductGroup {
+class ProductGroupWithLaborCosts extends ProductGroup {
   @Field(() => ProductCategory)
   productCategory: ProductCategory;
   @Field(() => [LaborCost])
@@ -16,33 +16,45 @@ class ProductGroupDto extends ProductGroup {
 }
 
 @ObjectType()
-class ProductWithGroupDto extends Product {
-  @Field(() => ProductGroupDto)
-  productGroup: ProductGroupDto;
+class ProductWithProductGroup extends Product {
+  @Field(() => ProductGroupWithLaborCosts)
+  productGroup: ProductGroupWithLaborCosts;
 }
 
 @ObjectType()
-class WorkWithProductDto extends Work {
-  @Field(() => ProductWithGroupDto)
-  product: ProductWithGroupDto;
+class WorkWithProduct extends Work {
+  @Field(() => ProductWithProductGroup)
+  product: ProductWithProductGroup;
 }
 
 @ObjectType()
-class TaskWithWorkDto extends Task {
-  @Field(() => WorkWithProductDto)
-  work: WorkWithProductDto;
+class TaskWithWork extends Task {
+  @Field(() => WorkWithProduct)
+  work: WorkWithProduct;
   @Field()
-  totalQuantity: number;
+  quantityPerTask: number;
   @Field()
-  taskCost: number;
+  costPerTask: number;
   @Field()
-  payable: number;
+  payablePerTask: number;
 }
 
 @ObjectType()
-export class PayrollGetDto extends Artisan {
-  @Field(() => [TaskWithWorkDto])
-  tasks: TaskWithWorkDto[];
+class ArtisanWithTasks extends Artisan {
+  @Field(() => [TaskWithWork])
+  tasks: TaskWithWork[];
+  @Field()
+  payablePerArtisan: number;
+  @Field()
+  quantityPerArtisan: number;
+}
+
+@ObjectType()
+export class PayrollGetDto {
   @Field()
   totalPayable: number;
+  @Field()
+  totalQuantity: number;
+  @Field(() => [ArtisanWithTasks])
+  artisans: ArtisanWithTasks[];
 }
