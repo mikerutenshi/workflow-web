@@ -12,7 +12,7 @@
       </template>
       <template v-slot:item.actions="{ item, index }">
         <NuxtLink :to="`/artisans/update/${item.id}`">
-          <v-btn color="primary" icon="mdi-pencil" variant="text"></v-btn>
+          <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
         </NuxtLink>
       </template>
     </v-data-table>
@@ -21,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import { mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetArtisansDocument } from '~/api/generated/types';

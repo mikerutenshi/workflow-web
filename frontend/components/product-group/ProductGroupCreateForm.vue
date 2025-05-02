@@ -38,7 +38,7 @@
                     <NuxtLink :to="`/product-categories/update/${item.raw.id}`">
                       <v-btn
                         color="primary"
-                        icon="mdi-pencil"
+                        :icon="mdiPencil"
                         size="small"
                         variant="text"
                       ></v-btn>
@@ -50,7 +50,7 @@
           </v-col>
           <v-col cols="2" md="1" class="ml-auto">
             <NuxtLink to="/product-categories/create">
-              <v-btn icon="mdi-plus" color="primary"></v-btn>
+              <v-btn :icon="mdiPlus" color="primary"></v-btn>
             </NuxtLink>
           </v-col>
         </v-row>
@@ -94,6 +94,7 @@ import {
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
+import { mdiPencil, mdiPlus } from '@mdi/js';
 
 const route = useRoute();
 const productGroupId = ref(route.params.id as string);

@@ -31,7 +31,7 @@
                     <NuxtLink :to="`/product-groups/update/${item.raw.id}`">
                       <v-btn
                         color="primary"
-                        icon="mdi-pencil"
+                        :icon="mdiPencil"
                         size="small"
                         variant="text"
                       ></v-btn>
@@ -43,7 +43,7 @@
           </v-col>
           <v-col cols="2" md="1" class="d-flex justify-end">
             <NuxtLink to="/product-groups/create">
-              <v-btn icon="mdi-plus" color="primary"></v-btn>
+              <v-btn :icon="mdiPlus" color="primary"></v-btn>
             </NuxtLink>
           </v-col>
         </v-row>
@@ -73,7 +73,7 @@
                     <NuxtLink :to="`/colors/update/${item.raw.id}`">
                       <v-btn
                         color="primary"
-                        icon="mdi-pencil"
+                        :icon="mdiPencil"
                         size="small"
                         variant="text"
                       ></v-btn>
@@ -97,7 +97,7 @@
           </v-col>
           <v-col cols="2" md="1" class="d-flex justify-end">
             <NuxtLink to="/colors/create">
-              <v-btn icon="mdi-plus" color="primary"></v-btn>
+              <v-btn :icon="mdiPlus" color="primary"></v-btn>
             </NuxtLink>
           </v-col>
         </v-row>
@@ -157,6 +157,7 @@ import {
 } from '~/api/generated/types';
 import { useRoute } from 'vue-router';
 import { CACHE_COLORS } from '~/utils/cache-tags';
+import { mdiPencil, mdiPlus } from '@mdi/js';
 
 const route = useRoute();
 const productId = ref(route.params.id as string);

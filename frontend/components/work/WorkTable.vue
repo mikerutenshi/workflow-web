@@ -27,7 +27,7 @@
               } At: ${task.doneAt ?? '-'}`
             }}
             <template v-slot:prepend>
-              <v-icon icon="mdi-checkbox-blank"></v-icon>
+              <v-icon :icon="mdiCheckboxBlank"></v-icon>
             </template>
           </v-list-item>
         </v-list>
@@ -35,7 +35,7 @@
 
       <template v-slot:item.actions="{ item }">
         <NuxtLink :to="`/works/update/${item.id}`">
-          <v-btn color="primary" icon="mdi-pencil" variant="text"></v-btn>
+          <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
         </NuxtLink>
       </template>
     </v-data-table>
@@ -49,6 +49,7 @@
 </style>
 
 <script setup lang="ts">
+import { mdiCheckboxBlank, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetWorksDocument } from '~/api/generated/types';

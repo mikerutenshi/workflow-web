@@ -1,8 +1,8 @@
-import '@mdi/font/css/materialdesignicons.css';
 import { createVuetify } from 'vuetify';
 import * as directives from 'vuetify/directives';
 import { VDateInput } from 'vuetify/labs/components';
 import 'vuetify/styles';
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
@@ -12,6 +12,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     directives,
     icons: {
       defaultSet: 'mdi',
+      aliases,
+      sets: { mdi },
     },
     defaults: {
       VTextField: {

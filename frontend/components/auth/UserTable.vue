@@ -14,7 +14,7 @@
           v-model="search"
           label="Cari"
           class="ma-4"
-          prepend-inner-icon="mdi-magnify"
+          :prepend-inner-icon="mdiMagnify"
           density="compact"
           variant="outlined"
         ></v-text-field>
@@ -25,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { mdiMagnify } from '@mdi/js';
 import { useQuery } from 'villus';
 import { ref } from 'vue';
 import { GetUsersDocument } from '~/api/generated/types';

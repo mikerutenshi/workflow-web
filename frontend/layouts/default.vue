@@ -12,7 +12,9 @@
         v-if="currentPage && pagesWithCreate.includes(currentPage as string)"
       >
         <NuxtLink :to="createBtn.route">
-          <v-btn> <v-icon left>mdi-plus</v-icon> {{ createBtn.title }} </v-btn>
+          <v-btn>
+            <v-icon left :icon="mdiPlus"></v-icon> {{ createBtn.title }}
+          </v-btn>
         </NuxtLink>
       </template>
     </v-app-bar>
@@ -47,8 +49,8 @@
             :to="navItem.route"
             router
             :title="navItem.title"
-            :prepend-icon="navItem.icon"
             slim
+            :prepend-icon="navItem.icon"
           >
           </v-list-item>
         </template>
@@ -63,6 +65,15 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
+import {
+  mdiCalculator,
+  mdiCashRegister,
+  mdiChartTimeline,
+  mdiFaceMan,
+  mdiHome,
+  mdiShoeFormal,
+  mdiPlus,
+} from '@mdi/js';
 
 const route = useRoute();
 
@@ -80,31 +91,31 @@ const closeDrawer = () => {
 };
 
 const navItems = [
-  { title: 'Home', route: '/', icon: 'mdi-home' },
+  { title: 'Home', route: '/', icon: mdiHome },
   {
     title: 'Production Status',
     route: '/works',
-    icon: 'mdi-chart-timeline',
+    icon: mdiChartTimeline,
   },
   {
     title: 'Products',
     route: '/products',
-    icon: 'mdi-shoe-formal',
+    icon: mdiShoeFormal,
   },
   {
     title: 'Production Costs',
     route: '/labor-costs',
-    icon: 'mdi-calculator',
+    icon: mdiCalculator,
   },
   {
     title: 'Artisans',
     route: '/artisans',
-    icon: 'mdi-face-man',
+    icon: mdiFaceMan,
   },
   {
     title: 'Payroll',
     route: '/payroll',
-    icon: 'mdi-cash-register',
+    icon: mdiCashRegister,
   },
   // {
   //   title: 'Utility',

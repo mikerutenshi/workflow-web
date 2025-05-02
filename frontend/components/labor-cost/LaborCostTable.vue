@@ -76,7 +76,7 @@
           </v-list>
         </v-menu> -->
         <NuxtLink :to="`/labor-costs/update/${item.id}`">
-          <v-btn color="primary" icon="mdi-pencil" variant="text"></v-btn>
+          <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
         </NuxtLink>
       </template>
     </v-data-table>
@@ -85,6 +85,7 @@
 </template>
 
 <script setup lang="ts">
+import { mdiPencil } from '@mdi/js';
 import { compileString } from 'sass';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
