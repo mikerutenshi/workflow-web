@@ -3,7 +3,7 @@ const JOB_OPTIONS = [
   { id: 'DRAW_LINING', title: 'Lining Drawer' },
   { id: 'STITCH_UPPER', title: 'Upper Stitcher' },
   { id: 'STITCH_OUTSOLE', title: 'Outsole Stitcher' },
-  { id: '', title: 'Insole Stitcher' },
+  { id: 'STITCH_INSOLE', title: 'Insole Stitcher' },
   { id: 'LAST', title: 'Laster' },
 ];
 

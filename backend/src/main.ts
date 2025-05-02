@@ -29,16 +29,16 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  // try {
-  //   console.log('Running Prisma db push...');
-  //   execSync('npx prisma db push', { stdio: 'inherit' });
+  try {
+    console.log('Running Prisma db push...');
+    execSync('npx prisma db push', { stdio: 'inherit' });
 
-  //   console.log('Running Prisma db seed...');
-  //   execSync('npx prisma db seed', { stdio: 'inherit' });
+    console.log('Running Prisma db seed...');
+    execSync('npx prisma db seed', { stdio: 'inherit' });
 
-  //   console.log('Prisma setup completed.');
-  // } catch (error) {
-  //   console.error('Error executing Prisma commands:', error);
-  // }
+    console.log('Prisma setup completed.');
+  } catch (error) {
+    console.error('Error executing Prisma commands:', error);
+  }
 }
 bootstrap();
