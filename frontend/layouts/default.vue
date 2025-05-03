@@ -139,8 +139,10 @@ const navItems = [
   // },
 ];
 
+const { t } = useI18n();
+
 const appBarTitle = computed(() => {
-  return route.meta.title || 'Workflow App';
+  return route.meta.title || t('app.title');
 });
 
 const currentPage = computed(() => {

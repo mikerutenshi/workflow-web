@@ -19,7 +19,16 @@ export default defineNuxtConfig({
         config.plugins?.push(vuetify({ autoImport: true }));
       });
     },
+    '@nuxtjs/i18n',
   ],
+  i18n: {
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', name: 'English', file: 'en.json' },
+      { code: 'id', name: 'Indonesian', file: 'id.json' },
+      { code: 'su', name: 'Sundanese', file: 'su.json' },
+    ],
+  },
   components: true,
   css: [
     'vuetify/lib/styles/main.sass',

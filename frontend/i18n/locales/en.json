@@ -1,0 +1,11 @@
+{
+  "greeting": {
+    "morning": "Good morning,",
+    "afternoon": "Good afternoon,",
+    "evening": "Good evening,"
+  },
+  "app": {
+    "title": "Borsa App"
+  },
+  "logout": "Log Out"
+}

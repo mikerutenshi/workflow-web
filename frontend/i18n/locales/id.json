@@ -1,0 +1,11 @@
+{
+  "greeting": {
+    "morning": "Selamat pagi,",
+    "afternoon": "Selamat siang,",
+    "evening": "Selamat malam,"
+  },
+  "app": {
+    "title": "Aplikasi Borsa"
+  },
+  "logout": "Keluar"
+}

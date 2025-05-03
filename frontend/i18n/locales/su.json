@@ -1,0 +1,11 @@
+{
+  "greeting": {
+    "morning": "Wilujeng enjing,",
+    "afternoon": "Wilujeng sonten,",
+    "evening": "Wilujeng wengi,"
+  },
+  "app": {
+    "title": "Aplikasi Borsa"
+  },
+  "logout": "Kaluar"
+}
