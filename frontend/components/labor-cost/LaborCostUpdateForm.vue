@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col cols="12" md="4">
+    <v-col>
       <v-form @submit.prevent="handleSubmit" class="pa-4">
         <v-text-field
           v-model="header.skuNumeric"

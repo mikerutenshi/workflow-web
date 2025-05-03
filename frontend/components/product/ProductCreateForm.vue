@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col md="4">
+    <v-col>
       <v-form class="pa-4" @submit.prevent="handleSubmit">
         <v-alert v-if="createError" type="error">
           {{ createError }}
@@ -11,7 +11,7 @@
         <v-text-field v-model="form.sku" label="SKU" />
 
         <v-row>
-          <v-col cols="10" md="11">
+          <v-col>
             <v-autocomplete
               v-model="form.productGroupId"
               label="Product Group"

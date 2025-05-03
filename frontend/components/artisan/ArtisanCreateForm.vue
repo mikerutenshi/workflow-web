@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-col cols="12" md="4">
+    <v-col>
       <v-form class="pa-4" @submit.prevent="handleSubmit">
         <v-alert v-if="errorMessage" type="error">
           {{ errorMessage }}

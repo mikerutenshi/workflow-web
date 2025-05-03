@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" class="mt-4">
-    <v-col md="4">
+    <v-col>
       <v-card>
         <v-row no-gutters align="center">
           <v-col class="d-flex flex-column align-center my-2" cols="6">

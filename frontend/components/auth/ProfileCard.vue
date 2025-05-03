@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="authStore.user" width="400">
+  <v-card v-if="authStore.user">
     <v-card-title class="text-center">
       Hi, {{ `${authStore.user.firstName} ${authStore.user.lastName}` }}
     </v-card-title>

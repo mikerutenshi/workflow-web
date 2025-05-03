@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col md="4">
+    <v-col>
       <v-form
         class="pa-4"
         @submit.prevent="

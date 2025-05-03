@@ -19,7 +19,7 @@
       </template>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app rail expand-on-hover>
+    <v-navigation-drawer v-model="drawer" app temporary>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
           <!-- <v-list-group v-if="navItem.children">
@@ -52,6 +52,9 @@
             slim
             :prepend-icon="navItem.icon"
           >
+            <template #prepend
+              ><v-icon :icon="navItem.icon"></v-icon>
+            </template>
           </v-list-item>
         </template>
       </v-list>

@@ -2,7 +2,7 @@
   <!-- <v-row align="center" class="flex-column"><AuthUsersTable /> </v-row> -->
   <v-container fluid>
     <v-row justify="center" align="center">
-      <v-col cols="12" md="4" class="translucent-background">
+      <v-col class="translucent-background">
         <v-form
           @submit.prevent="execute({ data: form })"
           class="d-flex flex-column align-center"
