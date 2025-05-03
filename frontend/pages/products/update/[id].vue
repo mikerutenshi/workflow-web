@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'Edit a Product',
+  title: 'page_title.product_edit',
 });
 </script>

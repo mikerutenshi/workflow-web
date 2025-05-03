@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'Payroll',
+  title: 'page_title.payroll',
 });
 </script>

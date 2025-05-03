@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'Edit Production Cost',
+  title: 'page_title.labor_cost_update',
 });
 </script>

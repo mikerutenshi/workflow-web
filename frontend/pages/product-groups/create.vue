@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'Create a New Product Group',
+  title: 'page_title.product_group_create',
 });
 </script>

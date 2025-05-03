@@ -7,5 +7,36 @@
   "app": {
     "title": "Aplikasi Borsa"
   },
-  "logout": "Keluar"
+  "logout": "Keluar",
+  "nav": {
+    "home": "Rumah",
+    "production_status": "Status Produksi",
+    "products": "Produk",
+    "labor_costs": "Biaya Tenaga Kerja",
+    "artisans": "Perajin",
+    "payroll": "Daftar Upah"
+  },
+  "page_title": {
+    "artisan_create": "Create a New Artisan",
+    "artisan_edit": "Edit an Artisan",
+    "artisans": "Artisans",
+    "color_create": "Create a New Color",
+    "color_edit": "Edit a Color",
+    "colors": "Colors",
+    "labor_costs": "Production Costs",
+    "labor_cost_update": "Update a Production Cost",
+    "payroll": "Payroll",
+    "product_category_create": "Create a New Product Category",
+    "product_categories": "Product Categories",
+    "product_category_edit": "Edit a Product Category",
+    "product_group_create": "Create a New Product Group",
+    "product_groups": "Product Groups",
+    "product_group_edit": "Edit a Product Group",
+    "product_create": "Create a New Product",
+    "products": "Products",
+    "product_edit": "Edit a Product",
+    "work_create": "Create a New Work",
+    "works": "Production Status",
+    "work_edit": "Edit a Work"
+  }
 }

@@ -5,15 +5,16 @@
         <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
       </template>
 
-      <v-app-bar-title>{{ appBarTitle }}</v-app-bar-title>
+      <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
 
       <template
         v-slot:append
-        v-if="currentPage && pagesWithCreate.includes(currentPage as string)"
+        v-if="pagesWithCreate.includes(currentRouteName as string)"
       >
         <NuxtLink :to="createBtn.route">
           <v-btn>
-            <v-icon left :icon="mdiPlus"></v-icon> {{ createBtn.title }}
+            <v-icon left :icon="mdiPlus"></v-icon>
+            {{ createBtn.title }}
           </v-btn>
         </NuxtLink>
       </template>
@@ -78,8 +79,6 @@ import {
   mdiPlus,
 } from '@mdi/js';
 
-const route = useRoute();
-
 const drawer = ref(false);
 const createBtn = reactive({
   title: '',
@@ -93,61 +92,62 @@ const closeDrawer = () => {
   drawer.value = false;
 };
 
-const navItems = [
-  { title: 'Home', route: '/', icon: mdiHome },
-  {
-    title: 'Production Status',
-    route: '/works',
-    icon: mdiChartTimeline,
-  },
-  {
-    title: 'Products',
-    route: '/products',
-    icon: mdiShoeFormal,
-  },
-  {
-    title: 'Production Costs',
-    route: '/labor-costs',
-    icon: mdiCalculator,
-  },
-  {
-    title: 'Artisans',
-    route: '/artisans',
-    icon: mdiFaceMan,
-  },
-  {
-    title: 'Payroll',
-    route: '/payroll',
-    icon: mdiCashRegister,
-  },
-  // {
-  //   title: 'Utility',
-  //   icon: 'mdi-tools',
-  //   children: [
-  //     {
-  //       title: 'Product Groups',
-  //       route: '/product-groups',
-  //       icon: 'mdi-basket',
-  //     },
-  //     {
-  //       title: 'Product Categories',
-  //       route: '/product-categories',
-  //       icon: 'mdi-shape',
-  //     },
-  //     { title: 'Colors', route: '/colors', icon: 'mdi-palette' },
-  //   ],
-  // },
-];
-
 const { t } = useI18n();
-
-const appBarTitle = computed(() => {
-  return route.meta.title || t('app.title');
+const localePath = useLocalePath();
+const navItems = computed(() => {
+  return [
+    { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
+    {
+      title: t('nav.production_status'),
+      route: localePath('/works'),
+      icon: mdiChartTimeline,
+    },
+    {
+      title: t('nav.products'),
+      route: localePath('/products'),
+      icon: mdiShoeFormal,
+    },
+    {
+      title: t('nav.labor_costs'),
+      route: localePath('/labor-costs'),
+      icon: mdiCalculator,
+    },
+    {
+      title: t('nav.artisans'),
+      route: localePath('/artisans'),
+      icon: mdiFaceMan,
+    },
+    {
+      title: t('nav.payroll'),
+      route: localePath('/payroll'),
+      icon: mdiCashRegister,
+    },
+    // {
+    //   title: 'Utility',
+    //   icon: 'mdi-tools',
+    //   children: [
+    //     {
+    //       title: 'Product Groups',
+    //       route: '/product-groups',
+    //       icon: 'mdi-basket',
+    //     },
+    //     {
+    //       title: 'Product Categories',
+    //       route: '/product-categories',
+    //       icon: 'mdi-shape',
+    //     },
+    //     { title: 'Colors', route: '/colors', icon: 'mdi-palette' },
+    //   ],
+    // },
+  ];
 });
 
-const currentPage = computed(() => {
-  return route.name;
+const route = useRoute();
+const routeBaseName = useRouteBaseName();
+const currentRouteName = computed(() => {
+  return routeBaseName(route.name ?? '');
 });
+const pageTitle = computed(() => t(route.meta.title as string));
 
 const pagesWithCreate = [
   'products',
@@ -159,11 +159,11 @@ const pagesWithCreate = [
 ];
 
 watch(
-  () => route.name,
-  (routeName) => {
-    switch (routeName) {
+  currentRouteName,
+  (newName) => {
+    switch (newName) {
       case 'products': {
-        createBtn.route = 'products/create';
+        createBtn.route = localePath('products/create');
         createBtn.title = 'New Product';
         break;
       }
@@ -207,12 +207,7 @@ watch(
   { immediate: true }
 );
 
-watch(
-  () => appBarTitle.value,
-  (newTitle) => {
-    useHead({
-      title: newTitle,
-    });
-  }
-);
+useHead({
+  title: pageTitle,
+});
 </script>

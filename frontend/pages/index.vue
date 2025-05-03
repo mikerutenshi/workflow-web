@@ -9,3 +9,9 @@
     </v-container>
   </v-main>
 </template>
+
+<script setup lang="ts">
+definePageMeta({
+  title: 'app.title',
+});
+</script>

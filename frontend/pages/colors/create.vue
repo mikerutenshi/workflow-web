@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'Create a New Color',
+  title: 'page_title.color_create',
 });
 </script>
