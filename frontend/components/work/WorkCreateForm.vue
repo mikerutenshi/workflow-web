@@ -7,15 +7,18 @@
         </v-alert>
 
         <v-date-input
-          label="Date"
+          :label="$t('label.date')"
           v-model="form.date"
           variant="outlined"
         ></v-date-input>
 
-        <v-text-field label="SPK" v-model.number="form.orderNo"></v-text-field>
+        <v-text-field
+          :label="$t('label.order_no')"
+          v-model.number="form.orderNo"
+        ></v-text-field>
 
         <v-autocomplete
-          label="Product"
+          :label="$t('label.product')"
           auto-select-first
           item-value="id"
           item-title="sku"
@@ -26,7 +29,7 @@
         </v-autocomplete>
 
         <v-autocomplete
-          label="Select Sizes"
+          :label="$t('label.select_sizes')"
           multiple
           chips
           auto-select-first
@@ -46,7 +49,7 @@
         </v-autocomplete>
 
         <v-card class="mb-4">
-          <v-card-title>Fill in Quantities</v-card-title>
+          <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
           <v-data-table
             :headers="sizeHeaders"
             :items="sizesTable"
@@ -57,7 +60,7 @@
             <template #item.quantity="{ item }">
               <v-text-field
                 v-model.number="item.quantity"
-                label="Quantity"
+                :label="$t('label.quantity')"
                 type="number"
               />
             </template>
@@ -65,11 +68,15 @@
         </v-card>
 
         <div class="d-flex mt-4">
-          <NuxtLink to="/works">
-            <v-btn color="secondary" class="mr-4">Discard</v-btn>
+          <NuxtLink :to="$localePath('works')">
+            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
           </NuxtLink>
-          <v-btn v-if="workId" type="submit" color="primary">Update</v-btn>
-          <v-btn v-else type="submit" color="primary">Create</v-btn>
+          <v-btn v-if="workId" type="submit" color="primary">{{
+            $t('btn.update')
+          }}</v-btn>
+          <v-btn v-else type="submit" color="primary">{{
+            $t('btn.create')
+          }}</v-btn>
           <v-btn
             v-if="workId"
             type="button"
@@ -77,7 +84,7 @@
             class="ml-auto"
             @click="executeDelete({ id: workId })"
           >
-            Delete
+            {{ $t('btn.delete') }}
           </v-btn>
         </div>
       </v-form>
@@ -156,9 +163,10 @@ const sizes = ref<Size[]>([]);
 const sizesTable = reactive<
   Array<{ id: string; title: string; quantity: number }>
 >([]);
+const { t } = useI18n();
 const sizeHeaders = ref([
-  { title: 'Size', key: 'title' },
-  { title: 'Quantity', key: 'quantity' },
+  { title: t('header.size'), key: 'title' },
+  { title: t('header.quantity'), key: 'quantity' },
 ]);
 
 const errorMessages = ref('');

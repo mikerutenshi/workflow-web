@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'page_title.artisan_edit',
+  title: 'page.artisan_edit',
 });
 </script>

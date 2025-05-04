@@ -11,32 +11,80 @@
   "nav": {
     "home": "Imah",
     "production_status": "Status Produksi",
-    "products": "Produk",
+    "products": "Sapatu",
     "labor_costs": "Ongkos Kuli",
     "artisans": "Pangrajin",
     "payroll": "Gajih"
   },
-  "page_title": {
-    "artisan_create": "Create a New Artisan",
-    "artisan_edit": "Edit an Artisan",
-    "artisans": "Artisans",
-    "color_create": "Create a New Color",
-    "color_edit": "Edit a Color",
-    "colors": "Colors",
-    "labor_costs": "Production Costs",
-    "labor_cost_update": "Update a Production Cost",
-    "payroll": "Payroll",
-    "product_category_create": "Create a New Product Category",
-    "product_categories": "Product Categories",
-    "product_category_edit": "Edit a Product Category",
-    "product_group_create": "Create a New Product Group",
-    "product_groups": "Product Groups",
-    "product_group_edit": "Edit a Product Group",
-    "product_create": "Create a New Product",
-    "products": "Products",
-    "product_edit": "Edit a Product",
-    "work_create": "Create a New Work",
+  "page": {
+    "artisan_create": "Nyieun Pangrajin Anyar",
+    "artisan_edit": "Ngarobah Pangrajin",
+    "artisans": "Pangrajin",
+    "color_create": "Nyieun Warna Anyar",
+    "color_edit": "Ngarobah Warna",
+    "colors": "Warna",
+    "labor_costs": "Ongkos Kuli",
+    "labor_cost_update": "Ngarobah Ongkos Kuli",
+    "payroll": "Gajih",
+    "product_category_create": "Nyieun Kategori Sapatu Anyar",
+    "product_categories": "Kategori Sapatu",
+    "product_category_edit": "Ngarobah Kategori Sapatu",
+    "product_group_create": "Nyieun Kelompok Sapatu Anyar",
+    "product_groups": "Kelompok Sapatu",
+    "product_group_edit": "Ngarobah Kelompok Sapatu",
+    "product_create": "Nyieun Sapatu Anyar",
+    "products": "Sapatu",
+    "product_edit": "Ngarobah Sapatu",
+    "work_create": "Nyieun Pagawean Anyar",
     "works": "Status Produksi",
-    "work_edit": "Edit a Work"
+    "work_edit": "Ngarobah Pagawean"
+  },
+  "create_btn": {
+    "product": "Sapatu Anyar",
+    "color": "Warna Anyar",
+    "product_group": "Kelompok Sapatu Anyar",
+    "product_category": "Kategori Sapatu Anyar",
+    "artisan": "Pangrajin Anyar",
+    "work": "Pagawean Anyar"
+  },
+  "btn": {
+    "create": "Jieun",
+    "update": "Robah",
+    "delete": "Hapus",
+    "cancel": "Batal"
+  },
+  "header": {
+    "id": "ID",
+    "date": "Tanggal",
+    "order_no": "SPK",
+    "sku": "SKU",
+    "size": "Ukuran",
+    "sizes": "Ukuran {'|'} Jumlah",
+    "quantity": "Jumlah",
+    "tasks": "Tugas",
+    "type": "Tugas",
+    "artisan": "Pangrajin",
+    "done_at": "Tanggal Rengse"
+  },
+  "label": {
+    "date": "Tanggal",
+    "order_no": "SPK",
+    "product": "Sapatu",
+    "select_sizes": "Pilih Ukuran",
+    "quantity": "Jumlah",
+    "artisan": "Pangrajin",
+    "done_at": "Tanggal Rengse"
+  },
+  "card": {
+    "fill_quantities": "Eusian Jumlah Sapatu",
+    "fill_artisans": "Eusian Nu Ngagawekeun"
+  },
+  "jobs": {
+    "draw_upper": "Ngagurat Upper",
+    "draw_lining": "Ngagurat Lining",
+    "stitch_upper": "Ngetutui Upper",
+    "stitch_outsole": "Ngetutui Outsole",
+    "stitch_insole": "Ngetutui Insole",
+    "last": "Ngabentuk"
   }
 }

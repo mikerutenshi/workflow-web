@@ -8,7 +8,7 @@
       :sort-by="[{ key: 'id', order: 'asc' }]"
     >
       <template v-slot:item.jobs="{ item }">
-        {{ renderJobs(item.jobs) }}
+        {{ $t(renderJobs(item.jobs)) }}
       </template>
       <template v-slot:item.actions="{ item, index }">
         <NuxtLink :to="`/artisans/update/${item.id}`">

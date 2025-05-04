@@ -16,7 +16,7 @@
     "artisans": "Perajin",
     "payroll": "Daftar Upah"
   },
-  "page_title": {
+  "page": {
     "artisan_create": "Create a New Artisan",
     "artisan_edit": "Edit an Artisan",
     "artisans": "Artisans",

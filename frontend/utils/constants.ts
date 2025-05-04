@@ -1,10 +1,10 @@
-const JOB_OPTIONS = [
-  { id: 'DRAW_UPPER', title: 'Upper Drawer' },
-  { id: 'DRAW_LINING', title: 'Lining Drawer' },
-  { id: 'STITCH_UPPER', title: 'Upper Stitcher' },
-  { id: 'STITCH_OUTSOLE', title: 'Outsole Stitcher' },
-  { id: 'STITCH_INSOLE', title: 'Insole Stitcher' },
-  { id: 'LAST', title: 'Laster' },
+const JOBS = [
+  { id: 'DRAW_UPPER', title: 'jobs.draw_upper' },
+  { id: 'DRAW_LINING', title: 'jobs.draw_lining' },
+  { id: 'STITCH_UPPER', title: 'jobs.stitch_upper' },
+  { id: 'STITCH_OUTSOLE', title: 'jobs.stitch_outsole' },
+  { id: 'STITCH_INSOLE', title: 'jobs.stitch_insole' },
+  { id: 'LAST', title: 'jobs.last' },
 ];
 
 enum JOB {
@@ -16,4 +16,4 @@ enum JOB {
   LAST = 'LAST',
 }
 
-export { JOB, JOB_OPTIONS };
+export { JOB, JOBS };

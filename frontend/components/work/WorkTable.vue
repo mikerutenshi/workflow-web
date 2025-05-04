@@ -25,7 +25,10 @@
 
       <template v-slot:item.tasks="{ item }">
         <v-list density="compact">
-          <v-list-item v-for="task in item.tasks" :title="renderJob(task.type)">
+          <v-list-item
+            v-for="task in item.tasks"
+            :title="$t(renderJob(task.type))"
+          >
             {{
               task.artisan
                 ? `By: ${task.artisan?.firstName} ${
@@ -45,8 +48,10 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <NuxtLink :to="`/works/update/${item.id}`">
-          <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
+        <NuxtLink :to="$localePath(`/works/update/${item.id}`)">
+          <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+            $t('btn.update')
+          }}</v-btn>
         </NuxtLink>
       </template>
     </v-data-table>
@@ -61,10 +66,7 @@
 
 <script setup lang="ts">
 import {
-  mdiCheckboxBlank,
   mdiCheckboxBlankOutline,
-  mdiCheckboxMarked,
-  mdiCheckboxMarkedCircleOutline,
   mdiCheckboxMarkedOutline,
   mdiPencil,
 } from '@mdi/js';
@@ -80,13 +82,14 @@ const { data } = useQuery({
   tags: [CACHE_WORKS],
 });
 
+const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: 'ID', key: 'id' },
-  { title: 'Date', key: 'date' },
-  { title: 'SPK', key: 'orderNo' },
-  { title: 'SKU', key: 'product.sku' },
-  { title: 'Size | Quantity', key: 'sizes' },
-  { title: 'Tasks', key: 'tasks' },
+  { title: t('header.id'), key: 'id' },
+  { title: t('header.date'), key: 'date' },
+  { title: t('header.order_no'), key: 'orderNo' },
+  { title: t('header.sku'), key: 'product.sku' },
+  { title: t('header.sizes'), key: 'sizes' },
+  { title: t('header.tasks'), key: 'tasks' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 

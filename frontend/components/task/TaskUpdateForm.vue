@@ -14,7 +14,7 @@
         </v-alert>
 
         <v-card>
-          <v-card-title>Fill in Artisans</v-card-title>
+          <v-card-title>{{ $t('card.fill_artisans') }}</v-card-title>
           <v-data-table
             :headers="taskHeaders"
             :items="displayForm"
@@ -22,12 +22,12 @@
             editable
           >
             <template v-slot:item.type="{ item }">
-              {{ renderJob(item.type) }}
+              {{ $t(renderJob(item.type)) }}
             </template>
 
             <template #item.doneAt="{ item }">
               <v-date-input
-                label="Done At"
+                :label="$t('label.done_at')"
                 v-model="item.doneAt"
                 variant="outlined"
               ></v-date-input>
@@ -35,7 +35,7 @@
 
             <template #item.artisan="{ item }">
               <v-autocomplete
-                label="Artisan"
+                :label="$t('label.artisan')"
                 auto-select-first
                 item-value="id"
                 item-title="firstName"
@@ -53,7 +53,7 @@
                   <v-list-item
                     v-bind="props"
                     :title="`${item.raw.firstName} ${item.raw.lastName}`"
-                    :subtitle="renderJobs(item.raw.jobs)"
+                    :subtitle="$t(renderJobs(item.raw.jobs))"
                   ></v-list-item>
                 </template>
               </v-autocomplete>
@@ -62,11 +62,15 @@
         </v-card>
 
         <div class="d-flex mt-4">
-          <NuxtLink to="/works">
-            <v-btn color="secondary" class="mr-4">Discard</v-btn>
+          <NuxtLink :to="$localePath('works')">
+            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
           </NuxtLink>
-          <v-btn v-if="workId" type="submit" color="primary">Update</v-btn>
-          <v-btn v-else type="submit" color="primary">Create</v-btn>
+          <v-btn v-if="workId" type="submit" color="primary">{{
+            $t('btn.update')
+          }}</v-btn>
+          <v-btn v-else type="submit" color="primary">{{
+            $t('btn.create')
+          }}</v-btn>
         </div>
       </v-form>
     </v-col>
@@ -135,10 +139,11 @@ const form = computed<TaskUpdateDto[]>(() => {
   return result;
 });
 
+const { t } = useI18n();
 const taskHeaders = ref([
-  { title: 'Task', key: 'type' },
-  { title: 'Artisan', key: 'artisan' },
-  { title: 'Done At', key: 'doneAt' },
+  { title: t('header.type'), key: 'type' },
+  { title: t('header.artisan'), key: 'artisan' },
+  { title: t('header.done_at'), key: 'doneAt' },
 ]);
 
 const errorMessages = ref('');

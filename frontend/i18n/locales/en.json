@@ -16,7 +16,7 @@
     "artisans": "Artisans",
     "payroll": "Payroll"
   },
-  "page_title": {
+  "page": {
     "artisan_create": "Create a New Artisan",
     "artisan_edit": "Edit an Artisan",
     "artisans": "Artisans",
@@ -38,5 +38,13 @@
     "work_create": "Create a New Work",
     "works": "Production Status",
     "work_edit": "Edit a Work"
+  },
+  "create_btn": {
+    "product": "New Prodct",
+    "color": "New Color",
+    "product_group": "New Product Group",
+    "product_category": "New Product Cateogory",
+    "artisan": "New Artisan",
+    "work": "New Work"
   }
 }

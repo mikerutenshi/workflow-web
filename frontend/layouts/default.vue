@@ -12,7 +12,7 @@
         v-if="pagesWithCreate.includes(currentRouteName as string)"
       >
         <NuxtLink :to="createBtn.route">
-          <v-btn>
+          <v-btn variant="flat">
             <v-icon left :icon="mdiPlus"></v-icon>
             {{ createBtn.title }}
           </v-btn>
@@ -164,37 +164,37 @@ watch(
     switch (newName) {
       case 'products': {
         createBtn.route = localePath('products/create');
-        createBtn.title = 'New Product';
+        createBtn.title = t('create_btn.product');
         break;
       }
 
       case 'colors': {
         createBtn.route = 'colors/create';
-        createBtn.title = 'New Color';
+        createBtn.title = t('create_btn.color');
         break;
       }
 
       case 'product-groups': {
         createBtn.route = 'product-groups/create';
-        createBtn.title = 'New Product Group';
+        createBtn.title = t('create_btn.product_group');
         break;
       }
 
       case 'product-categories': {
         createBtn.route = 'product-categories/create';
-        createBtn.title = 'New Product Category';
+        createBtn.title = t('create_btn.product_category');
         break;
       }
 
       case 'artisans': {
         createBtn.route = 'artisans/create';
-        createBtn.title = 'New Artisan';
+        createBtn.title = t('create_btn.artisan');
         break;
       }
 
       case 'works': {
         createBtn.route = 'works/create';
-        createBtn.title = 'New Work';
+        createBtn.title = t('create_btn.work');
         break;
       }
 

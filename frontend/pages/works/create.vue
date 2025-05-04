@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: 'page_title.work_create',
+  title: 'page.work_create',
 });
 </script>

@@ -66,7 +66,8 @@ const route = useRoute();
 const artisanId = ref(route.params.id as string);
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
-const jobOptions = ref(JOB_OPTIONS);
+const { t } = useI18n();
+const jobOptions = computed(() => JOBS.map((job) => ({id: job.id, title: t(job.title)}));
 const errorMessage = ref('');
 const form = reactive({
   firstName: '',
