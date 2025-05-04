@@ -7,6 +7,12 @@ const JOBS = [
   { id: 'LAST', title: 'jobs.last' },
 ];
 
+const GENDERS = [
+  { id: 'MEN', title: 'genders.men' },
+  { id: 'WOMEN', title: 'genders.women' },
+  { id: 'KIDS', title: 'genders.kids' },
+];
+
 enum JOB {
   DRAW_UPPER = 'DRAW_UPPER',
   DRAW_LINING = 'DRAW_LINING',
@@ -16,4 +22,4 @@ enum JOB {
   LAST = 'LAST',
 }
 
-export { JOB, JOBS };
+export { JOB, JOBS, GENDERS };

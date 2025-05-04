@@ -1,6 +1,6 @@
 {
   "greeting": {
-    "morning": "Wilujeng enjing,",
+    "morning": "Wilujeng énjing,",
     "afternoon": "Wilujeng sonten,",
     "evening": "Wilujeng wengi,"
   },
@@ -35,9 +35,9 @@
     "product_create": "Nyieun Sapatu Anyar",
     "products": "Sapatu",
     "product_edit": "Ngarobah Sapatu",
-    "work_create": "Nyieun Pagawean Anyar",
+    "work_create": "Nyieun Pagawéan Anyar",
     "works": "Status Produksi",
-    "work_edit": "Ngarobah Pagawean"
+    "work_edit": "Ngarobah Pagawéan"
   },
   "create_btn": {
     "product": "Sapatu Anyar",
@@ -45,7 +45,7 @@
     "product_group": "Kelompok Sapatu Anyar",
     "product_category": "Kategori Sapatu Anyar",
     "artisan": "Pangrajin Anyar",
-    "work": "Pagawean Anyar"
+    "work": "Pagawéan Anyar"
   },
   "btn": {
     "create": "Jieun",
@@ -64,7 +64,11 @@
     "tasks": "Tugas",
     "type": "Tugas",
     "artisan": "Pangrajin",
-    "done_at": "Tanggal Rengse"
+    "done_at": "Tanggal Réngsé",
+    "product_group": "Kelompok Sapatu",
+    "product_category": "Kategori Sapatu",
+    "gender": "Jenis Kelamin",
+    "colors": "Warna"
   },
   "label": {
     "date": "Tanggal",
@@ -73,11 +77,11 @@
     "select_sizes": "Pilih Ukuran",
     "quantity": "Jumlah",
     "artisan": "Pangrajin",
-    "done_at": "Tanggal Rengse"
+    "done_at": "Tanggal Réngsé"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
-    "fill_artisans": "Eusian Nu Ngagawekeun"
+    "fill_artisans": "Eusian Nu Ngagawékeun"
   },
   "jobs": {
     "draw_upper": "Ngagurat Upper",
@@ -86,5 +90,10 @@
     "stitch_outsole": "Ngetutui Outsole",
     "stitch_insole": "Ngetutui Insole",
     "last": "Ngabentuk"
+  },
+  "genders": {
+    "men": "Lalaki",
+    "women": "Awéwé",
+    "kids": "Barudak"
   }
 }

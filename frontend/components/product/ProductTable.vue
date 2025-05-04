@@ -10,8 +10,11 @@
       <template v-slot:item.productColors="{ item }">
         {{ extractColors(item.productColors) }}
       </template>
+      <template v-slot:item.productGroup.productCategory.gender="{ item }">
+        {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
+      </template>
 
-      <template v-slot:item.actions="{ item, index }">
+      <template v-slot:item.actions="{ item }">
         <!-- <v-menu variant="outlined">
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props" variant="text">
@@ -29,8 +32,10 @@
             </v-list-item>
           </v-list>
         </v-menu> -->
-        <NuxtLink :to="`/products/update/${item.id}`">
-          <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
+        <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
+          <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+            $t('btn.update')
+          }}</v-btn>
         </NuxtLink>
       </template>
     </v-data-table>
@@ -45,7 +50,7 @@ import type { VDataTable } from 'vuetify/components';
 import {
   DeleteProductDocument,
   GetProductsDocument,
-  type ProductColorsWithColor,
+  type ColorToProductWithColor,
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
@@ -54,19 +59,23 @@ const { data } = useQuery({
   tags: [CACHE_PRODUCTS],
 });
 
+const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: 'ID', key: 'id' },
-  { title: 'SKU', key: 'sku' },
-  { title: 'Product Group', key: 'productGroup.skuNumeric' },
-  { title: 'Category', key: 'productGroup.productCategory.name' },
-  { title: 'Gender', key: 'productGroup.productCategory.gender' },
-  { title: 'Colors', key: 'productColors' },
+  { title: t('header.id'), key: 'id' },
+  { title: t('header.sku'), key: 'sku' },
+  { title: t('header.product_group'), key: 'productGroup.skuNumeric' },
+  {
+    title: t('header.product_category'),
+    key: 'productGroup.productCategory.name',
+  },
+  { title: t('header.gender'), key: 'productGroup.productCategory.gender' },
+  { title: t('header.colors'), key: 'productColors' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
 const extractColors = (productColors: any[]) => {
   let stringResult = '';
-  (productColors as ProductColorsWithColor[]).forEach((productColor) => {
+  (productColors as ColorToProductWithColor[]).forEach((productColor) => {
     stringResult += `${productColor.order}. ${productColor.color.name}, `;
   });
   return stringResult.slice(0, -2);

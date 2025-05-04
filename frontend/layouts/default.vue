@@ -163,37 +163,37 @@ watch(
   (newName) => {
     switch (newName) {
       case 'products': {
-        createBtn.route = localePath('products/create');
+        createBtn.route = localePath('/products/create');
         createBtn.title = t('create_btn.product');
         break;
       }
 
       case 'colors': {
-        createBtn.route = 'colors/create';
+        createBtn.route = localePath('/colors/create');
         createBtn.title = t('create_btn.color');
         break;
       }
 
       case 'product-groups': {
-        createBtn.route = 'product-groups/create';
+        createBtn.route = localePath('/product-groups/create');
         createBtn.title = t('create_btn.product_group');
         break;
       }
 
       case 'product-categories': {
-        createBtn.route = 'product-categories/create';
+        createBtn.route = localePath('/product-categories/create');
         createBtn.title = t('create_btn.product_category');
         break;
       }
 
       case 'artisans': {
-        createBtn.route = 'artisans/create';
+        createBtn.route = localePath('/artisans/create');
         createBtn.title = t('create_btn.artisan');
         break;
       }
 
       case 'works': {
-        createBtn.route = 'works/create';
+        createBtn.route = localePath('/works/create');
         createBtn.title = t('create_btn.work');
         break;
       }

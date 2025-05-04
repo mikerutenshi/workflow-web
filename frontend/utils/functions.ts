@@ -1,4 +1,4 @@
-import type { Job } from '~/api/generated/types';
+import type { Gender, Job } from '~/api/generated/types';
 
 function renderJobs(jobs: Job[]): string {
   let stringResult = '';
@@ -18,17 +18,6 @@ function renderJob(job: Job): string {
   return found?.title ?? '';
 }
 
-function formatToRupiah(amount: number | null | undefined): string {
-  if (amount === undefined) return '';
-  if (amount === null) return '-';
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
 function formatRupiah(amount: number | null | undefined): string {
   if (amount === undefined) return '';
   if (amount === null) return '-';
@@ -45,4 +34,9 @@ function parseRupiah(rupiah: string): number {
   return parseFloat(cleaned);
 }
 
-export { renderJob, renderJobs, formatRupiah, parseRupiah };
+function renderGender(gender: Gender): string {
+  const found = GENDERS.find((item) => item.id === gender);
+  return found?.title ?? '';
+}
+
+export { renderJob, renderJobs, formatRupiah, parseRupiah, renderGender };
