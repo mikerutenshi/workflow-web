@@ -112,27 +112,17 @@
         </v-row>
 
         <div class="d-flex mt-4">
-          <NuxtLink :to="$localePath('/products')">
-            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
-          </NuxtLink>
-          <v-btn
-            v-if="productId"
-            :loading="isUpdating"
-            type="submit"
-            color="primary"
-            >{{ $t('btn.update') }}</v-btn
-          >
-          <v-btn v-else :loading="isCreating" type="submit" color="primary">{{
+          <ActionCancel></ActionCancel>
+          <ActionConfirm v-if="productId" :loading="isUpdating">{{
+            $t('btn.update')
+          }}</ActionConfirm>
+          <ActionConfirm v-else :loading="isCreating">{{
             $t('btn.create')
-          }}</v-btn>
-          <v-btn
+          }}</ActionConfirm>
+          <ActionDelete
             v-if="productId"
-            type="button"
-            color="error"
-            class="ml-auto"
             @click="executeDelete({ id: productId })"
-            >{{ $t('btn.delete') }}</v-btn
-          >
+          ></ActionDelete>
         </div>
       </v-form>
     </v-col>

@@ -1,5 +1,5 @@
 <template>
-  <v-btn :loading="isFetching" color="blue" block @click="execute">
+  <v-btn :loading="isFetching" color="primary" block @click="execute">
     {{ $t('logout') }}
   </v-btn>
 </template>
@@ -9,12 +9,13 @@ import { useMutation } from 'villus';
 import { useAuthStore } from '@/stores/auth';
 import { LogOutDocument } from '~/api/generated/types';
 
-// defineProps({
-//   label: {
-//     type: String,
-//     default: 'Log Out',
-//   },
-// });
+const { t } = useI18n();
+defineProps({
+  label: {
+    type: String,
+    default: 'Log Out',
+  },
+});
 
 const { error, execute, isFetching, isDone } = useMutation(LogOutDocument);
 const localePath = useLocalePath();
