@@ -78,10 +78,10 @@
           "
         />
 
-        <NuxtLink :to="$localePath('/labor-costs')">
-          <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
-        </NuxtLink>
-        <v-btn type="submit" color="primary">{{ submitBtnValue }}</v-btn>
+        <div class="d-flex mt-4">
+          <ActionCancel></ActionCancel>
+          <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
+        </div>
       </v-form>
     </v-col>
   </v-row>
@@ -89,19 +89,13 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import {
-  Mask,
-  MaskInput,
-  type MaskaDetail,
-  type MaskInputOptions,
-} from 'maska';
+import { Mask, type MaskaDetail, type MaskInputOptions } from 'maska';
 import { useMutation, useQuery } from 'villus';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   GetProductGroupDocument,
   Job,
   UpsertLaborCostsDocument,
-  type LaborCost,
   type LaborCostUpsertDto,
 } from '~/api/generated/types';
 
@@ -123,11 +117,6 @@ const costs = reactive({
   stitchOutsole: '',
   stitchInsole: '',
   last: '',
-});
-
-const { t } = useI18n();
-const submitBtnValue = computed(() => {
-  return form.values.length > 0 ? t('btn.update') : t('btn.create');
 });
 
 useQuery({
@@ -155,15 +144,20 @@ useQuery({
   tags: [CACHE_PRODUCT_GROUP],
 });
 
+const { t } = useI18n();
+const submitBtnTitle = computed(() => {
+  return form.length > 0 ? t('btn.update') : t('btn.create');
+});
+
 const handleSubmit = async () => {
   await execute({ productGroupId, data: form });
 };
 
-const localePath = useLocalePath();
+const router = useRouter();
 const { execute } = useMutation(UpsertLaborCostsDocument, {
   clearCacheTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
   onData() {
-    navigateTo(localePath('/labor-costs'));
+    router.back();
   },
   onError(err) {
     alert(err);
@@ -197,7 +191,7 @@ watch(costs, (newCosts) => {
   updateForm(newLast, Job.Last);
 });
 watchEffect(() => {
-  console.log(JSON.stringify(form));
+  console.log(`Labor Form : ${JSON.stringify(form)}`);
 });
 
 function updateForm(cost: number, type: Job) {

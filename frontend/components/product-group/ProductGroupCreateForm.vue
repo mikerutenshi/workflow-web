@@ -34,8 +34,8 @@
               <template v-slot:item="{ props, item }">
                 <v-list-item
                   v-bind="props"
-                  :subtitle="item.raw.gender"
                   :title="item.raw.name"
+                  :subtitle="$t(renderGender(item.raw.gender))"
                 >
                   <template #append>
                     <NuxtLink
@@ -65,27 +65,17 @@
         </v-row>
 
         <div class="d-flex mt-4">
-          <v-btn color="secondary" class="mr-4" @click="goPrevious()">{{
-            $t('btn.cancel')
-          }}</v-btn>
-          <v-btn
-            v-if="!productGroupId"
-            :loading="isCreating"
-            type="submit"
-            color="primary"
-            >{{ $t('btn.create') }}</v-btn
-          >
-          <v-btn v-else :loading="isUpdating" type="submit" color="primary">{{
+          <ActionCancel></ActionCancel>
+          <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
             $t('btn.update')
-          }}</v-btn>
-          <v-btn
+          }}</ActionConfirm>
+          <ActionConfirm v-else :loading="isCreating">{{
+            $t('btn.create')
+          }}</ActionConfirm>
+          <ActionDelete
             v-if="productGroupId"
-            type="button"
-            color="error"
-            class="ml-auto"
             @click="executeDelete({ id: productGroupId })"
-            >{{ $t('btn.delete') }}</v-btn
-          >
+          ></ActionDelete>
         </div>
       </v-form>
     </v-col>

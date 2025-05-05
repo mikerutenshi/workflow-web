@@ -1,6 +1,6 @@
 <template>
   <v-btn :loading="isFetching" color="primary" block @click="execute">
-    {{ $t('logout') }}
+    {{ $t('auth.logout') }}
   </v-btn>
 </template>
 

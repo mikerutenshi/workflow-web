@@ -27,27 +27,17 @@
         ></v-combobox>
 
         <div class="d-flex mt-4">
-          <NuxtLink :to="$localePath('/artisans')">
-            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
-          </NuxtLink>
-          <v-btn
-            v-if="!artisanId"
-            :loading="isCreating"
-            type="submit"
-            color="primary"
-            >{{ $t('btn.create') }}</v-btn
-          >
-          <v-btn v-else :loading="isUpdating" type="submit" color="primary">{{
+          <ActionCancel></ActionCancel>
+          <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
             $t('btn.update')
-          }}</v-btn>
-          <v-btn
+          }}</ActionConfirm>
+          <ActionConfirm v-else :loading="isCreating">{{
+            $t('btn.create')
+          }}</ActionConfirm>
+          <ActionDelete
             v-if="artisanId"
-            type="button"
-            color="error"
-            class="ml-auto"
             @click="executeDelete({ id: artisanId })"
-            >{{ $t('btn.delete') }}</v-btn
-          >
+          ></ActionDelete>
         </div>
       </v-form>
     </v-col>

@@ -28,27 +28,17 @@
         </v-sheet>
 
         <div class="d-flex mt-4">
-          <v-btn color="secondary" class="mr-4" @click="goPrevious">{{
-            $t('btn.cancel')
-          }}</v-btn>
-          <v-btn
-            v-if="colorId"
-            :loading="isUpdating"
-            type="submit"
-            color="primary"
-            >{{ $t('btn.update') }}</v-btn
-          >
-          <v-btn v-else :loading="isCreating" type="submit" color="primary">{{
+          <ActionCancel></ActionCancel>
+          <ActionConfirm v-if="colorId" :loading="isUpdating">{{
+            $t('btn.update')
+          }}</ActionConfirm>
+          <ActionConfirm v-else :loading="isCreating">{{
             $t('btn.create')
-          }}</v-btn>
-          <v-btn
+          }}</ActionConfirm>
+          <ActionDelete
             v-if="colorId"
-            type="button"
-            color="error"
-            class="ml-auto"
             @click="executeDelete({ id: colorId })"
-            >{{ $t('btn.delete') }}</v-btn
-          >
+          ></ActionDelete>
         </div>
       </v-form>
     </v-col>

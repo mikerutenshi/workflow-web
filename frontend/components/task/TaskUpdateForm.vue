@@ -62,15 +62,8 @@
         </v-card>
 
         <div class="d-flex mt-4">
-          <NuxtLink :to="$localePath('works')">
-            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
-          </NuxtLink>
-          <v-btn v-if="workId" type="submit" color="primary">{{
-            $t('btn.update')
-          }}</v-btn>
-          <v-btn v-else type="submit" color="primary">{{
-            $t('btn.create')
-          }}</v-btn>
+          <ActionCancel></ActionCancel>
+          <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
         </div>
       </v-form>
     </v-col>
@@ -141,6 +134,11 @@ const form = computed<TaskUpdateDto[]>(() => {
 });
 
 const { t } = useI18n();
+
+const submitBtnTitle = computed(() =>
+  workId.value ? t('btn.update') : t('btn.create')
+);
+
 const taskHeaders = ref([
   { title: t('label.type'), key: 'type' },
   { title: t('label.artisan'), key: 'artisan' },

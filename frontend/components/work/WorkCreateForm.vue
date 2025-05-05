@@ -68,24 +68,12 @@
         </v-card>
 
         <div class="d-flex mt-4">
-          <NuxtLink :to="$localePath('works')">
-            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
-          </NuxtLink>
-          <v-btn v-if="workId" type="submit" color="primary">{{
-            $t('btn.update')
-          }}</v-btn>
-          <v-btn v-else type="submit" color="primary">{{
-            $t('btn.create')
-          }}</v-btn>
-          <v-btn
+          <ActionCancel></ActionCancel>
+          <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
+          <ActionDelete
             v-if="workId"
-            type="button"
-            color="error"
-            class="ml-auto"
             @click="executeDelete({ id: workId })"
-          >
-            {{ $t('btn.delete') }}
-          </v-btn>
+          ></ActionDelete>
         </div>
       </v-form>
     </v-col>
@@ -95,17 +83,14 @@
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
 import { useMutation, useQuery } from 'villus';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   CreateWorkDocument,
   DeleteWorkDocument,
-  GetArtisansDocument,
   GetProductsDocument,
   GetSizesDocument,
   GetWorkDocument,
-  Job,
   UpdateWorkDocument,
-  type Artisan,
   type Size,
   type SizeToWorkCreateDto,
 } from '~/api/generated/types';
@@ -121,11 +106,14 @@ const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
   query: GetSizesDocument,
   tags: [CACHE_SIZES],
 });
-const localePath = useLocalePath();
+const router = useRouter();
+const submitBtnTitle = computed(() =>
+  workId.value ? t('btn.update') : t('btn.create')
+);
 const { execute: executeCreate } = useMutation(CreateWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData() {
-    navigateTo(localePath('/works'));
+    router.back();
   },
   onError(err) {
     errorMessages.value += err;
@@ -134,7 +122,7 @@ const { execute: executeCreate } = useMutation(CreateWorkDocument, {
 const { execute: executeUpdate } = useMutation(UpdateWorkDocument, {
   clearCacheTags: [CACHE_WORK, CACHE_WORKS],
   onData() {
-    navigateTo(localePath('/works'));
+    router.back();
   },
   onError(err) {
     errorMessages.value += err;
@@ -143,7 +131,7 @@ const { execute: executeUpdate } = useMutation(UpdateWorkDocument, {
 const { execute: executeDelete } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData() {
-    navigateTo(localePath('/works'));
+    router.back();
   },
   onError(err) {
     errorMessages.value += err;

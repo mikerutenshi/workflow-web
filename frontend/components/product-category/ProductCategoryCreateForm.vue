@@ -22,30 +22,30 @@
           item-value="id"
           item-title="name"
           :items="genders"
-        />
+        >
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :title="$t(renderGender(item.title as Gender))"
+            ></v-list-item>
+          </template>
+          <template v-slot:selection="{ item }">
+            <span>{{ $t(renderGender(item.title as Gender)) }}</span>
+          </template>
+        </v-autocomplete>
 
         <div class="d-flex mt-4">
-          <v-btn color="secondary" class="mr-4" @click="goPrevious">{{
-            $t('btn.cancel')
-          }}</v-btn>
-          <v-btn
-            v-if="!productCategoryId"
-            :loading="isCreating"
-            type="submit"
-            color="primary"
-            >{{ $t('btn.create') }}</v-btn
-          >
-          <v-btn v-else :loading="isUpdating" type="submit" color="primary">{{
+          <ActionCancel></ActionCancel>
+          <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
             $t('btn.update')
-          }}</v-btn>
-          <v-btn
+          }}</ActionConfirm>
+          <ActionConfirm v-else :loading="isCreating">{{
+            $t('btn.create')
+          }}</ActionConfirm>
+          <ActionDelete
             v-if="productCategoryId"
-            type="button"
-            color="error"
-            class="ml-auto"
             @click="executeDelete({ id: productCategoryId })"
-            >{{ $t('btn.delete') }}</v-btn
-          >
+          ></ActionDelete>
         </div>
       </v-form>
     </v-col>
@@ -57,6 +57,7 @@ import { useRoute, useRouter } from 'vue-router';
 import {
   CreatePrdouctCategoryDocument,
   DeleteProductCategoryDocument,
+  Gender,
   GetProductCategoryDocument,
   UpdateProductCategoryDocument,
 } from '~/api/generated/types';
