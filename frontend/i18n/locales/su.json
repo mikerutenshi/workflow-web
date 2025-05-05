@@ -58,6 +58,7 @@
     "date": "Tanggal",
     "order_no": "SPK",
     "sku": "SKU",
+    "sku_numeric": "SKU Angka Wungkul",
     "size": "Ukuran",
     "sizes": "Ukuran {'|'} Jumlah",
     "quantity": "Jumlah",
@@ -66,8 +67,10 @@
     "artisan": "Pangrajin",
     "done_at": "Tanggal Réngsé",
     "product": "Sapatu",
+    "product_name": "Nami Sapatu",
     "product_group": "Kelompok Sapatu",
     "product_category": "Kategori Sapatu",
+    "select_language": "Pilih Basa",
     "select_sizes": "Pilih Ukuran",
     "select_colors": "Pilih Warna",
     "select_jobs": "Pilih Jabatan",
@@ -82,7 +85,9 @@
     "cost": "Ongkos",
     "total_payable": "Total Anu Kedah Dibayar",
     "total_quantity": "Total Jumlah",
-    "pairs": "Henteu Aya|Hiji Pasang|{count} pasang"
+    "pairs": "Henteu Aya|Hiji Pasang|{count} pasang",
+    "name": "Nami",
+    "pick_color": "Pilih Warna"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

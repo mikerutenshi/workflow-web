@@ -14,10 +14,10 @@
             updateError.message
           }}
         </v-alert>
-        <v-text-field v-model="form.name" label="Name" />
+        <v-text-field v-model="form.name" :label="$t('label.name')" />
         <v-autocomplete
           v-model="form.gender"
-          label="Gender"
+          :label="$t('label.gender')"
           auto-select-first
           item-value="id"
           item-title="name"
@@ -25,26 +25,26 @@
         />
 
         <div class="d-flex mt-4">
-          <v-btn color="secondary" class="mr-4" @click="goPrevious"
-            >Discard</v-btn
-          >
+          <v-btn color="secondary" class="mr-4" @click="goPrevious">{{
+            $t('btn.cancel')
+          }}</v-btn>
           <v-btn
             v-if="!productCategoryId"
             :loading="isCreating"
             type="submit"
             color="primary"
-            >Create</v-btn
+            >{{ $t('btn.create') }}</v-btn
           >
-          <v-btn v-else :loading="isUpdating" type="submit" color="primary"
-            >Update</v-btn
-          >
+          <v-btn v-else :loading="isUpdating" type="submit" color="primary">{{
+            $t('btn.update')
+          }}</v-btn>
           <v-btn
             v-if="productCategoryId"
             type="button"
             color="error"
             class="ml-auto"
             @click="executeDelete({ id: productCategoryId })"
-            >Delete</v-btn
+            >{{ $t('btn.delete') }}</v-btn
           >
         </div>
       </v-form>

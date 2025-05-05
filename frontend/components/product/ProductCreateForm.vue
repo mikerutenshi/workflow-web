@@ -74,7 +74,9 @@
                     />
                   </template>
                   <template #append>
-                    <NuxtLink :to="`/colors/update/${item.raw.id}`">
+                    <NuxtLink
+                      :to="$localePath(`/colors/update/${item.raw.id}`)"
+                    >
                       <v-btn
                         color="primary"
                         :icon="mdiPencil"
@@ -101,7 +103,7 @@
           </v-col>
 
           <v-col cols="12" md="4" class="d-flex justify-end align-center">
-            <NuxtLink :to="$t('/colors/create')">
+            <NuxtLink :to="$localePath('/colors/create')">
               <v-btn :prepend-icon="mdiPlus" color="primary">
                 {{ $t('create_btn.color') }}
               </v-btn>

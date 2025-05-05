@@ -14,9 +14,11 @@
             updateError.message
           }}
         </v-alert>
-        <v-text-field v-model="form.name" label="Name" />
+        <v-text-field v-model="form.name" :label="$t('label.name')" />
         <v-sheet elevation="1">
-          <span class="d-flex text-h6 pa-4 justify-center">Pick a Color</span>
+          <span class="d-flex text-h6 pa-4 justify-center">{{
+            $t('label.pick_color')
+          }}</span>
           <v-color-picker
             v-model="form.hexCode"
             :modes="['hex']"
@@ -26,26 +28,26 @@
         </v-sheet>
 
         <div class="d-flex mt-4">
-          <v-btn color="secondary" class="mr-4" @click="goPrevious"
-            >Discard</v-btn
-          >
+          <v-btn color="secondary" class="mr-4" @click="goPrevious">{{
+            $t('btn.cancel')
+          }}</v-btn>
           <v-btn
             v-if="colorId"
             :loading="isUpdating"
             type="submit"
             color="primary"
-            >Update</v-btn
+            >{{ $t('btn.update') }}</v-btn
           >
-          <v-btn v-else :loading="isCreating" type="submit" color="primary"
-            >Create</v-btn
-          >
+          <v-btn v-else :loading="isCreating" type="submit" color="primary">{{
+            $t('btn.create')
+          }}</v-btn>
           <v-btn
             v-if="colorId"
             type="button"
             color="error"
             class="ml-auto"
             @click="executeDelete({ id: colorId })"
-            >Delete</v-btn
+            >{{ $t('btn.delete') }}</v-btn
           >
         </div>
       </v-form>

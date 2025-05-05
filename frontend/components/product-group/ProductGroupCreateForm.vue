@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-col cols="12" md="4" class="translucent-background">
+    <v-col>
       <v-form class="pa-4" @submit.prevent="handleSubmit">
         <v-alert v-if="createError" type="error">
           {{
@@ -14,14 +14,17 @@
             updateError.message
           }}
         </v-alert>
-        <v-text-field v-model="form.skuNumeric" label="Sku Numeric" />
-        <v-text-field v-model="form.name" label="Name" />
+        <v-text-field
+          v-model="form.skuNumeric"
+          :label="$t('label.sku_numeric')"
+        />
+        <v-text-field v-model="form.name" :label="$t('label.product_name')" />
 
         <v-row>
-          <v-col cols="10" md="11">
+          <v-col>
             <v-autocomplete
               v-model="form.productCategoryId"
-              label="Product Category"
+              :label="$t('label.product_category')"
               auto-select-first
               item-value="id"
               item-title="name"
@@ -35,7 +38,11 @@
                   :title="item.raw.name"
                 >
                   <template #append>
-                    <NuxtLink :to="`/product-categories/update/${item.raw.id}`">
+                    <NuxtLink
+                      :to="
+                        $localePath(`/product-categories/update/${item.raw.id}`)
+                      "
+                    >
                       <v-btn
                         color="primary"
                         :icon="mdiPencil"
@@ -48,34 +55,36 @@
               </template>
             </v-autocomplete>
           </v-col>
-          <v-col cols="2" md="1" class="ml-auto">
-            <NuxtLink to="/product-categories/create">
-              <v-btn :icon="mdiPlus" color="primary"></v-btn>
+          <v-col cols="12" md="4" class="d-flex align-center justify-end">
+            <NuxtLink :to="$localePath('/product-categories/create')">
+              <v-btn :prepend-icon="mdiPlus" color="primary">{{
+                $t('create_btn.product_category')
+              }}</v-btn>
             </NuxtLink>
           </v-col>
         </v-row>
 
         <div class="d-flex mt-4">
-          <v-btn color="secondary" class="mr-4" @click="goPrevious"
-            >Discard</v-btn
-          >
+          <v-btn color="secondary" class="mr-4" @click="goPrevious()">{{
+            $t('btn.cancel')
+          }}</v-btn>
           <v-btn
             v-if="!productGroupId"
             :loading="isCreating"
             type="submit"
             color="primary"
-            >Create</v-btn
+            >{{ $t('btn.create') }}</v-btn
           >
-          <v-btn v-else :loading="isUpdating" type="submit" color="primary"
-            >Update</v-btn
-          >
+          <v-btn v-else :loading="isUpdating" type="submit" color="primary">{{
+            $t('btn.update')
+          }}</v-btn>
           <v-btn
             v-if="productGroupId"
             type="button"
             color="error"
             class="ml-auto"
             @click="executeDelete({ id: productGroupId })"
-            >Delete</v-btn
+            >{{ $t('btn.delete') }}</v-btn
           >
         </div>
       </v-form>

@@ -1,6 +1,7 @@
 <template>
   <v-card v-if="authStore.user">
     <v-card-title class="text-center">
+      <v-icon class="mr-2" :icon="greetingIcon"></v-icon>
       {{
         `${$t(greeting)} ${authStore.user.firstName} ${authStore.user.lastName}`
       }}
@@ -11,7 +12,7 @@
         <v-list-item> {{ `Email: ${authStore.user.email}` }}</v-list-item>
       </v-list>
       <v-select
-        label="Select language"
+        :label="$t('label.select_language')"
         :items="locales"
         item-title="name"
         item-value="code"
@@ -45,6 +46,7 @@
 import { useAuthStore } from '@/stores/auth';
 import indonesia from '@/assets/images/id.svg';
 import us from '@/assets/images/us.svg';
+import { mdiWeatherNight, mdiWeatherSunny, mdiWeatherSunset } from '@mdi/js';
 
 const authStore = useAuthStore();
 const { locale, setLocale } = useI18n({ useScope: 'global' });
@@ -75,6 +77,16 @@ const greeting = computed(() => {
     return 'greeting.afternoon';
   } else {
     return 'greeting.evening';
+  }
+});
+const greetingIcon = computed(() => {
+  const hour = new Date().getHours();
+  if (hour < 12) {
+    return mdiWeatherSunset;
+  } else if (hour < 18) {
+    return mdiWeatherSunny;
+  } else {
+    return mdiWeatherNight;
   }
 });
 
