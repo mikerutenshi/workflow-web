@@ -8,13 +8,13 @@
         <v-alert v-if="updateError" type="error">
           {{ updateError }}
         </v-alert>
-        <v-text-field v-model="form.sku" label="SKU" />
+        <v-text-field v-model="form.sku" :label="$t('label.sku')" />
 
         <v-row>
           <v-col>
             <v-autocomplete
               v-model="form.productGroupId"
-              label="Product Group"
+              :label="$t('label.product_group')"
               auto-select-first
               item-value="id"
               item-title="skuNumeric"
@@ -28,7 +28,9 @@
                   :title="item.raw.skuNumeric"
                 >
                   <template #append>
-                    <NuxtLink :to="`/product-groups/update/${item.raw.id}`">
+                    <NuxtLink
+                      :to="$localePath(`/product-groups/update/${item.raw.id}`)"
+                    >
                       <v-btn
                         color="primary"
                         :icon="mdiPencil"
@@ -41,19 +43,21 @@
               </template>
             </v-autocomplete>
           </v-col>
-          <v-col cols="2" md="1" class="d-flex justify-end">
-            <NuxtLink to="/product-groups/create">
-              <v-btn :icon="mdiPlus" color="primary"></v-btn>
+          <v-col cols="12" md="4" class="d-flex justify-end align-center">
+            <NuxtLink :to="$localePath('/product-groups/create')">
+              <v-btn :prepend-icon="mdiPlus" color="primary">{{
+                $t('create_btn.product_group')
+              }}</v-btn>
             </NuxtLink>
           </v-col>
         </v-row>
 
         <v-row align="center">
-          <v-col cols="10" md="11">
+          <v-col>
             <v-autocomplete
               no-filter
               v-model="selectedColors"
-              label="Select Colors"
+              :label="$t('label.select_colors')"
               multiple
               chips
               auto-select-first
@@ -95,34 +99,37 @@
               </template>
             </v-autocomplete>
           </v-col>
-          <v-col cols="2" md="1" class="d-flex justify-end">
-            <NuxtLink to="/colors/create">
-              <v-btn :icon="mdiPlus" color="primary"></v-btn>
+
+          <v-col cols="12" md="4" class="d-flex justify-end align-center">
+            <NuxtLink :to="$t('/colors/create')">
+              <v-btn :prepend-icon="mdiPlus" color="primary">
+                {{ $t('create_btn.color') }}
+              </v-btn>
             </NuxtLink>
           </v-col>
         </v-row>
 
         <div class="d-flex mt-4">
-          <NuxtLink to="/products">
-            <v-btn color="secondary" class="mr-4">Discard</v-btn>
+          <NuxtLink :to="$localePath('/products')">
+            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
           </NuxtLink>
           <v-btn
             v-if="productId"
             :loading="isUpdating"
             type="submit"
             color="primary"
-            >Update</v-btn
+            >{{ $t('btn.update') }}</v-btn
           >
-          <v-btn v-else :loading="isCreating" type="submit" color="primary"
-            >Create</v-btn
-          >
+          <v-btn v-else :loading="isCreating" type="submit" color="primary">{{
+            $t('btn.create')
+          }}</v-btn>
           <v-btn
             v-if="productId"
             type="button"
             color="error"
             class="ml-auto"
             @click="executeDelete({ id: productId })"
-            >Delete</v-btn
+            >{{ $t('btn.delete') }}</v-btn
           >
         </div>
       </v-form>
@@ -170,6 +177,7 @@ const form = reactive({
   updatedBy: undefined as string | undefined,
 });
 
+const localePath = useLocalePath();
 const {
   data: createData,
   isFetching: isCreating,
@@ -177,7 +185,7 @@ const {
   error: createError,
 } = useMutation(CreateProductDocument, {
   onData() {
-    navigateTo('/products');
+    navigateTo(localePath('/products'));
   },
   clearCacheTags: [CACHE_PRODUCTS],
 });
@@ -188,14 +196,14 @@ const {
   error: updateError,
 } = useMutation(UpdateProductDocument, {
   onData() {
-    navigateTo('/products');
+    navigateTo(localePath('/products'));
   },
   clearCacheTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
 });
 const { execute: executeDelete } = useMutation(DeleteProductDocument, {
   clearCacheTags: [CACHE_PRODUCTS],
   onData() {
-    navigateTo('/products');
+    navigateTo(localePath('/products'));
   },
   onError(err) {
     alert(`Error while deleting product -> ${err}`);

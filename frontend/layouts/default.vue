@@ -11,7 +11,7 @@
         v-slot:append
         v-if="pagesWithCreate.includes(currentRouteName as string)"
       >
-        <NuxtLink :to="createBtn.route">
+        <NuxtLink :to="createBtn.route" class="mr-4">
           <v-btn variant="flat">
             <v-icon left :icon="mdiPlus"></v-icon>
             {{ createBtn.title }}

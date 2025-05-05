@@ -4,17 +4,21 @@
       <v-form @submit.prevent="handleSubmit" class="pa-4">
         <v-text-field
           v-model="header.skuNumeric"
-          label="Product Group"
+          :label="$t('label.product_group')"
           disabled
         />
         <v-text-field
           v-model="header.productCategory"
-          label="Product Category"
+          :label="$t('label.product_category')"
           disabled
         />
-        <v-text-field v-model="header.gender" label="Gender" disabled />
         <v-text-field
-          label="Draw Upper"
+          v-model="header.gender"
+          :label="$t('label.gender')"
+          disabled
+        />
+        <v-text-field
+          :label="$t('jobs.draw_upper')"
           prefix="Rp"
           :model-value="mask.masked(costs.drawUpper)"
           @update:model-value="
@@ -24,7 +28,7 @@
           "
         />
         <v-text-field
-          label="Draw Lining"
+          :label="$t('jobs.draw_lining')"
           prefix="Rp"
           :model-value="mask.masked(costs.drawLining)"
           @update:model-value="
@@ -34,7 +38,7 @@
           "
         />
         <v-text-field
-          label="Stitch Upper"
+          :label="$t('jobs.stitch_upper')"
           prefix="Rp"
           :model-value="mask.masked(costs.stitchUpper)"
           @update:model-value="
@@ -44,7 +48,7 @@
           "
         />
         <v-text-field
-          label="Last"
+          :label="$t('jobs.last')"
           prefix="Rp"
           :model-value="mask.masked(costs.last)"
           @update:model-value="
@@ -54,7 +58,7 @@
           "
         />
         <v-text-field
-          label="Stitch Outsole"
+          :label="$t('jobs.stitch_outsole')"
           prefix="Rp"
           :model-value="mask.masked(costs.stitchOutsole)"
           @update:model-value="
@@ -64,7 +68,7 @@
           "
         />
         <v-text-field
-          label="Stitch Insole"
+          :label="$t('jobs.stitch_insole')"
           prefix="Rp"
           :model-value="mask.masked(costs.stitchInsole)"
           @update:model-value="
@@ -74,8 +78,8 @@
           "
         />
 
-        <NuxtLink to="/labor-costs">
-          <v-btn color="secondary" class="mr-4">Discard</v-btn>
+        <NuxtLink :to="$localePath('/labor-costs')">
+          <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
         </NuxtLink>
         <v-btn type="submit" color="primary">{{ submitBtnValue }}</v-btn>
       </v-form>
@@ -121,8 +125,9 @@ const costs = reactive({
   last: '',
 });
 
+const { t } = useI18n();
 const submitBtnValue = computed(() => {
-  return form.values.length > 0 ? 'Update' : 'Create';
+  return form.values.length > 0 ? t('btn.update') : t('btn.create');
 });
 
 useQuery({
@@ -154,10 +159,11 @@ const handleSubmit = async () => {
   await execute({ productGroupId, data: form });
 };
 
+const localePath = useLocalePath();
 const { execute } = useMutation(UpsertLaborCostsDocument, {
   clearCacheTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
   onData() {
-    navigateTo('/labor-costs');
+    navigateTo(localePath('/labor-costs'));
   },
   onError(err) {
     alert(err);

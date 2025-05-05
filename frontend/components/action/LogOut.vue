@@ -17,12 +17,13 @@ import { LogOutDocument } from '~/api/generated/types';
 // });
 
 const { error, execute, isFetching, isDone } = useMutation(LogOutDocument);
+const localePath = useLocalePath();
 
 const authStore = useAuthStore();
 watchEffect(() => {
   if (!error.value && isDone.value) {
     authStore.user = null;
-    navigateTo('login');
+    navigateTo(localePath('login'));
   }
 });
 </script>

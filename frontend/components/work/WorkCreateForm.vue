@@ -121,10 +121,11 @@ const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
   query: GetSizesDocument,
   tags: [CACHE_SIZES],
 });
+const localePath = useLocalePath();
 const { execute: executeCreate } = useMutation(CreateWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData() {
-    navigateTo('/works');
+    navigateTo(localePath('/works'));
   },
   onError(err) {
     errorMessages.value += err;
@@ -133,7 +134,7 @@ const { execute: executeCreate } = useMutation(CreateWorkDocument, {
 const { execute: executeUpdate } = useMutation(UpdateWorkDocument, {
   clearCacheTags: [CACHE_WORK, CACHE_WORKS],
   onData() {
-    navigateTo('/works');
+    navigateTo(localePath('/works'));
   },
   onError(err) {
     errorMessages.value += err;
@@ -142,7 +143,7 @@ const { execute: executeUpdate } = useMutation(UpdateWorkDocument, {
 const { execute: executeDelete } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData() {
-    navigateTo('/works');
+    navigateTo(localePath('/works'));
   },
   onError(err) {
     errorMessages.value += err;
@@ -165,8 +166,8 @@ const sizesTable = reactive<
 >([]);
 const { t } = useI18n();
 const sizeHeaders = ref([
-  { title: t('header.size'), key: 'title' },
-  { title: t('header.quantity'), key: 'quantity' },
+  { title: t('label.size'), key: 'title' },
+  { title: t('label.quantity'), key: 'quantity' },
 ]);
 
 const errorMessages = ref('');

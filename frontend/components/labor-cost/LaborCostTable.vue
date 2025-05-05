@@ -7,6 +7,10 @@
       item-value="id"
       :sort-by="[{ key: 'id', order: 'asc' }]"
     >
+      <template v-slot:item.productCategory.gender="{ item }">
+        {{ $t(renderGender(item.productCategory.gender)) }}
+      </template>
+
       <template v-slot:item.drawUpper="{ item }">
         {{
           formatRupiah(
@@ -75,8 +79,10 @@
             </v-list-item>
           </v-list>
         </v-menu> -->
-        <NuxtLink :to="`/labor-costs/update/${item.id}`">
-          <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
+        <NuxtLink :to="$localePath(`/labor-costs/update/${item.id}`)">
+          <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+            $t('btn.update')
+          }}</v-btn>
         </NuxtLink>
       </template>
     </v-data-table>
@@ -100,21 +106,25 @@ const { data } = useQuery({
   tags: [CACHE_PRODUCT_GROUPS],
 });
 
+const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: 'ID', key: 'id' },
-  { title: 'Product Group', key: 'skuNumeric' },
-  { title: 'Category', key: 'productCategory.name' },
-  { title: 'Gender', key: 'productCategory.gender' },
+  { title: t('label.id'), key: 'id' },
+  { title: t('label.product_group'), key: 'skuNumeric' },
   {
-    title: 'Labor Costs',
+    title: t('label.product_category'),
+    key: 'productCategory.name',
+  },
+  { title: t('label.gender'), key: 'productCategory.gender' },
+  {
+    title: t('label.labor_costs'),
     align: 'center',
     children: [
-      { title: 'Draw Upper', key: 'drawUpper' },
-      { title: 'Draw Lining', key: 'drawLining' },
-      { title: 'Stitch Upper', key: 'stitchUpper' },
-      { title: 'Last', key: 'last' },
-      { title: 'Stitch Outsole', key: 'stitchOutsole' },
-      { title: 'Stitch Insole', key: 'stitchInsole' },
+      { title: t('jobs.draw_upper'), key: 'drawUpper' },
+      { title: t('jobs.draw_upper'), key: 'drawLining' },
+      { title: t('jobs.stitch_upper'), key: 'stitchUpper' },
+      { title: t('jobs.last'), key: 'last' },
+      { title: t('jobs.stitch_outsole'), key: 'stitchOutsole' },
+      { title: t('jobs.stitch_insole'), key: 'stitchInsole' },
     ],
   },
   { title: '', key: 'actions', sortable: false, align: 'end' },

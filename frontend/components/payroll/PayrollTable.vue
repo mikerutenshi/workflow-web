@@ -5,15 +5,17 @@
         <v-row no-gutters align="center">
           <v-col class="d-flex flex-column align-center my-2" cols="6">
             <div style="text-align: left">
-              <p>Total Payable</p>
+              <p>{{ $t('label.total_payable') }}</p>
               <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
             </div>
           </v-col>
           <v-divider vertical></v-divider>
           <v-col class="d-flex flex-column align-center my-2" cols="6">
             <div style="text-align: left">
-              <p>Total Quantity</p>
-              <h2>{{ `${data?.getPayroll.totalQuantity} pairs` }}</h2>
+              <p>{{ $t('label.total_quantity') }}</p>
+              <h2>
+                {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
+              </h2>
             </div>
           </v-col>
         </v-row>
@@ -24,12 +26,12 @@
           {{ `${artisan.firstName} ${artisan.lastName ?? ''}` }}
         </v-card-title>
         <v-card-subtitle class="d-flex align-center">
-          <span class="mr-2">Payable:</span>
+          <span class="mr-2">{{ $t('label.payable') }}</span>
           <h3 class="my-2">
             {{ formatRupiah(artisan.payablePerArtisan) }}
           </h3>
           <v-divider vertical class="mx-4"></v-divider>
-          <span class="mr-2">Quantity:</span>
+          <span class="mr-2">{{ $t('label.quantity') }}</span>
           <h3 class="my-2">
             {{ artisan.quantityPerArtisan }}
           </h3>
@@ -42,7 +44,7 @@
             hide-default-footer
           >
             <template #item.type="{ item }">
-              {{ renderJob(item.type) }}
+              {{ $t(renderJob(item.type)) }}
             </template>
             <template #item.payablePerTask="{ item }">
               {{ formatRupiah(item.payablePerTask) }}
@@ -100,11 +102,12 @@ const display = reactive({
   ],
 });
 
+const { t } = useI18n();
 const headers = [
-  { title: 'Product', key: 'work.product.sku' },
-  { title: 'Job', key: 'type' },
-  { title: 'Payable', key: 'payablePerTask' },
-  { title: 'Cost', key: 'costPerTask' },
-  { title: 'Quantity', key: 'quantityPerTask' },
+  { title: t('label.product'), key: 'work.product.sku' },
+  { title: t('label.job'), key: 'type' },
+  { title: t('label.payable'), key: 'payablePerTask' },
+  { title: t('label.cost'), key: 'costPerTask' },
+  { title: t('label.quantity'), key: 'quantityPerTask' },
 ];
 </script>

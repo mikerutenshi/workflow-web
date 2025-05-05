@@ -5,17 +5,20 @@
         <v-alert v-if="errorMessage" type="error">
           {{ errorMessage }}
         </v-alert>
-        <v-text-field v-model="form.firstName" label="First Name" />
+        <v-text-field
+          v-model="form.firstName"
+          :label="$t('label.first_name')"
+        />
         <v-text-field
           @blur="onBlur"
           v-model="form.lastName"
-          label="Last Name"
+          :label="$t('label.last_name')"
         />
         <v-combobox
           v-model="form.jobs"
           :items="jobOptions"
           :return-object="false"
-          label="Seiect Jobs"
+          :label="$t('label.select_jobs')"
           multiple
           chips
           auto-select-first
@@ -24,26 +27,26 @@
         ></v-combobox>
 
         <div class="d-flex mt-4">
-          <NuxtLink to="/artisans">
-            <v-btn color="secondary" class="mr-4">Discard</v-btn>
+          <NuxtLink :to="$localePath('/artisans')">
+            <v-btn color="secondary" class="mr-4">{{ $t('btn.cancel') }}</v-btn>
           </NuxtLink>
           <v-btn
             v-if="!artisanId"
             :loading="isCreating"
             type="submit"
             color="primary"
-            >Create</v-btn
+            >{{ $t('btn.create') }}</v-btn
           >
-          <v-btn v-else :loading="isUpdating" type="submit" color="primary"
-            >Update</v-btn
-          >
+          <v-btn v-else :loading="isUpdating" type="submit" color="primary">{{
+            $t('btn.update')
+          }}</v-btn>
           <v-btn
             v-if="artisanId"
             type="button"
             color="error"
             class="ml-auto"
             @click="executeDelete({ id: artisanId })"
-            >Delete</v-btn
+            >{{ $t('btn.delete') }}</v-btn
           >
         </div>
       </v-form>
@@ -67,7 +70,9 @@ const artisanId = ref(route.params.id as string);
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
 const { t } = useI18n();
-const jobOptions = computed(() => JOBS.map((job) => ({id: job.id, title: t(job.title)}));
+const jobOptions = computed(() =>
+  JOBS.map((job) => ({ id: job.id, title: t(job.title) }))
+);
 const errorMessage = ref('');
 const form = reactive({
   firstName: '',
@@ -76,11 +81,12 @@ const form = reactive({
   createdBy: userId,
   updatedBy: undefined as string | undefined,
 });
+const localePath = useLocalePath();
 const { execute: executeCreate, isFetching: isCreating } = useMutation(
   CreateArtisanDocument,
   {
     onData() {
-      navigateTo('/artisans');
+      navigateTo(localePath('/artisans'));
     },
     onError(err) {
       errorMessage.value =
@@ -94,7 +100,7 @@ const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
   UpdateArtisanDocument,
   {
     onData() {
-      navigateTo('/artisans');
+      navigateTo(localePath('/artisans'));
     },
     onError(err) {
       errorMessage.value =
@@ -107,7 +113,7 @@ const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
 const { execute: executeDelete } = useMutation(DeleteArtisanDocument, {
   clearCacheTags: [CACHE_ARTISANS],
   onData() {
-    navigateTo('/artisans');
+    navigateTo(localePath('/artisans'));
   },
   onError(err) {
     alert(`Error while deleting artisan -> ${err}`);

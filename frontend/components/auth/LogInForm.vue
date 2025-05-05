@@ -44,11 +44,12 @@ const form = reactive({
 });
 
 const authStore = useAuthStore();
+const localePath = useLocalePath();
 
 watch(data, (loginData) => {
   if (loginData?.logIn) {
     authStore.user = loginData.logIn;
-    navigateTo('/');
+    navigateTo(localePath('/'));
   }
 });
 </script>

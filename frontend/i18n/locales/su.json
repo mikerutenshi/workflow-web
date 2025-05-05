@@ -53,7 +53,7 @@
     "delete": "Hapus",
     "cancel": "Batal"
   },
-  "header": {
+  "label": {
     "id": "ID",
     "date": "Tanggal",
     "order_no": "SPK",
@@ -65,19 +65,24 @@
     "type": "Tugas",
     "artisan": "Pangrajin",
     "done_at": "Tanggal Réngsé",
+    "product": "Sapatu",
     "product_group": "Kelompok Sapatu",
     "product_category": "Kategori Sapatu",
-    "gender": "Jenis Kelamin",
-    "colors": "Warna"
-  },
-  "label": {
-    "date": "Tanggal",
-    "order_no": "SPK",
-    "product": "Sapatu",
     "select_sizes": "Pilih Ukuran",
-    "quantity": "Jumlah",
-    "artisan": "Pangrajin",
-    "done_at": "Tanggal Réngsé"
+    "select_colors": "Pilih Warna",
+    "select_jobs": "Pilih Jabatan",
+    "gender": "Jenis Kelamin",
+    "colors": "Warna",
+    "labor_costs": "Ongkos",
+    "first_name": "Nami Hareup",
+    "last_name": "Nami Tukang",
+    "jobs": "Jabatan",
+    "job": "Tugas",
+    "payable": "Anu Kedah Dibayar",
+    "cost": "Ongkos",
+    "total_payable": "Total Anu Kedah Dibayar",
+    "total_quantity": "Total Jumlah",
+    "pairs": "Henteu Aya|Hiji Pasang|{count} pasang"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

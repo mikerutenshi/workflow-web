@@ -97,10 +97,11 @@ const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   query: GetArtisansDocument,
   tags: [CACHE_ARTISANS],
 });
+const localePath = useLocalePath();
 const { execute: executeUpdate } = useMutation(UpdateTasksDocument, {
   clearCacheTags: [CACHE_WORKS, CACHE_TASKS],
   onData() {
-    navigateTo('/works');
+    navigateTo(localePath('/works'));
   },
   onError(err) {
     errorMessages.value += err;
@@ -141,9 +142,9 @@ const form = computed<TaskUpdateDto[]>(() => {
 
 const { t } = useI18n();
 const taskHeaders = ref([
-  { title: t('header.type'), key: 'type' },
-  { title: t('header.artisan'), key: 'artisan' },
-  { title: t('header.done_at'), key: 'doneAt' },
+  { title: t('label.type'), key: 'type' },
+  { title: t('label.artisan'), key: 'artisan' },
+  { title: t('label.done_at'), key: 'doneAt' },
 ]);
 
 const errorMessages = ref('');

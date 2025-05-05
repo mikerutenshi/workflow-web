@@ -61,15 +61,15 @@ const { data } = useQuery({
 
 const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: t('header.id'), key: 'id' },
-  { title: t('header.sku'), key: 'sku' },
-  { title: t('header.product_group'), key: 'productGroup.skuNumeric' },
+  { title: t('label.id'), key: 'id' },
+  { title: t('label.sku'), key: 'sku' },
+  { title: t('label.product_group'), key: 'productGroup.skuNumeric' },
   {
-    title: t('header.product_category'),
+    title: t('label.product_category'),
     key: 'productGroup.productCategory.name',
   },
-  { title: t('header.gender'), key: 'productGroup.productCategory.gender' },
-  { title: t('header.colors'), key: 'productColors' },
+  { title: t('label.gender'), key: 'productGroup.productCategory.gender' },
+  { title: t('label.colors'), key: 'productColors' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 

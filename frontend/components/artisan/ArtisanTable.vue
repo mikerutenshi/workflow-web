@@ -8,11 +8,13 @@
       :sort-by="[{ key: 'id', order: 'asc' }]"
     >
       <template v-slot:item.jobs="{ item }">
-        {{ $t(renderJobs(item.jobs)) }}
+        {{ item.jobs.map((job) => $t(renderJob(job))).join(', ') }}
       </template>
-      <template v-slot:item.actions="{ item, index }">
-        <NuxtLink :to="`/artisans/update/${item.id}`">
-          <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
+      <template v-slot:item.actions="{ item }">
+        <NuxtLink :to="$localePath(`/artisans/update/${item.id}`)">
+          <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+            $t('btn.update')
+          }}</v-btn>
         </NuxtLink>
       </template>
     </v-data-table>
@@ -32,11 +34,12 @@ const { data } = useQuery({
   tags: [CACHE_ARTISANS],
 });
 
+const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: 'ID', key: 'id' },
-  { title: 'First Name', key: 'firstName' },
-  { title: 'Last Name', key: 'lastName' },
-  { title: 'Jobs', key: 'jobs' },
+  { title: t('label.id'), key: 'id' },
+  { title: t('label.first_name'), key: 'firstName' },
+  { title: t('label.last_name'), key: 'lastName' },
+  { title: t('label.jobs'), key: 'jobs' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 </script>
