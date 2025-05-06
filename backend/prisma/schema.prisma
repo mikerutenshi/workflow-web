@@ -153,7 +153,7 @@ model Artisan {
 model Work {
   id                Int             @id @default(autoincrement())
   date              DateTime
-  orderNo           Int             
+  orderNo           Int             @unique
   productId         Int             
   sizes             SizeToWork[]
   tasks             Task[]
@@ -173,7 +173,7 @@ model Task {
   artisanId         Int?
   doneAt            DateTime?
 
-  work              Work            @relation(fields: [workId], references: [id])
+  work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
   artisan           Artisan?        @relation(fields: [artisanId], references: [id])
 
   createdBy         Int
@@ -184,10 +184,16 @@ model Task {
 
 model Size {
   id                Int             @id @default(autoincrement())
-  eu                String          @unique
-  us                String?         @unique
-  uk                String?         @unique
+  eu                String          
+  us                String?         
+  uk                String?         
+  gender            Gender
+
   works             SizeToWork[]
+
+  @@unique([eu, gender])
+  @@unique([us, gender])
+  @@unique([uk, gender])
 }
 
 model SizeToWork {

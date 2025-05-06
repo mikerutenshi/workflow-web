@@ -15,7 +15,6 @@
 
 <script setup>
 import { mdiCheckBold } from '@mdi/js';
-import { defineEmits, defineProps } from 'vue';
 
 const props = defineProps({
   color: { type: String, default: 'primary' },

@@ -130,7 +130,7 @@ const { execute: executeUpdate } = useMutation(UpdateWorkDocument, {
 });
 const { execute: executeDelete } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
-  onData() {
+  onData(data) {
     router.back();
   },
   onError(err) {

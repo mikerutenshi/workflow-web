@@ -12,7 +12,7 @@ import { DateScalar } from './scalars/date.scalar';
 import { authenticateUserByRequest } from './auth/auth.middleware';
 import { ProductModule } from './product/product.module';
 import { ArtisanModule } from './artisan/artisan.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductionModule } from './production/production.module';
 
 @Module({
@@ -24,16 +24,22 @@ import { ProductionModule } from './production/production.module';
     PrismaModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [AuthModule, ProductModule, ArtisanModule, ProductionModule],
-      inject: [AuthService],
-      useFactory: (authService: AuthService) => ({
+      imports: [
+        AuthModule,
+        ProductModule,
+        ArtisanModule,
+        ProductionModule,
+        ConfigModule,
+      ],
+      inject: [AuthService, ConfigService],
+      useFactory: (authService: AuthService, configService: ConfigService) => ({
         playground: true,
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         cors: {
           origin: [
-            'http://localhost:3000',
-            'http://127.0.0.1:3000',
-            'http://192.168.100.7',
+            configService.get('CORS_ORIGIN_1') || '',
+            configService.get('CORS_ORIGIN_2') || '',
+            configService.get('CORS_ORIGIN_3') || '',
           ],
           credentials: true,
         },

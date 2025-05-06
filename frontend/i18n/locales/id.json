@@ -17,13 +17,13 @@
     "production_status": "Status Produksi",
     "products": "Sepatu",
     "labor_costs": "Biaya Tenaga Kerja",
-    "artisans": "Pengrajin",
+    "artisans": "Perajin",
     "payroll": "Penggajian"
   },
   "page": {
-    "artisan_create": "Buat Pengrajin Baru",
-    "artisan_edit": "Ubah Pengrajin",
-    "artisans": "Pengrajin",
+    "artisan_create": "Buat Perajin Baru",
+    "artisan_edit": "Ubah Perajin",
+    "artisans": "Perajin",
     "color_create": "Buat Warna Baru",
     "color_edit": "Ubah Warna",
     "colors": "Warna",
@@ -48,7 +48,7 @@
     "color": "Warna Baru",
     "product_group": "Kelompok Sepatu Baru",
     "product_category": "Kategori Sepatu Baru",
-    "artisan": "Pengrajin Baru",
+    "artisan": "Perajin Baru",
     "work": "Pekerjaan Baru"
   },
   "btn": {
@@ -68,7 +68,7 @@
     "quantity": "Jumlah",
     "tasks": "Tugas",
     "type": "Tugas",
-    "artisan": "Pengrajin",
+    "artisan": "Perajin",
     "done_at": "Tanggal Selesai",
     "product": "Sepatu",
     "product_name": "Nama Sepatu",
@@ -78,7 +78,7 @@
     "select_sizes": "Pilih Ukuran",
     "select_colors": "Pilih Warna",
     "select_jobs": "Pilih Jabatan",
-    "gender": "Jenis Kelamin",
+    "gender": "Segmen",
     "colors": "Warna",
     "labor_costs": "Biaya Tenaga Kerja",
     "first_name": "Nama Depan",
@@ -97,7 +97,7 @@
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
-    "fill_artisans": "Isi Nama Pengrajin"
+    "fill_artisans": "Isi Nama Perajin"
   },
   "jobs": {
     "draw_upper": "Menggambar Upper",

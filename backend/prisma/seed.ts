@@ -132,6 +132,59 @@ async function main() {
       },
     });
   }
+  await prisma.size.upsert({
+    where: { eu: '36' },
+    update: {},
+    create: { eu: '36', us: '4', uk: '3.5 ' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '37' },
+    update: {},
+    create: { eu: '37', us: '5', uk: '4.5' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '38' },
+    update: {},
+    create: { eu: '38', us: '5.5', uk: '5' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '39' },
+    update: {},
+    create: { eu: '39', us: '6.5', uk: '6' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '40' },
+    update: {},
+    create: { eu: '40', us: '7', uk: '6.5' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '41' },
+    update: {},
+    create: { eu: '41', us: '8', uk: '7' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '42' },
+    update: {},
+    create: { eu: '42', us: '8.5', uk: '7.5' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '43' },
+    update: {},
+    create: { eu: '43', us: '9.5', uk: '8.5' },
+  });
+
+  await prisma.size.upsert({
+    where: { eu: '44' },
+    update: {},
+    create: { eu: '44', us: '10', uk: '9' },
+  });
 
   console.log('Seeding is complete');
 }

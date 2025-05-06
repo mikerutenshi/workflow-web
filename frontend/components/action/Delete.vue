@@ -6,7 +6,6 @@
     :outlined="outlined"
     :prepend-icon="mdiTrashCan"
     @click="handleClick"
-    type="submit"
     class="ml-auto"
   >
     <slot>{{ $t('btn.delete') }}</slot>
@@ -15,7 +14,6 @@
 
 <script setup>
 import { mdiTrashCan } from '@mdi/js';
-import { defineEmits, defineProps } from 'vue';
 
 const props = defineProps({
   color: { type: String, default: 'error' },

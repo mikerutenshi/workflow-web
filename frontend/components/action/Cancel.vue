@@ -14,7 +14,6 @@
 
 <script setup>
 import { mdiBackspace } from '@mdi/js';
-import { defineEmits, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 
 const props = defineProps({

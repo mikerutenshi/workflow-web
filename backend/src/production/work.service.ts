@@ -1,8 +1,7 @@
-import { Work } from '@/models/work.model';
 import { WorkWithTasks } from '@/models/work-with-tasks.model';
+import { Work } from '@/models/work.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Job } from '@prisma/client';
 import { WorkCreateDto } from './dto/work-create.dto';
 import { WorkUpdateDto } from './dto/work-update.dto';
 
@@ -28,11 +27,12 @@ export class WorkService {
       });
 
       const laborCosts = await tx.laborCost.findMany({
-        select: {
-          type: true,
+        where: {
           productGroup: {
-            select: {
-              products: { select: { id: true }, where: { id: data.productId } },
+            products: {
+              some: {
+                id: data.productId,
+              },
             },
           },
         },

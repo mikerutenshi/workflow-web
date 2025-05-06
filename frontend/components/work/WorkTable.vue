@@ -94,8 +94,8 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.date'), key: 'date' },
   { title: t('label.order_no'), key: 'orderNo' },
   { title: t('label.sku'), key: 'product.sku' },
-  { title: t('label.sizes'), key: 'sizes' },
-  { title: t('label.tasks'), key: 'tasks' },
+  { title: t('label.sizes'), key: 'sizes', minWidth: '120' },
+  { title: t('label.tasks'), key: 'tasks', minWidth: '300' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
