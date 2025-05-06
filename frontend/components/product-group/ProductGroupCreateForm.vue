@@ -16,6 +16,7 @@
         </v-alert>
         <v-text-field
           v-model="form.skuNumeric"
+          @keypress="(e: any) => /[0-9]/.test(e.key) || e.preventDefault()"
           :label="$t('label.sku_numeric')"
         />
         <v-text-field v-model="form.name" :label="$t('label.product_name')" />

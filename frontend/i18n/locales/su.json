@@ -91,7 +91,9 @@
     "total_quantity": "Total Jumlah",
     "pairs": "Henteu Aya|Hiji Pasang|{count} pasang",
     "name": "Nami",
-    "pick_color": "Pilih Warna"
+    "pick_color": "Pilih Warna",
+    "by": "Ku: {artisan}",
+    "at": ", Dina: {done_at}"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

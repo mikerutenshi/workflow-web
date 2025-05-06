@@ -7,11 +7,15 @@
   "app": {
     "title": "Borsa App"
   },
-  "logout": "Log Out",
+  "auth": {
+    "password": "Password",
+    "login": "Log In",
+    "logout": "Log Out"
+  },
   "nav": {
     "home": "Home",
     "production_status": "Production Status",
-    "products": "Products",
+    "products": "Shoes",
     "labor_costs": "Labor Costs",
     "artisans": "Artisans",
     "payroll": "Payroll"
@@ -23,28 +27,89 @@
     "color_create": "Create a New Color",
     "color_edit": "Edit a Color",
     "colors": "Colors",
-    "labor_costs": "Production Costs",
-    "labor_cost_update": "Update a Production Cost",
+    "labor_costs": "Labor Costs",
+    "labor_cost_update": "Update a Labor Cost",
     "payroll": "Payroll",
-    "product_category_create": "Create a New Product Category",
-    "product_categories": "Product Categories",
-    "product_category_edit": "Edit a Product Category",
-    "product_group_create": "Create a New Product Group",
-    "product_groups": "Product Groups",
-    "product_group_edit": "Edit a Product Group",
-    "product_create": "Create a New Product",
-    "products": "Products",
-    "product_edit": "Edit a Product",
+    "product_category_create": "Create a New Shoe Category",
+    "product_categories": "Shoe Categories",
+    "product_category_edit": "Edit a Shoe Category",
+    "product_group_create": "Create a New Shoe Group",
+    "product_groups": "Shoe Groups",
+    "product_group_edit": "Edit a Shoe Group",
+    "product_create": "Create a New Shoe",
+    "products": "Shoes",
+    "product_edit": "Edit s Shoe",
     "work_create": "Create a New Work",
     "works": "Production Status",
     "work_edit": "Edit a Work"
   },
   "create_btn": {
-    "product": "New Prodct",
+    "product": "New Shoe",
     "color": "New Color",
-    "product_group": "New Product Group",
-    "product_category": "New Product Cateogory",
+    "product_group": "New Shoe Group",
+    "product_category": "New Shoe Category",
     "artisan": "New Artisan",
-    "work": "New Work"
+    "work": "New Task"
+  },
+  "btn": {
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "label": {
+    "id": "ID",
+    "date": "Date",
+    "order_no": "Order No",
+    "sku": "SKU",
+    "sku_numeric": "Numeric SKU Only",
+    "size": "Size",
+    "sizes": "Size {'|'} Quantity",
+    "quantity": "Quantity",
+    "tasks": "Tasks",
+    "type": "Task",
+    "artisan": "Artisan",
+    "done_at": "Completion Date",
+    "product": "Shoes",
+    "product_name": "Shoe Name",
+    "product_group": "Shoe Group",
+    "product_category": "Shoe Category",
+    "select_language": "Select Language",
+    "select_sizes": "Select Size",
+    "select_colors": "Select Color",
+    "select_jobs": "Select Job",
+    "gender": "Gender",
+    "colors": "Color",
+    "labor_costs": "Labor Costs",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "jobs": "Job",
+    "job": "Task",
+    "payable": "Amount Payable",
+    "cost": "Cost",
+    "total_payable": "Total Amount Payable",
+    "total_quantity": "Total Quantity",
+    "pairs": "None|One Pair|{count} pairs",
+    "name": "Name",
+    "pick_color": "Pick Color",
+    "by": "By: {artisan}",
+    "at": ", On: {done_at}"
+  },
+  "card": {
+    "fill_quantities": "Enter Shoe Quantity",
+    "fill_artisans": "Enter Artisan"
+  },
+  "jobs": {
+    "draw_upper": "Draw Upper",
+    "draw_lining": "Draw Lining",
+    "stitch_upper": "Stitch Upper",
+    "stitch_outsole": "Stitch Outsole",
+    "stitch_insole": "Stitch Insole",
+    "last": "Last"
+  },
+  "genders": {
+    "men": "Men",
+    "women": "Women",
+    "kids": "Kids"
   }
 }

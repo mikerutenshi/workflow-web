@@ -33,7 +33,7 @@
           <v-divider vertical class="mx-4"></v-divider>
           <span class="mr-2">{{ $t('label.quantity') }}</span>
           <h3 class="my-2">
-            {{ artisan.quantityPerArtisan }}
+            {{ $t('label.pairs', artisan.quantityPerArtisan) }}
           </h3>
         </v-card-subtitle>
 
@@ -51,6 +51,9 @@
             </template>
             <template #item.costPerTask="{ item }">
               {{ formatRupiah(item.costPerTask) }}
+            </template>
+            <template #item.quantityPerTask="{ item }">
+              {{ $t('label.pairs', item.quantityPerTask) }}
             </template>
           </v-data-table>
         </v-card-text>

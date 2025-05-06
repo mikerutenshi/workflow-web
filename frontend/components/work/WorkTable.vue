@@ -31,9 +31,15 @@
           >
             {{
               task.artisan
-                ? `By: ${task.artisan?.firstName} ${
-                    task.artisan?.lastName ?? ''
-                  } At: ${formatLocalDate(task.doneAt)}`
+                ? `${$t('label.by', {
+                    artisan:
+                      task.artisan?.firstName +
+                      (task.artisan?.lastName
+                        ? ' ' + task.artisan.lastName
+                        : ''),
+                  })}${$t('label.at', {
+                    done_at: formatLocalDate(task.doneAt),
+                  })}`
                 : ''
             }}
             <template v-slot:prepend>
