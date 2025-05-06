@@ -33,7 +33,7 @@
           multiple
           chips
           auto-select-first
-          :items="sizesData?.getSizes"
+          :items="computeSizeList"
           :loading="isFetchingSizes"
           item-title="eu"
           item-value="id"
@@ -106,6 +106,17 @@ const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
   query: GetSizesDocument,
   tags: [CACHE_SIZES],
 });
+
+const computeSizeList = computed(() => {
+  const product = productsData.value?.getProducts.find(
+    (product) => product.id === form.productId
+  );
+  const gender = product?.productGroup.productCategory.gender;
+  return gender
+    ? sizesData.value?.getSizes.filter((size) => size.gender == gender)
+    : sizesData.value?.getSizes;
+});
+
 const router = useRouter();
 const submitBtnTitle = computed(() =>
   workId.value ? t('btn.update') : t('btn.create')
@@ -180,6 +191,10 @@ if (workId.value) {
       sizes.value = work.sizes.map((item) => ({
         id: item.size.id,
         eu: item.size.eu,
+        gender: item.size.gender,
+        jp: item.size.jp,
+        uk: item.size.uk,
+        us: item.size.us,
       }));
       work.sizes.forEach((item) => {
         const sizeInTable = sizesTable.find((size) => size.id === item.size.id);

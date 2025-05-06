@@ -3,6 +3,8 @@ fragment Size on Size {
   eu
   us
   uk
+  jp
+  gender
 }
 
 fragment TaskWithArtisan on TaskWithArtisan {

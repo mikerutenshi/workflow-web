@@ -187,6 +187,7 @@ model Size {
   eu                String          
   us                String?         
   uk                String?         
+  jp                String?
   gender            Gender
 
   works             SizeToWork[]

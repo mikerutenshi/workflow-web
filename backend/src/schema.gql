@@ -155,6 +155,8 @@ type Size {
   eu: String!
   us: String
   uk: String
+  jp: String
+  gender: Gender!
 }
 
 type SizeToWork {
@@ -419,6 +421,8 @@ input SizeCreateDto {
   eu: String!
   us: String
   uk: String
+  jp: String
+  gender: Gender!
 }
 
 input TaskUpdateDto {

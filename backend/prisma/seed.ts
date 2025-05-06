@@ -133,57 +133,70 @@ async function main() {
     });
   }
   await prisma.size.upsert({
-    where: { eu: '36' },
+    where: { eu_gender: { eu: '38', gender: Gender.MEN } },
     update: {},
-    create: { eu: '36', us: '4', uk: '3.5 ' },
+    create: { eu: '38', us: '5.5', uk: '5', jp: '24', gender: Gender.MEN },
+  });
+  await prisma.size.upsert({
+    where: { eu_gender: { eu: '39', gender: Gender.MEN } },
+    update: {},
+    create: { eu: '39', us: '6.5', uk: '6', jp: '24.5', gender: Gender.MEN },
+  });
+  await prisma.size.upsert({
+    where: { eu_gender: { eu: '40', gender: Gender.MEN } },
+    update: {},
+    create: { eu: '40', us: '7', uk: '6.5', jp: '25', gender: Gender.MEN },
+  });
+  await prisma.size.upsert({
+    where: { eu_gender: { eu: '41', gender: Gender.MEN } },
+    update: {},
+    create: { eu: '41', us: '8', uk: '7', jp: '26', gender: Gender.MEN },
+  });
+  await prisma.size.upsert({
+    where: { eu_gender: { eu: '42', gender: Gender.MEN } },
+    update: {},
+    create: { eu: '42', us: '8.5', uk: '7.5', jp: '26.5', gender: Gender.MEN },
+  });
+  await prisma.size.upsert({
+    where: { eu_gender: { eu: '43', gender: Gender.MEN } },
+    update: {},
+    create: { eu: '43', us: '9.5', uk: '8.5', jp: '27.5', gender: Gender.MEN },
+  });
+  await prisma.size.upsert({
+    where: { eu_gender: { eu: '44', gender: Gender.MEN } },
+    update: {},
+    create: { eu: '44', us: '10', uk: '9', jp: '28', gender: Gender.MEN },
   });
 
   await prisma.size.upsert({
-    where: { eu: '37' },
+    where: { eu_gender: { eu: '36', gender: Gender.WOMEN } },
     update: {},
-    create: { eu: '37', us: '5', uk: '4.5' },
+    create: { eu: '36', us: '5.5', uk: '3', jp: '22.5', gender: Gender.WOMEN },
   });
-
   await prisma.size.upsert({
-    where: { eu: '38' },
+    where: { eu_gender: { eu: '37', gender: Gender.WOMEN } },
     update: {},
-    create: { eu: '38', us: '5.5', uk: '5' },
+    create: { eu: '37', us: '6.5', uk: '4', jp: '23.5', gender: Gender.WOMEN },
   });
-
   await prisma.size.upsert({
-    where: { eu: '39' },
+    where: { eu_gender: { eu: '38', gender: Gender.WOMEN } },
     update: {},
-    create: { eu: '39', us: '6.5', uk: '6' },
+    create: { eu: '38', us: '7', uk: '4.5', jp: '24', gender: Gender.WOMEN },
   });
-
   await prisma.size.upsert({
-    where: { eu: '40' },
+    where: { eu_gender: { eu: '39', gender: Gender.WOMEN } },
     update: {},
-    create: { eu: '40', us: '7', uk: '6.5' },
+    create: { eu: '39', us: '8', uk: '5.5', jp: '25', gender: Gender.WOMEN },
   });
-
   await prisma.size.upsert({
-    where: { eu: '41' },
+    where: { eu_gender: { eu: '40', gender: Gender.WOMEN } },
     update: {},
-    create: { eu: '41', us: '8', uk: '7' },
+    create: { eu: '40', us: '8.5', uk: '6', jp: '25.5', gender: Gender.WOMEN },
   });
-
   await prisma.size.upsert({
-    where: { eu: '42' },
+    where: { eu_gender: { eu: '41', gender: Gender.WOMEN } },
     update: {},
-    create: { eu: '42', us: '8.5', uk: '7.5' },
-  });
-
-  await prisma.size.upsert({
-    where: { eu: '43' },
-    update: {},
-    create: { eu: '43', us: '9.5', uk: '8.5' },
-  });
-
-  await prisma.size.upsert({
-    where: { eu: '44' },
-    update: {},
-    create: { eu: '44', us: '10', uk: '9' },
+    create: { eu: '41', us: '9.5', uk: '7', jp: '26.5', gender: Gender.WOMEN },
   });
 
   console.log('Seeding is complete');
