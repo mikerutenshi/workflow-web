@@ -152,8 +152,8 @@ const { execute: executeDelete } = useMutation(DeleteWorkDocument, {
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 const form = reactive({
-  date: null as Date | null,
-  orderNo: 0,
+  date: new Date(),
+  orderNo: parseInt(new Date().toISOString().slice(0, 10).replace(/-/g, '')),
   productId: '',
   sizes: [] as SizeToWorkCreateDto[],
   createdBy: userId,
