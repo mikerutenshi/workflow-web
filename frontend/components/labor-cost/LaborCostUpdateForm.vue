@@ -155,7 +155,13 @@ const handleSubmit = async () => {
 
 const router = useRouter();
 const { execute } = useMutation(UpsertLaborCostsDocument, {
-  clearCacheTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
+  clearCacheTags: [
+    CACHE_PRODUCT_GROUPS,
+    CACHE_PRODUCT_GROUP,
+    CACHE_TASKS,
+    CACHE_WORKS,
+    CACHE_PAYROLL,
+  ],
   onData() {
     router.back();
   },

@@ -116,9 +116,9 @@ enum Job {
   DRAW_UPPER
   DRAW_LINING
   STITCH_UPPER
+  LAST
   STITCH_OUTSOLE
   STITCH_INSOLE
-  LAST
 }
 
 model LaborCost {
@@ -134,6 +134,7 @@ model LaborCost {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
+  tasks             Task[]
   productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
 
@@ -172,9 +173,12 @@ model Task {
   type              Job
   artisanId         Int?
   doneAt            DateTime?
+  laborCostId       Int
+  @@unique([workId, type])
 
   work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
   artisan           Artisan?        @relation(fields: [artisanId], references: [id])
+  laborCost         LaborCost       @relation(fields: [laborCostId], references: [id])
 
   createdBy         Int
   updatedBy         Int?

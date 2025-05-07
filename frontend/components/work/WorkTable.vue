@@ -98,8 +98,4 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.tasks'), key: 'tasks', minWidth: '300' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
-
-function formatLocalDate(utcDate: string) {
-  return utcDate ? new Date(utcDate).toLocaleDateString() : '-';
-}
 </script>

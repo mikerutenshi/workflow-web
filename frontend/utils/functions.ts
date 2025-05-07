@@ -39,4 +39,15 @@ function renderGender(gender: Gender): string {
   return found?.title ?? '';
 }
 
-export { renderJob, renderJobs, formatRupiah, parseRupiah, renderGender };
+function formatLocalDate(utcDate: string) {
+  return utcDate ? new Date(utcDate).toLocaleDateString() : '-';
+}
+
+export {
+  renderJob,
+  renderJobs,
+  formatRupiah,
+  parseRupiah,
+  renderGender,
+  formatLocalDate,
+};

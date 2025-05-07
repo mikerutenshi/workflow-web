@@ -45,6 +45,7 @@ export class WorkService {
             data: {
               workId: createdWork.id,
               type: laborCost.type,
+              laborCostId: laborCost.id,
               createdBy: data.createdBy,
             },
           });

@@ -205,30 +205,6 @@ type WorkWithTasks {
   product: Product!
 }
 
-type ProductGroupWithLaborCosts {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  skuNumeric: String!
-  name: String
-  productCategoryId: ID!
-  productCategory: ProductCategory!
-  laborCosts: [LaborCost!]!
-}
-
-type ProductWithProductGroup {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  sku: String!
-  productGroupId: ID!
-  productGroup: ProductGroupWithLaborCosts!
-}
-
 type WorkWithProduct {
   id: ID!
   createdBy: ID!
@@ -239,7 +215,7 @@ type WorkWithProduct {
   orderNo: Float!
   productId: ID!
   sizes: [SizeToWork!]!
-  product: ProductWithProductGroup!
+  product: Product!
 }
 
 type TaskWithWork {

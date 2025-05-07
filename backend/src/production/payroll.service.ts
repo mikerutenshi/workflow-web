@@ -12,21 +12,25 @@ export class PayrollService {
       include: {
         tasks: {
           include: {
+            laborCost: true,
             work: {
               include: {
                 sizes: { include: { size: true } },
-                product: {
-                  include: {
-                    productGroup: {
-                      include: { productCategory: true, laborCosts: true },
-                    },
-                  },
-                },
+                product: true,
+                // {
+                // include: {
+                //   productGroup: {
+                //     include: { productCategory: true, laborCosts: true },
+                //   },
+                // },
+                // },
               },
             },
           },
+          orderBy: [{ doneAt: 'asc' }, { work: { product: { sku: 'asc' } } }],
         },
       },
+      orderBy: { firstName: 'asc' },
     });
 
     let payroll: PayrollGetDto = new PayrollGetDto();
@@ -39,10 +43,11 @@ export class PayrollService {
             (sum, workSize) => sum + workSize.quantity,
             0,
           );
-          const costPerTask =
-            task.work.product.productGroup.laborCosts.find(
-              (laborCost) => laborCost.type === task.type,
-            )?.cost || 0;
+          const costPerTask = task.laborCost.cost;
+          // const costPerTask =
+          //   task.work.product.productGroup.laborCosts.find(
+          //     (laborCost) => laborCost.type === task.type,
+          //   )?.cost || 0;
 
           const payablePerTask = quantityPerTask * costPerTask;
 

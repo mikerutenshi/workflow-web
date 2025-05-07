@@ -141,6 +141,7 @@ query getPayroll {
         costPerTask
         quantityPerTask
         type
+        doneAt
         work {
           sizes {
             size {
@@ -150,13 +151,13 @@ query getPayroll {
           }
           product {
             sku
-            productGroup {
-              skuNumeric
-              laborCosts {
-                type
-                cost
-              }
-            }
+            # productGroup {
+            #   skuNumeric
+            #   laborCosts {
+            #     type
+            #     cost
+            #   }
+            # }
           }
         }
       }

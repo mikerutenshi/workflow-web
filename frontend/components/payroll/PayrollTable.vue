@@ -46,6 +46,9 @@
             <template #item.type="{ item }">
               {{ $t(renderJob(item.type)) }}
             </template>
+            <template #item.doneAt="{ item }">
+              {{ formatLocalDate(item.doneAt) }}
+            </template>
             <template #item.payablePerTask="{ item }">
               {{ formatRupiah(item.payablePerTask) }}
             </template>
@@ -71,7 +74,11 @@
 import { useQuery } from 'villus';
 import { GetPayrollDocument } from '~/api/generated/types';
 
-const { data } = useQuery({ query: GetPayrollDocument, tags: [CACHE_PAYROLL] });
+const { data } = useQuery({
+  query: GetPayrollDocument,
+  cachePolicy: 'network-only',
+  tags: [CACHE_PAYROLL],
+});
 
 const display = reactive({
   totalPayable: '',
@@ -109,8 +116,9 @@ const { t } = useI18n();
 const headers = [
   { title: t('label.product'), key: 'work.product.sku' },
   { title: t('label.job'), key: 'type' },
-  { title: t('label.payable'), key: 'payablePerTask' },
-  { title: t('label.cost'), key: 'costPerTask' },
+  { title: t('label.done_at'), key: 'doneAt' },
   { title: t('label.quantity'), key: 'quantityPerTask' },
+  { title: t('label.cost'), key: 'costPerTask' },
+  { title: t('label.payable'), key: 'payablePerTask' },
 ];
 </script>
