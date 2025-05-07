@@ -8,7 +8,20 @@
       class="flex-grow-1"
     >
       <template v-slot:item.productColors="{ item }">
-        {{ extractColors(item.productColors) }}
+        <v-list density="compact" class="d-flex flex-row">
+          <v-list-item
+            v-for="color in item.productColors"
+            class="d-inline-flex"
+          >
+            <template #prepend>
+              <div
+                class="color-box"
+                :style="{ backgroundColor: color.color.hexCode }"
+              />
+            </template>
+            <span>{{ `${color.order}. ${color.color.name}` }}</span>
+          </v-list-item>
+        </v-list>
       </template>
       <template v-slot:item.productGroup.productCategory.gender="{ item }">
         {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
@@ -42,6 +55,15 @@
   </div>
   <div v-else>Loading...</div>
 </template>
+
+<style scoped>
+.color-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+</style>
 
 <script setup lang="ts">
 import { mdiPencil } from '@mdi/js';

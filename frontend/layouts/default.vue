@@ -103,14 +103,14 @@ const navItems = computed(() => {
       icon: mdiChartTimeline,
     },
     {
+      title: t('nav.payroll'),
+      route: localePath('/payroll'),
+      icon: mdiCashRegister,
+    },
+    {
       title: t('nav.products'),
       route: localePath('/products'),
       icon: mdiShoeFormal,
-    },
-    {
-      title: t('nav.labor_costs'),
-      route: localePath('/labor-costs'),
-      icon: mdiCalculator,
     },
     {
       title: t('nav.artisans'),
@@ -118,9 +118,9 @@ const navItems = computed(() => {
       icon: mdiFaceMan,
     },
     {
-      title: t('nav.payroll'),
-      route: localePath('/payroll'),
-      icon: mdiCashRegister,
+      title: t('nav.labor_costs'),
+      route: localePath('/labor-costs'),
+      icon: mdiCalculator,
     },
     // {
     //   title: 'Utility',
