@@ -14,7 +14,7 @@
   },
   "nav": {
     "home": "Imah",
-    "production_status": "Status Produksi",
+    "production_status": "Produksi",
     "products": "Sapatu",
     "labor_costs": "Ongkos Kuli",
     "artisans": "Pangrajin",
@@ -40,7 +40,7 @@
     "products": "Sapatu",
     "product_edit": "Ngarobah Sapatu",
     "work_create": "Nyieun Pagawéan Anyar",
-    "works": "Status Produksi",
+    "works": "Produksi",
     "work_edit": "Ngarobah Pagawéan"
   },
   "create_btn": {
@@ -105,7 +105,7 @@
     "stitch_upper": "Ngetutui Upper",
     "stitch_outsole": "Ngetutui Outsole",
     "stitch_insole": "Ngetutui Insole",
-    "last": "Ngabentuk"
+    "last": "Melasting"
   },
   "genders": {
     "men": "Lalaki",

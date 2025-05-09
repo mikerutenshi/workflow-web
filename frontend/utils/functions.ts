@@ -1,21 +1,15 @@
-import type { Gender, Job } from '~/api/generated/types';
+import { Gender, type Job } from '~/api/generated/types';
 
 function renderJobs(jobs: Job[]): string {
-  let stringResult = '';
-  const jobTitles = jobs.map((key) => {
-    const job = JOBS.find((item) => item.id === key);
-    return job?.title;
-  });
-  jobTitles.forEach((title) => {
-    stringResult += `${title}, `;
-  });
-
-  return stringResult.slice(0, -2);
+  return jobs
+    .map((key) => {
+      return key in JOBS ? JOBS[key] : 'N/A';
+    })
+    .join(', ');
 }
 
 function renderJob(job: Job): string {
-  const found = JOBS.find((item) => item.id === job);
-  return found?.title ?? '';
+  return job in JOBS ? JOBS[job] : 'N/A';
 }
 
 function formatRupiah(amount: number | null | undefined): string {
@@ -35,8 +29,13 @@ function parseRupiah(rupiah: string): number {
 }
 
 function renderGender(gender: Gender): string {
-  const found = GENDERS.find((item) => item.id === gender);
-  return found?.title ?? '';
+  const title = GENDERS[gender];
+  return title ?? 'N/A';
+}
+
+function parseGender(title: string): Gender {
+  const entry = Object.entries(GENDERS).find(([_, value]) => value === title);
+  return entry ? (entry[0] as Gender) : Gender.Kids;
 }
 
 function formatLocalDate(utcDate: string) {
@@ -49,5 +48,6 @@ export {
   formatRupiah,
   parseRupiah,
   renderGender,
+  parseGender,
   formatLocalDate,
 };

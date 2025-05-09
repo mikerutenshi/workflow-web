@@ -8,11 +8,8 @@
       class="flex-grow-1"
     >
       <template v-slot:item.productColors="{ item }">
-        <v-list density="compact" class="d-flex flex-row">
-          <v-list-item
-            v-for="color in item.productColors"
-            class="d-inline-flex"
-          >
+        <v-list density="compact">
+          <v-list-item v-for="color in item.productColors">
             <template #prepend>
               <div
                 class="color-box"
@@ -91,7 +88,7 @@ const headers: ReadOnlyHeaders = [
     key: 'productGroup.productCategory.name',
   },
   { title: t('label.gender'), key: 'productGroup.productCategory.gender' },
-  { title: t('label.colors'), key: 'productColors' },
+  { title: t('label.colors'), key: 'productColors', minWidth: '140' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 

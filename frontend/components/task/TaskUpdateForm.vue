@@ -52,9 +52,16 @@
                 <template #item="{ props, item }">
                   <v-list-item
                     v-bind="props"
-                    :title="`${item.raw.firstName} ${item.raw.lastName}`"
-                    :subtitle="$t(renderJobs(item.raw.jobs))"
-                  ></v-list-item>
+                    :title="`${item.raw.firstName} ${item.raw.lastName ?? ''}`"
+                  >
+                    <template #subtitle>
+                      {{
+                        item.raw.jobs
+                          .map((job) => $t(renderJob(job)))
+                          .join(', ')
+                      }}
+                    </template>
+                  </v-list-item>
                 </template>
               </v-autocomplete>
             </template>

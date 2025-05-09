@@ -14,7 +14,7 @@
   },
   "nav": {
     "home": "Home",
-    "production_status": "Production Status",
+    "production_status": "Production",
     "products": "Shoes",
     "labor_costs": "Labor Costs",
     "artisans": "Artisans",
@@ -40,7 +40,7 @@
     "products": "Shoes",
     "product_edit": "Edit s Shoe",
     "work_create": "Create a New Work",
-    "works": "Production Status",
+    "works": "Production",
     "work_edit": "Edit a Work"
   },
   "create_btn": {

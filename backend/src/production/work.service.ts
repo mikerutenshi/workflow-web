@@ -89,7 +89,7 @@ export class WorkService {
           },
           orderBy: { size: { eu: 'asc' } },
         },
-        tasks: { include: { artisan: true } },
+        tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: true,
       },
     });
@@ -103,7 +103,7 @@ export class WorkService {
     return this.prisma.work.findMany({
       include: {
         sizes: { include: { size: true }, orderBy: { size: { eu: 'asc' } } },
-        tasks: { include: { artisan: true } },
+        tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: true,
       },
     });

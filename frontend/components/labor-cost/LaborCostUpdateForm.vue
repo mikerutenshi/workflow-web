@@ -13,7 +13,7 @@
           disabled
         />
         <v-text-field
-          v-model="header.gender"
+          v-model="computeGender"
           :label="$t('label.gender')"
           disabled
         />
@@ -26,6 +26,7 @@
               costs.drawUpper = val;
             }
           "
+          type="number"
         />
         <v-text-field
           :label="$t('jobs.draw_lining')"
@@ -36,6 +37,7 @@
               costs.drawLining = val;
             }
           "
+          type="number"
         />
         <v-text-field
           :label="$t('jobs.stitch_upper')"
@@ -46,16 +48,7 @@
               costs.stitchUpper = val;
             }
           "
-        />
-        <v-text-field
-          :label="$t('jobs.last')"
-          prefix="Rp"
-          :model-value="mask.masked(costs.last)"
-          @update:model-value="
-            (val) => {
-              costs.last = val;
-            }
-          "
+          type="number"
         />
         <v-text-field
           :label="$t('jobs.stitch_outsole')"
@@ -66,6 +59,7 @@
               costs.stitchOutsole = val;
             }
           "
+          type="number"
         />
         <v-text-field
           :label="$t('jobs.stitch_insole')"
@@ -76,6 +70,18 @@
               costs.stitchInsole = val;
             }
           "
+          type="number"
+        />
+        <v-text-field
+          :label="$t('jobs.last')"
+          prefix="Rp"
+          :model-value="mask.masked(costs.last)"
+          @update:model-value="
+            (val) => {
+              costs.last = val;
+            }
+          "
+          type="number"
         />
 
         <div class="d-flex mt-4">
@@ -93,11 +99,13 @@ import { Mask, type MaskaDetail, type MaskInputOptions } from 'maska';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
 import {
+  Gender,
   GetProductGroupDocument,
   Job,
   UpsertLaborCostsDocument,
   type LaborCostUpsertDto,
 } from '~/api/generated/types';
+import { parseGender } from '~/utils/functions';
 
 const route = useRoute();
 const productGroupId = route.params.id as string;
@@ -107,7 +115,7 @@ const userId = authStore.user?.id ?? '';
 const header = reactive({
   skuNumeric: '',
   productCategory: '',
-  gender: '',
+  gender: 'KIDS' as Gender,
 });
 const form = reactive([] as LaborCostUpsertDto[]);
 const costs = reactive({
@@ -117,6 +125,14 @@ const costs = reactive({
   stitchOutsole: '',
   stitchInsole: '',
   last: '',
+});
+const computeGender = computed({
+  get() {
+    return t(renderGender(header.gender));
+  },
+  set(val) {
+    header.gender = parseGender(val);
+  },
 });
 
 useQuery({

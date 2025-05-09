@@ -1,17 +1,17 @@
-const JOBS = [
-  { id: 'DRAW_UPPER', title: 'jobs.draw_upper' },
-  { id: 'DRAW_LINING', title: 'jobs.draw_lining' },
-  { id: 'STITCH_UPPER', title: 'jobs.stitch_upper' },
-  { id: 'STITCH_OUTSOLE', title: 'jobs.stitch_outsole' },
-  { id: 'STITCH_INSOLE', title: 'jobs.stitch_insole' },
-  { id: 'LAST', title: 'jobs.last' },
-];
+const JOBS = {
+  DRAW_UPPER: 'jobs.draw_upper',
+  DRAW_LINING: 'jobs.draw_lining',
+  STITCH_UPPER: 'jobs.stitch_upper',
+  STITCH_OUTSOLE: 'jobs.stitch_outsole',
+  STITCH_INSOLE: 'jobs.stitch_insole',
+  LAST: 'jobs.last',
+};
 
-const GENDERS = [
-  { id: 'MEN', title: 'genders.men' },
-  { id: 'WOMEN', title: 'genders.women' },
-  { id: 'KIDS', title: 'genders.kids' },
-];
+const GENDERS = {
+  MEN: 'genders.men',
+  WOMEN: 'genders.women',
+  KIDS: 'genders.kids',
+};
 
 enum JOB {
   DRAW_UPPER = 'DRAW_UPPER',

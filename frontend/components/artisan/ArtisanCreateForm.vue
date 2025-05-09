@@ -61,7 +61,10 @@ const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
 const { t } = useI18n();
 const jobOptions = computed(() =>
-  JOBS.map((job) => ({ id: job.id, title: t(job.title) }))
+  (Object.keys(JOBS) as Array<keyof typeof JOBS>).map((key) => ({
+    id: key,
+    title: t(JOBS[key]),
+  }))
 );
 const errorMessage = ref('');
 const form = reactive({
@@ -80,7 +83,7 @@ const { execute: executeCreate, isFetching: isCreating } = useMutation(
     },
     onError(err) {
       errorMessage.value =
-        (err.graphqlErrors?.[0]?.extensions?.['originalError'] as string) ??
+        JSON.stringify(err.graphqlErrors?.[0]?.extensions?.['originalError']) ??
         err.message;
     },
     clearCacheTags: [CACHE_ARTISANS],
@@ -94,8 +97,9 @@ const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
     },
     onError(err) {
       errorMessage.value =
-        (err.graphqlErrors?.[0]?.extensions?.['originalError'] as string) ??
-        err.message;
+        JSON.stringify(
+          err.graphqlErrors?.[0]?.extensions?.['originalError'] as string
+        ) ?? err.message;
     },
     clearCacheTags: [CACHE_ARTISANS, CACHE_ARTISAN],
   }

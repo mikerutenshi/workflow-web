@@ -27,6 +27,7 @@ export class TaskService {
     return this.prisma.task.findMany({
       where: { workId },
       include: { artisan: true },
+      orderBy: { type: 'asc' },
     });
   }
 }

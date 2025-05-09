@@ -15,6 +15,7 @@
         <v-text-field
           :label="$t('label.order_no')"
           v-model.number="form.orderNo"
+          type="number"
         ></v-text-field>
 
         <v-autocomplete

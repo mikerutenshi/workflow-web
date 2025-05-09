@@ -117,8 +117,8 @@ const headers = [
   { title: t('label.product'), key: 'work.product.sku' },
   { title: t('label.job'), key: 'type' },
   { title: t('label.done_at'), key: 'doneAt' },
+  { title: t('label.payable'), key: 'payablePerTask' },
   { title: t('label.quantity'), key: 'quantityPerTask' },
   { title: t('label.cost'), key: 'costPerTask' },
-  { title: t('label.payable'), key: 'payablePerTask' },
 ];
 </script>

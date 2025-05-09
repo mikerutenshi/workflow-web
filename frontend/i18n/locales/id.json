@@ -14,11 +14,11 @@
   },
   "nav": {
     "home": "Rumah",
-    "production_status": "Status Produksi",
+    "production_status": "Produksi",
     "products": "Sepatu",
     "labor_costs": "Biaya Tenaga Kerja",
     "artisans": "Perajin",
-    "payroll": "Penggajian"
+    "payroll": "Daftar Upah"
   },
   "page": {
     "artisan_create": "Buat Perajin Baru",
@@ -29,7 +29,7 @@
     "colors": "Warna",
     "labor_costs": "Biaya Tenaga Kerja",
     "labor_cost_update": "Ubah Biaya Tenaga Kerja",
-    "payroll": "Penggajian",
+    "payroll": "Daftar Upah",
     "product_category_create": "Buat Kategori Sepatu Baru",
     "product_categories": "Kategori Sepatu",
     "product_category_edit": "Ubah Kategori Sepatu",
@@ -40,7 +40,7 @@
     "products": "Sepatu",
     "product_edit": "Ubah Sepatu",
     "work_create": "Buat Pekerjaan Baru",
-    "works": "Status Produksi",
+    "works": "Produksi",
     "work_edit": "Ubah Pekerjaan"
   },
   "create_btn": {
@@ -100,12 +100,12 @@
     "fill_artisans": "Isi Nama Perajin"
   },
   "jobs": {
-    "draw_upper": "Menggambar Upper",
-    "draw_lining": "Menggambar Lining",
+    "draw_upper": "Menggurat Upper",
+    "draw_lining": "Menggurat Lining",
     "stitch_upper": "Menjahit Upper",
     "stitch_outsole": "Menjahit Outsole",
     "stitch_insole": "Menjahit Insole",
-    "last": "Membentuk"
+    "last": "Melasting"
   },
   "genders": {
     "men": "Laki-laki",

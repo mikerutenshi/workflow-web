@@ -2,13 +2,9 @@
   <v-row justify="center" align="center">
     <v-col>
       <v-form class="pa-4" @submit.prevent="handleSubmit">
-        <v-alert v-if="createError" type="error">
-          {{ createError }}
+        <v-alert v-if="errorMessage" type="error">
+          {{ errorMessage }}
         </v-alert>
-        <v-alert v-if="updateError" type="error">
-          {{ updateError }}
-        </v-alert>
-        <v-text-field v-model="form.sku" :label="$t('label.sku')" />
 
         <v-row>
           <v-col>
@@ -51,6 +47,8 @@
             </NuxtLink>
           </v-col>
         </v-row>
+
+        <v-text-field v-model="form.sku" :label="$t('label.sku')" />
 
         <v-row align="center">
           <v-col>
@@ -160,6 +158,7 @@ import { mdiPencil, mdiPlus } from '@mdi/js';
 
 const route = useRoute();
 const productId = ref(route.params.id as string);
+const errorMessage = ref('');
 
 const form = reactive({
   sku: '',
@@ -174,10 +173,18 @@ const {
   data: createData,
   isFetching: isCreating,
   execute: executeCreate,
-  error: createError,
 } = useMutation(CreateProductDocument, {
   onData() {
     navigateTo(localePath('/products'));
+  },
+  onError(err) {
+    errorMessage.value +=
+      (
+        err.graphqlErrors?.[0]?.extensions?.['originalError'] as Record<
+          string,
+          any
+        >
+      )?.['message'] ?? err.message;
   },
   clearCacheTags: [CACHE_PRODUCTS],
 });
@@ -185,10 +192,18 @@ const {
   data: updateData,
   isFetching: isUpdating,
   execute: executeUpdate,
-  error: updateError,
 } = useMutation(UpdateProductDocument, {
   onData() {
     navigateTo(localePath('/products'));
+  },
+  onError(err) {
+    errorMessage.value +=
+      (
+        err.graphqlErrors?.[0]?.extensions?.['originalError'] as Record<
+          string,
+          any
+        >
+      )?.['message'] ?? err.message;
   },
   clearCacheTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
 });
