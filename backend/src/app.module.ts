@@ -14,6 +14,7 @@ import { ProductModule } from './product/product.module';
 import { ArtisanModule } from './artisan/artisan.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductionModule } from './production/production.module';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { ProductionModule } from './production/production.module';
       ],
       inject: [AuthService, ConfigService],
       useFactory: (authService: AuthService, configService: ConfigService) => ({
-        playground: true,
+        playground: false,
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         cors: {
           origin: [
