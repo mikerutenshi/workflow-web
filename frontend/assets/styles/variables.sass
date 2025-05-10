@@ -5,9 +5,16 @@
 
 $translucent-background:rgba(255, 255, 255, 0.8) 
 $appbar-height: 64px
+$datepicker-height: 110px
 
 .wf-fill-screen
   height: calc(100vh - $appbar-height)
+  display: flex
+  flex-direction: column
+  overflow: auto
+
+.wf-fill-screen-after-datepicker
+  height: calc(100vh - $appbar-height - $datepicker-height)
   display: flex
   flex-direction: column
   overflow: auto

@@ -34,7 +34,7 @@ export class AuthService {
 
     return this.prisma.user.create({
       data: {
-        email: data.email,
+        email: data.email.toLowerCase(),
         password: password,
         firstName: data.firstName,
         lastName: data.lastName,
@@ -66,7 +66,7 @@ export class AuthService {
 
   async logIn(data: LogInDto): Promise<{ user: User; accessToken: string }> {
     const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
+      where: { email: data.email.toLowerCase() },
       include: { role: true },
     });
 

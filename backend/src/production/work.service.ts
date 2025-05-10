@@ -99,12 +99,18 @@ export class WorkService {
     return work;
   }
 
-  getWorks(): Promise<WorkWithTasks[]> {
+  getWorks(startDate: Date, endDate: Date): Promise<WorkWithTasks[]> {
     return this.prisma.work.findMany({
       include: {
         sizes: { include: { size: true }, orderBy: { size: { eu: 'asc' } } },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: true,
+      },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
       },
     });
   }

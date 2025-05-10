@@ -18,7 +18,7 @@ export class SizeService {
   }
 
   getSizes(): Promise<Size[]> {
-    return this.prisma.size.findMany();
+    return this.prisma.size.findMany({ orderBy: { eu: 'asc' } });
   }
 
   async getSize(id: number): Promise<Size> {

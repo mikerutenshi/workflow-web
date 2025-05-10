@@ -41,12 +41,12 @@
           v-model="sizes"
           return-object
         >
-          <template #item="{ props, item }">
+          <!-- <template #item="{ props, item }">
             <v-list-item
               v-bind="props"
               :title="`${item.raw.eu} | ${item.raw.us} | ${item.raw.uk}`"
             ></v-list-item>
-          </template>
+          </template> -->
         </v-autocomplete>
 
         <v-card class="mb-4">

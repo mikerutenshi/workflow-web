@@ -272,11 +272,11 @@ type Query {
   getArtisans: [Artisan!]!
   getArtisan(id: ID!): Artisan!
   getWork(id: ID!): WorkWithTasks!
-  getWorks: [WorkWithTasks!]!
+  getWorks(startDate: Date!, endDate: Date!): [WorkWithTasks!]!
   getSize(id: ID!): Size!
   getSizes: [Size!]!
   getTasks(workId: ID!): [TaskWithArtisan!]!
-  getPayroll: PayrollGetDto!
+  getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
 }
 
 type Mutation {

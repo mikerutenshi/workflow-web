@@ -48,7 +48,11 @@
           </v-col>
         </v-row>
 
-        <v-text-field v-model="form.sku" :label="$t('label.sku')" />
+        <v-text-field
+          v-model="form.sku"
+          :label="$t('label.sku')"
+          class="mt-4"
+        />
 
         <v-row align="center">
           <v-col>

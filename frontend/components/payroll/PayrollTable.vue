@@ -1,6 +1,15 @@
 <template>
-  <v-row justify="center" class="mt-4">
+  <v-row justify="center">
     <v-col>
+      <v-date-input
+        :label="$t('label.date')"
+        variant="outlined"
+        multiple="range"
+        class="ma-4"
+        v-model="datePicker"
+        show-adjacent-months
+      ></v-date-input>
+
       <v-card>
         <v-row no-gutters align="center">
           <v-col class="d-flex flex-column align-center my-2" cols="6">
@@ -74,10 +83,41 @@
 import { useQuery } from 'villus';
 import { GetPayrollDocument } from '~/api/generated/types';
 
-const { data } = useQuery({
+const today = new Date();
+const thursday = new Date();
+
+if (today.getDay() > 5) {
+  // If today is after Friday, get next Thursday
+  thursday.setDate(today.getDate() + ((4 - today.getDay() + 7) % 7));
+} else {
+  // If today is Friday or earlier, get previous Thursday
+  thursday.setDate(today.getDate() - ((today.getDay() + 3) % 7));
+}
+const form = reactive({
+  startDate: new Date(new Date(thursday).setDate(thursday.getDate() - 6)),
+  endDate: new Date(thursday),
+});
+const datePicker = ref([
+  ...Array.from(
+    {
+      length:
+        (form.endDate.getTime() - form.startDate.getTime()) /
+          (1000 * 60 * 60 * 24) +
+        1,
+    },
+    (_, i) => new Date(form.startDate.getTime() + i * (1000 * 60 * 60 * 24))
+  ),
+]);
+
+const { execute, data } = useQuery({
   query: GetPayrollDocument,
   cachePolicy: 'network-only',
   tags: [CACHE_PAYROLL],
+  variables: computed(() => ({
+    startDate: form.startDate,
+    endDate: form.endDate,
+  })),
+  paused: true,
 });
 
 const display = reactive({
@@ -121,4 +161,23 @@ const headers = [
   { title: t('label.quantity'), key: 'quantityPerTask' },
   { title: t('label.cost'), key: 'costPerTask' },
 ];
+
+watch(
+  datePicker,
+  (newDates: Date[]) => {
+    form.startDate = new Date(
+      newDates
+        .reduce((min, date) => (date < min ? date : min))
+        .setHours(0, 0, 0, 0)
+    );
+
+    form.endDate = new Date(
+      newDates
+        .reduce((max, date) => (date > max ? date : max), newDates[0])
+        .setHours(23, 59, 59, 999)
+    );
+    execute();
+  },
+  { immediate: true }
+);
 </script>

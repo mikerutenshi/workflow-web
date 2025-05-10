@@ -7,7 +7,7 @@ import { Product } from '@/models/product.model';
 export class PayrollService {
   constructor(private prisma: PrismaService) {}
 
-  async getPayroll(): Promise<PayrollGetDto> {
+  async getPayroll(startDate: Date, endDate: Date): Promise<PayrollGetDto> {
     const artisans = await this.prisma.artisan.findMany({
       include: {
         tasks: {
@@ -28,6 +28,16 @@ export class PayrollService {
             },
           },
           orderBy: [{ doneAt: 'asc' }, { work: { product: { sku: 'asc' } } }],
+        },
+      },
+      where: {
+        tasks: {
+          some: {
+            doneAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
         },
       },
       orderBy: { firstName: 'asc' },

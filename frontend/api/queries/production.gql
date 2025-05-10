@@ -43,6 +43,8 @@ fragment WorkWithTasks on WorkWithTasks {
   }
   createdBy
   updatedBy
+  createdAt
+  updatedAt
 }
 
 fragment Work on WorkWithTasks {
@@ -107,8 +109,8 @@ mutation deleteWork($id: ID!) {
   deleteWork(id: $id)
 }
 
-query getWorks {
-  getWorks {
+query getWorks($startDate: Date!, $endDate: Date!) {
+  getWorks(startDate: $startDate, endDate: $endDate) {
     ...WorkWithTasks
   }
 }
@@ -131,8 +133,8 @@ mutation updateTasks($data: [TaskUpdateDto!]!) {
   }
 }
 
-query getPayroll {
-  getPayroll {
+query getPayroll($startDate: Date!, $endDate: Date!) {
+  getPayroll(startDate: $startDate, endDate: $endDate) {
     artisans {
       firstName
       lastName

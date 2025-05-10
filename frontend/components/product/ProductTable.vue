@@ -16,7 +16,7 @@
                 :style="{ backgroundColor: color.color.hexCode }"
               />
             </template>
-            <span>{{ `${color.order}. ${color.color.name}` }}</span>
+            <span>{{ color.color.name }}</span>
           </v-list-item>
         </v-list>
       </template>

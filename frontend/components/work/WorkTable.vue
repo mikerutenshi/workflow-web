@@ -1,5 +1,14 @@
 <template>
-  <div v-if="data" class="wf-fill-screen">
+  <v-date-input
+    :label="$t('label.date')"
+    variant="outlined"
+    multiple="range"
+    class="ma-4"
+    v-model="datePicker"
+    show-adjacent-months
+  ></v-date-input>
+
+  <div v-if="data" class="wf-fill-screen-after-datepicker">
     <v-data-table
       :headers="headers"
       :items="data.getWorks"
@@ -78,14 +87,37 @@ import {
 } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
-import { GetWorksDocument } from '~/api/generated/types';
+import { GetWorksDocument, type WorkWithTasks } from '~/api/generated/types';
 import { CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data } = useQuery({
+const today = new Date();
+
+const form = reactive({
+  startDate: new Date(new Date(today).setDate(today.getDate() - 30)),
+  endDate: new Date(today),
+});
+const datePicker = ref([
+  ...Array.from(
+    {
+      length:
+        (form.endDate.getTime() - form.startDate.getTime()) /
+          (1000 * 60 * 60 * 24) +
+        1,
+    },
+    (_, i) => new Date(form.startDate.getTime() + i * (1000 * 60 * 60 * 24))
+  ),
+]);
+
+const { execute, data } = useQuery({
   query: GetWorksDocument,
   tags: [CACHE_WORKS],
+  variables: computed(() => ({
+    startDate: form.startDate,
+    endDate: form.endDate,
+  })),
+  paused: true,
 });
 
 const { t } = useI18n();
@@ -98,4 +130,28 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.tasks'), key: 'tasks', minWidth: '300' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
+
+watch(
+  datePicker,
+  (newDates: Date[]) => {
+    form.startDate = new Date(
+      newDates
+        .reduce((min, date) => (date < min ? date : min))
+        .setHours(0, 0, 0, 0)
+    );
+
+    form.endDate = new Date(
+      newDates
+        .reduce((max, date) => (date > max ? date : max), newDates[0])
+        .setHours(23, 59, 59, 999)
+    );
+    execute();
+  },
+  { immediate: true }
+);
+
+watchEffect(() => {
+  console.log(`Form: ${JSON.stringify(form)}`);
+  console.log(`Dates: ${JSON.stringify(datePicker.value)}`);
+});
 </script>

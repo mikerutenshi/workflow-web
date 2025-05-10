@@ -38,7 +38,10 @@ export class WorkResolver {
   }
 
   @Query(() => [WorkWithTasks])
-  getWorks(): Promise<WorkWithTasks[]> {
-    return this.workService.getWorks();
+  getWorks(
+    @Args('startDate', { type: () => Date }) startDate: Date,
+    @Args('endDate', { type: () => Date }) endDate: Date,
+  ): Promise<WorkWithTasks[]> {
+    return this.workService.getWorks(startDate, endDate);
   }
 }
