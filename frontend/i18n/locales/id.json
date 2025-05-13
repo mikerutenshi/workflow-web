@@ -18,7 +18,7 @@
     "products": "Sepatu",
     "labor_costs": "Biaya Tenaga Kerja",
     "artisans": "Perajin",
-    "payroll": "Daftar Upah"
+    "payroll": "Penggajian"
   },
   "page": {
     "artisan_create": "Buat Perajin Baru",
@@ -29,7 +29,7 @@
     "colors": "Warna",
     "labor_costs": "Biaya Tenaga Kerja",
     "labor_cost_update": "Ubah Biaya Tenaga Kerja",
-    "payroll": "Daftar Upah",
+    "payroll": "Penggajian",
     "product_category_create": "Buat Kategori Sepatu Baru",
     "product_categories": "Kategori Sepatu",
     "product_category_edit": "Ubah Kategori Sepatu",

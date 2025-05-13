@@ -1,134 +1,147 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col>
-      <v-form class="pa-4" @submit.prevent="handleSubmit">
-        <v-alert v-if="errorMessage" type="error">
-          {{ errorMessage }}
-        </v-alert>
+  <v-form @submit.prevent="handleSubmit" class="h-100">
+    <v-container class="h-100 d-flex flex-column">
+      <v-row>
+        <v-col>
+          <v-alert v-if="errorMessage" type="error">
+            {{ errorMessage }}
+          </v-alert>
 
-        <v-row>
-          <v-col>
-            <v-autocomplete
-              v-model="form.productGroupId"
-              :label="$t('label.product_group')"
-              auto-select-first
-              item-value="id"
-              item-title="skuNumeric"
-              :items="productGroupsData?.getProductGroups"
-              :loading="isFetchingProductGroups"
-            >
-              <template v-slot:item="{ props, item }">
-                <v-list-item
-                  v-bind="props"
-                  :title="item.raw.skuNumeric"
-                  :subtitle="$t(renderGender(item.raw.productCategory.gender))"
-                >
-                  <template #append>
-                    <NuxtLink
-                      :to="$localePath(`/product-groups/update/${item.raw.id}`)"
-                    >
-                      <v-btn
-                        color="primary"
-                        :icon="mdiPencil"
-                        size="small"
-                        variant="text"
-                      ></v-btn>
-                    </NuxtLink>
-                  </template>
-                </v-list-item>
-              </template>
-            </v-autocomplete>
-          </v-col>
-          <v-col cols="12" md="4" class="d-flex justify-end align-center">
-            <NuxtLink :to="$localePath('/product-groups/create')">
-              <v-btn :prepend-icon="mdiPlus" color="primary">{{
-                $t('create_btn.product_group')
-              }}</v-btn>
-            </NuxtLink>
-          </v-col>
-        </v-row>
+          <v-row>
+            <v-col>
+              <v-autocomplete
+                v-model="form.productGroupId"
+                :label="$t('label.product_group')"
+                auto-select-first
+                item-value="id"
+                item-title="skuNumeric"
+                :items="productGroupsData?.getProductGroups"
+                :loading="isFetchingProductGroups"
+                type="number"
+              >
+                <template v-slot:item="{ props, item }">
+                  <v-list-item
+                    v-bind="props"
+                    :title="item.raw.skuNumeric"
+                    :subtitle="
+                      $t(renderGender(item.raw.productCategory.gender))
+                    "
+                  >
+                    <template #append>
+                      <NuxtLink
+                        :to="
+                          $localePath(`/product-groups/update/${item.raw.id}`)
+                        "
+                      >
+                        <v-btn
+                          color="primary"
+                          :icon="mdiPencil"
+                          size="small"
+                          variant="text"
+                        ></v-btn>
+                      </NuxtLink>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-autocomplete>
+            </v-col>
+            <v-col cols="12" md="4" class="d-flex justify-end align-center">
+              <NuxtLink :to="$localePath('/product-groups/create')">
+                <v-btn :prepend-icon="mdiPlus" color="primary">{{
+                  $t('create_btn.product_group')
+                }}</v-btn>
+              </NuxtLink>
+            </v-col>
+          </v-row>
 
-        <v-text-field
-          v-model="form.sku"
-          :label="$t('label.sku')"
-          class="mt-4"
-        />
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="form.sku"
+                :label="$t('label.sku')"
+                class="mt-4"
+              />
+            </v-col>
+          </v-row>
 
-        <v-row align="center">
-          <v-col>
-            <v-autocomplete
-              no-filter
-              v-model="selectedColors"
-              :label="$t('label.select_colors')"
-              multiple
-              chips
-              auto-select-first
-              :items="filteredColors"
-              :loading="isFetchingColors"
-              @update:search="onSearch"
-            >
-              <template #item="{ item, props }">
-                <v-list-item v-bind="props" :title="item.value.name">
-                  <template #prepend>
-                    <div
-                      class="color-box"
-                      :style="{ backgroundColor: item.value.hexCode }"
-                    />
-                  </template>
-                  <template #append>
-                    <NuxtLink
-                      :to="$localePath(`/colors/update/${item.raw.id}`)"
-                    >
-                      <v-btn
-                        color="primary"
-                        :icon="mdiPencil"
-                        size="small"
-                        variant="text"
-                      ></v-btn>
-                    </NuxtLink>
-                  </template>
-                </v-list-item>
-              </template>
+          <v-row align="center">
+            <v-col>
+              <v-select
+                no-filter
+                v-model="selectedColors"
+                :label="$t('label.select_colors')"
+                multiple
+                chips
+                auto-select-first
+                :items="filteredColors"
+                :loading="isFetchingColors"
+                @update:search="onSearch"
+              >
+                <template #item="{ item, props }">
+                  <v-list-item v-bind="props" :title="item.value.name">
+                    <template #prepend>
+                      <div
+                        class="color-box"
+                        :style="{ backgroundColor: item.value.hexCode }"
+                      />
+                    </template>
+                    <template #append>
+                      <NuxtLink
+                        :to="$localePath(`/colors/update/${item.raw.id}`)"
+                      >
+                        <v-btn
+                          color="primary"
+                          :icon="mdiPencil"
+                          size="small"
+                          variant="text"
+                        ></v-btn>
+                      </NuxtLink>
+                    </template>
+                  </v-list-item>
+                </template>
 
-              <template #chip="{ item, index }">
-                <v-chip @click="remove(index)">
-                  <template #prepend>
-                    <div
-                      :style="{ backgroundColor: item.value.hexCode }"
-                      class="color-box"
-                    ></div>
-                  </template>
-                  <span>{{ item.value.name }}</span>
-                </v-chip>
-              </template>
-            </v-autocomplete>
-          </v-col>
+                <template #chip="{ item, index }">
+                  <v-chip @click="remove(index)">
+                    <template #prepend>
+                      <div
+                        :style="{ backgroundColor: item.value.hexCode }"
+                        class="color-box"
+                      ></div>
+                    </template>
+                    <span>{{ item.value.name }}</span>
+                  </v-chip>
+                </template>
+              </v-select>
+            </v-col>
 
-          <v-col cols="12" md="4" class="d-flex justify-end align-center">
-            <NuxtLink :to="$localePath('/colors/create')">
-              <v-btn :prepend-icon="mdiPlus" color="primary">
-                {{ $t('create_btn.color') }}
-              </v-btn>
-            </NuxtLink>
-          </v-col>
-        </v-row>
+            <v-col cols="12" md="4" class="d-flex justify-end align-center">
+              <NuxtLink :to="$localePath('/colors/create')">
+                <v-btn :prepend-icon="mdiPlus" color="primary">
+                  {{ $t('create_btn.color') }}
+                </v-btn>
+              </NuxtLink>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
 
-        <div class="d-flex mt-4">
-          <ActionCancel></ActionCancel>
-          <ActionConfirm v-if="productId" :loading="isUpdating">{{
-            $t('btn.update')
-          }}</ActionConfirm>
-          <ActionConfirm v-else :loading="isCreating">{{
-            $t('btn.create')
-          }}</ActionConfirm>
-          <ActionDelete
-            v-if="productId"
-            @click="executeDelete({ id: productId })"
-          ></ActionDelete>
-        </div>
-      </v-form>
-    </v-col>
-  </v-row>
+      <v-row class="flex-grow-1"></v-row>
+
+      <v-row align="end" class="ma-1">
+        <ActionCancel></ActionCancel>
+        <ActionConfirm v-if="productId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+        <ActionDelete
+          v-if="productId"
+          @click="executeDelete({ id: productId })"
+        ></ActionDelete>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 
 <style scoped>

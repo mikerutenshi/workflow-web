@@ -1,25 +1,5 @@
 <template>
   <v-app>
-    <v-app-bar ref="appBar" :elevation="2" app>
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
-      </template>
-
-      <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
-
-      <template
-        v-slot:append
-        v-if="pagesWithCreate.includes(currentRouteName as string)"
-      >
-        <NuxtLink :to="createBtn.route" class="mr-4">
-          <v-btn variant="flat">
-            <v-icon left :icon="mdiPlus"></v-icon>
-            {{ createBtn.title }}
-          </v-btn>
-        </NuxtLink>
-      </template>
-    </v-app-bar>
-
     <v-navigation-drawer v-model="drawer" app temporary>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
@@ -61,7 +41,27 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="pa-0 ma-0">
+    <v-app-bar ref="appBar" :elevation="2" app>
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
+      </template>
+
+      <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
+
+      <template
+        v-slot:append
+        v-if="pagesWithCreate.includes(currentRouteName as string)"
+      >
+        <NuxtLink :to="createBtn.route" class="mr-4">
+          <v-btn variant="flat">
+            <v-icon left :icon="mdiPlus"></v-icon>
+            {{ createBtn.title }}
+          </v-btn>
+        </NuxtLink>
+      </template>
+    </v-app-bar>
+
+    <v-main>
       <slot />
     </v-main>
   </v-app>
@@ -98,6 +98,11 @@ const navItems = computed(() => {
   return [
     { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
     {
+      title: t('nav.products'),
+      route: localePath('/products'),
+      icon: mdiShoeFormal,
+    },
+    {
       title: t('nav.production_status'),
       route: localePath('/works'),
       icon: mdiChartTimeline,
@@ -108,19 +113,14 @@ const navItems = computed(() => {
       icon: mdiCashRegister,
     },
     {
-      title: t('nav.products'),
-      route: localePath('/products'),
-      icon: mdiShoeFormal,
+      title: t('nav.labor_costs'),
+      route: localePath('/labor-costs'),
+      icon: mdiCalculator,
     },
     {
       title: t('nav.artisans'),
       route: localePath('/artisans'),
       icon: mdiFaceMan,
-    },
-    {
-      title: t('nav.labor_costs'),
-      route: localePath('/labor-costs'),
-      icon: mdiCalculator,
     },
     // {
     //   title: 'Utility',
