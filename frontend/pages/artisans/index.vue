@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <ArtisanTable />
-  </v-main>
+  <ArtisanTable />
 </template>
 
 <script setup lang="ts">

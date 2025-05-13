@@ -1,8 +1,9 @@
 <template>
-  <v-main>
+  <v-container class="d-flex flex-column">
     <WorkCreateForm />
+    <v-divider class="my-4"></v-divider>
     <TaskUpdateForm />
-  </v-main>
+  </v-container>
 </template>
 
 <script setup lang="ts">

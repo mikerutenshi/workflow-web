@@ -1,5 +1,25 @@
 <template>
   <v-app>
+    <v-app-bar ref="appBar" :elevation="2" app>
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
+      </template>
+
+      <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
+
+      <template
+        v-slot:append
+        v-if="pagesWithCreate.includes(currentRouteName as string)"
+      >
+        <NuxtLink :to="createBtn.route" class="mr-4">
+          <v-btn variant="flat">
+            <v-icon left :icon="mdiPlus"></v-icon>
+            {{ createBtn.title }}
+          </v-btn>
+        </NuxtLink>
+      </template>
+    </v-app-bar>
+
     <v-navigation-drawer v-model="drawer" app temporary>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
@@ -40,26 +60,6 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-
-    <v-app-bar ref="appBar" :elevation="2" app>
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
-      </template>
-
-      <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
-
-      <template
-        v-slot:append
-        v-if="pagesWithCreate.includes(currentRouteName as string)"
-      >
-        <NuxtLink :to="createBtn.route" class="mr-4">
-          <v-btn variant="flat">
-            <v-icon left :icon="mdiPlus"></v-icon>
-            {{ createBtn.title }}
-          </v-btn>
-        </NuxtLink>
-      </template>
-    </v-app-bar>
 
     <v-main>
       <slot />

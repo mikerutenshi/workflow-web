@@ -1,84 +1,107 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col>
-      <v-form class="pa-4" @submit.prevent="handleSubmit">
-        <v-alert v-if="errorMessages" type="error">
-          {{ errorMessages }}
-        </v-alert>
+  <v-form class="h-100" @submit.prevent="handleSubmit">
+    <v-container class="h-100 d-flex flex-column">
+      <v-row>
+        <v-col>
+          <v-alert v-if="errorMessages" type="error">
+            {{ errorMessages }}
+          </v-alert>
 
-        <v-date-input
-          :label="$t('label.date')"
-          v-model="form.date"
-          variant="outlined"
-        ></v-date-input>
+          <v-row>
+            <v-col>
+              <v-date-input
+                :label="$t('label.date')"
+                v-model="form.date"
+                variant="outlined"
+              ></v-date-input>
+            </v-col>
+          </v-row>
 
-        <v-text-field
-          :label="$t('label.order_no')"
-          v-model.number="form.orderNo"
-          type="number"
-        ></v-text-field>
+          <v-row>
+            <v-col>
+              <v-text-field
+                :label="$t('label.order_no')"
+                v-model.number="form.orderNo"
+                type="number"
+              ></v-text-field>
+            </v-col>
+          </v-row>
 
-        <v-autocomplete
-          :label="$t('label.product')"
-          auto-select-first
-          item-value="id"
-          item-title="sku"
-          :items="productsData?.getProducts"
-          :loading="isFetchingProducts"
-          v-model="form.productId"
-        >
-        </v-autocomplete>
+          <v-row>
+            <v-col>
+              <v-autocomplete
+                :label="$t('label.product')"
+                auto-select-first
+                item-value="id"
+                item-title="sku"
+                :items="productsData?.getProducts"
+                :loading="isFetchingProducts"
+                v-model="form.productId"
+              >
+              </v-autocomplete>
+            </v-col>
+          </v-row>
 
-        <v-autocomplete
-          :label="$t('label.select_sizes')"
-          multiple
-          chips
-          auto-select-first
-          :items="computeSizeList"
-          :loading="isFetchingSizes"
-          item-title="eu"
-          item-value="id"
-          v-model="sizes"
-          return-object
-        >
-          <!-- <template #item="{ props, item }">
+          <v-row>
+            <v-col>
+              <v-select
+                :label="$t('label.select_sizes')"
+                multiple
+                chips
+                auto-select-first
+                :items="computeSizeList"
+                :loading="isFetchingSizes"
+                item-title="eu"
+                item-value="id"
+                v-model="sizes"
+                return-object
+              >
+                <!-- <template #item="{ props, item }">
             <v-list-item
               v-bind="props"
               :title="`${item.raw.eu} | ${item.raw.us} | ${item.raw.uk}`"
             ></v-list-item>
           </template> -->
-        </v-autocomplete>
+              </v-select>
+            </v-col>
+          </v-row>
 
-        <v-card class="mb-4">
-          <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
-          <v-data-table
-            :headers="sizeHeaders"
-            :items="sizesTable"
-            class="elevation-1"
-            editable
-            hide-default-footer
-          >
-            <template #item.quantity="{ item }">
-              <v-text-field
-                v-model.number="item.quantity"
-                :label="$t('label.quantity')"
-                type="number"
-              />
-            </template>
-          </v-data-table>
-        </v-card>
+          <v-row>
+            <v-col>
+              <v-card>
+                <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
+                <v-card-text>
+                  <v-data-table
+                    :headers="sizeHeaders"
+                    :items="sizesTable"
+                    editable
+                    hide-default-footer
+                  >
+                    <template #item.quantity="{ item }">
+                      <v-text-field
+                        v-model.number="item.quantity"
+                        :label="$t('label.quantity')"
+                        type="number"
+                      />
+                    </template>
+                  </v-data-table>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
 
-        <div class="d-flex mt-4">
-          <ActionCancel></ActionCancel>
-          <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
-          <ActionDelete
-            v-if="workId"
-            @click="executeDelete({ id: workId })"
-          ></ActionDelete>
-        </div>
-      </v-form>
-    </v-col>
-  </v-row>
+      <v-row align="end" class="ma-1 mt-4">
+        <ActionCancel></ActionCancel>
+        <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
+        <ActionDelete
+          v-if="workId"
+          @click="executeDelete({ id: workId })"
+        ></ActionDelete>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <WorkTable />
-  </v-main>
+  <WorkTable />
 </template>
 
 <script setup lang="ts">

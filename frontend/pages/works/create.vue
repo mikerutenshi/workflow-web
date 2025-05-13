@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <WorkCreateForm />
-  </v-main>
+  <WorkCreateForm />
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <span>Product Category Page</span>
-  </v-main>
+  <span>Product Category Page</span>
 </template>
 
 <script setup lang="ts">

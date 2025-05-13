@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <ArtisanCreateForm />
-  </v-main>
+  <ArtisanCreateForm />
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data" class="wf-fill-screen">
+  <v-container v-if="data" class="h-100 d-flex flex-column">
     <v-data-table
       :headers="headers"
       :items="data.getProducts"
@@ -49,8 +49,8 @@
         </NuxtLink>
       </template>
     </v-data-table>
-  </div>
-  <div v-else>Loading...</div>
+  </v-container>
+  <v-container v-else>Loading...</v-container>
 </template>
 
 <style scoped>

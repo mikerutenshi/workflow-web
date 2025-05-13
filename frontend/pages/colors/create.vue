@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <ColorCreateForm />
-  </v-main>
+  <ColorCreateForm />
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <ProductGroupCreateForm />
-  </v-main>
+  <ProductGroupCreateForm />
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <span>Colors Page</span>
-  </v-main>
+  <span>Colors Page</span>
 </template>
 
 <script setup lang="ts">

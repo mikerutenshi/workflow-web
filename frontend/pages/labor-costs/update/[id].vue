@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <LaborCostUpdateForm />
-  </v-main>
+  <LaborCostUpdateForm />
 </template>
 
 <script setup lang="ts">

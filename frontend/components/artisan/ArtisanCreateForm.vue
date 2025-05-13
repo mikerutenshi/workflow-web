@@ -1,47 +1,63 @@
 <template>
-  <v-row justify="center">
-    <v-col>
-      <v-form class="pa-4" @submit.prevent="handleSubmit">
-        <v-alert v-if="errorMessage" type="error">
-          {{ errorMessage }}
-        </v-alert>
-        <v-text-field
-          v-model="form.firstName"
-          :label="$t('label.first_name')"
-        />
-        <v-text-field
-          @blur="onBlur"
-          v-model="form.lastName"
-          :label="$t('label.last_name')"
-        />
-        <v-combobox
-          v-model="form.jobs"
-          :items="jobOptions"
-          :return-object="false"
-          :label="$t('label.select_jobs')"
-          multiple
-          chips
-          auto-select-first
-          item-title="title"
-          item-value="id"
-        ></v-combobox>
+  <v-form class="h-100" @submit.prevent="handleSubmit">
+    <v-container class="h-100 d-flex flex-column">
+      <v-row>
+        <v-col>
+          <v-alert v-if="errorMessage" type="error">
+            {{ errorMessage }}
+          </v-alert>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="form.firstName"
+                :label="$t('label.first_name')"
+              />
+            </v-col>
+          </v-row>
 
-        <div class="d-flex mt-4">
-          <ActionCancel></ActionCancel>
-          <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
-            $t('btn.update')
-          }}</ActionConfirm>
-          <ActionConfirm v-else :loading="isCreating">{{
-            $t('btn.create')
-          }}</ActionConfirm>
-          <ActionDelete
-            v-if="artisanId"
-            @click="executeDelete({ id: artisanId })"
-          ></ActionDelete>
-        </div>
-      </v-form>
-    </v-col>
-  </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                @blur="onBlur"
+                v-model="form.lastName"
+                :label="$t('label.last_name')"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
+              <v-select
+                v-model="form.jobs"
+                :items="jobOptions"
+                :return-object="false"
+                :label="$t('label.select_jobs')"
+                multiple
+                chips
+                auto-select-first
+                item-title="title"
+                item-value="id"
+              ></v-select>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row align="end" class="ma-1">
+        <ActionCancel></ActionCancel>
+        <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+        <ActionDelete
+          v-if="artisanId"
+          @click="executeDelete({ id: artisanId })"
+        ></ActionDelete>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 
 <script setup lang="ts">

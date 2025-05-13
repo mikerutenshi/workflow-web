@@ -1,87 +1,107 @@
 <template>
-  <v-row justify="center">
-    <v-col>
-      <v-form class="pa-4" @submit.prevent="handleSubmit">
-        <v-alert v-if="createError" type="error">
-          {{
-            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            createError.message
-          }}
-        </v-alert>
-        <v-alert v-if="updateError" type="error">
-          {{
-            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            updateError.message
-          }}
-        </v-alert>
-        <v-text-field
-          v-model="form.skuNumeric"
-          @keypress="(e: any) => /[0-9]/.test(e.key) || e.preventDefault()"
-          :label="$t('label.sku_numeric')"
-          type="number"
-        />
-        <v-text-field v-model="form.name" :label="$t('label.product_name')" />
+  <v-form class="h-100" @submit.prevent="handleSubmit">
+    <v-container class="h-100 d-flex flex-column">
+      <v-row>
+        <v-col>
+          <v-alert v-if="createError" type="error">
+            {{
+              createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+              createError.message
+            }}
+          </v-alert>
+          <v-alert v-if="updateError" type="error">
+            {{
+              updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+              updateError.message
+            }}
+          </v-alert>
 
-        <v-row>
-          <v-col>
-            <v-autocomplete
-              v-model="form.productCategoryId"
-              :label="$t('label.product_category')"
-              auto-select-first
-              item-value="id"
-              item-title="name"
-              :items="data?.getProductCategories"
-              :loading="isFetchingQuery"
-            >
-              <template v-slot:item="{ props, item }">
-                <v-list-item
-                  v-bind="props"
-                  :title="item.raw.name"
-                  :subtitle="$t(renderGender(item.raw.gender))"
-                >
-                  <template #append>
-                    <NuxtLink
-                      :to="
-                        $localePath(`/product-categories/update/${item.raw.id}`)
-                      "
-                    >
-                      <v-btn
-                        color="primary"
-                        :icon="mdiPencil"
-                        size="small"
-                        variant="text"
-                      ></v-btn>
-                    </NuxtLink>
-                  </template>
-                </v-list-item>
-              </template>
-            </v-autocomplete>
-          </v-col>
-          <v-col cols="12" md="4" class="d-flex align-center justify-end">
-            <NuxtLink :to="$localePath('/product-categories/create')">
-              <v-btn :prepend-icon="mdiPlus" color="primary">{{
-                $t('create_btn.product_category')
-              }}</v-btn>
-            </NuxtLink>
-          </v-col>
-        </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="form.skuNumeric"
+                @keypress="(e: any) => /[0-9]/.test(e.key) || e.preventDefault()"
+                :label="$t('label.sku_numeric')"
+                type="number"
+              />
+            </v-col>
+          </v-row>
 
-        <div class="d-flex mt-4">
-          <ActionCancel></ActionCancel>
-          <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
-            $t('btn.update')
-          }}</ActionConfirm>
-          <ActionConfirm v-else :loading="isCreating">{{
-            $t('btn.create')
-          }}</ActionConfirm>
-          <ActionDelete
-            v-if="productGroupId"
-            @click="executeDelete({ id: productGroupId })"
-          ></ActionDelete>
-        </div>
-      </v-form>
-    </v-col>
-  </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="form.name"
+                :label="$t('label.product_name')"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
+              <v-select
+                v-model="form.productCategoryId"
+                :label="$t('label.product_category')"
+                auto-select-first
+                item-value="id"
+                item-title="name"
+                :items="data?.getProductCategories"
+                :loading="isFetchingQuery"
+              >
+                <template v-slot:item="{ props, item }">
+                  <v-list-item
+                    v-bind="props"
+                    :title="item.raw.name"
+                    :subtitle="$t(renderGender(item.raw.gender))"
+                  >
+                    <template #append>
+                      <NuxtLink
+                        :to="
+                          $localePath(
+                            `/product-categories/update/${item.raw.id}`
+                          )
+                        "
+                      >
+                        <v-btn
+                          color="primary"
+                          :icon="mdiPencil"
+                          size="small"
+                          variant="text"
+                        ></v-btn>
+                      </NuxtLink>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-select>
+            </v-col>
+
+            <v-col cols="12" md="4" class="d-flex align-center justify-end">
+              <NuxtLink :to="$localePath('/product-categories/create')">
+                <v-btn :prepend-icon="mdiPlus" color="primary">{{
+                  $t('create_btn.product_category')
+                }}</v-btn>
+              </NuxtLink>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row class="flex-grow-1"></v-row>
+
+      <v-row align="end" class="ma-1">
+        <ActionCancel></ActionCancel>
+        <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+        <ActionDelete
+          v-if="productGroupId"
+          @click="executeDelete({ id: productGroupId })"
+        ></ActionDelete>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 <script setup lang="ts">
 import { useMutation, useQuery } from 'villus';

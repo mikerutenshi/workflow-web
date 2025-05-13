@@ -1,57 +1,73 @@
 <template>
-  <v-row justify="center">
-    <v-col>
-      <v-form class="pa-4" @submit.prevent="handleSubmit">
-        <v-alert v-if="createError" type="error">
-          {{
-            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            createError.message
-          }}
-        </v-alert>
-        <v-alert v-if="updateError" type="error">
-          {{
-            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            updateError.message
-          }}
-        </v-alert>
-        <v-text-field v-model="form.name" :label="$t('label.name')" />
-        <v-autocomplete
-          v-model="form.gender"
-          :label="$t('label.gender')"
-          auto-select-first
-          item-value="id"
-          item-title="name"
-          :items="genders"
-        >
-          <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :title="item.title !== '' ? $t(renderGender(item.title as Gender)) : ''"
-            ></v-list-item>
-          </template>
-          <template v-slot:selection="{ item }">
-            <span>{{
-              item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
-            }}</span>
-          </template>
-        </v-autocomplete>
+  <v-form class="h-100" @submit.prevent="handleSubmit">
+    <v-container class="h-100 d-flex flex-column">
+      <v-row>
+        <v-col>
+          <v-alert v-if="createError" type="error">
+            {{
+              createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+              createError.message
+            }}
+          </v-alert>
+          <v-alert v-if="updateError" type="error">
+            {{
+              updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+              updateError.message
+            }}
+          </v-alert>
 
-        <div class="d-flex mt-4">
-          <ActionCancel></ActionCancel>
-          <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
-            $t('btn.update')
-          }}</ActionConfirm>
-          <ActionConfirm v-else :loading="isCreating">{{
-            $t('btn.create')
-          }}</ActionConfirm>
-          <ActionDelete
-            v-if="productCategoryId"
-            @click="executeDelete({ id: productCategoryId })"
-          ></ActionDelete>
-        </div>
-      </v-form>
-    </v-col>
-  </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field v-model="form.name" :label="$t('label.name')" />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
+              <v-select
+                v-model="form.gender"
+                :label="$t('label.gender')"
+                auto-select-first
+                item-value="id"
+                item-title="name"
+                :items="genders"
+              >
+                <template v-slot:item="{ props, item }">
+                  <v-list-item
+                    v-bind="props"
+                    :title="item.title !== '' ? $t(renderGender(item.title as Gender)) : ''"
+                  ></v-list-item>
+                </template>
+                <template v-slot:selection="{ item }">
+                  <span>{{
+                    item.title !== ''
+                      ? $t(renderGender(item.title as Gender))
+                      : ''
+                  }}</span>
+                </template>
+              </v-select>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row class="flex-grow-1"></v-row>
+
+      <v-row align="end" class="ma-1">
+        <ActionCancel></ActionCancel>
+        <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+        <ActionDelete
+          v-if="productCategoryId"
+          @click="executeDelete({ id: productCategoryId })"
+        ></ActionDelete>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 <script setup lang="ts">
 import { useMutation, useQuery } from 'villus';

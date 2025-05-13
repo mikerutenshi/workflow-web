@@ -1,77 +1,87 @@
 <template>
-  <v-row justify="center">
-    <v-col>
-      <v-date-input
-        :label="$t('label.date')"
-        variant="outlined"
-        multiple="range"
-        class="ma-4"
-        v-model="datePicker"
-        show-adjacent-months
-      ></v-date-input>
+  <v-container class="h-100 d-flex flex-column">
+    <v-row class="flex-grow-0">
+      <v-col>
+        <v-date-input
+          :label="$t('label.date')"
+          variant="outlined"
+          multiple="range"
+          class="ma-4"
+          v-model="datePicker"
+          show-adjacent-months
+        ></v-date-input>
+      </v-col>
+    </v-row>
 
-      <v-card>
-        <v-row no-gutters align="center">
-          <v-col class="d-flex flex-column align-center my-2" cols="6">
-            <div style="text-align: left">
-              <p>{{ $t('label.total_payable') }}</p>
-              <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
-            </div>
-          </v-col>
-          <v-divider vertical></v-divider>
-          <v-col class="d-flex flex-column align-center my-2" cols="6">
-            <div style="text-align: left">
-              <p>{{ $t('label.total_quantity') }}</p>
-              <h2>
-                {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
-              </h2>
-            </div>
-          </v-col>
-        </v-row>
-      </v-card>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-row no-gutters align="center">
+            <v-col class="d-flex flex-column align-center my-2" cols="6">
+              <div style="text-align: left">
+                <p>{{ $t('label.total_payable') }}</p>
+                <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
+              </div>
+            </v-col>
+            <v-divider vertical></v-divider>
+            <v-col class="d-flex flex-column align-center my-2" cols="6">
+              <div style="text-align: left">
+                <p>{{ $t('label.total_quantity') }}</p>
+                <h2>
+                  {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
+                </h2>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <v-card v-for="artisan in data?.getPayroll.artisans" class="my-4">
-        <v-card-title>
-          {{ `${artisan.firstName} ${artisan.lastName ?? ''}` }}
-        </v-card-title>
-        <v-card-subtitle class="d-flex align-center">
-          <span class="mr-2">{{ $t('label.payable') }}</span>
-          <h3 class="my-2">
-            {{ formatRupiah(artisan.payablePerArtisan) }}
-          </h3>
-          <v-divider vertical class="mx-4"></v-divider>
-          <span class="mr-2">{{ $t('label.quantity') }}</span>
-          <h3 class="my-2">
-            {{ $t('label.pairs', artisan.quantityPerArtisan) }}
-          </h3>
-        </v-card-subtitle>
+    <v-row>
+      <v-col>
+        <v-card v-for="artisan in data?.getPayroll.artisans" class="my-4">
+          <v-card-title>
+            {{ `${artisan.firstName} ${artisan.lastName ?? ''}` }}
+          </v-card-title>
+          <v-card-subtitle class="d-flex align-center">
+            <span class="mr-2">{{ $t('label.payable') }}</span>
+            <h3 class="my-2">
+              {{ formatRupiah(artisan.payablePerArtisan) }}
+            </h3>
+            <v-divider vertical class="mx-4"></v-divider>
+            <span class="mr-2">{{ $t('label.quantity') }}</span>
+            <h3 class="my-2">
+              {{ $t('label.pairs', artisan.quantityPerArtisan) }}
+            </h3>
+          </v-card-subtitle>
 
-        <v-card-text>
-          <v-data-table
-            :items="artisan.tasks"
-            :headers="headers"
-            hide-default-footer
-          >
-            <template #item.type="{ item }">
-              {{ $t(renderJob(item.type)) }}
-            </template>
-            <template #item.doneAt="{ item }">
-              {{ formatLocalDate(item.doneAt) }}
-            </template>
-            <template #item.payablePerTask="{ item }">
-              {{ formatRupiah(item.payablePerTask) }}
-            </template>
-            <template #item.costPerTask="{ item }">
-              {{ formatRupiah(item.costPerTask) }}
-            </template>
-            <template #item.quantityPerTask="{ item }">
-              {{ $t('label.pairs', item.quantityPerTask) }}
-            </template>
-          </v-data-table>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+          <v-card-text>
+            <v-data-table
+              :items="artisan.tasks"
+              :headers="headers"
+              hide-default-footer
+            >
+              <template #item.type="{ item }">
+                {{ $t(renderJob(item.type)) }}
+              </template>
+              <template #item.doneAt="{ item }">
+                {{ formatLocalDate(item.doneAt) }}
+              </template>
+              <template #item.payablePerTask="{ item }">
+                {{ formatRupiah(item.payablePerTask) }}
+              </template>
+              <template #item.costPerTask="{ item }">
+                {{ formatRupiah(item.costPerTask) }}
+              </template>
+              <template #item.quantityPerTask="{ item }">
+                {{ $t('label.pairs', item.quantityPerTask) }}
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style lang="sass">

@@ -1,77 +1,85 @@
 <template>
-  <v-date-input
-    :label="$t('label.date')"
-    variant="outlined"
-    multiple="range"
-    class="ma-4"
-    v-model="datePicker"
-    show-adjacent-months
-  ></v-date-input>
+  <v-container v-if="data" class="h-100 d-flex flex-column">
+    <v-row class="flex-grow-0">
+      <v-col>
+        <v-date-input
+          :label="$t('label.date')"
+          variant="outlined"
+          multiple="range"
+          class="ma-4"
+          v-model="datePicker"
+          show-adjacent-months
+        ></v-date-input>
+      </v-col>
+    </v-row>
 
-  <div v-if="data" class="wf-fill-screen-after-datepicker">
-    <v-data-table
-      :headers="headers"
-      :items="data.getWorks"
-      item-value="id"
-      :sort-by="[{ key: 'id', order: 'asc' }]"
-      class="flex-grow-1"
-    >
-      <template v-slot:item.date="{ item }">
-        {{ formatLocalDate(item.date) }}
-      </template>
-      <template v-slot:item.sizes="{ item }">
-        <v-chip-group direction="vertical">
-          <v-chip
-            v-for="size in item.sizes"
-            variant="outlined"
-            disabled
-            class="d-flex justify-center"
-          >
-            {{ `${size.size.eu} | ${size.quantity}` }}
-          </v-chip>
-        </v-chip-group>
-      </template>
+    <v-row>
+      <v-col class="d-flex flex-column">
+        <v-data-table
+          :headers="headers"
+          :items="data.getWorks"
+          item-value="id"
+          :sort-by="[{ key: 'id', order: 'asc' }]"
+          class="flex-grow-1"
+        >
+          <template v-slot:item.date="{ item }">
+            {{ formatLocalDate(item.date) }}
+          </template>
+          <template v-slot:item.sizes="{ item }">
+            <v-chip-group direction="vertical">
+              <v-chip
+                v-for="size in item.sizes"
+                variant="outlined"
+                disabled
+                class="d-flex justify-center"
+              >
+                {{ `${size.size.eu} | ${size.quantity}` }}
+              </v-chip>
+            </v-chip-group>
+          </template>
 
-      <template v-slot:item.tasks="{ item }">
-        <v-list density="compact">
-          <v-list-item
-            v-for="task in item.tasks"
-            :title="$t(renderJob(task.type))"
-          >
-            {{
-              task.artisan
-                ? `${$t('label.by', {
-                    artisan:
-                      task.artisan?.firstName +
-                      (task.artisan?.lastName
-                        ? ' ' + task.artisan.lastName
-                        : ''),
-                  })}${$t('label.at', {
-                    done_at: formatLocalDate(task.doneAt),
-                  })}`
-                : ''
-            }}
-            <template v-slot:prepend>
-              <v-icon
-                v-if="task.artisan"
-                :icon="mdiCheckboxMarkedOutline"
-              ></v-icon>
-              <v-icon v-else :icon="mdiCheckboxBlankOutline"></v-icon>
-            </template>
-          </v-list-item>
-        </v-list>
-      </template>
+          <template v-slot:item.tasks="{ item }">
+            <v-list density="compact">
+              <v-list-item
+                v-for="task in item.tasks"
+                :title="$t(renderJob(task.type))"
+              >
+                {{
+                  task.artisan
+                    ? `${$t('label.by', {
+                        artisan:
+                          task.artisan?.firstName +
+                          (task.artisan?.lastName
+                            ? ' ' + task.artisan.lastName
+                            : ''),
+                      })}${$t('label.at', {
+                        done_at: formatLocalDate(task.doneAt),
+                      })}`
+                    : ''
+                }}
+                <template v-slot:prepend>
+                  <v-icon
+                    v-if="task.artisan"
+                    :icon="mdiCheckboxMarkedOutline"
+                  ></v-icon>
+                  <v-icon v-else :icon="mdiCheckboxBlankOutline"></v-icon>
+                </template>
+              </v-list-item>
+            </v-list>
+          </template>
 
-      <template v-slot:item.actions="{ item }">
-        <NuxtLink :to="$localePath(`/works/update/${item.id}`)">
-          <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
-            $t('btn.update')
-          }}</v-btn>
-        </NuxtLink>
-      </template>
-    </v-data-table>
-  </div>
-  <div v-else>Loading...</div>
+          <template v-slot:item.actions="{ item }">
+            <NuxtLink :to="$localePath(`/works/update/${item.id}`)">
+              <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+                $t('btn.update')
+              }}</v-btn>
+            </NuxtLink>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-container v-else>Loading...</v-container>
 </template>
 
 <style scoped lang="sass">

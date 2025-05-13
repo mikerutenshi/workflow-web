@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <PayrollTable />
-  </v-main>
+  <PayrollTable />
 </template>
 
 <script setup lang="ts">

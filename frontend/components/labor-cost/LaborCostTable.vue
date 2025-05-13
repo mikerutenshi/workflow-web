@@ -1,11 +1,11 @@
 <template>
-  <div v-if="data" class="wf-fill-screen">
+  <v-container v-if="data" class="h-100 d-flex flex-column">
     <v-data-table
       :headers="headers"
       :items="data.getProductGroups"
-      class="elevation-1 flex-grow-1"
       item-value="id"
       :sort-by="[{ key: 'id', order: 'asc' }]"
+      class="flex-grow-1"
     >
       <template v-slot:item.productCategory.gender="{ item }">
         {{ $t(renderGender(item.productCategory.gender)) }}
@@ -86,8 +86,9 @@
         </NuxtLink>
       </template>
     </v-data-table>
-  </div>
-  <div v-else>Loading...</div>
+  </v-container>
+
+  <v-container v-else>Loading...</v-container>
 </template>
 
 <script setup lang="ts">

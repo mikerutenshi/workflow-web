@@ -1,7 +1,5 @@
 <template>
-  <v-main>
-    <LaborCostTable />
-  </v-main>
+  <LaborCostTable />
 </template>
 
 <script setup lang="ts">
