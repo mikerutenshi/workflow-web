@@ -1,5 +1,5 @@
 <template>
-  <v-container class="d-flex flex-column">
+  <v-container class="h-100 d-flex flex-column">
     <WorkCreateForm />
     <v-divider class="my-4"></v-divider>
     <TaskUpdateForm />

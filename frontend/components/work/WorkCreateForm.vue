@@ -1,106 +1,107 @@
 <template>
-  <v-form class="h-100" @submit.prevent="handleSubmit">
-    <v-container class="h-100 d-flex flex-column">
-      <v-row>
-        <v-col>
-          <v-alert v-if="errorMessages" type="error">
-            {{ errorMessages }}
-          </v-alert>
+  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+    <v-row>
+      <v-col>
+        <v-alert v-if="errorMessages" type="error">
+          {{ errorMessages }}
+        </v-alert>
 
-          <v-row>
-            <v-col>
-              <v-date-input
-                :label="$t('label.date')"
-                v-model="form.date"
-                variant="outlined"
-              ></v-date-input>
-            </v-col>
-          </v-row>
+        <v-row>
+          <v-col>
+            <v-date-input
+              :label="$t('label.date')"
+              v-model="form.date"
+              variant="outlined"
+            ></v-date-input>
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-text-field
-                :label="$t('label.order_no')"
-                v-model.number="form.orderNo"
-                type="number"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('label.order_no')"
+              v-model.number="form.orderNo"
+              type="number"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-autocomplete
-                :label="$t('label.product')"
-                auto-select-first
-                item-value="id"
-                item-title="sku"
-                :items="productsData?.getProducts"
-                :loading="isFetchingProducts"
-                v-model="form.productId"
-              >
-              </v-autocomplete>
-            </v-col>
-          </v-row>
+        <v-row>
+          <v-col>
+            <v-autocomplete
+              :label="$t('label.product')"
+              auto-select-first
+              item-value="id"
+              item-title="sku"
+              :items="productsData?.getProducts"
+              :loading="isFetchingProducts"
+              v-model="form.productId"
+            >
+            </v-autocomplete>
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-select
-                :label="$t('label.select_sizes')"
-                multiple
-                chips
-                auto-select-first
-                :items="computeSizeList"
-                :loading="isFetchingSizes"
-                item-title="eu"
-                item-value="id"
-                v-model="sizes"
-                return-object
-              >
-                <!-- <template #item="{ props, item }">
+        <v-row>
+          <v-col>
+            <v-select
+              :label="$t('label.select_sizes')"
+              multiple
+              chips
+              auto-select-first
+              :items="computeSizeList"
+              :loading="isFetchingSizes"
+              item-title="eu"
+              item-value="id"
+              v-model="sizes"
+              return-object
+            >
+              <!-- <template #item="{ props, item }">
             <v-list-item
               v-bind="props"
               :title="`${item.raw.eu} | ${item.raw.us} | ${item.raw.uk}`"
             ></v-list-item>
           </template> -->
-              </v-select>
-            </v-col>
-          </v-row>
+            </v-select>
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-card>
-                <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
-                <v-card-text>
-                  <v-data-table
-                    :headers="sizeHeaders"
-                    :items="sizesTable"
-                    editable
-                    hide-default-footer
-                  >
-                    <template #item.quantity="{ item }">
-                      <v-text-field
-                        v-model.number="item.quantity"
-                        :label="$t('label.quantity')"
-                        type="number"
-                      />
-                    </template>
-                  </v-data-table>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+        <v-row>
+          <v-col>
+            <v-card>
+              <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
+              <v-card-text>
+                <v-data-table
+                  :headers="sizeHeaders"
+                  :items="sizesTable"
+                  editable
+                  hide-default-footer
+                >
+                  <template #item.quantity="{ item }">
+                    <v-text-field
+                      v-model.number="item.quantity"
+                      :label="$t('label.quantity')"
+                      type="number"
+                    />
+                  </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
 
-      <v-row align="end" class="ma-1 mt-4">
-        <ActionCancel></ActionCancel>
-        <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
-        <ActionDelete
-          v-if="workId"
-          @click="executeDelete({ id: workId })"
-        ></ActionDelete>
-      </v-row>
-    </v-container>
+    <v-row align="end" class="ma-1 mt-4">
+      <ActionCancel></ActionCancel>
+      <ActionConfirm :loading="isCreating || isUpdating">{{
+        submitBtnTitle
+      }}</ActionConfirm>
+      <ActionDelete
+        v-if="workId"
+        :loading="isDeleting"
+        @click="executeDelete({ id: workId })"
+      ></ActionDelete>
+    </v-row>
   </v-form>
 </template>
 
@@ -145,33 +146,42 @@ const router = useRouter();
 const submitBtnTitle = computed(() =>
   workId.value ? t('btn.update') : t('btn.create')
 );
-const { execute: executeCreate } = useMutation(CreateWorkDocument, {
-  clearCacheTags: [CACHE_WORKS],
-  onData() {
-    router.back();
-  },
-  onError(err) {
-    errorMessages.value += err;
-  },
-});
-const { execute: executeUpdate } = useMutation(UpdateWorkDocument, {
-  clearCacheTags: [CACHE_WORK, CACHE_WORKS],
-  onData() {
-    router.back();
-  },
-  onError(err) {
-    errorMessages.value += err;
-  },
-});
-const { execute: executeDelete } = useMutation(DeleteWorkDocument, {
-  clearCacheTags: [CACHE_WORKS],
-  onData(data) {
-    router.back();
-  },
-  onError(err) {
-    errorMessages.value += err;
-  },
-});
+const { execute: executeCreate, isFetching: isCreating } = useMutation(
+  CreateWorkDocument,
+  {
+    clearCacheTags: [CACHE_WORKS],
+    onData() {
+      router.back();
+    },
+    onError(err) {
+      errorMessages.value += err;
+    },
+  }
+);
+const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
+  UpdateWorkDocument,
+  {
+    clearCacheTags: [CACHE_WORK, CACHE_WORKS],
+    onData() {
+      router.back();
+    },
+    onError(err) {
+      errorMessages.value += err;
+    },
+  }
+);
+const { execute: executeDelete, isFetching: isDeleting } = useMutation(
+  DeleteWorkDocument,
+  {
+    clearCacheTags: [CACHE_WORKS],
+    onData(data) {
+      router.back();
+    },
+    onError(err) {
+      errorMessages.value += err;
+    },
+  }
+);
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';

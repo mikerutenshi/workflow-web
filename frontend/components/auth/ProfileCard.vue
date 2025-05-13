@@ -1,45 +1,62 @@
 <template>
-  <v-card v-if="authStore.user">
-    <v-card-title class="text-center">
-      <v-icon class="mr-2" :icon="greetingIcon"></v-icon>
-      {{
-        `${$t(greeting)} ${authStore.user.firstName} ${authStore.user.lastName}`
-      }}
-    </v-card-title>
-    <v-card-text>
-      <!-- <ActionCheckMe /> -->
-      <v-list class="text-center">
-        <v-list-item> {{ `Email: ${authStore.user.email}` }}</v-list-item>
-      </v-list>
-      <v-select
-        :label="$t('label.select_language')"
-        :items="locales"
-        item-title="name"
-        item-value="code"
-        v-model="selectedLocale"
-        @update:model-value="setLocale(selectedLocale)"
-      >
-        <template v-slot:item="{ props, item }">
-          <v-list-item v-bind="props">
-            <template v-slot:prepend>
+  <v-row class="flex-grow-0">
+    <v-col>
+      <v-card v-if="authStore.user">
+        <v-card-title class="text-center">
+          <v-icon class="mr-2" :icon="greetingIcon"></v-icon>
+          {{
+            `${$t(greeting)} ${authStore.user.firstName} ${
+              authStore.user.lastName
+            }`
+          }}
+        </v-card-title>
+        <v-card-text>
+          <!-- <ActionCheckMe /> -->
+          <v-list class="text-center">
+            <v-list-item> {{ `Email: ${authStore.user.email}` }}</v-list-item>
+          </v-list>
+          <v-select
+            :label="$t('label.select_language')"
+            :items="locales"
+            item-title="name"
+            item-value="code"
+            v-model="selectedLocale"
+            @update:model-value="setLocale(selectedLocale)"
+          >
+            <template v-slot:item="{ props, item }">
+              <v-list-item v-bind="props">
+                <template v-slot:prepend>
+                  <v-img
+                    :src="item.raw.avatar"
+                    aspect-ratio="4/3"
+                    width="30"
+                    class="mr-4"
+                  ></v-img>
+                </template>
+              </v-list-item>
+            </template>
+
+            <template v-slot:selection="{ item }">
               <v-img
                 :src="item.raw.avatar"
                 aspect-ratio="4/3"
                 width="30"
-                class="mr-4"
               ></v-img>
+              <span class="ml-4">{{ item.raw.name }}</span>
             </template>
-          </v-list-item>
-        </template>
+          </v-select>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 
-        <template v-slot:selection="{ item }">
-          <v-img :src="item.raw.avatar" aspect-ratio="4/3" width="30"></v-img>
-          <span class="ml-4">{{ item.raw.name }}</span>
-        </template>
-      </v-select>
+  <v-row class="flex-grow-1"></v-row>
+
+  <v-row align="end" class="ma-1">
+    <v-col>
       <ActionLogOut class="mt-2" />
-    </v-card-text>
-  </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup lang="ts">

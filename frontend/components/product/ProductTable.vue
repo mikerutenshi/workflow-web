@@ -1,31 +1,32 @@
 <template>
-  <v-container v-if="data" class="h-100 d-flex flex-column">
-    <v-data-table
-      :headers="headers"
-      :items="data.getProducts"
-      item-value="id"
-      :sort-by="[{ key: 'id', order: 'asc' }]"
-      class="flex-grow-1"
-    >
-      <template v-slot:item.productColors="{ item }">
-        <v-list density="compact">
-          <v-list-item v-for="color in item.productColors">
-            <template #prepend>
-              <div
-                class="color-box"
-                :style="{ backgroundColor: color.color.hexCode }"
-              />
-            </template>
-            <span>{{ color.color.name }}</span>
-          </v-list-item>
-        </v-list>
-      </template>
-      <template v-slot:item.productGroup.productCategory.gender="{ item }">
-        {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
-      </template>
+  <v-skeleton-loader v-if="isFetching" type="table"></v-skeleton-loader>
+  <v-data-table
+    v-else
+    :headers="headers"
+    :items="data.getProducts"
+    item-value="id"
+    :sort-by="[{ key: 'id', order: 'asc' }]"
+    class="flex-grow-1"
+  >
+    <template v-slot:item.productColors="{ item }">
+      <v-list density="compact">
+        <v-list-item v-for="color in item.productColors">
+          <template #prepend>
+            <div
+              class="color-box"
+              :style="{ backgroundColor: color.color.hexCode }"
+            />
+          </template>
+          <span>{{ color.color.name }}</span>
+        </v-list-item>
+      </v-list>
+    </template>
+    <template v-slot:item.productGroup.productCategory.gender="{ item }">
+      {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
+    </template>
 
-      <template v-slot:item.actions="{ item }">
-        <!-- <v-menu variant="outlined">
+    <template v-slot:item.actions="{ item }">
+      <!-- <v-menu variant="outlined">
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props" variant="text">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -42,15 +43,13 @@
             </v-list-item>
           </v-list>
         </v-menu> -->
-        <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
-          <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
-            $t('btn.update')
-          }}</v-btn>
-        </NuxtLink>
-      </template>
-    </v-data-table>
-  </v-container>
-  <v-container v-else>Loading...</v-container>
+      <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
+        <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+          $t('btn.update')
+        }}</v-btn>
+      </NuxtLink>
+    </template>
+  </v-data-table>
 </template>
 
 <style scoped>
@@ -73,7 +72,7 @@ import {
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data } = useQuery({
+const { data, isFetching } = useQuery({
   query: GetProductsDocument,
   tags: [CACHE_PRODUCTS],
 });

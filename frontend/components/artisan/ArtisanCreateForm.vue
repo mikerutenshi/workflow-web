@@ -1,62 +1,62 @@
 <template>
-  <v-form class="h-100" @submit.prevent="handleSubmit">
-    <v-container class="h-100 d-flex flex-column">
-      <v-row>
-        <v-col>
-          <v-alert v-if="errorMessage" type="error">
-            {{ errorMessage }}
-          </v-alert>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="form.firstName"
-                :label="$t('label.first_name')"
-              />
-            </v-col>
-          </v-row>
+  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+    <v-row>
+      <v-col>
+        <v-alert v-if="errorMessage" type="error">
+          {{ errorMessage }}
+        </v-alert>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="form.firstName"
+              :label="$t('label.first_name')"
+            />
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-text-field
-                @blur="onBlur"
-                v-model="form.lastName"
-                :label="$t('label.last_name')"
-              />
-            </v-col>
-          </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              @blur="onBlur"
+              v-model="form.lastName"
+              :label="$t('label.last_name')"
+            />
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-select
-                v-model="form.jobs"
-                :items="jobOptions"
-                :return-object="false"
-                :label="$t('label.select_jobs')"
-                multiple
-                chips
-                auto-select-first
-                item-title="title"
-                item-value="id"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+        <v-row>
+          <v-col>
+            <v-select
+              v-model="form.jobs"
+              :items="jobOptions"
+              :return-object="false"
+              :label="$t('label.select_jobs')"
+              multiple
+              chips
+              auto-select-first
+              item-title="title"
+              item-value="id"
+            ></v-select>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
 
-      <v-row align="end" class="ma-1">
-        <ActionCancel></ActionCancel>
-        <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-        <ActionDelete
-          v-if="artisanId"
-          @click="executeDelete({ id: artisanId })"
-        ></ActionDelete>
-      </v-row>
-    </v-container>
+    <v-row class="flex-grow-1"></v-row>
+
+    <v-row align="end" class="ma-1">
+      <ActionCancel></ActionCancel>
+      <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+      <ActionDelete
+        v-if="artisanId"
+        @click="executeDelete({ id: artisanId })"
+      ></ActionDelete>
+    </v-row>
   </v-form>
 </template>
 

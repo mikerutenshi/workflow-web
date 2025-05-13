@@ -1,25 +1,24 @@
 <template>
-  <div v-if="data" class="wf-fill-screen">
-    <v-data-table
-      :headers="headers"
-      :items="data.getArtisans"
-      class="elevation-1 flex-grow-1"
-      item-value="id"
-      :sort-by="[{ key: 'id', order: 'asc' }]"
-    >
-      <template v-slot:item.jobs="{ item }">
-        {{ item.jobs.map((job) => $t(renderJob(job))).join(', ') }}
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <NuxtLink :to="$localePath(`/artisans/update/${item.id}`)">
-          <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
-            $t('btn.update')
-          }}</v-btn>
-        </NuxtLink>
-      </template>
-    </v-data-table>
-  </div>
-  <div v-else>Loading...</div>
+  <v-skeleton-loader v-if="isFetching" type="table"></v-skeleton-loader>
+  <v-data-table
+    v-else
+    :headers="headers"
+    :items="data.getArtisans"
+    class="flex-grow-1"
+    item-value="id"
+    :sort-by="[{ key: 'id', order: 'asc' }]"
+  >
+    <template v-slot:item.jobs="{ item }">
+      {{ item.jobs.map((job) => $t(renderJob(job))).join(', ') }}
+    </template>
+    <template v-slot:item.actions="{ item }">
+      <NuxtLink :to="$localePath(`/artisans/update/${item.id}`)">
+        <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+          $t('btn.update')
+        }}</v-btn>
+      </NuxtLink>
+    </template>
+  </v-data-table>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +28,7 @@ import type { VDataTable } from 'vuetify/components';
 import { GetArtisansDocument } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data } = useQuery({
+const { data, isFetching } = useQuery({
   query: GetArtisansDocument,
   tags: [CACHE_ARTISANS],
 });

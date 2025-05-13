@@ -1,133 +1,131 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" class="h-100">
-    <v-container class="h-100 d-flex flex-column">
-      <v-row>
-        <v-col>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="header.skuNumeric"
-                :label="$t('label.product_group')"
-                readonly
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="header.productCategory"
-                :label="$t('label.product_category')"
-                readonly
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="computeGender"
-                :label="$t('label.gender')"
-                readonly
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                :label="$t('jobs.draw_upper')"
-                prefix="Rp"
-                :model-value="mask.masked(costs.drawUpper)"
-                @update:model-value="
-                  (val) => {
-                    costs.drawUpper = val;
-                  }
-                "
-                type="number"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                :label="$t('jobs.draw_lining')"
-                prefix="Rp"
-                :model-value="mask.masked(costs.drawLining)"
-                @update:model-value="
-                  (val) => {
-                    costs.drawLining = val;
-                  }
-                "
-                type="number"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                :label="$t('jobs.stitch_upper')"
-                prefix="Rp"
-                :model-value="mask.masked(costs.stitchUpper)"
-                @update:model-value="
-                  (val) => {
-                    costs.stitchUpper = val;
-                  }
-                "
-                type="number"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                :label="$t('jobs.stitch_outsole')"
-                prefix="Rp"
-                :model-value="mask.masked(costs.stitchOutsole)"
-                @update:model-value="
-                  (val) => {
-                    costs.stitchOutsole = val;
-                  }
-                "
-                type="number"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                :label="$t('jobs.stitch_insole')"
-                prefix="Rp"
-                :model-value="mask.masked(costs.stitchInsole)"
-                @update:model-value="
-                  (val) => {
-                    costs.stitchInsole = val;
-                  }
-                "
-                type="number"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                :label="$t('jobs.last')"
-                prefix="Rp"
-                :model-value="mask.masked(costs.last)"
-                @update:model-value="
-                  (val) => {
-                    costs.last = val;
-                  }
-                "
-                type="number"
-              />
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+    <v-row>
+      <v-col>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="header.skuNumeric"
+              :label="$t('label.product_group')"
+              readonly
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="header.productCategory"
+              :label="$t('label.product_category')"
+              readonly
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="computeGender"
+              :label="$t('label.gender')"
+              readonly
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('jobs.draw_upper')"
+              prefix="Rp"
+              :model-value="mask.masked(costs.drawUpper)"
+              @update:model-value="
+                (val) => {
+                  costs.drawUpper = val;
+                }
+              "
+              type="number"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('jobs.draw_lining')"
+              prefix="Rp"
+              :model-value="mask.masked(costs.drawLining)"
+              @update:model-value="
+                (val) => {
+                  costs.drawLining = val;
+                }
+              "
+              type="number"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('jobs.stitch_upper')"
+              prefix="Rp"
+              :model-value="mask.masked(costs.stitchUpper)"
+              @update:model-value="
+                (val) => {
+                  costs.stitchUpper = val;
+                }
+              "
+              type="number"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('jobs.stitch_outsole')"
+              prefix="Rp"
+              :model-value="mask.masked(costs.stitchOutsole)"
+              @update:model-value="
+                (val) => {
+                  costs.stitchOutsole = val;
+                }
+              "
+              type="number"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('jobs.stitch_insole')"
+              prefix="Rp"
+              :model-value="mask.masked(costs.stitchInsole)"
+              @update:model-value="
+                (val) => {
+                  costs.stitchInsole = val;
+                }
+              "
+              type="number"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('jobs.last')"
+              prefix="Rp"
+              :model-value="mask.masked(costs.last)"
+              @update:model-value="
+                (val) => {
+                  costs.last = val;
+                }
+              "
+              type="number"
+            />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
 
-      <v-row align="end" class="ma-1">
-        <ActionCancel></ActionCancel>
-        <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
-      </v-row>
-    </v-container>
+    <v-row align="end" class="ma-1">
+      <ActionCancel></ActionCancel>
+      <ActionConfirm :loading="isUpdating">{{ submitBtnTitle }}</ActionConfirm>
+    </v-row>
   </v-form>
 </template>
 
@@ -208,21 +206,24 @@ const handleSubmit = async () => {
 };
 
 const router = useRouter();
-const { execute } = useMutation(UpsertLaborCostsDocument, {
-  clearCacheTags: [
-    CACHE_PRODUCT_GROUPS,
-    CACHE_PRODUCT_GROUP,
-    CACHE_TASKS,
-    CACHE_WORKS,
-    CACHE_PAYROLL,
-  ],
-  onData() {
-    router.back();
-  },
-  onError(err) {
-    alert(err);
-  },
-});
+const { execute, isFetching: isUpdating } = useMutation(
+  UpsertLaborCostsDocument,
+  {
+    clearCacheTags: [
+      CACHE_PRODUCT_GROUPS,
+      CACHE_PRODUCT_GROUP,
+      CACHE_TASKS,
+      CACHE_WORKS,
+      CACHE_PAYROLL,
+    ],
+    onData() {
+      router.back();
+    },
+    onError(err) {
+      alert(err);
+    },
+  }
+);
 
 const options: MaskInputOptions = {
   mask: '9.99#',

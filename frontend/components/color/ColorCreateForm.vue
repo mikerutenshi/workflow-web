@@ -1,63 +1,62 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" class="h-100">
-    <v-container class="h-100 d-flex flex-column">
-      <v-row>
-        <v-col>
-          <v-alert v-if="createError" type="error">
-            {{
-              createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-              createError.message
-            }}
-          </v-alert>
-          <v-alert v-if="updateError" type="error">
-            {{
-              updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-              updateError.message
-            }}
-          </v-alert>
+  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+    <v-row>
+      <v-col>
+        <v-alert v-if="createError" type="error">
+          {{
+            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            createError.message
+          }}
+        </v-alert>
+        <v-alert v-if="updateError" type="error">
+          {{
+            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            updateError.message
+          }}
+        </v-alert>
 
-          <v-row>
-            <v-col>
-              <v-text-field v-model="form.name" :label="$t('label.name')" />
-            </v-col>
-          </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field v-model="form.name" :label="$t('label.name')" />
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-card>
-                <v-card-title>
-                  {{ $t('label.pick_color') }}
-                </v-card-title>
-                <v-card-text>
-                  <v-color-picker
-                    v-model="form.hexCode"
-                    :modes="['hex']"
-                    show-swatches
-                    class="d-inline"
-                  ></v-color-picker>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+        <v-row>
+          <v-col>
+            <v-card>
+              <v-card-title>
+                {{ $t('label.pick_color') }}
+              </v-card-title>
+              <v-card-text>
+                <v-color-picker
+                  v-model="form.hexCode"
+                  :modes="['hex']"
+                  show-swatches
+                  class="d-inline"
+                ></v-color-picker>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
 
-      <v-row class="flex-grow-1"></v-row>
+    <v-row class="flex-grow-1"></v-row>
 
-      <v-row align="end" class="ma-1">
-        <ActionCancel></ActionCancel>
-        <ActionConfirm v-if="colorId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-        <ActionDelete
-          v-if="colorId"
-          @click="executeDelete({ id: colorId })"
-        ></ActionDelete>
-      </v-row>
-    </v-container>
+    <v-row align="end" class="ma-1">
+      <ActionCancel></ActionCancel>
+      <ActionConfirm v-if="colorId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+      <ActionDelete
+        v-if="colorId"
+        :loading="isDeleting"
+        @click="executeDelete({ id: colorId })"
+      ></ActionDelete>
+    </v-row>
   </v-form>
 </template>
 
@@ -101,15 +100,18 @@ const {
   },
   clearCacheTags: [CACHE_COLORS, CACHE_COLOR],
 });
-const { execute: executeDelete } = useMutation(DeleteColorDocument, {
-  clearCacheTags: [CACHE_COLORS],
-  onData() {
-    goPrevious();
-  },
-  onError(err) {
-    alert(`Error while deleting color -> ${err}`);
-  },
-});
+const { execute: executeDelete, isFetching: isDeleting } = useMutation(
+  DeleteColorDocument,
+  {
+    clearCacheTags: [CACHE_COLORS],
+    onData() {
+      goPrevious();
+    },
+    onError(err) {
+      alert(`Error while deleting color -> ${err}`);
+    },
+  }
+);
 
 if (colorId.value) {
   useQuery({

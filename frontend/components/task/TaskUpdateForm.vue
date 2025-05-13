@@ -1,85 +1,82 @@
 <template>
   <v-form
-    class="h-100"
     @submit.prevent="
       executeUpdate({
         data: form,
       })
     "
   >
-    <v-container class="h-100 d-flex flex-column">
-      <v-row>
-        <v-col>
-          <v-alert v-if="errorMessages" type="error">
-            {{ errorMessages }}
-          </v-alert>
+    <v-row>
+      <v-col>
+        <v-alert v-if="errorMessages" type="error">
+          {{ errorMessages }}
+        </v-alert>
 
-          <v-card>
-            <v-card-title>{{ $t('card.fill_artisans') }}</v-card-title>
-            <v-card-text>
-              <v-data-table
-                :headers="taskHeaders"
-                :items="displayForm"
-                hide-default-footer
-                editable
-              >
-                <template v-slot:item.type="{ item }">
-                  {{ $t(renderJob(item.type)) }}
-                </template>
+        <v-card>
+          <v-card-title>{{ $t('card.fill_artisans') }}</v-card-title>
+          <v-card-text>
+            <v-data-table
+              :headers="taskHeaders"
+              :items="displayForm"
+              hide-default-footer
+              editable
+            >
+              <template v-slot:item.type="{ item }">
+                {{ $t(renderJob(item.type)) }}
+              </template>
 
-                <template #item.doneAt="{ item }">
-                  <v-date-input
-                    :label="$t('label.done_at')"
-                    v-model="item.doneAt"
-                    variant="outlined"
-                  ></v-date-input>
-                </template>
+              <template #item.doneAt="{ item }">
+                <v-date-input
+                  :label="$t('label.done_at')"
+                  v-model="item.doneAt"
+                  variant="outlined"
+                ></v-date-input>
+              </template>
 
-                <template #item.artisan="{ item }">
-                  <v-select
-                    :label="$t('label.artisan')"
-                    auto-select-first
-                    item-value="id"
-                    item-title="firstName"
-                    :items="
-                      artisansData?.getArtisans.filter((artisan) => {
-                        return artisan.jobs.includes(item.type);
-                      })
-                    "
-                    :loading="isFetchingArtisans"
-                    v-model="item.artisan"
-                    clearable
-                    return-object
-                  >
-                    <template #item="{ props, item }">
-                      <v-list-item
-                        v-bind="props"
-                        :title="`${item.raw.firstName} ${
-                          item.raw.lastName ?? ''
-                        }`"
-                      >
-                        <template #subtitle>
-                          {{
-                            item.raw.jobs
-                              .map((job) => $t(renderJob(job)))
-                              .join(', ')
-                          }}
-                        </template>
-                      </v-list-item>
-                    </template>
-                  </v-select>
-                </template>
-              </v-data-table>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+              <template #item.artisan="{ item }">
+                <v-select
+                  :label="$t('label.artisan')"
+                  auto-select-first
+                  item-value="id"
+                  item-title="firstName"
+                  :items="
+                    artisansData?.getArtisans.filter((artisan) => {
+                      return artisan.jobs.includes(item.type);
+                    })
+                  "
+                  :loading="isFetchingArtisans"
+                  v-model="item.artisan"
+                  clearable
+                  return-object
+                >
+                  <template #item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :title="`${item.raw.firstName} ${
+                        item.raw.lastName ?? ''
+                      }`"
+                    >
+                      <template #subtitle>
+                        {{
+                          item.raw.jobs
+                            .map((job) => $t(renderJob(job)))
+                            .join(', ')
+                        }}
+                      </template>
+                    </v-list-item>
+                  </template>
+                </v-select>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <v-row align="end" class="ma-1 mt-4">
-        <ActionCancel></ActionCancel>
-        <ActionConfirm>{{ submitBtnTitle }}</ActionConfirm>
-      </v-row>
-    </v-container>
+    <v-row align="end" class="ma-1 mt-4">
+      <ActionCancel></ActionCancel>
+      <ActionConfirm :loading="isUpdating">{{ submitBtnTitle }}</ActionConfirm>
+    </v-row>
   </v-form>
 </template>
 
@@ -104,15 +101,18 @@ const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   tags: [CACHE_ARTISANS],
 });
 const localePath = useLocalePath();
-const { execute: executeUpdate } = useMutation(UpdateTasksDocument, {
-  clearCacheTags: [CACHE_WORKS, CACHE_TASKS],
-  onData() {
-    navigateTo(localePath('/works'));
-  },
-  onError(err) {
-    errorMessages.value += err;
-  },
-});
+const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
+  UpdateTasksDocument,
+  {
+    clearCacheTags: [CACHE_WORKS, CACHE_TASKS],
+    onData() {
+      navigateTo(localePath('/works'));
+    },
+    onError(err) {
+      errorMessages.value += err;
+    },
+  }
+);
 
 const displayForm = reactive([
   {

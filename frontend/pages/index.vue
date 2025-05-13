@@ -1,13 +1,7 @@
 <template>
-  <v-main>
-    <v-container fluid fill-height>
-      <v-row justify="center" align="center">
-        <v-col md="6">
-          <AuthProfileCard />
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
+  <v-container class="h-100 d-flex flex-column">
+    <AuthProfileCard />
+  </v-container>
 </template>
 
 <script setup lang="ts">

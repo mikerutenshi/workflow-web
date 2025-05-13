@@ -1,74 +1,74 @@
 <template>
-  <v-form class="h-100" @submit.prevent="handleSubmit">
-    <v-container class="h-100 d-flex flex-column">
-      <v-row>
-        <v-col>
-          <v-alert v-if="createError" type="error">
-            {{
-              createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-              createError.message
-            }}
-          </v-alert>
-          <v-alert v-if="updateError" type="error">
-            {{
-              updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-              updateError.message
-            }}
-          </v-alert>
+  <v-form class="h-100 d-flex flex-column" @submit.prevent="handleSubmit">
+    <v-row>
+      <v-col>
+        <v-alert v-if="createError" type="error">
+          {{
+            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            createError.message
+          }}
+        </v-alert>
+        <v-alert v-if="updateError" type="error">
+          {{
+            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
+            updateError.message
+          }}
+        </v-alert>
 
-          <v-row>
-            <v-col>
-              <v-text-field v-model="form.name" :label="$t('label.name')" />
-            </v-col>
-          </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field v-model="form.name" :label="$t('label.name')" />
+          </v-col>
+        </v-row>
 
-          <v-row>
-            <v-col>
-              <v-select
-                v-model="form.gender"
-                :label="$t('label.gender')"
-                auto-select-first
-                item-value="id"
-                item-title="name"
-                :items="genders"
-              >
-                <template v-slot:item="{ props, item }">
-                  <v-list-item
-                    v-bind="props"
-                    :title="item.title !== '' ? $t(renderGender(item.title as Gender)) : ''"
-                  ></v-list-item>
-                </template>
-                <template v-slot:selection="{ item }">
-                  <span>{{
-                    item.title !== ''
-                      ? $t(renderGender(item.title as Gender))
-                      : ''
-                  }}</span>
-                </template>
-              </v-select>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+        <v-row>
+          <v-col>
+            <v-select
+              v-model="form.gender"
+              :label="$t('label.gender')"
+              auto-select-first
+              item-value="id"
+              item-title="name"
+              :items="genders"
+            >
+              <template v-slot:item="{ props, item }">
+                <v-list-item
+                  v-bind="props"
+                  :title="item.title !== '' ? $t(renderGender(item.title as Gender)) : ''"
+                ></v-list-item>
+              </template>
+              <template v-slot:selection="{ item }">
+                <span>{{
+                  item.title !== ''
+                    ? $t(renderGender(item.title as Gender))
+                    : ''
+                }}</span>
+              </template>
+            </v-select>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
 
-      <v-row class="flex-grow-1"></v-row>
+    <v-row class="flex-grow-1"></v-row>
 
-      <v-row align="end" class="ma-1">
-        <ActionCancel></ActionCancel>
-        <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-        <ActionDelete
-          v-if="productCategoryId"
-          @click="executeDelete({ id: productCategoryId })"
-        ></ActionDelete>
-      </v-row>
-    </v-container>
+    <v-row align="end" class="ma-1">
+      <ActionCancel></ActionCancel>
+      <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+      <ActionDelete
+        v-if="productCategoryId"
+        :loading="isDeleting"
+        @click="executeDelete({ id: productCategoryId })"
+      ></ActionDelete>
+    </v-row>
   </v-form>
 </template>
+
 <script setup lang="ts">
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
@@ -109,15 +109,18 @@ const {
   },
   clearCacheTags: [CACHE_PRODUCT_CATEGORIES, CACHE_PRODUCT_CATEGORY],
 });
-const { execute: executeDelete } = useMutation(DeleteProductCategoryDocument, {
-  clearCacheTags: [CACHE_PRODUCT_CATEGORIES],
-  onData() {
-    goPrevious();
-  },
-  onError(err) {
-    alert(`Error while deleting product category -> ${err}`);
-  },
-});
+const { execute: executeDelete, isFetching: isDeleting } = useMutation(
+  DeleteProductCategoryDocument,
+  {
+    clearCacheTags: [CACHE_PRODUCT_CATEGORIES],
+    onData() {
+      goPrevious();
+    },
+    onError(err) {
+      alert(`Error while deleting product category -> ${err}`);
+    },
+  }
+);
 const handleSubmit = () => {
   if (productCategoryId.value) {
     executeUpdate({ id: productCategoryId.value, data: form });

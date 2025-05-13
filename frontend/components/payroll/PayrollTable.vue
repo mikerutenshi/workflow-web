@@ -1,19 +1,24 @@
 <template>
-  <v-container class="h-100 d-flex flex-column">
-    <v-row class="flex-grow-0">
-      <v-col>
-        <v-date-input
-          :label="$t('label.date')"
-          variant="outlined"
-          multiple="range"
-          class="ma-4"
-          v-model="datePicker"
-          show-adjacent-months
-        ></v-date-input>
-      </v-col>
-    </v-row>
+  <v-row class="flex-grow-0">
+    <v-col>
+      <v-date-input
+        :label="$t('label.date')"
+        variant="outlined"
+        multiple="range"
+        class="ma-4"
+        v-model="datePicker"
+        show-adjacent-months
+      ></v-date-input>
+    </v-col>
+  </v-row>
 
-    <v-row>
+  <template v-if="isFetching">
+    <v-skeleton-loader type="heading"></v-skeleton-loader>
+    <v-skeleton-loader v-for="n in 3" :key="n" type="card"></v-skeleton-loader>
+  </template>
+
+  <template v-else>
+    <v-row class="flex-grow-0">
       <v-col>
         <v-card>
           <v-row no-gutters align="center">
@@ -81,7 +86,7 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
+  </template>
 </template>
 
 <style lang="sass">
@@ -119,7 +124,7 @@ const datePicker = ref([
   ),
 ]);
 
-const { execute, data } = useQuery({
+const { execute, data, isFetching } = useQuery({
   query: GetPayrollDocument,
   cachePolicy: 'network-only',
   tags: [CACHE_PAYROLL],

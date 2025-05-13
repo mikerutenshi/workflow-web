@@ -1,5 +1,7 @@
 <template>
-  <PayrollTable />
+  <v-container class="h-100 d-flex flex-column">
+    <PayrollTable />
+  </v-container>
 </template>
 
 <script setup lang="ts">
