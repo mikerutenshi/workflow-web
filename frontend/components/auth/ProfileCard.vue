@@ -110,13 +110,17 @@ const greetingIcon = computed(() => {
 
 const { current } = useLocale();
 
-watch(locale, (newLocale) => {
-  if (newLocale == 'su') {
-    current.value = 'id';
-  } else {
-    current.value = newLocale;
-  }
-});
+watch(
+  locale,
+  (newLocale) => {
+    if (newLocale == 'su') {
+      current.value = 'id';
+    } else {
+      current.value = newLocale;
+    }
+  },
+  { immediate: true }
+);
 
 // bypass login
 // const { data, isFetching, execute, error } = useMutation(LogInDocument);

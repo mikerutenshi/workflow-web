@@ -56,14 +56,14 @@
             {{ `${artisan.firstName} ${artisan.lastName ?? ''}` }}
           </v-card-title>
           <v-card-subtitle>
-            <div class="d-flex align-end justify-space-between mb-2 px-4">
+            <div class="d-flex align-end justify-space-between mb-2">
               <span class="mr-2">{{ $t('label.payable') }}</span>
               <h3>
                 {{ formatRupiah(artisan.payablePerArtisan) }}
               </h3>
             </div>
             <!-- <v-divider vertical class="mx-2"></v-divider> -->
-            <div class="d-flex align-end justify-space-between px-4">
+            <div class="d-flex align-end justify-space-between">
               <span class="mr-2">{{ $t('label.quantity') }}</span>
               <h3>
                 {{ $t('label.pairs', artisan.quantityPerArtisan) }}
