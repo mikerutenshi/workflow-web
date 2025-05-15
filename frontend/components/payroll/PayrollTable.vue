@@ -18,16 +18,26 @@
     <v-row class="flex-grow-0">
       <v-col>
         <v-card>
-          <v-row no-gutters align="center">
-            <v-col class="d-flex flex-column align-center pa-2" cols="6">
-              <div class="d-flex flex-column align-start">
+          <v-row no-gutters class="d-flex">
+            <v-col
+              class="d-flex flex-column align-center justify-end pa-2"
+              cols="6"
+            >
+              <div
+                class="d-flex flex-column align-start justify-space-between flex-grow-1"
+              >
                 <p>{{ $t('label.total_payable') }}</p>
                 <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
               </div>
             </v-col>
             <v-divider vertical></v-divider>
-            <v-col class="d-flex flex-column align-center pa-2" cols="6">
-              <div class="d-flex flex-column align-start">
+            <v-col
+              class="d-flex flex-column align-center justify-end pa-2"
+              cols="6"
+            >
+              <div
+                class="d-flex flex-column align-start justify-space-between flex-grow-1"
+              >
                 <p>{{ $t('label.total_quantity') }}</p>
                 <h2>
                   {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
@@ -46,14 +56,14 @@
             {{ `${artisan.firstName} ${artisan.lastName ?? ''}` }}
           </v-card-title>
           <v-card-subtitle>
-            <div class="d-flex mb-2">
+            <div class="d-flex align-end justify-space-between mb-2 px-4">
               <span class="mr-2">{{ $t('label.payable') }}</span>
               <h3>
                 {{ formatRupiah(artisan.payablePerArtisan) }}
               </h3>
             </div>
             <!-- <v-divider vertical class="mx-2"></v-divider> -->
-            <div class="d-flex">
+            <div class="d-flex align-end justify-space-between px-4">
               <span class="mr-2">{{ $t('label.quantity') }}</span>
               <h3>
                 {{ $t('label.pairs', artisan.quantityPerArtisan) }}
