@@ -11,6 +11,12 @@ export class PayrollService {
     const artisans = await this.prisma.artisan.findMany({
       include: {
         tasks: {
+          where: {
+            doneAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
           include: {
             laborCost: true,
             work: {

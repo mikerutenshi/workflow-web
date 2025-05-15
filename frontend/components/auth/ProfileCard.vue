@@ -21,7 +21,7 @@
             item-title="name"
             item-value="code"
             v-model="selectedLocale"
-            @update:model-value="setAppLocale(selectedLocale)"
+            @update:model-value="setLocale(selectedLocale)"
           >
             <template v-slot:item="{ props, item }">
               <v-list-item v-bind="props">
@@ -109,15 +109,14 @@ const greetingIcon = computed(() => {
 });
 
 const { current } = useLocale();
-function setAppLocale(locale: 'id' | 'en' | 'su') {
-  setLocale(locale);
 
-  if (locale == 'su') {
+watch(locale, (newLocale) => {
+  if (newLocale == 'su') {
     current.value = 'id';
   } else {
-    current.value = locale;
+    current.value = newLocale;
   }
-}
+});
 
 // bypass login
 // const { data, isFetching, execute, error } = useMutation(LogInDocument);
