@@ -8,11 +8,7 @@
 
         <v-row>
           <v-col>
-            <v-date-input
-              :label="$t('label.date')"
-              v-model="form.date"
-              variant="outlined"
-            ></v-date-input>
+            <ActionPickDate v-model="form.date"></ActionPickDate>
           </v-col>
         </v-row>
 
@@ -107,6 +103,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
+import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -186,7 +183,7 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 const form = reactive({
-  date: new Date(),
+  date: dayjs().toISOString(),
   orderNo: parseInt(new Date().toISOString().slice(0, 10).replace(/-/g, '')),
   productId: '',
   sizes: [] as SizeToWorkCreateDto[],
@@ -219,7 +216,7 @@ if (workId.value) {
     tags: [CACHE_WORK],
     onData(data) {
       const work = data.getWork;
-      form.date = new Date(work.date);
+      form.date = work.date;
       form.orderNo = work.orderNo;
       form.productId = work.productId;
       sizes.value = work.sizes.map((item) => ({

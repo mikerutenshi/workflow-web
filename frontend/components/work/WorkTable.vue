@@ -1,14 +1,11 @@
 <template>
   <v-row class="flex-grow-0">
     <v-col>
-      <v-date-input
-        :label="$t('label.date')"
-        variant="outlined"
+      <ActionPickDate
+        v-model="dates"
+        @update:model-value="manageDates"
         multiple="range"
-        class="ma-4"
-        v-model="datePicker"
-        show-adjacent-months
-      ></v-date-input>
+      ></ActionPickDate>
     </v-col>
   </v-row>
 
@@ -18,17 +15,13 @@
       <v-data-table
         v-else
         :headers="headers"
-        :items="data.getWorks"
+        :items="data?.getWorks"
         item-value="id"
         :sort-by="[{ key: 'id', order: 'asc' }]"
         class="flex-grow-1"
       >
-        <!-- <template v-slot:loading>
-          <v-skeleton-loader type="table-tbody"></v-skeleton-loader>
-        </template> -->
-
         <template v-slot:item.date="{ item }">
-          {{ formatLocalDate(item.date) }}
+          {{ adapter.format(item.date, 'fullDate') }}
         </template>
         <template v-slot:item.sizes="{ item }">
           <v-chip-group direction="vertical">
@@ -58,7 +51,7 @@
                           ? ' ' + task.artisan.lastName
                           : ''),
                     })}${$t('label.at', {
-                      done_at: formatLocalDate(task.doneAt),
+                      done_at: adapter.format(task.doneAt, 'fullDate'),
                     })}`
                   : ''
               }}
@@ -96,30 +89,42 @@ import {
   mdiCheckboxMarkedOutline,
   mdiPencil,
 } from '@mdi/js';
+import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
 import { useQuery } from 'villus';
+import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetWorksDocument, type WorkWithTasks } from '~/api/generated/types';
+import { GetWorksDocument } from '~/api/generated/types';
 import { CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const today = new Date();
+const adapter = useDate();
+const now = dayjs();
+dayjs.extend(weekday);
+
+const nextThurs =
+  now.day() < 5
+    ? now.weekday(4).hour(23).minute(59).second(59)
+    : now.add(1, 'week').weekday(4).hour(23).minute(59).second(59);
+console.log(`Next Thurs: ${nextThurs}`);
+
+const lastFrid = nextThurs.subtract(6, 'days').hour(0).second(1);
+console.log(`Last Frid: ${lastFrid}`);
+
+const dates = ref<string[]>([]);
+
+let currentDate = lastFrid.clone();
+while (currentDate.isBefore(nextThurs)) {
+  dates.value.push(currentDate.format('YYYY-MM-DD'));
+  currentDate = currentDate.add(1, 'day');
+}
+console.log(`Dates: ${dates.value}`);
 
 const form = reactive({
-  startDate: new Date(new Date(today).setDate(today.getDate() - 30)),
-  endDate: new Date(today),
+  startDate: lastFrid.toISOString(),
+  endDate: nextThurs.toISOString(),
 });
-const datePicker = ref([
-  ...Array.from(
-    {
-      length:
-        (form.endDate.getTime() - form.startDate.getTime()) /
-          (1000 * 60 * 60 * 24) +
-        1,
-    },
-    (_, i) => new Date(form.startDate.getTime() + i * (1000 * 60 * 60 * 24))
-  ),
-]);
 
 const { execute, data, isFetching } = useQuery({
   query: GetWorksDocument,
@@ -128,7 +133,6 @@ const { execute, data, isFetching } = useQuery({
     startDate: form.startDate,
     endDate: form.endDate,
   })),
-  paused: true,
 });
 
 const { t } = useI18n();
@@ -142,27 +146,13 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
-watch(
-  datePicker,
-  (newDates: Date[]) => {
-    form.startDate = new Date(
-      newDates
-        .reduce((min, date) => (date < min ? date : min))
-        .setHours(0, 0, 0, 0)
-    );
-
-    form.endDate = new Date(
-      newDates
-        .reduce((max, date) => (date > max ? date : max), newDates[0])
-        .setHours(23, 59, 59, 999)
-    );
-    execute();
-  },
-  { immediate: true }
-);
+function manageDates(newDates: string[] | string) {
+  form.startDate = newDates[0];
+  form.endDate = newDates[newDates.length - 1];
+  execute();
+}
 
 watchEffect(() => {
   console.log(`Form: ${JSON.stringify(form)}`);
-  console.log(`Dates: ${JSON.stringify(datePicker.value)}`);
 });
 </script>

@@ -26,11 +26,11 @@
               </template>
 
               <template #item.doneAt="{ item }">
-                <v-date-input
+                <ActionPickDate
                   :label="$t('label.done_at')"
                   v-model="item.doneAt"
                   variant="outlined"
-                ></v-date-input>
+                ></ActionPickDate>
               </template>
 
               <template #item.artisan="{ item }">
@@ -82,6 +82,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
+import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import {
   GetArtisansDocument,
@@ -126,7 +127,7 @@ const displayForm = reactive([
       createdBy: string;
       updatedBy?: string | null | undefined;
     } | null,
-    doneAt: null as Date | null,
+    doneAt: '',
     updatedBy: '',
   },
 ]);
@@ -135,7 +136,7 @@ const form = computed<TaskUpdateDto[]>(() => {
   const result = displayForm.map((item) => ({
     id: item.id,
     artisanId: item.artisan?.id ?? null,
-    doneAt: item.doneAt,
+    doneAt: item.doneAt === '' ? null : item.doneAt,
     updatedBy: userId,
   }));
 
@@ -183,7 +184,7 @@ if (workId.value) {
                 updatedBy: task.artisan.updatedBy,
               }
             : null,
-          doneAt: task.doneAt ? new Date(task.doneAt) : null,
+          doneAt: task.doneAt,
           updatedBy: userId,
         }))
       );
@@ -196,9 +197,9 @@ watch(
   (newTasks) => {
     newTasks.forEach((task) => {
       if (task.artisan && !task.doneAt) {
-        task.doneAt = new Date();
+        task.doneAt = dayjs().toISOString();
       } else if (!task.artisan && task.doneAt) {
-        task.doneAt = null;
+        task.doneAt = '';
       }
     });
   },

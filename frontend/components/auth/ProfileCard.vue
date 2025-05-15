@@ -21,7 +21,7 @@
             item-title="name"
             item-value="code"
             v-model="selectedLocale"
-            @update:model-value="setLocale(selectedLocale)"
+            @update:model-value="setAppLocale(selectedLocale)"
           >
             <template v-slot:item="{ props, item }">
               <v-list-item v-bind="props">
@@ -64,6 +64,7 @@ import { useAuthStore } from '@/stores/auth';
 import indonesia from '@/assets/images/id.svg';
 import us from '@/assets/images/us.svg';
 import { mdiWeatherNight, mdiWeatherSunny, mdiWeatherSunset } from '@mdi/js';
+import { useLocale } from 'vuetify';
 
 const authStore = useAuthStore();
 const { locale, setLocale } = useI18n({ useScope: 'global' });
@@ -106,6 +107,17 @@ const greetingIcon = computed(() => {
     return mdiWeatherNight;
   }
 });
+
+const { current } = useLocale();
+function setAppLocale(locale: 'id' | 'en' | 'su') {
+  setLocale(locale);
+
+  if (locale == 'su') {
+    current.value = 'id';
+  } else {
+    current.value = locale;
+  }
+}
 
 // bypass login
 // const { data, isFetching, execute, error } = useMutation(LogInDocument);

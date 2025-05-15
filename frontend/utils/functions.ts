@@ -13,7 +13,7 @@ function renderJob(job: Job): string {
 }
 
 function formatRupiah(amount: number | null | undefined): string {
-  if (amount === undefined) return '';
+  if (amount === undefined) return '-';
   if (amount === null) return '-';
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
