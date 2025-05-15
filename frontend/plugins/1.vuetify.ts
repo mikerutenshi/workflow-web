@@ -1,12 +1,11 @@
-import { createVuetify } from 'vuetify';
-import * as directives from 'vuetify/directives';
-import { VDateInput } from 'vuetify/labs/components';
-import 'vuetify/styles';
-import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
 import DayJsAdapter from '@date-io/dayjs';
 import 'dayjs/locale/en';
 import 'dayjs/locale/id';
-import { id, en } from 'vuetify/locale';
+import { createVuetify } from 'vuetify';
+import * as directives from 'vuetify/directives';
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
+import { en, id } from 'vuetify/locale';
+import 'vuetify/styles';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
@@ -22,9 +21,6 @@ export default defineNuxtPlugin((nuxtApp) => {
         en: 'en',
         su: 'id',
       },
-    },
-    components: {
-      VDateInput,
     },
     directives,
     icons: {
