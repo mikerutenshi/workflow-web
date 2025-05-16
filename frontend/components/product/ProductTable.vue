@@ -1,32 +1,49 @@
 <template>
-  <v-skeleton-loader v-if="isFetching" type="table"></v-skeleton-loader>
-  <v-data-table
-    v-else
-    :headers="headers"
-    :items="data.getProducts"
-    item-value="id"
-    :sort-by="[{ key: 'id', order: 'asc' }]"
-    class="flex-grow-1"
-  >
-    <template v-slot:item.productColors="{ item }">
-      <v-list density="compact">
-        <v-list-item v-for="color in item.productColors">
-          <template #prepend>
-            <div
-              class="color-box"
-              :style="{ backgroundColor: color.color.hexCode }"
-            />
-          </template>
-          <span>{{ color.color.name }}</span>
-        </v-list-item>
-      </v-list>
-    </template>
-    <template v-slot:item.productGroup.productCategory.gender="{ item }">
-      {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
-    </template>
+  <v-row class="flex-grow-0">
+    <v-col>
+      <v-text-field
+        v-model="search"
+        :label="$t('label.search')"
+        :prepend-inner-icon="mdiMagnify"
+        variant="outlined"
+        hide-details
+        single-line
+      ></v-text-field>
+    </v-col>
+  </v-row>
 
-    <template v-slot:item.actions="{ item }">
-      <!-- <v-menu variant="outlined">
+  <v-row>
+    <v-col class="d-flex flex-column">
+      <v-skeleton-loader v-if="isFetching" type="table"></v-skeleton-loader>
+      <v-data-table
+        v-else
+        :headers="headers"
+        :items="data.getProducts"
+        :search="search"
+        item-value="id"
+        :sort-by="[{ key: 'id', order: 'asc' }]"
+        class="flex-grow-1"
+        hover
+      >
+        <template v-slot:item.productColors="{ item }">
+          <v-list density="compact">
+            <v-list-item v-for="color in item.productColors">
+              <template #prepend>
+                <div
+                  class="color-box"
+                  :style="{ backgroundColor: color.color.hexCode }"
+                />
+              </template>
+              <span>{{ color.color.name }}</span>
+            </v-list-item>
+          </v-list>
+        </template>
+        <template v-slot:item.productGroup.productCategory.gender="{ item }">
+          {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <!-- <v-menu variant="outlined">
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props" variant="text">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -43,13 +60,15 @@
             </v-list-item>
           </v-list>
         </v-menu> -->
-      <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
-        <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
-          $t('btn.update')
-        }}</v-btn>
-      </NuxtLink>
-    </template>
-  </v-data-table>
+          <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
+            <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
+              $t('btn.update')
+            }}</v-btn>
+          </NuxtLink>
+        </template>
+      </v-data-table>
+    </v-col>
+  </v-row>
 </template>
 
 <style scoped>
@@ -62,7 +81,7 @@
 </style>
 
 <script setup lang="ts">
-import { mdiPencil } from '@mdi/js';
+import { mdiMagnify, mdiPencil } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import {
@@ -90,6 +109,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.colors'), key: 'productColors', minWidth: '140' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
+const search = ref('');
 
 const extractColors = (productColors: any[]) => {
   let stringResult = '';

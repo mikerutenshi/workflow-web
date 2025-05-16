@@ -19,6 +19,7 @@
         item-value="id"
         :sort-by="[{ key: 'id', order: 'asc' }]"
         class="flex-grow-1"
+        hover
       >
         <template v-slot:item.date="{ item }">
           {{ adapter.format(item.date, 'fullDate') }}

@@ -93,7 +93,8 @@
     "name": "Nama",
     "pick_color": "Pilih Warna",
     "by": "Oleh: {artisan}",
-    "at": ", Pada: {done_at}"
+    "at": ", Pada: {done_at}",
+    "search": "Cari"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

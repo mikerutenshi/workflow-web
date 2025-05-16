@@ -7,6 +7,7 @@
     class="flex-grow-1"
     item-value="id"
     :sort-by="[{ key: 'id', order: 'asc' }]"
+    hover
   >
     <template v-slot:item.jobs="{ item }">
       {{ item.jobs.map((job) => $t(renderJob(job))).join(', ') }}

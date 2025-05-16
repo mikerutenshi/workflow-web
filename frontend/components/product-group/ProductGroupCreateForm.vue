@@ -17,26 +17,6 @@
 
         <v-row>
           <v-col>
-            <v-text-field
-              v-model="form.skuNumeric"
-              @keypress="(e: any) => /[0-9]/.test(e.key) || e.preventDefault()"
-              :label="$t('label.sku_numeric')"
-              type="number"
-            />
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="form.name"
-              :label="$t('label.product_name')"
-            />
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
             <v-select
               v-model="form.productCategoryId"
               :label="$t('label.product_category')"
@@ -77,6 +57,26 @@
                 $t('create_btn.product_category')
               }}</v-btn>
             </NuxtLink>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="form.skuNumeric"
+              @keypress="(e: any) => /[0-9]/.test(e.key) || e.preventDefault()"
+              :label="$t('label.sku_numeric')"
+              type="number"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="form.name"
+              :label="$t('label.product_name')"
+            />
           </v-col>
         </v-row>
       </v-col>

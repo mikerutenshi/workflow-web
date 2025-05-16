@@ -93,7 +93,8 @@
     "name": "Nami",
     "pick_color": "Pilih Warna",
     "by": "Ku: {artisan}",
-    "at": ", Dina: {done_at}"
+    "at": ", Dina: {done_at}",
+    "search": "Milarian"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

@@ -93,7 +93,8 @@
     "name": "Name",
     "pick_color": "Pick Color",
     "by": "By: {artisan}",
-    "at": ", On: {done_at}"
+    "at": ", On: {done_at}",
+    "search": "Search"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
