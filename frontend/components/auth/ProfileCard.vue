@@ -3,7 +3,7 @@
     <v-col>
       <v-card v-if="authStore.user">
         <v-card-title class="text-center">
-          <v-icon class="mr-2" :icon="greetingIcon"></v-icon>
+          <v-icon class="mr-2">{{ greetingIcon }}</v-icon>
           {{
             `${$t(greeting)} ${authStore.user.firstName} ${
               authStore.user.lastName

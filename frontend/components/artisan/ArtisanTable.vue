@@ -1,14 +1,17 @@
 <template>
-  <v-skeleton-loader v-if="isFetching" type="table"></v-skeleton-loader>
   <v-data-table
-    v-else
     :headers="headers"
     :items="data.getArtisans"
+    :loading="isFetching"
     class="flex-grow-1"
     item-value="id"
     :sort-by="[{ key: 'id', order: 'asc' }]"
     hover
   >
+    <template #loading>
+      <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+    </template>
+
     <template v-slot:item.jobs="{ item }">
       {{ item.jobs.map((job) => $t(renderJob(job))).join(', ') }}
     </template>

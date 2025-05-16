@@ -14,17 +14,20 @@
 
   <v-row>
     <v-col class="d-flex flex-column">
-      <v-skeleton-loader v-if="isFetching" type="table"></v-skeleton-loader>
       <v-data-table
-        v-else
         :headers="headers"
-        :items="data.getProductGroups"
+        :items="data?.getProductGroups"
         :search="search"
+        :loading="isFetching"
         item-value="id"
         :sort-by="[{ key: 'id', order: 'asc' }]"
         class="flex-grow-1"
         hover
       >
+        <template #loading>
+          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+        </template>
+
         <template v-slot:item.productCategory.gender="{ item }">
           {{ $t(renderGender(item.productCategory.gender)) }}
         </template>
