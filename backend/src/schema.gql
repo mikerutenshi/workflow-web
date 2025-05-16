@@ -94,6 +94,18 @@ type ProductGetDto {
   productColors: [ColorToProductWithColor!]!
 }
 
+type ProductGroupGetDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  skuNumeric: String!
+  name: String
+  productCategoryId: ID!
+  productCategory: ProductCategory!
+}
+
 type LaborCost {
   id: ID!
   createdBy: ID!
@@ -105,18 +117,7 @@ type LaborCost {
   productGroupId: ID!
 }
 
-type ProductWithColors {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  sku: String!
-  productGroupId: ID!
-  productColors: [ColorToProductWithColor!]!
-}
-
-type ProductGroupGetDto {
+type LaborCostGetDto {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -126,7 +127,6 @@ type ProductGroupGetDto {
   name: String
   productCategoryId: ID!
   productCategory: ProductCategory!
-  products: [ProductWithColors]
   laborCosts: [LaborCost]
 }
 
@@ -268,7 +268,8 @@ type Query {
   getProductCategory(id: ID!): ProductCategory!
   getProductGroups: [ProductGroupGetDto!]!
   getProductGroup(id: ID!): ProductGroupGetDto!
-  getLaborCosts: [LaborCost!]!
+  getLaborCosts: [LaborCostGetDto!]!
+  getLaborCost(id: ID!): LaborCostGetDto!
   getArtisans: [Artisan!]!
   getArtisan(id: ID!): Artisan!
   getWork(id: ID!): WorkWithTasks!

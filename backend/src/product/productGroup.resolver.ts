@@ -23,7 +23,6 @@ export class ProductGroupResolver {
     return this.productGroupService.updateProductGroup(id, data);
   }
 
-  // @UseGuards(AuthGuard)
   @Query(() => [ProductGroupGetDto])
   getProductGroups() {
     return this.productGroupService.getProductGroups();

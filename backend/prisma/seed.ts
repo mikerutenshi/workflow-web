@@ -6,23 +6,40 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  const adminRole = await prisma.role.upsert({
-    where: { name: 'Admin' },
+  const superuserRole = await prisma.role.upsert({
+    where: { name: 'Superuser' },
     update: {},
     create: {
-      name: 'Admin',
-      description: "Programmer's role",
+      name: 'Superuser',
+      description: 'Develop app',
       clearanceLevel: 0,
     },
   });
-
-  const userRole = await prisma.role.upsert({
-    where: { name: 'User' },
+  const financeRole = await prisma.role.upsert({
+    where: { name: 'Finance' },
     update: {},
     create: {
-      name: 'User',
-      description: "Regular user's role",
-      clearanceLevel: 5,
+      name: 'Finance',
+      description: 'Review payroll reports',
+      clearanceLevel: 2,
+    },
+  });
+  const plannerRole = await prisma.role.upsert({
+    where: { name: 'Planner' },
+    update: {},
+    create: {
+      name: 'Planner',
+      description: 'Input production plans',
+      clearanceLevel: 4,
+    },
+  });
+  const fieldRole = await prisma.role.upsert({
+    where: { name: 'Field' },
+    update: {},
+    create: {
+      name: 'Field',
+      description: 'Input details on production field',
+      clearanceLevel: 6,
     },
   });
 
@@ -33,28 +50,26 @@ async function main() {
     update: {},
     create: {
       email: 'admin@email.com',
-      firstName: 'Admin',
-      lastName: 'Istrator',
-      roleId: adminRole.id,
+      firstName: 'Super',
+      lastName: 'User',
+      roleId: superuserRole.id,
       password: password,
       isActive: true,
     },
   });
-
-  const user = await prisma.user.upsert({
-    where: { email: 'user@email.com' },
+  const planner = await prisma.user.upsert({
+    where: { email: 'planner@email.com' },
     update: {},
     create: {
-      email: 'user@email.com',
-      firstName: 'User',
-      lastName: 'Regular',
-      roleId: userRole.id,
+      email: 'planner@email.com',
+      firstName: 'Planner',
+      lastName: 'User',
+      roleId: plannerRole.id,
       password: password,
       createdBy: adminUser.id,
       isActive: true,
     },
   });
-
   await prisma.user.upsert({
     where: { email: 'yomeifung@gmail.com' },
     update: {},
@@ -62,7 +77,20 @@ async function main() {
       email: 'yomeifung@gmail.com',
       firstName: 'Mei Fung',
       lastName: 'Yo',
-      roleId: userRole.id,
+      roleId: financeRole.id,
+      password: password,
+      createdBy: adminUser.id,
+      isActive: true,
+    },
+  });
+  await prisma.user.upsert({
+    where: { email: 'field@email.com' },
+    update: {},
+    create: {
+      email: 'field@email.com',
+      firstName: 'Field',
+      lastName: 'User',
+      roleId: fieldRole.id,
       password: password,
       createdBy: adminUser.id,
       isActive: true,
@@ -92,7 +120,7 @@ async function main() {
         skuNumeric: '00603',
         productCategoryId: heelsCategory.id,
         name: 'Aviana',
-        createdBy: user.id,
+        createdBy: planner.id,
       },
     });
   }
@@ -122,7 +150,7 @@ async function main() {
       data: {
         sku: 'B00603-L.Brown/D.Brown',
         productGroupId: productGroup603.id,
-        createdBy: user.id,
+        createdBy: planner.id,
         productColors: {
           create: colorIds.map((colorId) => ({
             color: { connect: { id: colorId } },

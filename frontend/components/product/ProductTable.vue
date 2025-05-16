@@ -1,4 +1,12 @@
 <template>
+  <v-row v-if="error" class="flex-grow-0">
+    <v-col>
+      <v-alert type="error">
+        {{ extractGraphQlError(error) }}
+      </v-alert>
+    </v-col>
+  </v-row>
+
   <v-row class="flex-grow-0">
     <v-col>
       <v-text-field
@@ -94,7 +102,7 @@ import {
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data, isFetching } = useQuery({
+const { data, isFetching, error } = useQuery({
   query: GetProductsDocument,
   tags: [CACHE_PRODUCTS],
 });

@@ -1,4 +1,12 @@
 <template>
+  <v-row v-if="error" class="flex-grow-0">
+    <v-col>
+      <v-alert type="error">
+        {{ extractGraphQlError(error) }}
+      </v-alert>
+    </v-col>
+  </v-row>
+
   <v-row class="flex-grow-0">
     <v-col>
       <ActionPickDate
@@ -128,7 +136,7 @@ const form = reactive({
   endDate: nextThurs.toISOString(),
 });
 
-const { execute, data, isFetching } = useQuery({
+const { execute, data, isFetching, error } = useQuery({
   query: GetPayrollDocument,
   cachePolicy: 'network-only',
   tags: [CACHE_PAYROLL],

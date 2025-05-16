@@ -3,6 +3,11 @@ fragment AuthUser on User {
   email
   firstName
   lastName
+  createdAt
+  role {
+    name
+    clearanceLevel
+  }
 }
 
 mutation logIn($data: LogInDto!) {
@@ -25,13 +30,6 @@ query me {
 
 query getUsers {
   getUsers {
-    id
-    email
-    firstName
-    lastName
-    createdAt
-    role {
-      name
-    }
+    ...AuthUser
   }
 }

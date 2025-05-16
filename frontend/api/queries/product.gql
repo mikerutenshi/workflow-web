@@ -120,9 +120,6 @@ query getProductGroups {
     productCategory {
       ...ProductCategoryFrag
     }
-    laborCosts {
-      ...LaborCostFrag
-    }
   }
 }
 
@@ -133,9 +130,6 @@ query getProductGroup($id: ID!) {
     name
     productCategory {
       ...ProductCategoryFrag
-    }
-    laborCosts {
-      ...LaborCostFrag
     }
     createdBy
     updatedBy
@@ -174,6 +168,34 @@ query getProduct($id: ID!) {
       color {
         id
       }
+    }
+  }
+}
+
+query getLaborCost($id: ID!) {
+  getLaborCost(id: $id) {
+    id
+    skuNumeric
+    name
+    productCategory {
+      ...ProductCategoryFrag
+    }
+    laborCosts {
+      ...LaborCostFrag
+    }
+  }
+}
+
+query getLaborCosts {
+  getLaborCosts {
+    id
+    skuNumeric
+    name
+    productCategory {
+      ...ProductCategoryFrag
+    }
+    laborCosts {
+      ...LaborCostFrag
     }
   }
 }

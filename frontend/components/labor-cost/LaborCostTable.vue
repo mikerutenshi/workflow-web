@@ -1,4 +1,12 @@
 <template>
+  <v-row v-if="error" class="flex-grow-0">
+    <v-col>
+      <v-alert type="error">
+        {{ extractGraphQlError(error) }}
+      </v-alert>
+    </v-col>
+  </v-row>
+
   <v-row class="flex-grow-0">
     <v-col>
       <v-text-field
@@ -16,7 +24,7 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="data?.getProductGroups"
+        :items="data?.getLaborCosts"
         :search="search"
         :loading="isFetching"
         item-value="id"
@@ -117,15 +125,12 @@
 import { mdiMagnify, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
-import {
-  GetProductGroupsDocument,
-  type LaborCost,
-} from '~/api/generated/types';
+import { GetLaborCostsDocument } from '~/api/generated/types';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data, isFetching } = useQuery({
-  query: GetProductGroupsDocument,
+const { data, isFetching, error } = useQuery({
+  query: GetLaborCostsDocument,
   tags: [CACHE_PRODUCT_GROUPS],
 });
 

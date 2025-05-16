@@ -10,7 +10,8 @@
   "auth": {
     "password": "Password",
     "login": "Log In",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "role": "Role: {role_name}"
   },
   "nav": {
     "home": "Home",
@@ -38,7 +39,7 @@
     "product_group_edit": "Edit a Shoe Group",
     "product_create": "Create a New Shoe",
     "products": "Shoes",
-    "product_edit": "Edit s Shoe",
+    "product_edit": "Edit a Shoe",
     "work_create": "Create a New Work",
     "works": "Production",
     "work_edit": "Edit a Work"

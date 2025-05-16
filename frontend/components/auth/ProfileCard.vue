@@ -2,7 +2,7 @@
   <v-row class="flex-grow-0">
     <v-col>
       <v-card v-if="authStore.user">
-        <v-card-title class="text-center">
+        <v-card-title class="text-start">
           <v-icon class="mr-2">{{ greetingIcon }}</v-icon>
           {{
             `${$t(greeting)} ${authStore.user.firstName} ${
@@ -11,40 +11,54 @@
           }}
         </v-card-title>
         <v-card-text>
-          <!-- <ActionCheckMe /> -->
-          <v-list class="text-center">
-            <v-list-item> {{ `Email: ${authStore.user.email}` }}</v-list-item>
-          </v-list>
-          <v-select
-            :label="$t('label.select_language')"
-            :items="locales"
-            item-title="name"
-            item-value="code"
-            v-model="selectedLocale"
-            @update:model-value="setLocale(selectedLocale)"
-          >
-            <template v-slot:item="{ props, item }">
-              <v-list-item v-bind="props">
-                <template v-slot:prepend>
+          <v-row>
+            <v-col>
+              <v-list class="text-start">
+                <v-list-item>
+                  {{ `Email: ${authStore.user.email}` }}</v-list-item
+                >
+                <v-list-item>
+                  {{
+                    $t('auth.role', { role_name: authStore.user.role.name })
+                  }}</v-list-item
+                >
+              </v-list>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-select
+                :label="$t('label.select_language')"
+                :items="locales"
+                item-title="name"
+                item-value="code"
+                v-model="selectedLocale"
+                @update:model-value="setLocale(selectedLocale)"
+              >
+                <template v-slot:item="{ props, item }">
+                  <v-list-item v-bind="props">
+                    <template v-slot:prepend>
+                      <v-img
+                        :src="item.raw.avatar"
+                        aspect-ratio="4/3"
+                        width="30"
+                        class="mr-4"
+                      ></v-img>
+                    </template>
+                  </v-list-item>
+                </template>
+
+                <template v-slot:selection="{ item }">
                   <v-img
                     :src="item.raw.avatar"
                     aspect-ratio="4/3"
                     width="30"
-                    class="mr-4"
                   ></v-img>
+                  <span class="ml-4">{{ item.raw.name }}</span>
                 </template>
-              </v-list-item>
-            </template>
-
-            <template v-slot:selection="{ item }">
-              <v-img
-                :src="item.raw.avatar"
-                aspect-ratio="4/3"
-                width="30"
-              ></v-img>
-              <span class="ml-4">{{ item.raw.name }}</span>
-            </template>
-          </v-select>
+              </v-select>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-col>

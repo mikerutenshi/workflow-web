@@ -136,6 +136,7 @@ import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
 import {
   Gender,
+  GetLaborCostDocument,
   GetProductGroupDocument,
   Job,
   UpsertLaborCostsDocument,
@@ -172,14 +173,14 @@ const computeGender = computed({
 });
 
 useQuery({
-  query: GetProductGroupDocument,
+  query: GetLaborCostDocument,
   variables: { id: productGroupId },
   onData: (data) => {
-    header.skuNumeric = data.getProductGroup.skuNumeric;
-    header.productCategory = data.getProductGroup.productCategory.name;
-    header.gender = data.getProductGroup.productCategory.gender;
+    header.skuNumeric = data.getLaborCost.skuNumeric;
+    header.productCategory = data.getLaborCost.productCategory.name;
+    header.gender = data.getLaborCost.productCategory.gender;
 
-    const laborCosts = data.getProductGroup.laborCosts ?? [];
+    const laborCosts = data.getLaborCost.laborCosts ?? [];
 
     if (laborCosts.length > 0) {
       updateCosts('drawUpper', Job.DrawUpper, laborCosts);

@@ -5,8 +5,13 @@ import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductCreateDto } from './dto/product-create.dto';
 import { ProductGetDto } from './dto/product-get.dto';
 import { ProductService } from './product.service';
+import { RoleGuard } from '@/guards/role.guard';
+import { Roles } from '@/guards/roles.decorator';
+import { Role } from '@/models/role.enum';
 
 @Resolver(() => Product)
+@UseGuards(RoleGuard)
+@Roles(Role.Planner)
 export class ProductResolver {
   constructor(private productService: ProductService) {}
 

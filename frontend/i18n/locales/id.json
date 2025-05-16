@@ -10,7 +10,8 @@
   "auth": {
     "password": "Kata Sandi",
     "login": "Masuk",
-    "logout": "Keluar"
+    "logout": "Keluar",
+    "role": "Peran: {role_name}"
   },
   "nav": {
     "home": "Rumah",

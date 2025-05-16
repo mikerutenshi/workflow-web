@@ -38,13 +38,12 @@ async function bootstrap() {
       execSync('npx prisma db seed', { stdio: 'inherit' });
 
       console.log('Prisma setup completed.');
-    }
-    // } else {
-    //   console.log('Running Prisma db seed...');
-    //   execSync('npx prisma db seed', { stdio: 'inherit' });
+    } else {
+      console.log('Running Prisma db seed...');
+      execSync('npx prisma db seed', { stdio: 'inherit' });
 
-    //   console.log('Prisma setup completed.');
-    // }
+      console.log('Prisma setup completed.');
+    }
   } catch (error) {
     console.error('Error executing Prisma commands:', error);
   }

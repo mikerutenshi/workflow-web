@@ -44,16 +44,6 @@ export class AuthService {
       },
       include: {
         role: true,
-        // createdUsers: {
-        //   select: {
-        //     id: true,
-        //   },
-        // },
-        // approvedUsers: {
-        //   select: {
-        //     id: true,
-        //   },
-        // },
       },
     });
   }

@@ -1,3 +1,4 @@
+import type { CombinedError } from 'villus';
 import { Gender, type Job } from '~/api/generated/types';
 
 function renderJobs(jobs: Job[]): string {
@@ -42,6 +43,32 @@ function formatLocalDate(utcDate: string) {
   return utcDate ? new Date(utcDate).toLocaleDateString() : '-';
 }
 
+interface VillusError {
+  message: string;
+  graphQLErrors?: Array<{
+    message: string;
+    extensions?: {
+      originalError?: {
+        message?: string;
+      };
+    };
+  }>;
+}
+
+function extractGraphQlError(error?: CombinedError | null): string {
+  if (!error) return '';
+
+  return (
+    error.graphqlErrors
+      ?.flatMap(
+        (e) =>
+          (e.extensions?.originalError as { message?: string })?.message ||
+          e.message
+      )
+      .join(', ') || error.message
+  );
+}
+
 export {
   renderJob,
   renderJobs,
@@ -50,4 +77,5 @@ export {
   renderGender,
   parseGender,
   formatLocalDate,
+  extractGraphQlError,
 };

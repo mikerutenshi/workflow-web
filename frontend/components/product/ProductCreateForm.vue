@@ -2,8 +2,12 @@
   <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-alert v-if="errorMessage" type="error">
-          {{ errorMessage }}
+        <v-alert v-if="errorCreate || errorUpdate || errorDelete" type="error">
+          {{
+            extractGraphQlError(errorCreate) ||
+            extractGraphQlError(errorUpdate) ||
+            extractGraphQlError(errorDelete)
+          }}
         </v-alert>
 
         <v-row>
@@ -22,7 +26,9 @@
                 <v-list-item
                   v-bind="props"
                   :title="item.raw.skuNumeric"
-                  :subtitle="$t(renderGender(item.raw.productCategory.gender))"
+                  :subtitle="`${$t(
+                    renderGender(item.raw.productCategory.gender)
+                  )} | ${item.raw.productCategory.name}`"
                 >
                   <template #append>
                     <NuxtLink
@@ -170,7 +176,6 @@ import { mdiPencil, mdiPlus } from '@mdi/js';
 
 const route = useRoute();
 const productId = ref(route.params.id as string);
-const errorMessage = ref('');
 
 const form = reactive({
   sku: '',
@@ -185,18 +190,10 @@ const {
   data: createData,
   isFetching: isCreating,
   execute: executeCreate,
+  error: errorCreate,
 } = useMutation(CreateProductDocument, {
   onData() {
     navigateTo(localePath('/products'));
-  },
-  onError(err) {
-    errorMessage.value +=
-      (
-        err.graphqlErrors?.[0]?.extensions?.['originalError'] as Record<
-          string,
-          any
-        >
-      )?.['message'] ?? err.message;
   },
   clearCacheTags: [CACHE_PRODUCTS],
 });
@@ -204,33 +201,23 @@ const {
   data: updateData,
   isFetching: isUpdating,
   execute: executeUpdate,
+  error: errorUpdate,
 } = useMutation(UpdateProductDocument, {
   onData() {
     navigateTo(localePath('/products'));
   },
-  onError(err) {
-    errorMessage.value +=
-      (
-        err.graphqlErrors?.[0]?.extensions?.['originalError'] as Record<
-          string,
-          any
-        >
-      )?.['message'] ?? err.message;
-  },
   clearCacheTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
 });
-const { execute: executeDelete, isFetching: isDeleting } = useMutation(
-  DeleteProductDocument,
-  {
-    clearCacheTags: [CACHE_PRODUCTS],
-    onData() {
-      navigateTo(localePath('/products'));
-    },
-    onError(err) {
-      alert(`Error while deleting product -> ${err}`);
-    },
-  }
-);
+const {
+  execute: executeDelete,
+  isFetching: isDeleting,
+  error: errorDelete,
+} = useMutation(DeleteProductDocument, {
+  clearCacheTags: [CACHE_PRODUCTS],
+  onData() {
+    navigateTo(localePath('/products'));
+  },
+});
 
 const handleSubmit = async () => {
   const authStore = useAuthStore();

@@ -10,7 +10,8 @@
   "auth": {
     "password": "Sandi",
     "login": "Lebet",
-    "logout": "Kaluar"
+    "logout": "Kaluar",
+    "role": "Peran: {role_name}"
   },
   "nav": {
     "home": "Imah",

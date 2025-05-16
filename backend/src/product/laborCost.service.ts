@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
 import { LaborCost } from '@/models/labor-cost.model';
+import { LaborCostGetDto } from './dto/labor-cost-get.dto';
 
 @Injectable()
 export class LaborCostService {
@@ -94,11 +95,28 @@ export class LaborCostService {
     }
   }
 
-  async getLaborCosts(): Promise<LaborCost[]> {
-    return await this.prisma.laborCost.findMany({
+  getLaborCosts(): Promise<LaborCostGetDto[]> {
+    return this.prisma.productGroup.findMany({
       include: {
-        productGroup: true,
+        productCategory: true,
+        laborCosts: true,
       },
     });
+  }
+
+  async getLaborCost(id: number): Promise<LaborCostGetDto> {
+    const result = await this.prisma.productGroup.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        productCategory: true,
+        laborCosts: true,
+      },
+    });
+    if (!result) {
+      throw new Error(`Labor costs with ID ${id} not found.`);
+    }
+    return result;
   }
 }

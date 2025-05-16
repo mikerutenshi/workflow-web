@@ -30,12 +30,6 @@ export class ProductGroupService {
     return await this.prisma.productGroup.findMany({
       include: {
         productCategory: true,
-        products: {
-          include: {
-            productColors: { include: { color: true } },
-          },
-        },
-        laborCosts: true,
       },
     });
   }
@@ -47,12 +41,6 @@ export class ProductGroupService {
       },
       include: {
         productCategory: true,
-        products: {
-          include: {
-            productColors: { include: { color: true } },
-          },
-        },
-        laborCosts: true,
       },
     });
 

@@ -2,9 +2,15 @@ import { LaborCost } from '@/models/labor-cost.model';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { LaborCostService } from './laborCost.service';
 import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
-import { ParseIntPipe } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { RoleGuard } from '@/guards/role.guard';
+import { Roles } from '@/guards/roles.decorator';
+import { Role } from '@/models/role.enum';
+import { LaborCostGetDto } from './dto/labor-cost-get.dto';
 
 @Resolver(() => LaborCost)
+@UseGuards(RoleGuard)
+@Roles(Role.Finance)
 export class LaborCostResolver {
   constructor(private laborCostService: LaborCostService) {}
 
@@ -18,8 +24,15 @@ export class LaborCostResolver {
     return this.laborCostService.upsertLaborCosts(productGroupId, data);
   }
 
-  @Query(() => [LaborCost])
-  getLaborCosts() {
+  @Query(() => [LaborCostGetDto])
+  getLaborCosts(): Promise<LaborCostGetDto[]> {
     return this.laborCostService.getLaborCosts();
+  }
+
+  @Query(() => LaborCostGetDto)
+  getLaborCost(
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+  ): Promise<LaborCostGetDto> {
+    return this.laborCostService.getLaborCost(id);
   }
 }

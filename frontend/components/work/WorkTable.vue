@@ -113,7 +113,7 @@ const nextThurs =
     : now.add(1, 'week').weekday(4).hour(23).minute(59).second(59);
 console.log(`Next Thurs: ${nextThurs}`);
 
-const lastFrid = nextThurs.subtract(6, 'days').hour(0).second(1);
+const lastFrid = nextThurs.subtract(14, 'days').hour(0).second(1);
 console.log(`Last Frid: ${lastFrid}`);
 
 const dates = ref<string[]>([]);

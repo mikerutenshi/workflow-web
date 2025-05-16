@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="data.getArtisans"
+    :items="data?.getArtisans"
     :loading="isFetching"
     class="flex-grow-1"
     item-value="id"
