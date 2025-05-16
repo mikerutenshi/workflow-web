@@ -23,29 +23,6 @@
     <v-navigation-drawer v-model="drawer" app temporary>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
-          <!-- <v-list-group v-if="navItem.children">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                :title="navItem.title"
-                :prepend-icon="navItem.icon"
-                slim
-              >
-              </v-list-item>
-            </template>
-
-            <v-list-item
-              v-for="(child, childIndex) in navItem.children"
-              :key="childIndex"
-              :to="child.route"
-              router
-              :title="child.title"
-              :prepend-icon="child.icon"
-              slim
-            >
-            </v-list-item>
-          </v-list-group> -->
-
           <v-list-item
             :to="navItem.route"
             router
@@ -78,6 +55,7 @@ import {
   mdiShoeFormal,
   mdiPlus,
 } from '@mdi/js';
+import { Role } from '~/utils/constants';
 
 const drawer = ref(false);
 const createBtn = reactive({
@@ -94,52 +72,73 @@ const closeDrawer = () => {
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+
+const authStore = useAuthStore();
+const clearance = authStore.user?.role.clearanceLevel ?? 6;
 const navItems = computed(() => {
-  return [
-    { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
-    {
-      title: t('nav.products'),
-      route: localePath('/products'),
-      icon: mdiShoeFormal,
-    },
-    {
-      title: t('nav.production_status'),
-      route: localePath('/works'),
-      icon: mdiChartTimeline,
-    },
-    {
-      title: t('nav.payroll'),
-      route: localePath('/payroll'),
-      icon: mdiCashRegister,
-    },
-    {
-      title: t('nav.labor_costs'),
-      route: localePath('/labor-costs'),
-      icon: mdiCalculator,
-    },
-    {
-      title: t('nav.artisans'),
-      route: localePath('/artisans'),
-      icon: mdiFaceMan,
-    },
-    // {
-    //   title: 'Utility',
-    //   icon: 'mdi-tools',
-    //   children: [
-    //     {
-    //       title: 'Product Groups',
-    //       route: '/product-groups',
-    //       icon: 'mdi-basket',
-    //     },
-    //     {
-    //       title: 'Product Categories',
-    //       route: '/product-categories',
-    //       icon: 'mdi-shape',
-    //     },
-    //     { title: 'Colors', route: '/colors', icon: 'mdi-palette' },
-    //   ],
-    // },
-  ];
+  if (clearance <= Role.Finance) {
+    return [
+      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
+      {
+        title: t('nav.products'),
+        route: localePath('/products'),
+        icon: mdiShoeFormal,
+      },
+      {
+        title: t('nav.production_status'),
+        route: localePath('/works'),
+        icon: mdiChartTimeline,
+      },
+      {
+        title: t('nav.payroll'),
+        route: localePath('/payroll'),
+        icon: mdiCashRegister,
+      },
+      {
+        title: t('nav.labor_costs'),
+        route: localePath('/labor-costs'),
+        icon: mdiCalculator,
+      },
+      {
+        title: t('nav.artisans'),
+        route: localePath('/artisans'),
+        icon: mdiFaceMan,
+      },
+    ];
+  } else if (clearance <= Role.Planner) {
+    return [
+      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
+      {
+        title: t('nav.products'),
+        route: localePath('/products'),
+        icon: mdiShoeFormal,
+      },
+      {
+        title: t('nav.production_status'),
+        route: localePath('/works'),
+        icon: mdiChartTimeline,
+      },
+      {
+        title: t('nav.artisans'),
+        route: localePath('/artisans'),
+        icon: mdiFaceMan,
+      },
+    ];
+  } else if (clearance <= Role.Field) {
+    return [
+      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
+      {
+        title: t('nav.production_status'),
+        route: localePath('/works'),
+        icon: mdiChartTimeline,
+      },
+      {
+        title: t('nav.artisans'),
+        route: localePath('/artisans'),
+        icon: mdiFaceMan,
+      },
+    ];
+  }
 });
 
 const route = useRoute();
