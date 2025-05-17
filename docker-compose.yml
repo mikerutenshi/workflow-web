@@ -15,8 +15,9 @@ services:
       - workflow-network
   frontend:
     build:
-      context: ./frontend
-      target: staging
+      context: .
+      dockerfile: frontend/Dockerfile
+      target: base
     container_name: frontend
     restart: always
     depends_on:

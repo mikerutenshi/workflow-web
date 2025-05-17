@@ -10,6 +10,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3001;
   console.log(`Env -> ${process.env.NODE_ENV}`);
+  console.log(`Origin1 -> ${configService.get('CORS_ORIGIN_1')}`);
+  console.log(`DB -> ${configService.get('DATABASE_URL')}`);
 
   app.use(cookieParser());
   app.useGlobalPipes(
@@ -29,23 +31,23 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  try {
-    if (process.env.NODE_ENV != 'development') {
-      console.log('Running Prisma db push...');
-      execSync('npx prisma db push', { stdio: 'inherit' });
+  // try {
+  //   if (process.env.NODE_ENV != 'development') {
+  //     console.log('Running Prisma db push...');
+  //     execSync('npx prisma db push', { stdio: 'inherit' });
 
-      console.log('Running Prisma db seed...');
-      execSync('npx prisma db seed', { stdio: 'inherit' });
+  //     console.log('Running Prisma db seed...');
+  //     execSync('npx prisma db seed', { stdio: 'inherit' });
 
-      console.log('Prisma setup completed.');
-    } else {
-      console.log('Running Prisma db seed...');
-      execSync('npx prisma db seed', { stdio: 'inherit' });
+  //     console.log('Prisma setup completed.');
+  //   } else {
+  //     console.log('Running Prisma db seed...');
+  //     execSync('npx prisma db seed', { stdio: 'inherit' });
 
-      console.log('Prisma setup completed.');
-    }
-  } catch (error) {
-    console.error('Error executing Prisma commands:', error);
-  }
+  //     console.log('Prisma setup completed.');
+  //   }
+  // } catch (error) {
+  //   console.error('Error executing Prisma commands:', error);
+  // }
 }
 bootstrap();

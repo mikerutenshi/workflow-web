@@ -16,10 +16,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductionModule } from './production/production.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
+const ENV = process.env.NODE_ENV || 'development';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: `.env.${ENV}`,
     }),
     AuthModule,
     PrismaModule.forRoot({ isGlobal: true }),
