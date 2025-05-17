@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
+import { fileURLToPath, URL } from 'node:url';
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -20,6 +21,7 @@ export default defineNuxtConfig({
       });
     },
     '@nuxtjs/i18n',
+    '@vee-validate/nuxt',
   ],
   i18n: {
     defaultLocale: 'en',
@@ -50,4 +52,7 @@ export default defineNuxtConfig({
     },
   },
   sourcemap: true,
+  alias: {
+    '@shared': fileURLToPath(new URL('../shared', import.meta.url)),
+  },
 });

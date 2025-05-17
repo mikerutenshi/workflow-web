@@ -4,16 +4,6 @@ import { ProductCreateDto } from './dto/product-create.dto';
 import { Product } from '@/models/product.model';
 import { ProductGetDto } from './dto/product-get.dto';
 
-// type NullToUndefined<T> = {
-//   [K in keyof T]: T[K] extends null
-//     ? undefined
-//     : T[K] extends (infer U)[]
-//       ? NullToUndefined<U>[] // Handle arrays recursively
-//       : T[K] extends object
-//         ? NullToUndefined<T[K]> // Handle nested objects recursively
-//         : T[K];
-// };
-
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}

@@ -2,13 +2,20 @@
   <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-alert v-if="errorCreate || errorUpdate || errorDelete" type="error">
-          {{
-            extractGraphQlError(errorCreate) ||
-            extractGraphQlError(errorUpdate) ||
-            extractGraphQlError(errorDelete)
-          }}
-        </v-alert>
+        <v-row>
+          <v-col>
+            <v-alert
+              v-if="errorCreate || errorUpdate || errorDelete"
+              type="error"
+            >
+              {{
+                extractGraphQlError(errorCreate) ||
+                extractGraphQlError(errorUpdate) ||
+                extractGraphQlError(errorDelete)
+              }}
+            </v-alert>
+          </v-col>
+        </v-row>
 
         <v-row>
           <v-col>
