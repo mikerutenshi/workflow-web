@@ -6,7 +6,7 @@ WORKDIR /app
 # RUN rm -f wrontend/package-lock.json
 
 COPY frontend/package*.json ./frontend/
-COPY shared/ ./shared/
+COPY shared/schema.ts ./shared/
 
 WORKDIR /app/frontend
 RUN npm ci

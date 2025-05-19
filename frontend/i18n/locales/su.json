@@ -113,5 +113,21 @@
     "men": "Lalaki",
     "women": "Awéwé",
     "kids": "Barudak"
+  },
+  "zodI18n": {
+    "validations": {
+      "email": "Format email teu leres",
+      "min": "Minimum {minimum} aksara"
+    },
+    "errors": {
+      "invalid_string": {
+        "email": "Format email teu leres"
+      },
+      "too_small": {
+        "string": {
+          "inclusive": "Minimum {minimum} aksara"
+        }
+      }
+    }
   }
 }

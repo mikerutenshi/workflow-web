@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     },
     '@nuxtjs/i18n',
     '@vee-validate/nuxt',
+    'nuxt-zod-i18n',
   ],
   i18n: {
     defaultLocale: 'en',

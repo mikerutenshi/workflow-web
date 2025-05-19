@@ -113,5 +113,21 @@
     "men": "Laki-laki",
     "women": "Perempuan",
     "kids": "Anak-anak"
+  },
+  "zodI18n": {
+    "validations": {
+      "email": "Format email tidak valid",
+      "min": "Minimal {minimum} karakter"
+    },
+    "errors": {
+      "invalid_string": {
+        "email": "Format email tidak valid"
+      },
+      "too_small": {
+        "string": {
+          "inclusive": "Minimal {minimum} karakter"
+        }
+      }
+    }
   }
 }

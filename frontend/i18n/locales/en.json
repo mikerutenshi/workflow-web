@@ -113,5 +113,21 @@
     "men": "Men",
     "women": "Women",
     "kids": "Kids"
+  },
+  "zodI18n": {
+    "errors": {
+      "invalid_string": {
+        "email": "Not a valid email address"
+      },
+      "too_small": {
+        "string": {
+          "inclusive": "At least {minimum} characters"
+        },
+        "array": {
+          "inclusive": "Choose at least {minimum} item"
+        }
+      },
+      "invalid_type_received_undefined": "Field is required"
+    }
   }
 }

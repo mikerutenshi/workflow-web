@@ -1,15 +1,23 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+  <form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-alert v-if="errorMessage" type="error">
-          {{ errorMessage }}
-        </v-alert>
+        <v-row v-if="createError || updateError">
+          <v-col>
+            <v-alert type="error">
+              {{
+                extractGraphQlError(createError) ||
+                extractGraphQlError(updateError)
+              }}
+            </v-alert>
+          </v-col>
+        </v-row>
         <v-row>
           <v-col>
             <v-text-field
-              v-model="form.firstName"
+              v-model="firstName.value.value"
               :label="$t('label.first_name')"
+              :error-messages="firstName.errorMessage.value"
             />
           </v-col>
         </v-row>
@@ -17,9 +25,9 @@
         <v-row>
           <v-col>
             <v-text-field
-              @blur="onBlur"
-              v-model="form.lastName"
+              v-model="lastName.value.value"
               :label="$t('label.last_name')"
+              :error-messages="lastName.errorMessage.value"
             />
           </v-col>
         </v-row>
@@ -27,7 +35,7 @@
         <v-row>
           <v-col>
             <v-select
-              v-model="form.jobs"
+              v-model="jobs.value.value"
               :items="jobOptions"
               :return-object="false"
               :label="$t('label.select_jobs')"
@@ -36,6 +44,7 @@
               auto-select-first
               item-title="title"
               item-value="id"
+              :error-messages="jobs.errorMessage.value"
             ></v-select>
           </v-col>
         </v-row>
@@ -57,7 +66,7 @@
         @click="executeDelete({ id: artisanId })"
       ></ActionDelete>
     </v-row>
-  </v-form>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -70,6 +79,7 @@ import {
   UpdateArtisanDocument,
 } from '~/api/generated/types';
 import { useRoute } from 'vue-router';
+import { ArtisanSchema } from '@shared/schema';
 
 const route = useRoute();
 const artisanId = ref(route.params.id as string);
@@ -82,44 +92,42 @@ const jobOptions = computed(() =>
     title: t(JOBS[key]),
   }))
 );
-const errorMessage = ref('');
-const form = reactive({
-  firstName: '',
-  lastName: undefined as string | undefined,
-  jobs: [] as Job[],
-  createdBy: userId,
-  updatedBy: undefined as string | undefined,
+const validationSchema = toTypedSchema(ArtisanSchema);
+const {
+  handleSubmit,
+  // values: formValues,
+  setValues,
+} = useForm({
+  validationSchema,
+  initialValues: {
+    createdBy: userId,
+  },
 });
+const firstName = useField('firstName');
+const lastName = useField('lastName');
+const jobs = useField<Job[]>('jobs');
+
 const localePath = useLocalePath();
-const { execute: executeCreate, isFetching: isCreating } = useMutation(
-  CreateArtisanDocument,
-  {
-    onData() {
-      navigateTo(localePath('/artisans'));
-    },
-    onError(err) {
-      errorMessage.value =
-        JSON.stringify(err.graphqlErrors?.[0]?.extensions?.['originalError']) ??
-        err.message;
-    },
-    clearCacheTags: [CACHE_ARTISANS],
-  }
-);
-const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
-  UpdateArtisanDocument,
-  {
-    onData() {
-      navigateTo(localePath('/artisans'));
-    },
-    onError(err) {
-      errorMessage.value =
-        JSON.stringify(
-          err.graphqlErrors?.[0]?.extensions?.['originalError'] as string
-        ) ?? err.message;
-    },
-    clearCacheTags: [CACHE_ARTISANS, CACHE_ARTISAN],
-  }
-);
+const {
+  execute: executeCreate,
+  isFetching: isCreating,
+  error: createError,
+} = useMutation(CreateArtisanDocument, {
+  onData() {
+    navigateTo(localePath('/artisans'));
+  },
+  clearCacheTags: [CACHE_ARTISANS],
+});
+const {
+  execute: executeUpdate,
+  isFetching: isUpdating,
+  error: updateError,
+} = useMutation(UpdateArtisanDocument, {
+  onData() {
+    navigateTo(localePath('/artisans'));
+  },
+  clearCacheTags: [CACHE_ARTISANS, CACHE_ARTISAN],
+});
 const { execute: executeDelete } = useMutation(DeleteArtisanDocument, {
   clearCacheTags: [CACHE_ARTISANS],
   onData() {
@@ -129,9 +137,6 @@ const { execute: executeDelete } = useMutation(DeleteArtisanDocument, {
     alert(`Error while deleting artisan -> ${err}`);
   },
 });
-const onBlur = () => {
-  form.lastName = form.lastName === '' ? undefined : form.lastName;
-};
 
 if (artisanId.value) {
   useQuery({
@@ -141,24 +146,39 @@ if (artisanId.value) {
     onData(artisanData) {
       const artisan = artisanData.getArtisan;
       if (artisan) {
-        form.firstName = artisan.firstName;
-        if (artisan.lastName) form.lastName = artisan.lastName;
-        form.jobs = artisan.jobs;
-        form.createdBy = artisan.createdBy;
-        form.updatedBy = userId;
+        firstName.setValue(artisan.firstName);
+        lastName.setValue(artisan.lastName);
+        jobs.setValue(
+          artisan.jobs && artisan.jobs.length > 0
+            ? (artisan.jobs as [Job, ...Job[]])
+            : [Job.DrawUpper]
+        );
+
+        setValues({
+          createdBy: artisan.createdBy,
+          updatedBy: artisan.updatedBy,
+        });
       }
     },
   });
 }
-function handleSubmit() {
-  if (artisanId.value) {
-    executeUpdate({ id: artisanId.value, data: form });
-  } else {
-    executeCreate({ data: form });
-  }
-}
 
-watchEffect(() => {
-  console.log(JSON.stringify(form));
+const onSubmit = handleSubmit((values) => {
+  if (artisanId.value) {
+    executeUpdate({
+      id: artisanId.value,
+      data: {
+        ...values,
+        jobs: values.jobs as Job[],
+        lastName: values.lastName === '' ? null : values.lastName,
+      },
+    });
+  } else {
+    executeCreate({ data: { ...values, jobs: values.jobs as Job[] } });
+  }
 });
+
+// watchEffect(() => {
+//   console.log(JSON.stringify(formValues));
+// });
 </script>
