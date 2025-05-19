@@ -23,10 +23,11 @@ function formatRupiah(amount: number | null | undefined): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
-function parseRupiah(rupiah: string): number {
+function parseRupiah(rupiah: string): number | null {
   // Hapus semua karakter kecuali digit dan koma
   const cleaned = rupiah.replace(/[^0-9,]/g, '').replace(',', '.'); // Ganti koma dengan titik untuk desimal
-  return parseFloat(cleaned);
+  const parsed = parseFloat(cleaned);
+  return !Number.isNaN(parsed) ? parsed : null;
 }
 
 function renderGender(gender: Gender): string {

@@ -7,6 +7,7 @@ import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
+import { LaborCostUpdateDto } from './dto/labor-cost-update.dto';
 
 @Resolver(() => LaborCost)
 @UseGuards(RoleGuard)
@@ -22,6 +23,14 @@ export class LaborCostResolver {
     data: LaborCostUpsertDto[],
   ): Promise<LaborCost[]> {
     return this.laborCostService.upsertLaborCosts(productGroupId, data);
+  }
+
+  @Mutation(() => Boolean)
+  updateLaborCosts(
+    @Args('data')
+    data: LaborCostUpdateDto,
+  ): Promise<Boolean> {
+    return this.laborCostService.updateLaborCosts(data);
   }
 
   @Query(() => [LaborCostGetDto])

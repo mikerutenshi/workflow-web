@@ -123,6 +123,9 @@
         "string": {
           "inclusive": "At least {minimum} characters"
         },
+        "number": {
+          "inclusive": "Minimum value is {minimum}"
+        },
         "array": {
           "inclusive": "Choose at least {minimum} item"
         }

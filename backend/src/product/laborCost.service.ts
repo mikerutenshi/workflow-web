@@ -3,6 +3,8 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
 import { LaborCost } from '@/models/labor-cost.model';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
+import { LaborCostUpdateDto } from './dto/labor-cost-update.dto';
+import { Job } from '@prisma/client';
 
 @Injectable()
 export class LaborCostService {
@@ -93,6 +95,60 @@ export class LaborCostService {
       console.log(`Error -> ${err}`);
       throw err;
     }
+  }
+
+  async updateLaborCosts(data: LaborCostUpdateDto): Promise<boolean> {
+    const jobTypes: { key: keyof LaborCostUpdateDto; type: Job }[] = [
+      { key: 'drawUpper', type: Job.DRAW_UPPER },
+      { key: 'drawLining', type: Job.DRAW_LINING },
+      { key: 'stitchUpper', type: Job.STITCH_UPPER },
+      { key: 'stitchOutsole', type: Job.STITCH_OUTSOLE },
+      { key: 'stitchInsole', type: Job.STITCH_INSOLE },
+      { key: 'last', type: Job.LAST },
+    ];
+
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await Promise.all(
+          jobTypes.map(async ({ key, type }) => {
+            const cost = data[key];
+            if (cost != null && cost !== undefined) {
+              await tx.laborCost.upsert({
+                where: {
+                  productGroupId_type: {
+                    productGroupId: data.productGroupId,
+                    type,
+                  },
+                },
+                update: {
+                  productGroupId: data.productGroupId,
+                  createdBy: data.createdBy,
+                  updatedBy: data.updatedBy,
+                  type,
+                  cost,
+                },
+                create: {
+                  productGroupId: data.productGroupId,
+                  createdBy: data.createdBy,
+                  type,
+                  cost,
+                },
+              });
+            } else {
+              await tx.laborCost.deleteMany({
+                where: {
+                  productGroupId: data.productGroupId,
+                  type,
+                },
+              });
+            }
+          }),
+        );
+      });
+    } catch (err) {
+      throw err;
+    }
+    return true;
   }
 
   getLaborCosts(): Promise<LaborCostGetDto[]> {

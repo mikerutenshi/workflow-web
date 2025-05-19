@@ -25,3 +25,15 @@ export const ArtisanSchema = z.object({
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });
+
+export const LaborCostSchema = z.object({
+  productGroupId: positiveNumberString,
+  createdBy: positiveNumberString,
+  updatedBy: positiveNumberString,
+  drawUpper: z.number().min(100).nullable().optional(),
+  drawLining: z.number().min(100).nullable().optional(),
+  stitchUpper: z.number().min(100).nullable().optional(),
+  stitchOutsole: z.number().min(100).nullable().optional(),
+  stitchInsole: z.number().min(100).nullable().optional(),
+  last: z.number().min(100).nullable().optional(),
+});

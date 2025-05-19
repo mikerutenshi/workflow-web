@@ -89,6 +89,10 @@ mutation upsertLaborCosts($productGroupId: ID!, $data: [LaborCostUpsertDto!]!) {
   }
 }
 
+mutation updateLaborCosts($data: LaborCostUpdateDto!) {
+  updateLaborCosts(data: $data)
+}
+
 query getProductCategories {
   getProductCategories {
     ...ProductCategoryFrag
