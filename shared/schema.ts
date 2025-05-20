@@ -37,3 +37,11 @@ export const LaborCostSchema = z.object({
   stitchInsole: z.number().min(100).nullable().optional(),
   last: z.number().min(100).nullable().optional(),
 });
+
+export const ProductSchema = z.object({
+  productGroupId: positiveNumberString,
+  sku: z.string().regex(/^[A-Z]{1,2}\d{5}-[a-zA-Z.\s]*(\/[a-zA-Z.\s]*)*$/),
+  colorIds: positiveNumberString.array().nonempty(),
+  createdBy: positiveNumberString,
+  updatedBy: positiveNumberString.optional().nullable(),
+});

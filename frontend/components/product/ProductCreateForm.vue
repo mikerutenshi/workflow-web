@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+  <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
         <v-row>
@@ -20,7 +20,7 @@
         <v-row>
           <v-col>
             <v-autocomplete
-              v-model="form.productGroupId"
+              v-model="productGroupId.value.value"
               :label="$t('label.product_group')"
               auto-select-first
               item-value="id"
@@ -28,6 +28,7 @@
               :items="productGroupsData?.getProductGroups"
               :loading="isFetchingProductGroups"
               type="number"
+              :error-messages="productGroupId.errorMessage.value"
             >
               <template v-slot:item="{ props, item }">
                 <v-list-item
@@ -65,9 +66,14 @@
         <v-row>
           <v-col>
             <v-text-field
-              v-model="form.sku"
+              v-model="sku.value.value"
               :label="$t('label.sku')"
               class="mt-4"
+              :error-messages="
+                sku.errorMessage.value?.includes('regex')
+                  ? $t('error.sku_format_detail')
+                  : sku.errorMessage.value
+              "
             />
           </v-col>
         </v-row>
@@ -84,6 +90,7 @@
               :items="filteredColors"
               :loading="isFetchingColors"
               @update:search="onSearch"
+              :error-messages="colorIds.errorMessage.value"
             >
               <template #item="{ item, props }">
                 <v-list-item v-bind="props" :title="item.value.name">
@@ -180,21 +187,25 @@ import {
 import { useRoute } from 'vue-router';
 import { CACHE_COLORS } from '~/utils/cache-tags';
 import { mdiPencil, mdiPlus } from '@mdi/js';
+import { ProductSchema } from '@shared/schema';
+
+const authStore = useAuthStore();
+const userId = authStore.user?.id ?? '';
 
 const route = useRoute();
-const productId = ref(route.params.id as string);
+const productId = route.params.id as string;
 
-const form = reactive({
-  sku: '',
-  productGroupId: '',
-  colorIds: [] as string[],
-  createdBy: '',
-  updatedBy: undefined as string | undefined,
+const validationSchema = toTypedSchema(ProductSchema);
+const { handleSubmit, values, setValues, setFieldValue } = useForm({
+  validationSchema,
+  initialValues: { createdBy: userId },
 });
+const productGroupId = useField('productGroupId');
+const colorIds = useField('colorIds');
+const sku = useField('sku');
 
 const localePath = useLocalePath();
 const {
-  data: createData,
   isFetching: isCreating,
   execute: executeCreate,
   error: errorCreate,
@@ -205,7 +216,6 @@ const {
   clearCacheTags: [CACHE_PRODUCTS],
 });
 const {
-  data: updateData,
   isFetching: isUpdating,
   execute: executeUpdate,
   error: errorUpdate,
@@ -226,21 +236,13 @@ const {
   },
 });
 
-const handleSubmit = async () => {
-  const authStore = useAuthStore();
-  const userId = authStore.user?.id ?? '';
-  if (productId.value) {
-    form.createdBy = userId;
-    form.updatedBy = userId;
-    await executeUpdate({
-      id: productId.value,
-      data: form,
-    });
+const onSubmit = handleSubmit((data) => {
+  if (!productId) {
+    executeCreate({ data });
   } else {
-    form.createdBy = userId;
-    await executeCreate({ data: form });
+    executeUpdate({ id: productId, data });
   }
-};
+});
 
 const {
   data: colorsData,
@@ -279,23 +281,24 @@ const remove = (index: number) => {
   }
 };
 
-if (productId.value) {
+if (productId) {
   useQuery({
     query: GetProductDocument,
-    variables: { id: productId.value },
+    variables: { id: productId },
     tags: [CACHE_PRODUCT],
     onData: (data) => {
       const product = data.getProduct;
-      form.sku = product.sku;
-      form.productGroupId = product.productGroup.id;
-      const colorIds = product.productColors.map((productColor) => {
+      setValues({
+        sku: product.sku,
+        productGroupId: product.productGroup.id,
+        createdBy: product.createdBy,
+        updatedBy: userId,
+      });
+      const ids = product.productColors.map((productColor) => {
         return productColor.color.id;
       });
 
-      // selectedColors.value = filteredColors.value.filter((color) => {
-      //   return colorIds.includes(color.id);
-      // });
-      const colors = colorIds
+      const colors = ids
         .map((id) => {
           const matched = filteredColors.value.find((color) => {
             return color.id == id;
@@ -312,9 +315,8 @@ if (productId.value) {
 }
 
 watchEffect(() => {
-  form.colorIds = selectedColors.value.map((color) => {
-    return color.id;
-  });
-  console.log(JSON.stringify(form));
+  const colorIdArray = selectedColors.value.map((color) => color.id) ?? [];
+  setFieldValue('colorIds', colorIdArray);
+  // console.log(JSON.stringify(values));
 });
 </script>

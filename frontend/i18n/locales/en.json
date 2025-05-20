@@ -117,7 +117,8 @@
   "zodI18n": {
     "errors": {
       "invalid_string": {
-        "email": "Not a valid email address"
+        "email": "Not a valid email address",
+        "regex": "Input doesn't match the required regex format"
       },
       "too_small": {
         "string": {
@@ -130,7 +131,11 @@
           "inclusive": "Choose at least {minimum} item"
         }
       },
+      "invalid_type": "Wrong input type",
       "invalid_type_received_undefined": "Field is required"
     }
+  },
+  "error": {
+    "sku_format_detail": "This is the proper format: A12345-D.Brown/White"
   }
 }
