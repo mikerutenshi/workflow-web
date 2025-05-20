@@ -1,24 +1,20 @@
 <template>
-  <v-form class="h-100 d-flex flex-column" @submit.prevent="handleSubmit">
+  <v-form class="h-100 d-flex flex-column" @submit.prevent="onSubmit">
     <v-row>
       <v-col>
-        <v-alert v-if="createError" type="error">
-          {{
-            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            createError.message
-          }}
-        </v-alert>
-        <v-alert v-if="updateError" type="error">
-          {{
-            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            updateError.message
-          }}
-        </v-alert>
+        <v-row v-if="createError || updateError">
+          <v-col>
+            <v-alert type="error">
+              {{ extractGraphQlError(createError || updateError) }}
+            </v-alert>
+          </v-col>
+        </v-row>
 
         <v-row>
           <v-col>
             <v-select
-              v-model="form.productCategoryId"
+              v-model="productCategoryId.value.value"
+              :error-messages="productCategoryId.errorMessage.value"
               :label="$t('label.product_category')"
               auto-select-first
               item-value="id"
@@ -63,7 +59,8 @@
         <v-row>
           <v-col>
             <v-text-field
-              v-model="form.skuNumeric"
+              v-model="skuNumeric.value.value"
+              :error-messages="skuNumeric.errorMessage.value"
               @keypress="(e: any) => /[0-9]/.test(e.key) || e.preventDefault()"
               :label="$t('label.sku_numeric')"
               type="number"
@@ -74,7 +71,8 @@
         <v-row>
           <v-col>
             <v-text-field
-              v-model="form.name"
+              v-model="name.value.value"
+              :error-messages="name.errorMessage.value"
               :label="$t('label.product_name')"
             />
           </v-col>
@@ -114,6 +112,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import { mdiPencil, mdiPlus } from '@mdi/js';
+import { ProductGroupSchema } from '@shared/schema';
 
 const route = useRoute();
 const productGroupId = ref(route.params.id as string);
@@ -121,13 +120,17 @@ const productGroupId = ref(route.params.id as string);
 const authStore = useAuthStore();
 const router = useRouter();
 const userId = authStore.user?.id ?? '';
-const form = reactive({
-  skuNumeric: '',
-  name: '',
-  productCategoryId: '',
-  createdBy: userId,
-  updatedBy: undefined as string | undefined,
+
+const validationSchema = toTypedSchema(ProductGroupSchema);
+const { handleSubmit, setValues, values } = useForm({
+  validationSchema,
+  initialValues: {
+    createdBy: userId,
+  },
 });
+const skuNumeric = useField('skuNumeric');
+const name = useField('name');
+const productCategoryId = useField('productCategoryId');
 
 const {
   execute: executeCreate,
@@ -169,13 +172,13 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
     },
   }
 );
-const handleSubmit = () => {
+const onSubmit = handleSubmit((data) => {
   if (productGroupId.value) {
-    executeUpdate({ id: productGroupId.value, data: form });
+    executeUpdate({ id: productGroupId.value, data });
   } else {
-    executeCreate({ data: form });
+    executeCreate({ data });
   }
-};
+});
 
 if (productGroupId.value) {
   useQuery({
@@ -183,23 +186,25 @@ if (productGroupId.value) {
     variables: { id: productGroupId.value },
     onData(data) {
       const pg = data.getProductGroup;
-      form.skuNumeric = pg.skuNumeric;
-      if (pg.name) form.name;
-      form.productCategoryId = pg.productCategory.id;
-      form.createdBy = pg.createdBy;
+      setValues({
+        skuNumeric: pg.skuNumeric,
+        name: pg.name,
+        productCategoryId: pg.productCategory.id,
+        createdBy: pg.createdBy,
+        updatedBy: userId,
+      });
     },
     onError(err) {
       alert(`Get Product Group  Error -> ${err}`);
     },
     tags: [CACHE_PRODUCT_GROUP],
   });
-  form.updatedBy = productGroupId.value;
 }
 const goPrevious = () => {
   router.go(-1);
 };
 
-watchEffect(() => {
-  console.log(JSON.stringify(form));
-});
+// watchEffect(() => {
+//   console.log(JSON.stringify(values));
+// });
 </script>

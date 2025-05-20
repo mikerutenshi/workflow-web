@@ -15,6 +15,7 @@ const JobEnum = z.enum([
 ]);
 const positiveNumberString = z
   .string()
+  .trim()
   .refine((val) => !isNaN(Number(val)))
   .refine((num) => Number(num) > 0);
 
@@ -42,6 +43,25 @@ export const ProductSchema = z.object({
   productGroupId: positiveNumberString,
   sku: z.string().regex(/^[A-Z]{1,2}\d{5}-[a-zA-Z.\s]*(\/[a-zA-Z.\s]*)*$/),
   colorIds: positiveNumberString.array().nonempty(),
+  createdBy: positiveNumberString,
+  updatedBy: positiveNumberString.optional().nullable(),
+});
+
+export const ColorSchema = z.object({
+  name: z.string().min(1).trim(),
+  hexCode: z.string().min(1).trim(),
+});
+
+const GenderEnum = z.enum(["MEN", "WOMEN", "KIDS"]);
+export const ProductCategorySchema = z.object({
+  name: z.string().min(1).trim(),
+  gender: GenderEnum,
+});
+
+export const ProductGroupSchema = z.object({
+  skuNumeric: positiveNumberString,
+  productCategoryId: positiveNumberString,
+  name: z.string().min(1).trim().optional().nullable(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });

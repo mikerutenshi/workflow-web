@@ -92,7 +92,7 @@
     "total_quantity": "Total Quantity",
     "pairs": "None|One Pair|{count} pairs",
     "name": "Name",
-    "pick_color": "Pick Color",
+    "pick_color": "Pick a Color",
     "by": "By: {artisan}",
     "at": ", On: {done_at}",
     "search": "Search"
@@ -122,7 +122,7 @@
       },
       "too_small": {
         "string": {
-          "inclusive": "At least {minimum} characters"
+          "inclusive": "At least {minimum} character"
         },
         "number": {
           "inclusive": "Minimum value is {minimum}"
@@ -132,7 +132,8 @@
         }
       },
       "invalid_type": "Wrong input type",
-      "invalid_type_received_undefined": "Field is required"
+      "invalid_type_received_undefined": "Field is required",
+      "custom": "Must be a positive numeric value"
     }
   },
   "error": {

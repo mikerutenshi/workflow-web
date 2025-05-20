@@ -1,38 +1,44 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+  <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-alert v-if="createError" type="error">
-          {{
-            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            createError.message
-          }}
-        </v-alert>
-        <v-alert v-if="updateError" type="error">
-          {{
-            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            updateError.message
-          }}
-        </v-alert>
-
-        <v-row>
+        <v-row v-if="createError || updateError">
           <v-col>
-            <v-text-field v-model="form.name" :label="$t('label.name')" />
+            <v-alert type="error">
+              {{ extractGraphQlError(createError || updateError) }}
+            </v-alert>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-card>
+            <v-text-field
+              v-model="name.value.value"
+              :error-messages="name.errorMessage.value"
+              :label="$t('label.name')"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row class="flex-grow-1">
+          <v-col class="flex-grow-1">
+            <v-card elevation="0">
               <v-card-title>
                 {{ $t('label.pick_color') }}
               </v-card-title>
+              <v-card-subtitle
+                v-if="hexCode.errorMessage.value"
+                class="text-error"
+              >
+                {{ hexCode.errorMessage.value }}
+              </v-card-subtitle>
+
               <v-card-text>
                 <v-color-picker
-                  v-model="form.hexCode"
-                  :modes="['hex']"
+                  swatches-max-height="300px"
+                  v-model="hexCode.value.value"
+                  v-model:mode="mode"
                   show-swatches
-                  class="d-inline"
                 ></v-color-picker>
               </v-card-text>
             </v-card>
@@ -41,7 +47,7 @@
       </v-col>
     </v-row>
 
-    <v-row class="flex-grow-1"></v-row>
+    <!-- <v-row class="flex-grow-1"></v-row> -->
 
     <v-row align="end" class="ma-1">
       <ActionCancel></ActionCancel>
@@ -70,15 +76,28 @@ import {
 } from '~/api/generated/types';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
+import { ColorSchema } from '@shared/schema';
 
 const route = useRoute();
 const router = useRouter();
 
 const colorId = ref(route.params.id as string);
-const form = reactive({
-  name: '',
-  hexCode: '',
+// const form = reactive({
+//   name: '',
+//   hexCode: '',
+// });
+const validationSchema = toTypedSchema(ColorSchema);
+const { handleSubmit, values, setValues } = useForm({
+  validationSchema,
+  initialValues: {
+    hexCode: '',
+  },
 });
+const name = useField('name');
+const hexCode = useField<string>('hexCode');
+const mode = ref<'hex' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hexa' | undefined>(
+  'hex'
+);
 
 const {
   execute: executeCreate,
@@ -119,9 +138,12 @@ if (colorId.value) {
     variables: { id: colorId.value },
     tags: [CACHE_COLOR],
     onData(colorData) {
-      if (colorData.getColor) {
-        form.name = colorData.getColor.name;
-        form.hexCode = colorData.getColor.hexCode;
+      const color = colorData.getColor;
+      if (color) {
+        setValues({
+          name: color.name,
+          hexCode: color.hexCode,
+        });
       }
     },
   });
@@ -130,15 +152,15 @@ if (colorId.value) {
 const goPrevious = () => {
   router.go(-1);
 };
-const handleSubmit = () => {
+const onSubmit = handleSubmit((data) => {
   if (colorId.value) {
-    executeUpdate({ id: colorId.value, data: form });
+    executeUpdate({ id: colorId.value, data });
   } else {
-    executeCreate({ data: form });
+    executeCreate({ data });
   }
-};
+});
 
 watchEffect(() => {
-  console.log(JSON.stringify(form));
+  console.log(JSON.stringify(values));
 });
 </script>

@@ -1,35 +1,35 @@
 <template>
-  <v-form class="h-100 d-flex flex-column" @submit.prevent="handleSubmit">
+  <v-form class="h-100 d-flex flex-column" @submit.prevent="onSubmit">
     <v-row>
       <v-col>
-        <v-alert v-if="createError" type="error">
-          {{
-            createError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            createError.message
-          }}
-        </v-alert>
-        <v-alert v-if="updateError" type="error">
-          {{
-            updateError.graphqlErrors?.[0]?.extensions?.['originalError'] ??
-            updateError.message
-          }}
-        </v-alert>
+        <v-row v-if="createError || updateError">
+          <v-col>
+            <v-alert type="error">
+              {{ extractGraphQlError(createError || updateError) }}
+            </v-alert>
+          </v-col>
+        </v-row>
 
         <v-row>
           <v-col>
-            <v-text-field v-model="form.name" :label="$t('label.name')" />
+            <v-text-field
+              v-model="name.value.value"
+              :label="$t('label.name')"
+              :error-messages="name.errorMessage.value"
+            />
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
             <v-select
-              v-model="form.gender"
+              v-model="gender.value.value"
               :label="$t('label.gender')"
               auto-select-first
               item-value="id"
               item-title="name"
               :items="genders"
+              :error-messages="gender.errorMessage.value"
             >
               <template v-slot:item="{ props, item }">
                 <v-list-item
@@ -70,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import { ProductCategorySchema } from '@shared/schema';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -84,10 +85,14 @@ const route = useRoute();
 const productCategoryId = ref(route.params.id as string);
 
 const router = useRouter();
-const form = reactive({
-  name: '',
-  gender: '',
-});
+// const form = reactive({
+//   name: '',
+//   gender: '',
+// });
+const validationSchema = toTypedSchema(ProductCategorySchema);
+const { handleSubmit, setValues, values } = useForm({ validationSchema });
+const name = useField('name');
+const gender = useField<'MEN' | 'WOMEN' | 'KIDS'>('gender');
 const genders = ref(['MEN', 'WOMEN', 'KIDS']);
 const {
   execute: executeCreate,
@@ -121,13 +126,13 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
     },
   }
 );
-const handleSubmit = () => {
+const onSubmit = handleSubmit((data) => {
   if (productCategoryId.value) {
-    executeUpdate({ id: productCategoryId.value, data: form });
+    executeUpdate({ id: productCategoryId.value, data });
   } else {
-    executeCreate({ data: form });
+    executeCreate({ data });
   }
-};
+});
 
 const goPrevious = () => {
   router.go(-1);
@@ -139,8 +144,10 @@ if (productCategoryId.value) {
     variables: { id: productCategoryId.value },
     onData(data) {
       const category = data.getProductCategory;
-      form.name = category.name;
-      form.gender = category.gender;
+      setValues({
+        name: category.name,
+        gender: category.gender,
+      });
     },
     onError(err) {
       alert(`Get Product Category  Error -> ${err}`);
@@ -148,7 +155,7 @@ if (productCategoryId.value) {
     tags: [CACHE_PRODUCT_CATEGORY],
   });
 }
-watchEffect(() => {
-  console.log(JSON.stringify(form));
-});
+// watchEffect(() => {
+//   console.log(JSON.stringify(values));
+// });
 </script>
