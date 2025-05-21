@@ -23,11 +23,12 @@
                 {{ $t(renderJob(item.type)) }}
               </template>
 
-              <template #item.doneAt="{ item }">
+              <template #item.doneAt="{ item, index }">
                 <ActionPickDate
                   :label="$t('label.done_at')"
                   v-model="item.doneAt"
                   variant="outlined"
+                  :error-messages="(errors as any)[`tasks[${index}].doneAt`]"
                 ></ActionPickDate>
               </template>
 
@@ -81,7 +82,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
-import { TaskSchema } from '@shared/schema';
+import { createTaskSchema } from '@shared/schema';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import {
@@ -91,7 +92,6 @@ import {
   UpdateTasksDocument,
   type TaskUpdateDto,
 } from '~/api/generated/types';
-import z from 'zod';
 
 const route = useRoute();
 const workId = ref(route.params.id as string);
@@ -144,10 +144,12 @@ const form = computed<TaskUpdateDto[]>(() => {
   );
   return result;
 });
-const validationSchema = toTypedSchema(TaskSchema);
-const { handleSubmit, values, setValues, errors, validateField } = useForm<
-  z.infer<typeof TaskSchema>
->({
+const validationSchema = toTypedSchema(createTaskSchema(twoWeeksAgo()));
+
+function twoWeeksAgo() {
+  return dayjs().subtract(2, 'week').toDate();
+}
+const { handleSubmit, values, setValues, errors } = useForm({
   validationSchema,
 });
 const { replace } = useFieldArray('tasks');

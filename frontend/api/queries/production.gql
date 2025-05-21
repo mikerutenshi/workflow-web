@@ -10,7 +10,9 @@ fragment Size on Size {
 fragment TaskWithArtisan on TaskWithArtisan {
   id
   createdBy
+  createdAt
   updatedBy
+  updatedAt
   workId
   type
   artisan {

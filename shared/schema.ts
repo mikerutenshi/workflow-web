@@ -1,4 +1,5 @@
 import { z } from "zod";
+import dayjs from "dayjs";
 
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
@@ -75,7 +76,7 @@ export const ProductGroupSchema = z.object({
 });
 
 export const WorkSchema = z.object({
-  date: z.string().nonempty(),
+  date: z.string().datetime(),
   orderNo: positiveNumberString,
   productId: positiveNumberString,
   sizes: z.array(
@@ -88,13 +89,21 @@ export const WorkSchema = z.object({
   updatedBy: positiveNumberString.optional().nullable(),
 });
 
-export const TaskSchema = z.object({
-  tasks: z
-    .object({
-      id: positiveNumberString,
-      artisanId: positiveNumberString.optional().nullable(),
-      doneAt: z.string().nonempty().optional().nullable(),
-      updatedBy: positiveNumberString,
-    })
-    .array(),
-});
+export function createTaskSchema(minDate: Date) {
+  const minDatePlusOneDay = new Date(minDate.getTime() - 24 * 60 * 60 * 1000);
+  return z.object({
+    tasks: z
+      .object({
+        id: positiveNumberString,
+        artisanId: positiveNumberString.optional().nullable(),
+        doneAt: z
+          .string()
+          .datetime()
+          .refine((val) => new Date(val) >= minDatePlusOneDay)
+          .optional()
+          .nullable(),
+        updatedBy: positiveNumberString,
+      })
+      .array(),
+  });
+}
