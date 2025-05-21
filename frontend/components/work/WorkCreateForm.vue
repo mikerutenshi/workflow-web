@@ -61,6 +61,7 @@
               item-value="id"
               v-model="sizes"
               return-object
+              :error-messages="errors[`sizes`]"
             >
               <!-- <template #item="{ props, item }">
             <v-list-item
@@ -83,12 +84,12 @@
                   editable
                   hide-default-footer
                 >
-                  <template #item.quantity="{ item }">
+                  <template #item.quantity="{ item, index }">
                     <v-text-field
                       v-model.number="item.quantity"
                       :label="$t('label.quantity')"
                       type="number"
-                      :error-messages="formSizes.errorMessage.value"
+                      :error-messages="(errors as any)[`sizes[${index}].quantity`]"
                     />
                   </template>
                 </v-data-table>
@@ -190,7 +191,7 @@ const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 
 const validationSchema = toTypedSchema(WorkSchema);
-const { handleSubmit, setValues, setFieldValue, values } = useForm({
+const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   validationSchema,
   initialValues: {
     date: dayjs().toISOString(),
@@ -201,7 +202,7 @@ const { handleSubmit, setValues, setFieldValue, values } = useForm({
 const date = useField<string>('date');
 const orderNo = useField('orderNo');
 const productId = useField('productId');
-const formSizes = useField('sizes');
+const { fields, push, remove, replace } = useFieldArray('sizes');
 
 const sizes = ref<Size[]>([]);
 const sizesTable = reactive<
@@ -258,6 +259,16 @@ if (workId.value) {
   });
 }
 
+watch(sizesTable, (newSizes) => {
+  replace(newSizes);
+});
+
+watch(productId.value, (newId, oldId) => {
+  if (oldId == undefined && newId) {
+    sizes.value = [];
+  }
+});
+
 watchEffect(() => {
   sizesTable.splice(
     0,
@@ -270,14 +281,6 @@ watchEffect(() => {
         quantity: existing ? existing.quantity : 0,
       };
     })
-  );
-
-  setFieldValue(
-    'sizes',
-    sizesTable.map((item) => ({
-      id: item.id,
-      quantity: Number(item.quantity),
-    }))
   );
 
   // console.log(`Form -> ${JSON.stringify(values)}`);

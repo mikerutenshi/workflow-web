@@ -134,6 +134,10 @@
       "invalid_type": "Wrong input type",
       "invalid_type_received_undefined": "Field is required",
       "custom": "Must be a positive numeric value"
+    },
+    "types": {
+      "object": "Type should be object",
+      "array": "Type should be array"
     }
   },
   "error": {

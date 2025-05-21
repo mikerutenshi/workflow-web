@@ -1,17 +1,11 @@
 <template>
-  <v-form
-    @submit.prevent="
-      executeUpdate({
-        data: form,
-      })
-    "
-  >
+  <v-form @submit.prevent="onSubmit">
     <v-row>
       <v-col>
-        <v-row v-if="error">
+        <v-row v-if="error || errors">
           <v-col>
             <v-alert type="error">
-              {{ extractGraphQlError(error) }}
+              {{ extractGraphQlError(error) || errors }}
             </v-alert>
           </v-col>
         </v-row>
@@ -37,39 +31,44 @@
                 ></ActionPickDate>
               </template>
 
-              <template #item.artisan="{ item }">
-                <v-select
-                  :label="$t('label.artisan')"
-                  auto-select-first
-                  item-value="id"
-                  item-title="firstName"
-                  :items="
-                    artisansData?.getArtisans.filter((artisan) => {
-                      return artisan.jobs.includes(item.type);
-                    })
-                  "
-                  :loading="isFetchingArtisans"
-                  v-model="item.artisan"
-                  clearable
-                  return-object
-                >
-                  <template #item="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :title="`${item.raw.firstName} ${
-                        item.raw.lastName ?? ''
-                      }`"
-                    >
-                      <template #subtitle>
-                        {{
-                          item.raw.jobs
-                            .map((job) => $t(renderJob(job)))
-                            .join(', ')
-                        }}
-                      </template>
-                    </v-list-item>
-                  </template>
-                </v-select>
+              <template #item.artisan="{ item, index }">
+                <Field :name="`${index}.artisanId`" v-slot="{ errorMessage }">
+                  <v-select
+                    :label="$t('label.artisan')"
+                    auto-select-first
+                    item-value="id"
+                    item-title="firstName"
+                    :items="
+                      artisansData?.getArtisans.filter((artisan) => {
+                        return artisan.jobs.includes(item.type);
+                      })
+                    "
+                    :loading="isFetchingArtisans"
+                    v-model="item.artisan"
+                    clearable
+                    return-object
+                    :error-messages="errorMessage"
+                    @blur="() => validateField(`${index}.artisanId`)"
+                  >
+                    <template #item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :title="`${item.raw.firstName} ${
+                          item.raw.lastName ?? ''
+                        }`"
+                      >
+                        <template #subtitle>
+                          {{
+                            item.raw.jobs
+                              .map((job) => $t(renderJob(job)))
+                              .join(', ')
+                          }}
+                        </template>
+                      </v-list-item>
+                    </template>
+                  </v-select>
+                  <span class="error">{{ errors[`${index}.artisanId`] }}</span>
+                </Field>
               </template>
             </v-data-table>
           </v-card-text>
@@ -86,6 +85,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
+import { TaskSchema } from '@shared/schema';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import {
@@ -133,7 +133,6 @@ const displayForm = reactive([
     updatedBy: '',
   },
 ]);
-
 const form = computed<TaskUpdateDto[]>(() => {
   const result = displayForm.map((item) => ({
     id: item.id,
@@ -147,6 +146,15 @@ const form = computed<TaskUpdateDto[]>(() => {
     JSON.stringify(result)
   );
   return result;
+});
+const validationSchema = toTypedSchema(TaskSchema);
+const { handleSubmit, values, setValues, errors, validateField } = useForm({
+  validationSchema,
+  initialValues: [{ id: '1', artisanId: '2', doneAt: '', updatedBy: '3' }],
+});
+const artisan = useField('artisan');
+const onSubmit = handleSubmit((data) => {
+  executeUpdate({ data });
 });
 
 const { t } = useI18n();
@@ -207,6 +215,17 @@ watch(
 );
 
 watchEffect(() => {
-  console.log(`Tasks Table -> ${JSON.stringify(displayForm)}`);
+  setValues(
+    form.value.map((item) => ({
+      id: item.id,
+      doneAt: item.doneAt,
+      updatedBy: item.updatedBy,
+      artisanId: item.artisanId ?? '0',
+    }))
+  );
+});
+
+watchEffect(() => {
+  console.log(`Tasks Table -> ${JSON.stringify(values)}`);
 });
 </script>

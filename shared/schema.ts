@@ -75,15 +75,24 @@ export const ProductGroupSchema = z.object({
 });
 
 export const WorkSchema = z.object({
-  date: z.string(),
+  date: z.string().nonempty(),
   orderNo: positiveNumberString,
   productId: positiveNumberString,
-  sizes: z
-    .object({
+  sizes: z.array(
+    z.object({
       id: positiveNumberString,
       quantity: z.number().min(1),
     })
-    .array(),
+  ),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });
+
+export const TaskSchema = z.array(
+  z.object({
+    id: positiveNumberString,
+    artisanId: positiveNumberString,
+    doneAt: z.string().nonempty(),
+    updatedBy: positiveNumberString,
+  })
+);
