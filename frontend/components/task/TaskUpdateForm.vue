@@ -2,10 +2,10 @@
   <v-form @submit.prevent="onSubmit">
     <v-row>
       <v-col>
-        <v-row v-if="error || errors">
+        <v-row v-if="error">
           <v-col>
             <v-alert type="error">
-              {{ extractGraphQlError(error) || errors }}
+              {{ extractGraphQlError(error) }}
             </v-alert>
           </v-col>
         </v-row>
@@ -32,43 +32,39 @@
               </template>
 
               <template #item.artisan="{ item, index }">
-                <Field :name="`${index}.artisanId`" v-slot="{ errorMessage }">
-                  <v-select
-                    :label="$t('label.artisan')"
-                    auto-select-first
-                    item-value="id"
-                    item-title="firstName"
-                    :items="
-                      artisansData?.getArtisans.filter((artisan) => {
-                        return artisan.jobs.includes(item.type);
-                      })
-                    "
-                    :loading="isFetchingArtisans"
-                    v-model="item.artisan"
-                    clearable
-                    return-object
-                    :error-messages="errorMessage"
-                    @blur="() => validateField(`${index}.artisanId`)"
-                  >
-                    <template #item="{ props, item }">
-                      <v-list-item
-                        v-bind="props"
-                        :title="`${item.raw.firstName} ${
-                          item.raw.lastName ?? ''
-                        }`"
-                      >
-                        <template #subtitle>
-                          {{
-                            item.raw.jobs
-                              .map((job) => $t(renderJob(job)))
-                              .join(', ')
-                          }}
-                        </template>
-                      </v-list-item>
-                    </template>
-                  </v-select>
-                  <span class="error">{{ errors[`${index}.artisanId`] }}</span>
-                </Field>
+                <v-select
+                  :label="$t('label.artisan')"
+                  auto-select-first
+                  item-value="id"
+                  item-title="firstName"
+                  :items="
+                    artisansData?.getArtisans.filter((artisan) => {
+                      return artisan.jobs.includes(item.type);
+                    })
+                  "
+                  :loading="isFetchingArtisans"
+                  v-model="item.artisan"
+                  clearable
+                  return-object
+                  :error-messages="(errors as any)[`tasks[${index}].artisanId`]"
+                >
+                  <template #item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :title="`${item.raw.firstName} ${
+                        item.raw.lastName ?? ''
+                      }`"
+                    >
+                      <template #subtitle>
+                        {{
+                          item.raw.jobs
+                            .map((job) => $t(renderJob(job)))
+                            .join(', ')
+                        }}
+                      </template>
+                    </v-list-item>
+                  </template>
+                </v-select>
               </template>
             </v-data-table>
           </v-card-text>
@@ -95,6 +91,7 @@ import {
   UpdateTasksDocument,
   type TaskUpdateDto,
 } from '~/api/generated/types';
+import z from 'zod';
 
 const route = useRoute();
 const workId = ref(route.params.id as string);
@@ -148,13 +145,14 @@ const form = computed<TaskUpdateDto[]>(() => {
   return result;
 });
 const validationSchema = toTypedSchema(TaskSchema);
-const { handleSubmit, values, setValues, errors, validateField } = useForm({
+const { handleSubmit, values, setValues, errors, validateField } = useForm<
+  z.infer<typeof TaskSchema>
+>({
   validationSchema,
-  initialValues: [{ id: '1', artisanId: '2', doneAt: '', updatedBy: '3' }],
 });
-const artisan = useField('artisan');
-const onSubmit = handleSubmit((data) => {
-  executeUpdate({ data });
+const { replace } = useFieldArray('tasks');
+const onSubmit = handleSubmit((values) => {
+  executeUpdate({ data: values.tasks });
 });
 
 const { t } = useI18n();
@@ -214,18 +212,18 @@ watch(
   { deep: true }
 );
 
-watchEffect(() => {
-  setValues(
-    form.value.map((item) => ({
+watch(form, (newValues) => {
+  replace(
+    newValues.map((item) => ({
       id: item.id,
       doneAt: item.doneAt,
       updatedBy: item.updatedBy,
-      artisanId: item.artisanId ?? '0',
+      artisanId: item.artisanId ?? undefined,
     }))
   );
 });
 
-watchEffect(() => {
-  console.log(`Tasks Table -> ${JSON.stringify(values)}`);
-});
+// watchEffect(() => {
+//   console.log(`Tasks Table -> ${JSON.stringify(values)}`);
+// });
 </script>

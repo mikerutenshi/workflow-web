@@ -117,7 +117,7 @@
   "zodI18n": {
     "validations": {
       "email": "Format email teu leres",
-      "min": "Minimum {minimum} aksara"
+      "min": "Sahenteuna {minimum} aksara"
     },
     "errors": {
       "invalid_string": {
@@ -125,9 +125,27 @@
       },
       "too_small": {
         "string": {
-          "inclusive": "Minimum {minimum} aksara"
+          "inclusive": "Sahenteuna {minimum} aksara"
+        },
+        "number": {
+          "inclusive": "Nilai minimum nyaéta {minimum}"
+        },
+        "array": {
+          "inclusive": "Pilih sahenteuna {minimum} item"
         }
-      }
+      },
+      "invalid_type": "Jenis input salah",
+      "invalid_type_received_undefined": "Kolom ieu wajib diisi",
+      "custom": "Kudu eusian angka positif"
+    },
+    "types": {
+      "object": "Jenisna kudu obyék",
+      "array": "Jenisna kudu array"
     }
-  }
+  },
+  "error": {
+    "sku_format_detail": "Format anu leres: A12345-D.Coklat/Putih",
+    "nonempty": "Kudu milih sahenteuna 1"
+  },
+  "N/A": "N/A"
 }

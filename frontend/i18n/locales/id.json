@@ -126,8 +126,26 @@
       "too_small": {
         "string": {
           "inclusive": "Minimal {minimum} karakter"
+        },
+        "number": {
+          "inclusive": "Nilai minimum adalah {minimum}"
+        },
+        "array": {
+          "inclusive": "Pilih minimal {minimum} item"
         }
-      }
+      },
+      "invalid_type": "Jenis input salah",
+      "invalid_type_received_undefined": "Kolom wajib diisi",
+      "custom": "Harus berupa nilai numerik positif"
+    },
+    "types": {
+      "object": "Tipe harus berupa objek",
+      "array": "Tipe harus berupa array"
     }
-  }
+  },
+  "error": {
+    "sku_format_detail": "Format yang benar: A12345-D.Brown/White",
+    "nonempty": "Harus memilih minimal 1"
+  },
+  "N/A": "N/A"
 }

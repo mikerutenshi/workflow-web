@@ -88,11 +88,13 @@ export const WorkSchema = z.object({
   updatedBy: positiveNumberString.optional().nullable(),
 });
 
-export const TaskSchema = z.array(
-  z.object({
-    id: positiveNumberString,
-    artisanId: positiveNumberString,
-    doneAt: z.string().nonempty(),
-    updatedBy: positiveNumberString,
-  })
-);
+export const TaskSchema = z.object({
+  tasks: z
+    .object({
+      id: positiveNumberString,
+      artisanId: positiveNumberString.optional().nullable(),
+      doneAt: z.string().nonempty().optional().nullable(),
+      updatedBy: positiveNumberString,
+    })
+    .array(),
+});

@@ -263,11 +263,11 @@ watch(sizesTable, (newSizes) => {
   replace(newSizes);
 });
 
-watch(productId.value, (newId, oldId) => {
-  if (oldId == undefined && newId) {
-    sizes.value = [];
-  }
-});
+// watch(productId.value, (newId, oldId) => {
+//   if (oldId == undefined && newId) {
+//     sizes.value = [];
+//   }
+// });
 
 watchEffect(() => {
   sizesTable.splice(
