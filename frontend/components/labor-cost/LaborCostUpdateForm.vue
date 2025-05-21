@@ -2,9 +2,9 @@
   <form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-row>
+        <v-row v-if="error">
           <v-col>
-            <v-alert v-if="error" type="error">
+            <v-alert type="error">
               {{ extractGraphQlError(error) }}
             </v-alert>
           </v-col>
@@ -211,17 +211,6 @@ useQuery({
     });
 
     const laborCosts = data.getLaborCost.laborCosts ?? [];
-    // setValues(
-    //   laborCosts
-    //     .filter((item): item is NonNullable<typeof item> => item !== null)
-    //     .map((item) => ({
-    //       type: item.type as Job,
-    //       cost: item.cost,
-    //       productGroupId: productGroupId,
-    //       createdBy: item.createdBy,
-    //       updatedBy: item.updatedBy ?? userId,
-    //     }))
-    // );
 
     if (laborCosts.length > 0) {
       laborCosts.forEach((laborCost) => {
@@ -249,12 +238,6 @@ useQuery({
         }
       });
     }
-    // updateCosts('drawUpper', Job.DrawUpper, laborCosts);
-    // updateCosts('drawLining', Job.DrawLining, laborCosts);
-    // updateCosts('stitchUpper', Job.StitchUpper, laborCosts);
-    // updateCosts('last', Job.Last, laborCosts);
-    // updateCosts('stitchOutsole', Job.StitchOutsole, laborCosts);
-    // updateCosts('stitchInsole', Job.StitchInsole, laborCosts);
   },
   onError: (error) => {
     alert(`Get Product Group Error -> ${error}`);
@@ -263,9 +246,6 @@ useQuery({
 });
 
 const { t } = useI18n();
-// const submitBtnTitle = computed(() => {
-//   return values.length > 0 ? t('btn.update') : t('btn.create');
-// });
 
 const onSubmit = handleSubmit((values) => {
   execute({ data: values });
@@ -300,49 +280,10 @@ const options: MaskInputOptions = {
 
 const mask = new Mask(options);
 
-// watch(costs, (newCosts) => {
-//   let newDrawUpper = parseRupiah(newCosts.drawUpper);
-//   let newDrawLining = parseRupiah(newCosts.drawLining);
-//   let newStitchUpper = parseRupiah(newCosts.stitchUpper);
-//   let newStitchOutsole = parseRupiah(newCosts.stitchOutsole);
-//   let newStitchInsole = parseRupiah(newCosts.stitchInsole);
-//   let newLast = parseRupiah(newCosts.last);
-
-//   updateForm(newDrawUpper, Job.DrawUpper);
-//   updateForm(newDrawLining, Job.DrawLining);
-//   updateForm(newStitchUpper, Job.StitchUpper);
-//   updateForm(newStitchOutsole, Job.StitchOutsole);
-//   updateForm(newStitchInsole, Job.StitchInsole);
-//   updateForm(newLast, Job.Last);
-// });
 watchEffect(() => {
   console.log(`Labor Form : ${JSON.stringify(values)}`);
 });
 
-// function updateForm(cost: number, type: Job) {
-//   let foundItem = form.find((item) => item.type === type);
-//   if (cost > 0 && !Number.isNaN(cost)) {
-//     if (foundItem) {
-//       foundItem.cost = cost;
-//     } else {
-//       const object = {
-//         type,
-//         cost,
-//         productGroupId: productGroupId,
-//         createdBy: userId,
-//         updatedBy: userId,
-//       };
-//       form.push(object);
-//     }
-//   } else if (foundItem) {
-//     form.splice(form.indexOf(foundItem), 1);
-//   }
-// }
-
-// function updateCosts(field: keyof typeof costs, type: Job, array: any[]) {
-//   let found = array.find((find) => find?.type === type);
-//   if (found) costs[field] = found.cost.toString();
-// }
 function findCost(type: Job, array: any[]): number {
   return array.find((find) => find?.type === type);
 }

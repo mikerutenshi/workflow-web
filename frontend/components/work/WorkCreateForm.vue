@@ -1,14 +1,23 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" class="h-100 d-flex flex-column">
+  <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-alert v-if="errorMessages" type="error">
-          {{ errorMessages }}
-        </v-alert>
+        <v-row v-if="updateError || createError || deleteError">
+          <v-col>
+            <v-alert type="error">
+              {{
+                extractGraphQlError(updateError || createError || deleteError)
+              }}
+            </v-alert>
+          </v-col>
+        </v-row>
 
         <v-row>
           <v-col>
-            <ActionPickDate v-model="form.date"></ActionPickDate>
+            <ActionPickDate
+              v-model="date.value.value"
+              :error-messages="date.errorMessage.value"
+            ></ActionPickDate>
           </v-col>
         </v-row>
 
@@ -16,7 +25,8 @@
           <v-col>
             <v-text-field
               :label="$t('label.order_no')"
-              v-model.number="form.orderNo"
+              v-model="orderNo.value.value"
+              :error-messages="orderNo.errorMessage.value"
               type="number"
             ></v-text-field>
           </v-col>
@@ -31,7 +41,8 @@
               item-title="sku"
               :items="productsData?.getProducts"
               :loading="isFetchingProducts"
-              v-model="form.productId"
+              v-model="productId.value.value"
+              :error-messages="productId.errorMessage.value"
             >
             </v-autocomplete>
           </v-col>
@@ -77,6 +88,7 @@
                       v-model.number="item.quantity"
                       :label="$t('label.quantity')"
                       type="number"
+                      :error-messages="formSizes.errorMessage.value"
                     />
                   </template>
                 </v-data-table>
@@ -103,6 +115,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
+import { WorkSchema } from '@shared/schema';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
@@ -114,7 +127,6 @@ import {
   GetWorkDocument,
   UpdateWorkDocument,
   type Size,
-  type SizeToWorkCreateDto,
 } from '~/api/generated/types';
 
 const route = useRoute();
@@ -131,7 +143,7 @@ const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
 
 const computeSizeList = computed(() => {
   const product = productsData.value?.getProducts.find(
-    (product) => product.id === form.productId
+    (product) => product.id === productId.value.value
   );
   const gender = product?.productGroup.productCategory.gender;
   return gender
@@ -143,53 +155,54 @@ const router = useRouter();
 const submitBtnTitle = computed(() =>
   workId.value ? t('btn.update') : t('btn.create')
 );
-const { execute: executeCreate, isFetching: isCreating } = useMutation(
-  CreateWorkDocument,
-  {
-    clearCacheTags: [CACHE_WORKS],
-    onData() {
-      router.back();
-    },
-    onError(err) {
-      errorMessages.value += err;
-    },
-  }
-);
-const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
-  UpdateWorkDocument,
-  {
-    clearCacheTags: [CACHE_WORK, CACHE_WORKS],
-    onData() {
-      router.back();
-    },
-    onError(err) {
-      errorMessages.value += err;
-    },
-  }
-);
-const { execute: executeDelete, isFetching: isDeleting } = useMutation(
-  DeleteWorkDocument,
-  {
-    clearCacheTags: [CACHE_WORKS],
-    onData(data) {
-      router.back();
-    },
-    onError(err) {
-      errorMessages.value += err;
-    },
-  }
-);
+const {
+  execute: executeCreate,
+  isFetching: isCreating,
+  error: createError,
+} = useMutation(CreateWorkDocument, {
+  clearCacheTags: [CACHE_WORKS],
+  onData() {
+    router.back();
+  },
+});
+const {
+  execute: executeUpdate,
+  isFetching: isUpdating,
+  error: updateError,
+} = useMutation(UpdateWorkDocument, {
+  clearCacheTags: [CACHE_WORK, CACHE_WORKS],
+  onData() {
+    router.back();
+  },
+});
+const {
+  execute: executeDelete,
+  isFetching: isDeleting,
+  error: deleteError,
+} = useMutation(DeleteWorkDocument, {
+  clearCacheTags: [CACHE_WORKS],
+  onData(data) {
+    router.back();
+  },
+});
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
-const form = reactive({
-  date: dayjs().toISOString(),
-  orderNo: parseInt(new Date().toISOString().slice(0, 10).replace(/-/g, '')),
-  productId: '',
-  sizes: [] as SizeToWorkCreateDto[],
-  createdBy: userId,
-  updatedBy: undefined as string | undefined,
+
+const validationSchema = toTypedSchema(WorkSchema);
+const { handleSubmit, setValues, setFieldValue, values } = useForm({
+  validationSchema,
+  initialValues: {
+    date: dayjs().toISOString(),
+    orderNo: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+    createdBy: userId,
+  },
 });
+const date = useField<string>('date');
+const orderNo = useField('orderNo');
+const productId = useField('productId');
+const formSizes = useField('sizes');
+
 const sizes = ref<Size[]>([]);
 const sizesTable = reactive<
   Array<{ id: string; title: string; quantity: number }>
@@ -200,14 +213,13 @@ const sizeHeaders = ref([
   { title: t('label.quantity'), key: 'quantity' },
 ]);
 
-const errorMessages = ref('');
-const handleSubmit = () => {
+const onSubmit = handleSubmit((data) => {
   if (!workId.value) {
-    executeCreate({ data: form });
+    executeCreate({ data });
   } else {
-    executeUpdate({ id: workId.value, data: { ...form, updatedBy: userId } });
+    executeUpdate({ id: workId.value, data: { ...data, updatedBy: userId } });
   }
-};
+});
 
 if (workId.value) {
   useQuery({
@@ -216,9 +228,12 @@ if (workId.value) {
     tags: [CACHE_WORK],
     onData(data) {
       const work = data.getWork;
-      form.date = work.date;
-      form.orderNo = work.orderNo;
-      form.productId = work.productId;
+      setValues({
+        date: work.date,
+        orderNo: work.orderNo,
+        productId: work.productId,
+        updatedBy: userId,
+      });
       sizes.value = work.sizes.map((item) => ({
         id: item.size.id,
         eu: item.size.eu,
@@ -257,11 +272,14 @@ watchEffect(() => {
     })
   );
 
-  form.sizes = sizesTable.map((item) => ({
-    id: item.id,
-    quantity: item.quantity,
-  }));
+  setFieldValue(
+    'sizes',
+    sizesTable.map((item) => ({
+      id: item.id,
+      quantity: Number(item.quantity),
+    }))
+  );
 
-  console.log(`Form -> ${JSON.stringify(form)}`);
+  // console.log(`Form -> ${JSON.stringify(values)}`);
 });
 </script>

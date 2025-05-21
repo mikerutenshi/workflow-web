@@ -8,9 +8,13 @@
   >
     <v-row>
       <v-col>
-        <v-alert v-if="errorMessages" type="error">
-          {{ errorMessages }}
-        </v-alert>
+        <v-row v-if="error">
+          <v-col>
+            <v-alert type="error">
+              {{ extractGraphQlError(error) }}
+            </v-alert>
+          </v-col>
+        </v-row>
 
         <v-card>
           <v-card-title>{{ $t('card.fill_artisans') }}</v-card-title>
@@ -102,18 +106,16 @@ const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   tags: [CACHE_ARTISANS],
 });
 const localePath = useLocalePath();
-const { execute: executeUpdate, isFetching: isUpdating } = useMutation(
-  UpdateTasksDocument,
-  {
-    clearCacheTags: [CACHE_WORKS, CACHE_TASKS],
-    onData() {
-      navigateTo(localePath('/works'));
-    },
-    onError(err) {
-      errorMessages.value += err;
-    },
-  }
-);
+const {
+  execute: executeUpdate,
+  isFetching: isUpdating,
+  error,
+} = useMutation(UpdateTasksDocument, {
+  clearCacheTags: [CACHE_WORKS, CACHE_TASKS],
+  onData() {
+    navigateTo(localePath('/works'));
+  },
+});
 
 const displayForm = reactive([
   {
@@ -158,8 +160,6 @@ const taskHeaders = ref([
   { title: t('label.artisan'), key: 'artisan' },
   { title: t('label.done_at'), key: 'doneAt' },
 ]);
-
-const errorMessages = ref('');
 
 if (workId.value) {
   useQuery({

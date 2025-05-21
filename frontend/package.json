@@ -32,7 +32,7 @@
     "vue": "latest",
     "vue-router": "latest",
     "vuetify": "^3.7.14",
-    "zod": "^3.24.4"
+    "zod": "^3.25.7"
   },
   "devDependencies": {
     "@mdi/js": "^7.4.47",

@@ -7,6 +7,7 @@
         :prepend-inner-icon="mdiCalendar"
         v-model="internalTextModel"
         :label="label"
+        :error-messages="errorMessages"
       ></v-text-field>
     </template>
     <v-date-picker
@@ -38,6 +39,10 @@ const props = defineProps({
     default: false,
   },
   label: {
+    type: String,
+    default: '',
+  },
+  errorMessages: {
     type: String,
     default: '',
   },

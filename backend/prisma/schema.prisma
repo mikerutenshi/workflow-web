@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["relationJoins"]
+  output   = "../src/generated/client"
 }
 
 datasource db {
@@ -154,7 +155,7 @@ model Artisan {
 model Work {
   id                Int             @id @default(autoincrement())
   date              DateTime
-  orderNo           Int             @unique
+  orderNo           String             @unique
   productId         Int             
   sizes             SizeToWork[]
   tasks             Task[]
@@ -178,7 +179,7 @@ model Task {
 
   work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
   artisan           Artisan?        @relation(fields: [artisanId], references: [id])
-  laborCost         LaborCost       @relation(fields: [laborCostId], references: [id])
+  laborCost         LaborCost       @relation(fields: [laborCostId], references: [id], onDelete: Cascade)
 
   createdBy         Int
   updatedBy         Int?

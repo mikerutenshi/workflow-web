@@ -137,6 +137,8 @@
     }
   },
   "error": {
-    "sku_format_detail": "This is the proper format: A12345-D.Brown/White"
-  }
+    "sku_format_detail": "This is the proper format: A12345-D.Brown/White",
+    "nonempty": "Should choose at least 1"
+  },
+  "N/A": "N/A"
 }

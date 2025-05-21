@@ -145,9 +145,9 @@ enum Job {
   DRAW_UPPER
   DRAW_LINING
   STITCH_UPPER
-  LAST
   STITCH_OUTSOLE
   STITCH_INSOLE
+  LAST
 }
 
 type Size {
@@ -173,7 +173,7 @@ type Work {
   createdAt: Date!
   updatedAt: Date!
   date: Date!
-  orderNo: Float!
+  orderNo: String!
   productId: ID!
   sizes: [SizeToWork!]!
 }
@@ -198,7 +198,7 @@ type WorkWithTasks {
   createdAt: Date!
   updatedAt: Date!
   date: Date!
-  orderNo: Float!
+  orderNo: String!
   productId: ID!
   sizes: [SizeToWork!]!
   tasks: [TaskWithArtisan!]!
@@ -212,7 +212,7 @@ type WorkWithProduct {
   createdAt: Date!
   updatedAt: Date!
   date: Date!
-  orderNo: Float!
+  orderNo: String!
   productId: ID!
   sizes: [SizeToWork!]!
   product: Product!
@@ -387,7 +387,7 @@ input ArtisanCreateDto {
 
 input WorkCreateDto {
   date: Date!
-  orderNo: Float!
+  orderNo: String!
   productId: ID!
   sizes: [SizeToWorkCreateDto!]!
   createdBy: ID!
@@ -400,7 +400,7 @@ input SizeToWorkCreateDto {
 
 input WorkUpdateDto {
   date: Date!
-  orderNo: Float!
+  orderNo: String!
   productId: ID!
   sizes: [SizeToWorkCreateDto!]!
   createdBy: ID!

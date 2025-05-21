@@ -7,7 +7,7 @@ export class Work extends BaseModel {
   @Field(() => Date)
   date: Date;
   @Field()
-  orderNo: number;
+  orderNo: string;
   @Field(() => ID)
   productId: number;
   @Field(() => [SizeToWork])

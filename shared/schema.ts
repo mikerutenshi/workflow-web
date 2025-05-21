@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+// export function setZodLocale(locale: string) {
+//   if (locale == "en") {
+//     z.config(z.locales.en());
+//   } else {
+//     z.config(z.locales.id());
+//   }
+// }
+
 export const AuthSchema = z.object({
   email: z.string().email().trim(),
   password: z.string().min(8).trim(),
@@ -62,6 +70,20 @@ export const ProductGroupSchema = z.object({
   skuNumeric: positiveNumberString,
   productCategoryId: positiveNumberString,
   name: z.string().min(1).trim().optional().nullable(),
+  createdBy: positiveNumberString,
+  updatedBy: positiveNumberString.optional().nullable(),
+});
+
+export const WorkSchema = z.object({
+  date: z.string(),
+  orderNo: positiveNumberString,
+  productId: positiveNumberString,
+  sizes: z
+    .object({
+      id: positiveNumberString,
+      quantity: z.number().min(1),
+    })
+    .array(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });

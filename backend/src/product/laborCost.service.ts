@@ -113,7 +113,7 @@ export class LaborCostService {
           jobTypes.map(async ({ key, type }) => {
             const cost = data[key];
             if (cost != null && cost !== undefined) {
-              await tx.laborCost.upsert({
+              const newCost = await tx.laborCost.upsert({
                 where: {
                   productGroupId_type: {
                     productGroupId: data.productGroupId,
@@ -134,6 +134,28 @@ export class LaborCostService {
                   cost,
                 },
               });
+
+              const relatedWorks = await tx.work.findMany({
+                where: { product: { productGroupId: data.productGroupId } },
+              });
+
+              for (const work of relatedWorks) {
+                await tx.task.upsert({
+                  where: {
+                    workId_type: {
+                      workId: work.id,
+                      type: type,
+                    },
+                  },
+                  create: {
+                    workId: work.id,
+                    type: type,
+                    laborCostId: newCost.id,
+                    createdBy: data.createdBy,
+                  },
+                  update: {},
+                });
+              }
             } else {
               await tx.laborCost.deleteMany({
                 where: {

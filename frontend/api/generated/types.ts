@@ -604,7 +604,7 @@ export type Work = {
   createdBy: Scalars['ID']['output'];
   date: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
-  orderNo: Scalars['Float']['output'];
+  orderNo: Scalars['String']['output'];
   productId: Scalars['ID']['output'];
   sizes: Array<SizeToWork>;
   updatedAt: Scalars['Date']['output'];
@@ -614,7 +614,7 @@ export type Work = {
 export type WorkCreateDto = {
   createdBy: Scalars['ID']['input'];
   date: Scalars['Date']['input'];
-  orderNo: Scalars['Float']['input'];
+  orderNo: Scalars['String']['input'];
   productId: Scalars['ID']['input'];
   sizes: Array<SizeToWorkCreateDto>;
 };
@@ -622,7 +622,7 @@ export type WorkCreateDto = {
 export type WorkUpdateDto = {
   createdBy: Scalars['ID']['input'];
   date: Scalars['Date']['input'];
-  orderNo: Scalars['Float']['input'];
+  orderNo: Scalars['String']['input'];
   productId: Scalars['ID']['input'];
   sizes: Array<SizeToWorkCreateDto>;
   updatedBy: Scalars['ID']['input'];
@@ -634,7 +634,7 @@ export type WorkWithProduct = {
   createdBy: Scalars['ID']['output'];
   date: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
-  orderNo: Scalars['Float']['output'];
+  orderNo: Scalars['String']['output'];
   product: Product;
   productId: Scalars['ID']['output'];
   sizes: Array<SizeToWork>;
@@ -648,7 +648,7 @@ export type WorkWithTasks = {
   createdBy: Scalars['ID']['output'];
   date: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
-  orderNo: Scalars['Float']['output'];
+  orderNo: Scalars['String']['output'];
   product: Product;
   productId: Scalars['ID']['output'];
   sizes: Array<SizeToWork>;
@@ -890,9 +890,9 @@ export type SizeFragment = { __typename?: 'Size', id: string, eu: string, us?: s
 
 export type TaskWithArtisanFragment = { __typename?: 'TaskWithArtisan', id: string, createdBy: string, updatedBy?: string | null, workId: string, type: Job, doneAt?: any | null, artisan?: { __typename?: 'Artisan', id: string, firstName: string, lastName?: string | null, jobs: Array<Job>, createdBy: string, updatedBy?: string | null } | null };
 
-export type WorkWithTasksFragment = { __typename?: 'WorkWithTasks', id: string, date: any, orderNo: number, productId: string, createdBy: string, updatedBy?: string | null, createdAt: any, updatedAt: any, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, tasks: Array<{ __typename?: 'TaskWithArtisan', id: string, createdBy: string, updatedBy?: string | null, workId: string, type: Job, doneAt?: any | null, artisan?: { __typename?: 'Artisan', id: string, firstName: string, lastName?: string | null, jobs: Array<Job>, createdBy: string, updatedBy?: string | null } | null }>, product: { __typename?: 'Product', sku: string } };
+export type WorkWithTasksFragment = { __typename?: 'WorkWithTasks', id: string, date: any, orderNo: string, productId: string, createdBy: string, updatedBy?: string | null, createdAt: any, updatedAt: any, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, tasks: Array<{ __typename?: 'TaskWithArtisan', id: string, createdBy: string, updatedBy?: string | null, workId: string, type: Job, doneAt?: any | null, artisan?: { __typename?: 'Artisan', id: string, firstName: string, lastName?: string | null, jobs: Array<Job>, createdBy: string, updatedBy?: string | null } | null }>, product: { __typename?: 'Product', sku: string } };
 
-export type WorkFragment = { __typename?: 'WorkWithTasks', id: string, date: any, orderNo: number, productId: string, createdBy: string, updatedBy?: string | null, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, product: { __typename?: 'Product', sku: string } };
+export type WorkFragment = { __typename?: 'WorkWithTasks', id: string, date: any, orderNo: string, productId: string, createdBy: string, updatedBy?: string | null, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, product: { __typename?: 'Product', sku: string } };
 
 export type CreateSizeMutationVariables = Exact<{
   data: SizeCreateDto;
@@ -956,14 +956,14 @@ export type GetWorksQueryVariables = Exact<{
 }>;
 
 
-export type GetWorksQuery = { __typename?: 'Query', getWorks: Array<{ __typename?: 'WorkWithTasks', id: string, date: any, orderNo: number, productId: string, createdBy: string, updatedBy?: string | null, createdAt: any, updatedAt: any, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, tasks: Array<{ __typename?: 'TaskWithArtisan', id: string, createdBy: string, updatedBy?: string | null, workId: string, type: Job, doneAt?: any | null, artisan?: { __typename?: 'Artisan', id: string, firstName: string, lastName?: string | null, jobs: Array<Job>, createdBy: string, updatedBy?: string | null } | null }>, product: { __typename?: 'Product', sku: string } }> };
+export type GetWorksQuery = { __typename?: 'Query', getWorks: Array<{ __typename?: 'WorkWithTasks', id: string, date: any, orderNo: string, productId: string, createdBy: string, updatedBy?: string | null, createdAt: any, updatedAt: any, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, tasks: Array<{ __typename?: 'TaskWithArtisan', id: string, createdBy: string, updatedBy?: string | null, workId: string, type: Job, doneAt?: any | null, artisan?: { __typename?: 'Artisan', id: string, firstName: string, lastName?: string | null, jobs: Array<Job>, createdBy: string, updatedBy?: string | null } | null }>, product: { __typename?: 'Product', sku: string } }> };
 
 export type GetWorkQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetWorkQuery = { __typename?: 'Query', getWork: { __typename?: 'WorkWithTasks', id: string, date: any, orderNo: number, productId: string, createdBy: string, updatedBy?: string | null, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, product: { __typename?: 'Product', sku: string } } };
+export type GetWorkQuery = { __typename?: 'Query', getWork: { __typename?: 'WorkWithTasks', id: string, date: any, orderNo: string, productId: string, createdBy: string, updatedBy?: string | null, sizes: Array<{ __typename?: 'SizeToWork', quantity: number, size: { __typename?: 'Size', id: string, eu: string, us?: string | null, uk?: string | null, jp?: string | null, gender: Gender } }>, product: { __typename?: 'Product', sku: string } } };
 
 export type GetTasksQueryVariables = Exact<{
   workId: Scalars['ID']['input'];

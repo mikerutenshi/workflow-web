@@ -127,6 +127,7 @@ const { current } = useLocale();
 watch(
   locale,
   (newLocale) => {
+    // setZodLocale(newLocale);
     if (newLocale == 'su') {
       current.value = 'id';
     } else {
