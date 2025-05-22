@@ -1,5 +1,8 @@
 <template>
-  <form @submit.prevent="onSubmit">
+  <form
+    @submit.prevent="onSubmit"
+    :class="useFlexLayout ? 'h-100 d-flex flex-column' : ''"
+  >
     <v-row>
       <v-col>
         <v-row v-if="error">
@@ -11,7 +14,7 @@
         </v-row>
 
         <v-card>
-          <v-card-title>{{ $t('card.fill_artisans') }}</v-card-title>
+          <v-card-subtitle>{{ $t('card.fill_artisans') }}</v-card-subtitle>
           <v-card-text>
             <v-data-table
               :headers="taskHeaders"
@@ -150,8 +153,9 @@ const { data } = useQuery({
   variables: { id: workId.value },
 });
 
-// const validationSchema = shallowRef<any>(null);
-const { value: isValidDateVal } = useField('isValidDate');
+const useFlexLayout = ref(
+  (authStore.user?.role.clearanceLevel ?? 6) > Role.Planner
+);
 const validationSchema = toTypedSchema(
   createTaskSchema(
     dayjs().subtract(1, 'day').toISOString(),
@@ -202,9 +206,9 @@ const submitBtnTitle = computed(() =>
 );
 
 const taskHeaders = ref([
-  { title: t('label.type'), key: 'type' },
-  { title: t('label.artisan'), key: 'artisan' },
-  { title: t('label.done_at'), key: 'doneAt' },
+  { title: t('label.type'), key: 'type', sortable: false },
+  { title: t('label.artisan'), key: 'artisan', sortable: false },
+  { title: t('label.done_at'), key: 'doneAt', sortable: false },
 ]);
 
 if (workId.value) {

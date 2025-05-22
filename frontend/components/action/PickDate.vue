@@ -2,7 +2,7 @@
   <v-menu :close-on-content-click="false">
     <template #activator="{ props: activatorProps }">
       <v-text-field
-        v-bind="activatorProps"
+        v-bind="!readonly ? activatorProps : {}"
         readonly
         :prepend-inner-icon="mdiCalendar"
         v-model="internalTextModel"
@@ -50,6 +50,10 @@ const props = defineProps({
   rules: {
     type: Array as PropType<((value: any) => boolean | string)[]>,
     default: () => [],
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 });
 

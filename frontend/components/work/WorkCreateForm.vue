@@ -76,7 +76,9 @@
         <v-row>
           <v-col>
             <v-card>
-              <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
+              <v-card-subtitle>{{
+                $t('card.fill_quantities')
+              }}</v-card-subtitle>
               <v-card-text>
                 <v-data-table
                   :headers="sizeHeaders"
@@ -210,8 +212,8 @@ const sizesTable = reactive<
 >([]);
 const { t } = useI18n();
 const sizeHeaders = ref([
-  { title: t('label.size'), key: 'title' },
-  { title: t('label.quantity'), key: 'quantity' },
+  { title: t('label.size'), key: 'title', sortable: false },
+  { title: t('label.quantity'), key: 'quantity', sortable: false },
 ]);
 
 const onSubmit = handleSubmit((data) => {
