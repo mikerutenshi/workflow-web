@@ -2,7 +2,6 @@
 set -e
 
 /wait
-npm run db:push
-npm run db:seed
+npx prisma migrate deploy
 
 exec "$@"

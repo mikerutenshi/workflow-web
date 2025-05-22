@@ -10,15 +10,17 @@ import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
 
 @Resolver(() => Product)
-@UseGuards(RoleGuard)
-@Roles(Role.Planner)
 export class ProductResolver {
   constructor(private productService: ProductService) {}
 
+  @UseGuards(RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Product)
   createProduct(@Args('data') data: ProductCreateDto): Promise<Product> {
     return this.productService.createProduct(data);
   }
+  @UseGuards(RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Product)
   updateProduct(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -40,6 +42,8 @@ export class ProductResolver {
     return this.productService.getProduct(id);
   }
 
+  @UseGuards(RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   deleteProduct(

@@ -172,3 +172,13 @@ query getPayroll($startDate: Date!, $endDate: Date!) {
     totalQuantity
   }
 }
+
+query getWorkAuditTrail($id: ID!) {
+  getWork(id: $id) {
+    date
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+  }
+}

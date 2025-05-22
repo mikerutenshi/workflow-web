@@ -8,6 +8,7 @@
         v-model="internalTextModel"
         :label="label"
         :error-messages="errorMessages"
+        :rules="rules"
       ></v-text-field>
     </template>
     <v-date-picker
@@ -45,6 +46,10 @@ const props = defineProps({
   errorMessages: {
     type: String,
     default: '',
+  },
+  rules: {
+    type: Array as PropType<((value: any) => boolean | string)[]>,
+    default: () => [],
   },
 });
 

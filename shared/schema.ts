@@ -1,5 +1,4 @@
 import { z } from "zod";
-import dayjs from "dayjs";
 
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
@@ -89,21 +88,45 @@ export const WorkSchema = z.object({
   updatedBy: positiveNumberString.optional().nullable(),
 });
 
-export function createTaskSchema(minDate: Date) {
-  const minDatePlusOneDay = new Date(minDate.getTime() - 24 * 60 * 60 * 1000);
-  return z.object({
-    tasks: z
-      .object({
-        id: positiveNumberString,
-        artisanId: positiveNumberString.optional().nullable(),
-        doneAt: z
-          .string()
-          .datetime()
-          .refine((val) => new Date(val) >= minDatePlusOneDay)
-          .optional()
-          .nullable(),
-        updatedBy: positiveNumberString,
-      })
-      .array(),
-  });
+export function createTaskSchema(
+  minDate: string,
+  maxDate: string,
+  isCleared: boolean
+) {
+  console.log(`Schema: ${minDate}, ${maxDate}, ${isCleared}`);
+  if (isCleared) {
+    return z.object({
+      tasks: z
+        .object({
+          id: positiveNumberString,
+          artisanId: positiveNumberString.optional().nullable(),
+          doneAt: z.string().datetime().optional().nullable(),
+          updatedBy: positiveNumberString,
+          isValidDate: z.boolean(),
+        })
+        .array(),
+    });
+  } else {
+    return z.object({
+      tasks: z.array(
+        z
+          .object({
+            id: positiveNumberString,
+            artisanId: positiveNumberString.optional().nullable(),
+            doneAt: z.string().datetime().optional().nullable(),
+            updatedBy: positiveNumberString,
+            isValidDate: z.boolean(),
+          })
+          .superRefine((data, ctx) => {
+            if (data.doneAt !== null && data.isValidDate !== true) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Date out of range",
+                path: ["doneAt"],
+              });
+            }
+          })
+      ),
+    });
+  }
 }

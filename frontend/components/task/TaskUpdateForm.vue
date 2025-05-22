@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="onSubmit">
+  <form @submit.prevent="onSubmit">
     <v-row>
       <v-col>
         <v-row v-if="error">
@@ -77,7 +77,7 @@
       <ActionCancel></ActionCancel>
       <ActionConfirm :loading="isUpdating">{{ submitBtnTitle }}</ActionConfirm>
     </v-row>
-  </v-form>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -88,6 +88,7 @@ import { useMutation, useQuery } from 'villus';
 import {
   GetArtisansDocument,
   GetTasksDocument,
+  GetWorkAuditTrailDocument,
   Job,
   UpdateTasksDocument,
   type TaskUpdateDto,
@@ -97,7 +98,6 @@ const route = useRoute();
 const workId = ref(route.params.id as string);
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
-
 const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   query: GetArtisansDocument,
   tags: [CACHE_ARTISANS],
@@ -144,18 +144,56 @@ const form = computed<TaskUpdateDto[]>(() => {
   );
   return result;
 });
-const validationSchema = toTypedSchema(createTaskSchema(twoWeeksAgo()));
 
-function twoWeeksAgo() {
-  return dayjs().subtract(2, 'week').toDate();
-}
-const { handleSubmit, values, setValues, errors } = useForm({
+const { data } = useQuery({
+  query: GetWorkAuditTrailDocument,
+  variables: { id: workId.value },
+});
+
+// const validationSchema = shallowRef<any>(null);
+const { value: isValidDateVal } = useField('isValidDate');
+const validationSchema = toTypedSchema(
+  createTaskSchema(
+    dayjs().subtract(1, 'day').toISOString(),
+    dayjs().add(1, 'day').toISOString(),
+    (authStore.user?.role.clearanceLevel ?? 6) <= Role.Finance
+  )
+);
+const minDate = ref('');
+const maxDate = ref('');
+
+watch(
+  () => data.value,
+  (newData) => {
+    if (newData?.getWork) {
+      minDate.value = dayjs(data.value?.getWork.date)
+        .subtract(1, 'day')
+        .toISOString();
+      maxDate.value = dayjs(minDate.value)
+        .add(3, 'weeks')
+        .add(1, 'day')
+        .toISOString();
+    }
+  },
+  { immediate: true }
+);
+
+const { handleSubmit, values, setValues, setFieldValue, errors } = useForm({
   validationSchema,
 });
-const { replace } = useFieldArray('tasks');
+
 const onSubmit = handleSubmit((values) => {
-  executeUpdate({ data: values.tasks });
+  executeUpdate({
+    data: values.tasks.map((item) => ({
+      id: item.id,
+      doneAt: item.doneAt,
+      updatedBy: item.updatedBy,
+      artisanId: item.artisanId,
+    })),
+  });
 });
+
+const { replace } = useFieldArray('tasks');
 
 const { t } = useI18n();
 
@@ -221,6 +259,9 @@ watch(form, (newValues) => {
       doneAt: item.doneAt,
       updatedBy: item.updatedBy,
       artisanId: item.artisanId ?? undefined,
+      isValidDate:
+        dayjs(item.doneAt).isAfter(dayjs(minDate.value)) &&
+        dayjs(item.doneAt).isBefore(dayjs(maxDate.value)),
     }))
   );
 });
