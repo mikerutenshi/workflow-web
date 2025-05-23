@@ -192,7 +192,7 @@ import {
 import { useRoute } from 'vue-router';
 import { CACHE_COLORS } from '~/utils/cache-tags';
 import { mdiPencil, mdiPlus } from '@mdi/js';
-import { ProductSchema } from '@shared/schema';
+import { ProductSchema } from '~/validation/schema';
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';

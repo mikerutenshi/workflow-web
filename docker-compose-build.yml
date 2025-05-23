@@ -1,5 +1,8 @@
 services:
   backend:
+    build:
+      context: ./backend
+      target: production
     image: mikerutenshi/workflow-backend:latest
     container_name: backend
     restart: always
@@ -12,6 +15,11 @@ services:
     networks:
       - workflow-network
   frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        TARGET_ENV: production
     image: mikerutenshi/workflow-frontend:latest
     container_name: frontend
     restart: always
@@ -21,6 +29,9 @@ services:
       - 3005:3000
     networks:
       - workflow-network
+    #fix nitro worker eaddrinuse
+    # tmpfs:
+    #   - /tmp
   nginx:
     image: nginx:1.27.4-alpine
     container_name: nginx

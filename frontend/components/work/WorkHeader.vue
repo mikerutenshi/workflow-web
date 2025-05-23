@@ -31,6 +31,7 @@
         <v-row>
           <v-col>
             <v-card>
+              <v-card-title></v-card-title>
               <v-card-subtitle>{{ $t('label.sizes') }}</v-card-subtitle>
               <v-card-text>
                 <v-chip-group class="my-2">

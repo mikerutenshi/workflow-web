@@ -1,19 +1,20 @@
 FROM node:20.19.0-alpine AS build
 WORKDIR /app
 
-# Delete node_modules and package-lock.json for a clean install
-# RUN rm -rf frontend/node_modules
-# RUN rm -f wrontend/package-lock.json
-
 COPY frontend/package*.json ./frontend/
-COPY shared/schema.ts ./shared/
+# COPY shared/schema.ts ./shared/
 
 WORKDIR /app/frontend
 RUN npm ci
 COPY frontend/. .
-RUN npm run build
+RUN if [ "$TARGET_ENV" = "staging" ]; then \
+      npm run build:staging; \
+    else \
+      npm run build; \
+    fi
 
-FROM node:20.19.0-alpine AS base
+
+FROM node:20.19.0-alpine
 WORKDIR /app/frontend
 COPY --from=build /app/frontend/.output ./.output
 COPY --from=build /app/frontend/node_modules ./node_modules

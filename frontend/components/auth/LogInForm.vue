@@ -63,7 +63,7 @@
 import { useMutation } from 'villus';
 import { useAuthStore } from '~/stores/auth';
 import { LogInDocument } from '~/api/generated/types';
-import { AuthSchema } from '@shared/schema';
+import { AuthSchema } from '~/validation/schema';
 
 const errorMessage = ref('');
 const { data, isFetching, execute, error } = useMutation(LogInDocument, {

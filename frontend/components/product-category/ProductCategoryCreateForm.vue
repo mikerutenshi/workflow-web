@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ProductCategorySchema } from '@shared/schema';
+import { ProductCategorySchema } from '~/validation/schema';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
 import {

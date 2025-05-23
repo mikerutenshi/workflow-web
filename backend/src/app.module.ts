@@ -39,11 +39,7 @@ const ENV = process.env.NODE_ENV || 'development';
         plugins: [ApolloServerPluginLandingPageLocalDefault()],
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         cors: {
-          origin: [
-            configService.get('CORS_ORIGIN_1') || '',
-            configService.get('CORS_ORIGIN_2') || '',
-            configService.get('CORS_ORIGIN_3') || '',
-          ],
+          origin: [configService.get('CORS_ORIGIN') || ''],
           credentials: true,
         },
         context: async ({ req }: { req: Request }) => {

@@ -76,7 +76,7 @@ import {
 } from '~/api/generated/types';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
-import { ColorSchema } from '@shared/schema';
+import { ColorSchema } from '~/validation/schema';
 
 const route = useRoute();
 const router = useRouter();

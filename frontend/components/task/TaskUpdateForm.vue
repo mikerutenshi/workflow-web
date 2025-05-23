@@ -14,6 +14,7 @@
         </v-row>
 
         <v-card>
+          <v-card-title></v-card-title>
           <v-card-subtitle>{{ $t('card.fill_artisans') }}</v-card-subtitle>
           <v-card-text>
             <v-data-table
@@ -85,7 +86,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
-import { createTaskSchema } from '@shared/schema';
+import { createTaskSchema } from '~/validation/schema';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import {

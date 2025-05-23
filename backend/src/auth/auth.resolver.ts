@@ -1,34 +1,33 @@
-import { Query, Mutation, Resolver, Args, Context } from '@nestjs/graphql';
-import { User } from 'src/models/user.model';
-// import { Prisma, User as UserModel } from '@prisma/client';
-import { AuthService } from './auth.service';
-import { UserCreateDto } from './dto/user-create.dto';
-import { LogInDto } from './dto/logIn.dto';
-import { Request } from 'express';
-import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../guards/auth.guard';
 import { Role } from '@/models/role.model';
+import { UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Request } from 'express';
+import { User } from 'src/models/user.model';
+import { AuthGuard } from '../guards/auth.guard';
+import { AuthService } from './auth.service';
+import { LogInDto } from './dto/logIn.dto';
 import { RoleDto } from './dto/role.dto';
+import { UserCreateDto } from './dto/user-create.dto';
 
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
+  @UseGuards(AuthGuard)
   @Mutation(() => Role)
   createRole(@Args('data') data: RoleDto): Promise<Role> {
     return this.authService.createRole(data);
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => User)
   createUser(@Args('data') data: UserCreateDto): Promise<User> {
     return this.authService.createUser(data);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => [User])
   getUsers(): Promise<User[]> {
-    // type UsersWithRole = Prisma.PromiseReturnType<
-    //   typeof this.authService.getUsers
-    // >;
     const users = this.authService.getUsers();
     return users;
   }

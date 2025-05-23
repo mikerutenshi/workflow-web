@@ -10,7 +10,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3001;
   console.log(`Env -> ${process.env.NODE_ENV}`);
-  console.log(`Origin1 -> ${configService.get('CORS_ORIGIN_1')}`);
+  console.log(`Origin -> ${configService.get('CORS_ORIGIN')}`);
   console.log(`DB -> ${configService.get('DATABASE_URL')}`);
 
   app.use(cookieParser());
@@ -21,11 +21,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: [
-      configService.get('CORS_ORIGIN_1') || '',
-      configService.get('CORS_ORIGIN_2') || '',
-      configService.get('CORS_ORIGIN_3') || '',
-    ],
+    origin: [configService.get('CORS_ORIGIN') || ''],
     credentials: true,
   });
 

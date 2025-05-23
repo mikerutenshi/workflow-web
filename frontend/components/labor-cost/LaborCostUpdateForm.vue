@@ -151,7 +151,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { LaborCostSchema } from '@shared/schema';
+import { LaborCostSchema } from '~/validation/schema';
 import { Mask, type MaskaDetail, type MaskInputOptions } from 'maska';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';

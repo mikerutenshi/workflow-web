@@ -4,7 +4,7 @@
       <WorkCreateForm />
       <v-divider class="my-4"></v-divider>
     </template>
-    <WorkHeader v-if="clearanceLevel >= Role.Field"></WorkHeader>
+    <WorkHeader v-if="clearanceLevel >= Role.Field" class="mb-4"></WorkHeader>
     <TaskUpdateForm />
   </v-container>
 </template>

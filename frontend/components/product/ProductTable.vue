@@ -37,7 +37,7 @@
         </template>
 
         <template v-slot:item.productColors="{ item }">
-          <v-list density="compact" class="d-flex">
+          <v-list density="compact">
             <v-list-item v-for="color in item.productColors">
               <template #prepend>
                 <div

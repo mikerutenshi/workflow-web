@@ -98,7 +98,6 @@ import {
   mdiPencil,
 } from '@mdi/js';
 import dayjs from 'dayjs';
-import weekday from 'dayjs/plugin/weekday';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -109,29 +108,22 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
 const adapter = useDate();
 const now = dayjs();
-dayjs.extend(weekday);
 
-const nextThurs =
-  now.day() < 5
-    ? now.weekday(4).hour(23).minute(59).second(59)
-    : now.add(1, 'week').weekday(4).hour(23).minute(59).second(59);
-console.log(`Next Thurs: ${nextThurs}`);
-
-const lastFrid = nextThurs.subtract(14, 'days').hour(0).second(1);
-console.log(`Last Frid: ${lastFrid}`);
+const findEnd = now.hour(23).minute(59).second(59);
+const findStart = now.subtract(2, 'weeks').hour(0).second(1);
 
 const dates = ref<string[]>([]);
 
-let currentDate = lastFrid.clone();
-while (currentDate.isBefore(nextThurs)) {
+let currentDate = findStart.clone();
+while (currentDate.isBefore(findEnd)) {
   dates.value.push(currentDate.format('YYYY-MM-DD'));
   currentDate = currentDate.add(1, 'day');
 }
 console.log(`Dates: ${dates.value}`);
 
 const form = reactive({
-  startDate: lastFrid.toISOString(),
-  endDate: nextThurs.toISOString(),
+  startDate: findStart.toISOString(),
+  endDate: findEnd.toISOString(),
 });
 
 const { execute, data, isFetching } = useQuery({

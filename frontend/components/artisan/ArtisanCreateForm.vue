@@ -79,7 +79,7 @@ import {
   UpdateArtisanDocument,
 } from '~/api/generated/types';
 import { useRoute } from 'vue-router';
-import { ArtisanSchema } from '@shared/schema';
+import { ArtisanSchema } from '~/validation/schema';
 
 const route = useRoute();
 const artisanId = ref(route.params.id as string);

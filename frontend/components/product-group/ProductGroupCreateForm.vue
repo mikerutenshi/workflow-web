@@ -112,7 +112,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import { mdiPencil, mdiPlus } from '@mdi/js';
-import { ProductGroupSchema } from '@shared/schema';
+import { ProductGroupSchema } from '~/validation/schema';
 
 const route = useRoute();
 const productGroupId = ref(route.params.id as string);

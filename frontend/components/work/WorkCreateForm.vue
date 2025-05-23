@@ -76,6 +76,7 @@
         <v-row>
           <v-col>
             <v-card>
+              <v-card-title></v-card-title>
               <v-card-subtitle>{{
                 $t('card.fill_quantities')
               }}</v-card-subtitle>
@@ -118,7 +119,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
-import { WorkSchema } from '@shared/schema';
+import { WorkSchema } from '~/validation/schema';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
