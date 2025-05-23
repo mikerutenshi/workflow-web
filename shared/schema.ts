@@ -121,7 +121,7 @@ export function createTaskSchema(
             if (data.doneAt !== null && data.isValidDate !== true) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: "Date out of range",
+                message: undefined,
                 path: ["doneAt"],
               });
             }

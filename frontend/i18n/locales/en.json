@@ -133,7 +133,7 @@
       },
       "invalid_type": "Wrong input type",
       "invalid_type_received_undefined": "Field is required",
-      "custom": "Must be a positive numeric value"
+      "custom": "Date is out of accepted range"
     },
     "types": {
       "object": "Type should be object",

@@ -136,7 +136,7 @@
       },
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom wajib diisi",
-      "custom": "Harus berupa nilai numerik positif"
+      "custom": "Tanggal di luar rentang yang diterima"
     },
     "types": {
       "object": "Tipe harus berupa objek",

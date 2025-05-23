@@ -136,7 +136,7 @@
       },
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom ieu wajib diisi",
-      "custom": "Kudu eusian angka positif"
+      "custom": "tanggal kaluar tina rentang ditarima"
     },
     "types": {
       "object": "Jenisna kudu obyék",

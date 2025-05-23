@@ -119,7 +119,7 @@ const now = dayjs();
 dayjs.extend(weekday);
 
 const nextThurs =
-  now.day() < 5
+  now.day() <= 5
     ? now.weekday(4).hour(23).minute(59).second(59)
     : now.add(1, 'week').weekday(4).hour(23).minute(59).second(59);
 const lastFrid = nextThurs.subtract(6, 'days').hour(0).second(1);

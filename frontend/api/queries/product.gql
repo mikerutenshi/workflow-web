@@ -150,6 +150,7 @@ query getProducts {
       productCategory {
         ...ProductCategoryFrag
       }
+      name
     }
     productColors {
       order

@@ -33,10 +33,15 @@
               <template v-slot:item="{ props, item }">
                 <v-list-item
                   v-bind="props"
-                  :title="item.raw.skuNumeric"
-                  :subtitle="`${$t(
-                    renderGender(item.raw.productCategory.gender)
-                  )} | ${item.raw.productCategory.name}`"
+                  :title="
+                    item.raw.name
+                      ? `${item.raw.skuNumeric} / ${item.raw.name}`
+                      : item.raw.skuNumeric
+                  "
+                  :subtitle="`
+                    ${item.raw.productCategory.name} | 
+                  ${$t(renderGender(item.raw.productCategory.gender))}
+                    `"
                 >
                   <template #append>
                     <NuxtLink

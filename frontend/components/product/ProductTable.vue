@@ -37,7 +37,7 @@
         </template>
 
         <template v-slot:item.productColors="{ item }">
-          <v-list density="compact">
+          <v-list density="compact" class="d-flex">
             <v-list-item v-for="color in item.productColors">
               <template #prepend>
                 <div
@@ -112,8 +112,9 @@ const { data, isFetching, error } = useQuery({
 const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
   { title: t('label.id'), key: 'id' },
-  { title: t('label.sku'), key: 'sku' },
   { title: t('label.product_group'), key: 'productGroup.skuNumeric' },
+  { title: t('label.name'), key: 'productGroup.name' },
+  { title: t('label.sku'), key: 'sku' },
   {
     title: t('label.product_category'),
     key: 'productGroup.productCategory.name',
