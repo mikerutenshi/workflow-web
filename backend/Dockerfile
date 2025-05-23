@@ -5,12 +5,13 @@ WORKDIR /app/backend
 # RUN rm -rf node_modules
 # RUN rm -f package-lock.json
 
-COPY prisma ./
+# COPY prisma ./
 COPY package*.json ./
-COPY tsconfig*.json ./
+# COPY tsconfig*.json ./
 
 RUN npm ci
 COPY . .
+RUN npx prisma generate
 RUN npm run build
 
 FROM node:20.19.0-alpine AS base

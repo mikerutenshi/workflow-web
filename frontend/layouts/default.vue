@@ -80,9 +80,9 @@ const navItems = computed(() => {
     return [
       { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
       {
-        title: t('nav.products'),
-        route: localePath('/products'),
-        icon: mdiShoeFormal,
+        title: t('nav.payroll'),
+        route: localePath('/payroll'),
+        icon: mdiCashRegister,
       },
       {
         title: t('nav.production_status'),
@@ -90,9 +90,9 @@ const navItems = computed(() => {
         icon: mdiChartTimeline,
       },
       {
-        title: t('nav.payroll'),
-        route: localePath('/payroll'),
-        icon: mdiCashRegister,
+        title: t('nav.products'),
+        route: localePath('/products'),
+        icon: mdiShoeFormal,
       },
       {
         title: t('nav.labor_costs'),
@@ -109,14 +109,14 @@ const navItems = computed(() => {
     return [
       { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
       {
-        title: t('nav.products'),
-        route: localePath('/products'),
-        icon: mdiShoeFormal,
-      },
-      {
         title: t('nav.production_status'),
         route: localePath('/works'),
         icon: mdiChartTimeline,
+      },
+      {
+        title: t('nav.products'),
+        route: localePath('/products'),
+        icon: mdiShoeFormal,
       },
       {
         title: t('nav.artisans'),

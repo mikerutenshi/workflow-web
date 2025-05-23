@@ -72,9 +72,11 @@
 
         <template v-slot:item.actions="{ item }">
           <NuxtLink :to="$localePath(`/works/update/${item.id}`)">
-            <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
-              $t('btn.update')
-            }}</v-btn>
+            <v-btn
+              color="primary"
+              :prepend-icon="mdiPencil"
+              variant="text"
+            ></v-btn>
           </NuxtLink>
         </template>
       </v-data-table>
@@ -85,6 +87,8 @@
 <style scoped lang="sass">
 .v-chip.v-chip--disabled
   opacity: 1
+.v-chip
+  max-width: 80px
 </style>
 
 <script setup lang="ts">

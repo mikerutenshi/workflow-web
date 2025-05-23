@@ -40,7 +40,7 @@
                     class="ma-1"
                     color="primary"
                     variant="outlined"
-                    @click.prevent.stop
+                    disabled
                   >
                     {{ `${size.eu} | ${size.quantity}` }}
                   </v-chip>
@@ -53,6 +53,11 @@
     </v-row>
   </v-form>
 </template>
+
+<style scoped lang="sass">
+.v-chip.v-chip--disabled
+  opacity: 1
+</style>
 
 <script setup lang="ts">
 import { useQuery } from 'villus';

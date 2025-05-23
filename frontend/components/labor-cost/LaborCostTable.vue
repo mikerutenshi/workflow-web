@@ -111,9 +111,11 @@
           </v-list>
         </v-menu> -->
           <NuxtLink :to="$localePath(`/labor-costs/update/${item.id}`)">
-            <v-btn color="primary" :prepend-icon="mdiPencil" variant="text">{{
-              $t('btn.update')
-            }}</v-btn>
+            <v-btn
+              color="primary"
+              :prepend-icon="mdiPencil"
+              variant="text"
+            ></v-btn>
           </NuxtLink>
         </template>
       </v-data-table>
