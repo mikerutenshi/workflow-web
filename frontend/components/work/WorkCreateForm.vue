@@ -127,6 +127,7 @@ import { useRoute, useRouter } from 'vue-router';
 import {
   CreateWorkDocument,
   DeleteWorkDocument,
+  Gender,
   GetProductsDocument,
   GetSizesDocument,
   GetWorkDocument,
@@ -152,7 +153,7 @@ const computeSizeList = computed(() => {
     (product) => product.id === productId.value.value
   );
   const gender = product?.productGroup.productCategory.gender;
-  return gender
+  return gender == Gender.Men || gender == Gender.Women
     ? sizesData.value?.getSizes.filter((size) => size.gender == gender)
     : sizesData.value?.getSizes;
 });
@@ -202,8 +203,8 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
     date: dayjs().toISOString(),
     orderNo: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
     createdBy: userId,
+    sizes: [],
   },
-  validateOnMount: false,
 });
 const date = useField<string>('date');
 const orderNo = useField('orderNo');

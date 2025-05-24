@@ -319,9 +319,12 @@ if (productId) {
   });
 }
 
-watchEffect(() => {
-  const colorIdArray = selectedColors.value.map((color) => color.id) ?? [];
-  setFieldValue('colorIds', colorIdArray);
-  // console.log(JSON.stringify(values));
+watch(selectedColors, (newColors) => {
+  const colorIds = newColors.map((color) => color.id);
+  setFieldValue('colorIds', colorIds);
 });
+
+// watchEffect(() => {
+//   console.log(JSON.stringify(values));
+// });
 </script>

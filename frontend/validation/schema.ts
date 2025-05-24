@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
@@ -14,12 +14,12 @@ export const AuthSchema = z.object({
 });
 
 const JobEnum = z.enum([
-  "DRAW_UPPER",
-  "DRAW_LINING",
-  "STITCH_UPPER",
-  "STITCH_OUTSOLE",
-  "STITCH_INSOLE",
-  "LAST",
+  'DRAW_UPPER',
+  'DRAW_LINING',
+  'STITCH_UPPER',
+  'STITCH_OUTSOLE',
+  'STITCH_INSOLE',
+  'LAST',
 ]);
 const positiveNumberString = z
   .string()
@@ -30,7 +30,7 @@ const positiveNumberString = z
 export const ArtisanSchema = z.object({
   firstName: z.string().min(1).trim(),
   lastName: z.string().trim().optional().nullable(),
-  jobs: JobEnum.array().nonempty(),
+  jobs: JobEnum.array(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });
@@ -50,7 +50,7 @@ export const LaborCostSchema = z.object({
 export const ProductSchema = z.object({
   productGroupId: positiveNumberString,
   sku: z.string().regex(/^[A-Z]{1,2}\d{5}-[a-zA-Z.\s]*(\/[a-zA-Z.\s]*)*$/),
-  colorIds: positiveNumberString.array().nonempty(),
+  colorIds: positiveNumberString.array(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });
@@ -60,7 +60,7 @@ export const ColorSchema = z.object({
   hexCode: z.string().min(1).trim(),
 });
 
-const GenderEnum = z.enum(["MEN", "WOMEN", "KIDS"]);
+const GenderEnum = z.enum(['MEN', 'WOMEN', 'KIDS']);
 export const ProductCategorySchema = z.object({
   name: z.string().min(1).trim(),
   gender: GenderEnum,
@@ -122,7 +122,7 @@ export function createTaskSchema(
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: undefined,
-                path: ["doneAt"],
+                path: ['doneAt'],
               });
             }
           })
