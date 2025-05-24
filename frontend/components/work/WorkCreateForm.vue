@@ -62,6 +62,7 @@
               v-model="sizes"
               return-object
               :error-messages="errors[`sizes`]"
+              :disabled="isSizesDisabled"
             >
               <!-- <template #item="{ props, item }">
             <v-list-item
@@ -73,7 +74,7 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <v-row v-if="isShowSizeQuantities">
           <v-col>
             <v-card>
               <v-card-title></v-card-title>
@@ -83,7 +84,7 @@
               <v-card-text>
                 <v-data-table
                   :headers="sizeHeaders"
-                  :items="sizesTable"
+                  :items="sizeQuantities"
                   editable
                   hide-default-footer
                 >
@@ -132,6 +133,7 @@ import {
   UpdateWorkDocument,
   type Size,
 } from '~/api/generated/types';
+import { Title } from '#components';
 
 const route = useRoute();
 const workId = ref(route.params.id as string);
@@ -201,14 +203,18 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
     orderNo: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
     createdBy: userId,
   },
+  validateOnMount: false,
 });
 const date = useField<string>('date');
 const orderNo = useField('orderNo');
 const productId = useField('productId');
 const { fields, push, remove, replace } = useFieldArray('sizes');
 
+const isShowSizeQuantities = ref(false);
+const isSizesDisabled = ref(true);
+
 const sizes = ref<Size[]>([]);
-const sizesTable = reactive<
+const sizeQuantities = reactive<
   Array<{ id: string; title: string; quantity: number }>
 >([]);
 const { t } = useI18n();
@@ -247,11 +253,13 @@ if (workId.value) {
         us: item.size.us,
       }));
       work.sizes.forEach((item) => {
-        const sizeInTable = sizesTable.find((size) => size.id === item.size.id);
+        const sizeInTable = sizeQuantities.find(
+          (size) => size.id === item.size.id
+        );
         if (sizeInTable) {
           sizeInTable.quantity = item.quantity;
         } else {
-          sizesTable.push({
+          sizeQuantities.push({
             id: item.size.id,
             title: item.size.eu,
             quantity: item.quantity,
@@ -262,30 +270,63 @@ if (workId.value) {
   });
 }
 
-watch(sizesTable, (newSizes) => {
-  replace(newSizes);
-});
+watch(
+  productId.value,
+  (newId, oldId) => {
+    console.log(`NewId: ${newId}`);
+    console.log(`OldId: ${oldId}`);
+    if (newId && oldId === undefined) {
+      isSizesDisabled.value = false;
+    } else if ((newId && oldId) || (newId && oldId == null)) {
+      isSizesDisabled.value = false;
+      sizes.value = [];
+    } else {
+      isSizesDisabled.value = true;
+    }
+  },
+  { immediate: true }
+);
 
-// watch(productId.value, (newId, oldId) => {
-//   if (oldId == undefined && newId) {
-//     sizes.value = [];
-//   }
-// });
+watch(sizes, (newSizes) => {
+  isShowSizeQuantities.value = newSizes.length > 0;
 
-watchEffect(() => {
-  sizesTable.splice(
+  sizeQuantities.splice(
     0,
-    sizesTable.length,
-    ...sizes.value.map((size) => {
-      const existing = sizesTable.find((item) => item.id === size.id);
+    sizeQuantities.length,
+    ...newSizes.map((item) => {
+      const existing = sizeQuantities.find((i) => i.id === item.id);
       return {
-        id: size.id,
-        title: size.eu,
-        quantity: existing ? existing.quantity : 0,
+        id: item.id,
+        title: item.eu,
+        quantity: existing ? existing.quantity : 1,
       };
     })
   );
+});
 
-  // console.log(`Form -> ${JSON.stringify(values)}`);
+watch(sizeQuantities, (newItems) => {
+  replace(
+    newItems.map((newItem) => ({
+      id: newItem.id,
+      quantity: newItem.quantity,
+    }))
+  );
+});
+
+watchEffect(() => {
+  //   sizesTable.splice(
+  //     0,
+  //     sizesTable.length,
+  //     ...sizes.value.map((size) => {
+  //       const existing = sizesTable.find((item) => item.id === size.id);
+  //       return {
+  //         id: size.id,
+  //         title: size.eu,
+  //         quantity: existing ? existing.quantity : 0,
+  //       };
+  //     })
+  //   );
+
+  console.log(`Form -> ${JSON.stringify(values)}`);
 });
 </script>
