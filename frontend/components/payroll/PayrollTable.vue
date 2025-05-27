@@ -121,8 +121,19 @@ dayjs.extend(weekday);
 const nextThurs =
   now.day() <= 5
     ? now.weekday(4).hour(23).minute(59).second(59)
-    : now.add(1, 'week').weekday(4).hour(23).minute(59).second(59);
-const lastFrid = nextThurs.subtract(6, 'days').hour(0).second(1);
+    : now
+        .add(1, 'week')
+        .weekday(4)
+        .hour(23)
+        .minute(59)
+        .second(59)
+        .millisecond(999);
+const lastFrid = nextThurs
+  .subtract(6, 'days')
+  .hour(0)
+  .minute(0)
+  .second(0)
+  .millisecond(0);
 
 const dates = ref<string[]>([]);
 let currentDate = lastFrid.clone();
@@ -193,4 +204,12 @@ function manageDates(newDates: string[] | string) {
   form.endDate = newDates[newDates.length - 1];
   execute();
 }
+
+watch(
+  form,
+  (newForm) => {
+    console.log(`Payroll Form: ${JSON.stringify(newForm)}`);
+  },
+  { deep: true, immediate: true }
+);
 </script>

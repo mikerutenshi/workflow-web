@@ -109,8 +109,13 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const adapter = useDate();
 const now = dayjs();
 
-const findEnd = now.hour(23).minute(59).second(59);
-const findStart = now.subtract(2, 'weeks').hour(0).second(1);
+const findEnd = now.hour(23).minute(59).second(59).millisecond(999);
+const findStart = now
+  .subtract(2, 'weeks')
+  .hour(0)
+  .minute(0)
+  .second(0)
+  .millisecond(0);
 
 const dates = ref<string[]>([]);
 
