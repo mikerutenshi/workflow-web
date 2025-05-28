@@ -137,6 +137,11 @@
           "inclusive": "Pilih minimal {minimum} item"
         }
       },
+      "too_big": {
+        "string": {
+          "inclusive": "Maksimal {maximum} karakter"
+        }
+      },
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom wajib diisi",
       "custom": "Tanggal di luar rentang yang diterima"

@@ -113,6 +113,11 @@ const navItems = computed(() => {
         icon: mdiChartTimeline,
       },
       {
+        title: t('nav.payroll'),
+        route: localePath('/payroll'),
+        icon: mdiCashRegister,
+      },
+      {
         title: t('nav.products'),
         route: localePath('/products'),
         icon: mdiShoeFormal,

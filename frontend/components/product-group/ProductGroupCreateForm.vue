@@ -61,9 +61,7 @@
             <v-text-field
               v-model="skuNumeric.value.value"
               :error-messages="skuNumeric.errorMessage.value"
-              @keypress="(e: any) => /[0-9]/.test(e.key) || e.preventDefault()"
               :label="$t('label.sku_numeric')"
-              type="number"
             />
           </v-col>
         </v-row>

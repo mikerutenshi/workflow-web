@@ -8,7 +8,7 @@ import { Roles } from '@/guards/roles.decorator';
 
 @Resolver()
 @UseGuards(RoleGuard)
-@Roles(Role.Finance)
+@Roles(Role.Planner)
 export class PayrollResolver {
   constructor(private service: PayrollService) {}
 

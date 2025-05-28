@@ -27,7 +27,6 @@
               item-title="skuNumeric"
               :items="productGroupsData?.getProductGroups"
               :loading="isFetchingProductGroups"
-              type="number"
               :error-messages="productGroupId.errorMessage.value"
             >
               <template v-slot:item="{ props, item }">

@@ -1,4 +1,8 @@
 <template>
+  <ActionShowSnackbarSuccess
+    v-model="snackbar"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnackbarSuccess>
   <form
     @submit.prevent="onSubmit"
     :class="useFlexLayout ? 'h-100 d-flex flex-column' : ''"
@@ -81,10 +85,6 @@
       <ActionConfirm :loading="isUpdating">{{ submitBtnTitle }}</ActionConfirm>
     </v-row>
   </form>
-  <ActionShowSnackbarSuccess
-    v-model="snackbar"
-    @close-dialog="emit('close-dialog')"
-  ></ActionShowSnackbarSuccess>
 </template>
 
 <script setup lang="ts">

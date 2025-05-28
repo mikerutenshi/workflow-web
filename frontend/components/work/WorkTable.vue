@@ -7,6 +7,16 @@
         multiple="range"
       ></ActionPickDate>
     </v-col>
+    <v-col>
+      <v-text-field
+        v-model="search"
+        :label="$t('label.search')"
+        :prepend-inner-icon="mdiMagnify"
+        variant="outlined"
+        hide-details
+        single-line
+      ></v-text-field>
+    </v-col>
   </v-row>
 
   <v-row>
@@ -19,6 +29,9 @@
         :sort-by="[{ key: 'id', order: 'asc' }]"
         class="flex-grow-1"
         hover
+        fixed-header
+        :height="`calc(100vh - 174px)`"
+        :search="search"
       >
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -101,7 +114,6 @@
         <template v-if="clearanceLevel <= Role.Planner">
           <WorkCreateForm
             :workId="currentWorkId"
-            class="mt-4"
             @close-dialog="dialog = false"
           ></WorkCreateForm>
         </template>
@@ -131,6 +143,7 @@ import {
   mdiCheckboxBlankOutline,
   mdiCheckboxMarkedOutline,
   mdiClose,
+  mdiMagnify,
   mdiPencil,
 } from '@mdi/js';
 import dayjs from 'dayjs';
@@ -180,6 +193,7 @@ const { execute, data, isFetching } = useQuery({
 });
 
 const { t } = useI18n();
+const search = ref('');
 const headers: ReadOnlyHeaders = [
   { title: t('label.id'), key: 'id' },
   { title: t('label.date'), key: 'date' },

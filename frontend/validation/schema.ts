@@ -49,7 +49,9 @@ export const LaborCostSchema = z.object({
 
 export const ProductSchema = z.object({
   productGroupId: positiveNumberString,
-  sku: z.string().regex(/^[A-Z]{1,2}\d{5}-[a-zA-Z.\s]*(\/[a-zA-Z.\s]*)*$/),
+  sku: z
+    .string()
+    .regex(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/),
   colorIds: positiveNumberString.array(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
@@ -67,7 +69,7 @@ export const ProductCategorySchema = z.object({
 });
 
 export const ProductGroupSchema = z.object({
-  skuNumeric: positiveNumberString,
+  skuNumeric: z.string().max(7).min(5),
   productCategoryId: positiveNumberString,
   name: z.string().min(1).trim().optional().nullable(),
   createdBy: positiveNumberString,

@@ -134,6 +134,11 @@
           "inclusive": "Choose at least {minimum} item"
         }
       },
+      "too_big": {
+        "string": {
+          "inclusive": "At most {maximum} characters"
+        }
+      },
       "invalid_type": "Wrong input type",
       "invalid_type_received_undefined": "Field is required",
       "custom": "Date is out of accepted range"

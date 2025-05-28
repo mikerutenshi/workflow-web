@@ -137,6 +137,11 @@
           "inclusive": "Pilih sahenteuna {minimum} item"
         }
       },
+      "too_big": {
+        "string": {
+          "inclusive": "Paling {maximum} aksara"
+        }
+      },
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom ieu wajib diisi",
       "custom": "tanggal kaluar tina rentang ditarima"

@@ -5,7 +5,7 @@ import { IsArray, IsInt, IsOptional, Matches, Min } from 'class-validator';
 @InputType()
 export class ProductCreateDto {
   @Field()
-  @Matches(/^[A-Z]{1,2}\d{5}-[a-zA-Z.\s]*(\/[a-zA-Z.\s]*)*$/, {
+  @Matches(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/, {
     message: 'Format support example: A12345-D.Brown/White',
   })
   sku: string;

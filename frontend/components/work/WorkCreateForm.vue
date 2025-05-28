@@ -120,6 +120,11 @@
     v-model="snackbar"
     @close-dialog="emit('close-dialog')"
   ></ActionShowSnackbarSuccess>
+
+  <ActionShowSnackbarDelete
+    v-model="snackbarDel"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnackbarDelete>
 </template>
 
 <script setup lang="ts">
@@ -174,6 +179,7 @@ const submitBtnTitle = computed(() =>
 );
 
 const snackbar = ref(false);
+const snackbarDel = ref(false);
 const {
   execute: executeCreate,
   isFetching: isCreating,
@@ -203,7 +209,7 @@ const {
 } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData(data) {
-    snackbar.value = true;
+    snackbarDel.value = true;
     // router.back();
   },
 });
