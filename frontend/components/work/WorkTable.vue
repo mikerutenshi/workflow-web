@@ -71,17 +71,52 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <NuxtLink :to="$localePath(`/works/update/${item.id}`)">
-            <v-btn
-              color="primary"
-              :prepend-icon="mdiPencil"
-              variant="text"
-            ></v-btn>
-          </NuxtLink>
+          <!-- <NuxtLink :to="$localePath(`/works/update/${item.id}`)"> -->
+          <v-btn
+            color="primary"
+            :prepend-icon="mdiPencil"
+            variant="text"
+            @click="edit(item.id)"
+            @mouseenter="register($event)"
+          ></v-btn>
+          <!-- </NuxtLink> -->
         </template>
       </v-data-table>
     </v-col>
   </v-row>
+
+  <v-dialog
+    v-model="dialog"
+    :activator="activator"
+    fullscreen
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <v-toolbar>
+        <v-btn :icon="mdiClose" @click="dialog = false"></v-btn>
+        <v-toolbar-title>{{ $t('page.work_edit') }}</v-toolbar-title>
+      </v-toolbar>
+
+      <v-container class="h-100 d-flex flex-column">
+        <template v-if="clearanceLevel <= Role.Planner">
+          <WorkCreateForm
+            :workId="currentWorkId"
+            class="mt-4"
+            @close-dialog="dialog = false"
+          ></WorkCreateForm>
+        </template>
+        <WorkHeader
+          v-if="clearanceLevel >= Role.Field"
+          class="my-4"
+          :workId="currentWorkId"
+        ></WorkHeader>
+        <TaskUpdateForm
+          :workId="currentWorkId"
+          @close-dialog="dialog = false"
+        ></TaskUpdateForm>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style scoped lang="sass">
@@ -95,6 +130,7 @@
 import {
   mdiCheckboxBlankOutline,
   mdiCheckboxMarkedOutline,
+  mdiClose,
   mdiPencil,
 } from '@mdi/js';
 import dayjs from 'dayjs';
@@ -105,6 +141,9 @@ import { GetWorksDocument } from '~/api/generated/types';
 import { CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
+
+const authStore = useAuthStore();
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
 
 const adapter = useDate();
 const now = dayjs();
@@ -155,6 +194,25 @@ function manageDates(newDates: string[] | string) {
   form.startDate = newDates[0];
   form.endDate = newDates[newDates.length - 1];
   execute();
+}
+
+const currentWorkId = ref('');
+const dialog = ref(false);
+const activator = ref(undefined);
+
+function openDialog(workId: string) {
+  dialog.value = true;
+  currentWorkId.value = workId;
+}
+
+function edit(workId: string) {
+  currentWorkId.value = workId;
+}
+function save() {
+  dialog.value = false;
+}
+function register(event: any) {
+  activator.value = event.currentTarget;
 }
 
 watchEffect(() => {

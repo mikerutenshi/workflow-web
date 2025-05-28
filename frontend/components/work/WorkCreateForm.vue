@@ -105,7 +105,6 @@
     </v-row>
 
     <v-row align="end" class="ma-1 mt-4">
-      <ActionCancel></ActionCancel>
       <ActionConfirm :loading="isCreating || isUpdating">{{
         submitBtnTitle
       }}</ActionConfirm>
@@ -116,11 +115,15 @@
       ></ActionDelete>
     </v-row>
   </v-form>
+
+  <ActionShowSnackbarSuccess
+    v-model="snackbar"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnackbarSuccess>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
-import { WorkSchema } from '~/validation/schema';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
@@ -134,10 +137,17 @@ import {
   UpdateWorkDocument,
   type Size,
 } from '~/api/generated/types';
-import { Title } from '#components';
+import { WorkSchema } from '~/validation/schema';
+
+const props = defineProps({
+  workId: {
+    type: String,
+  },
+});
+const emit = defineEmits(['close-dialog']);
 
 const route = useRoute();
-const workId = ref(route.params.id as string);
+const workId = ref((route.params.id as string) || props.workId);
 
 const { data: productsData, isFetching: isFetchingProducts } = useQuery({
   query: GetProductsDocument,
@@ -162,6 +172,8 @@ const router = useRouter();
 const submitBtnTitle = computed(() =>
   workId.value ? t('btn.update') : t('btn.create')
 );
+
+const snackbar = ref(false);
 const {
   execute: executeCreate,
   isFetching: isCreating,
@@ -169,7 +181,8 @@ const {
 } = useMutation(CreateWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData() {
-    router.back();
+    snackbar.value = true;
+    // router.back();
   },
 });
 const {
@@ -179,7 +192,8 @@ const {
 } = useMutation(UpdateWorkDocument, {
   clearCacheTags: [CACHE_WORK, CACHE_WORKS],
   onData() {
-    router.back();
+    snackbar.value = true;
+    // router.back();
   },
 });
 const {
@@ -189,7 +203,8 @@ const {
 } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData(data) {
-    router.back();
+    snackbar.value = true;
+    // router.back();
   },
 });
 

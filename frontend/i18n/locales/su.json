@@ -95,7 +95,10 @@
     "pick_color": "Pilih Warna",
     "by": "Ku: {artisan}",
     "at": ", Dina: {done_at}",
-    "search": "Milarian"
+    "search": "Milarian",
+    "ok": "Muhun",
+    "status_saved": "Disimpen",
+    "status_deleted": "Dipupus"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

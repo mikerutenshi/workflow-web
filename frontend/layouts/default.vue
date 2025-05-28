@@ -7,17 +7,16 @@
 
       <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
 
-      <template
-        v-slot:append
+      <NuxtLink
         v-if="pagesWithCreate.includes(currentRouteName as string)"
+        :to="createBtn.route"
+        class="mr-4"
       >
-        <NuxtLink :to="createBtn.route" class="mr-4">
-          <v-btn variant="flat">
-            <v-icon left :icon="mdiPlus"></v-icon>
-            {{ createBtn.title }}
-          </v-btn>
-        </NuxtLink>
-      </template>
+        <v-btn variant="flat">
+          <v-icon left :icon="mdiPlus"></v-icon>
+          {{ createBtn.title }}
+        </v-btn>
+      </NuxtLink>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app temporary>
@@ -148,14 +147,23 @@ const currentRouteName = computed(() => {
 });
 const pageTitle = computed(() => t(route.meta.title as string));
 
-const pagesWithCreate = [
+const pagesWithCreate = shallowRef([
   'products',
   'colors',
   'product-groups',
   'product-categories',
   'artisans',
   'works',
-];
+]);
+
+if (clearance >= Role.Field)
+  pagesWithCreate.value = [
+    'products',
+    'colors',
+    'product-groups',
+    'product-categories',
+    'artisans',
+  ];
 
 watch(
   currentRouteName,

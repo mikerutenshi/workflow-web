@@ -78,10 +78,13 @@
     </v-row>
 
     <v-row align="end" class="ma-1 mt-4">
-      <ActionCancel></ActionCancel>
       <ActionConfirm :loading="isUpdating">{{ submitBtnTitle }}</ActionConfirm>
     </v-row>
   </form>
+  <ActionShowSnackbarSuccess
+    v-model="snackbar"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnackbarSuccess>
 </template>
 
 <script setup lang="ts">
@@ -98,8 +101,15 @@ import {
   type TaskUpdateDto,
 } from '~/api/generated/types';
 
+const props = defineProps({
+  workId: {
+    type: String,
+  },
+});
+const emit = defineEmits(['close-dialog']);
+
 const route = useRoute();
-const workId = ref(route.params.id as string);
+const workId = ref((route.params.id as string) || props.workId);
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
@@ -107,6 +117,8 @@ const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   tags: [CACHE_ARTISANS],
 });
 const localePath = useLocalePath();
+
+const snackbar = ref(false);
 const {
   execute: executeUpdate,
   isFetching: isUpdating,
@@ -114,7 +126,9 @@ const {
 } = useMutation(UpdateTasksDocument, {
   clearCacheTags: [CACHE_WORKS, CACHE_TASKS],
   onData() {
-    navigateTo(localePath('/works'));
+    snackbar.value = true;
+    if (route.params.id) navigateTo(localePath('/works'));
+    // else if (props.workId) emit('close-dialog');
   },
 });
 
@@ -151,7 +165,7 @@ const form = computed<TaskUpdateDto[]>(() => {
 
 const { data } = useQuery({
   query: GetWorkAuditTrailDocument,
-  variables: { id: workId.value },
+  variables: { id: workId.value ?? '' },
 });
 
 const useFlexLayout = ref(
@@ -265,13 +279,15 @@ watch(form, (newValues) => {
       updatedBy: item.updatedBy,
       artisanId: item.artisanId ?? undefined,
       isValidDate:
-        dayjs(item.doneAt).isAfter(dayjs(minDate.value)) &&
-        dayjs(item.doneAt).isBefore(dayjs(maxDate.value)),
+        minDate.value !== '' && maxDate.value !== ''
+          ? dayjs(item.doneAt).isAfter(dayjs(minDate.value)) &&
+            dayjs(item.doneAt).isBefore(dayjs(maxDate.value))
+          : true,
     }))
   );
 });
 
-// watchEffect(() => {
-//   console.log(`Tasks Table -> ${JSON.stringify(values)}`);
-// });
+watchEffect(() => {
+  console.log(`Tasks Table -> ${JSON.stringify(values)}`);
+});
 </script>

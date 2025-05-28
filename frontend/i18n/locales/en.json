@@ -95,7 +95,10 @@
     "pick_color": "Pick a Color",
     "by": "By: {artisan}",
     "at": ", On: {done_at}",
-    "search": "Search"
+    "search": "Search",
+    "ok": "Ok",
+    "status_saved": "Saved",
+    "status_deleted": "Deleted"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

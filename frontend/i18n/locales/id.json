@@ -95,7 +95,10 @@
     "pick_color": "Pilih Warna",
     "by": "Oleh: {artisan}",
     "at": ", Pada: {done_at}",
-    "search": "Cari"
+    "search": "Cari",
+    "ok": "Oke",
+    "status_saved": "Disimpan",
+    "status_deleted": "Dihapus"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

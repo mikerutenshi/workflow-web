@@ -64,8 +64,14 @@
 import { useQuery } from 'villus';
 import { GetWorkDocument } from '~/api/generated/types';
 
+const props = defineProps({
+  workId: {
+    type: String,
+  },
+});
+
 const route = useRoute();
-const workId = ref(route.params.id as string);
+const workId = ref((route.params.id as string) || props.workId);
 
 const form = reactive({
   date: '',
