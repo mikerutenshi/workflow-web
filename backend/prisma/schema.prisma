@@ -62,15 +62,16 @@ enum Gender {
 
 model ProductCategory {
   id                Int             @id @default(autoincrement())
-  name              String
+  name              String          
   gender            Gender
+  @@unique([name, gender])
 
   productGroups     ProductGroup[]
 }
 
 model ProductGroup {
   id                Int             @id @default(autoincrement())
-  skuNumeric        String
+  skuNumeric        String          @unique
   productCategoryId Int
   name              String?
 
@@ -87,7 +88,7 @@ model ProductGroup {
 
 model Product {
   id                Int             @id @default(autoincrement())
-  sku               String
+  sku               String          @unique
   productGroupId    Int
 
   createdBy         Int
@@ -154,7 +155,7 @@ model Artisan {
 model Work {
   id                Int             @id @default(autoincrement())
   date              DateTime
-  orderNo           String             @unique
+  orderNo           String          @unique
   productId         Int             
   sizes             SizeToWork[]
   tasks             Task[]
@@ -188,7 +189,7 @@ model Task {
 
 model Size {
   id                Int             @id @default(autoincrement())
-  eu                String          
+  eu                String                    
   us                String?         
   uk                String?         
   jp                String?

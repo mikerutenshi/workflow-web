@@ -141,6 +141,11 @@ const navItems = computed(() => {
         route: localePath('/artisans'),
         icon: mdiFaceMan,
       },
+      {
+        title: t('nav.products'),
+        route: localePath('/products'),
+        icon: mdiShoeFormal,
+      },
     ];
   }
 });

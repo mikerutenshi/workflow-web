@@ -7,11 +7,7 @@ COPY frontend/package*.json ./frontend/
 WORKDIR /app/frontend
 RUN npm ci
 COPY frontend/. .
-RUN if [ "$TARGET_ENV" = "staging" ]; then \
-      npm run build:staging; \
-    else \
-      npm run build; \
-    fi
+RUN npm run build
 
 
 FROM node:20.19.0-alpine
