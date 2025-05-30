@@ -39,6 +39,7 @@ export class AuthResolver {
   ): Promise<User> {
     const { user, accessToken } = await this.authService.logIn(data);
     req.res?.cookie('jwt', accessToken, {
+      httpOnly: true,
       sameSite: 'none',
       secure: true,
     });
@@ -51,6 +52,7 @@ export class AuthResolver {
     @Context('user') user: User,
   ): Promise<User> {
     req.res?.clearCookie('jwt', {
+      httpOnly: true,
       sameSite: 'none',
       secure: true,
     });
