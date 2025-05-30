@@ -1,5 +1,8 @@
 services:
   backend:
+    build:
+      context: ./backend
+      target: production
     image: mikerutenshi/workflow-backend:latest
     container_name: backend
     restart: always
@@ -12,6 +15,9 @@ services:
     networks:
       - workflow-network
   frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     image: mikerutenshi/workflow-frontend:latest
     container_name: frontend
     restart: always
@@ -26,12 +32,16 @@ services:
     container_name: nginx
     volumes:
       - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/snippets:/etc/nginx/snippets
+      - ./nginx/ssl/certs/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt
+      - ./nginx/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
+      - ./nginx/ssl/private/nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key
     depends_on:
       - frontend
     networks:
       - workflow-network
     ports:
-      - 80:80
+      - 443:443
     restart: unless-stopped
   postgres:
     image: postgres:15.12-alpine
