@@ -80,10 +80,11 @@ export class PayrollService {
     });
 
     for (const artisan of payroll.artisans) {
-      artisan.payablePerArtisan = artisan.tasks.reduce(
-        (sum, task) => sum + task.payablePerTask,
-        0,
-      );
+      artisan.payablePerArtisan =
+        Math.round(
+          artisan.tasks.reduce((sum, task) => sum + task.payablePerTask, 0) /
+            1000,
+        ) * 1000;
       artisan.quantityPerArtisan = artisan.tasks.reduce(
         (sum, task) => sum + task.quantityPerTask,
         0,

@@ -45,11 +45,18 @@
                   :label="$t('label.artisan')"
                   auto-select-first
                   item-value="id"
-                  item-title="firstName"
+                  item-title="fullName"
                   :items="
-                    artisansData?.getArtisans.filter((artisan) => {
-                      return artisan.jobs.includes(item.type);
-                    })
+                    artisansData?.getArtisans
+                      .filter((artisan) => {
+                        return artisan.jobs.includes(item.type);
+                      })
+                      .map((artisan) => ({
+                        ...artisan,
+                        fullName: `${artisan.firstName} ${
+                          artisan.lastName ?? ''
+                        }`,
+                      }))
                   "
                   :loading="isFetchingArtisans"
                   v-model="item.artisan"
@@ -140,6 +147,7 @@ const displayForm = reactive([
       id: string;
       firstName: string;
       lastName: string | null | undefined;
+      fullName: string;
       jobs: Job[];
       createdBy: string;
       updatedBy?: string | null | undefined;
@@ -156,10 +164,10 @@ const form = computed<TaskUpdateDto[]>(() => {
     updatedBy: userId,
   }));
 
-  console.log(
-    'Computed `form` recalculated based on displayForm:',
-    JSON.stringify(result)
-  );
+  // console.log(
+  //   'Computed `form` recalculated based on displayForm:',
+  //   JSON.stringify(result)
+  // );
   return result;
 });
 
@@ -247,6 +255,9 @@ if (workId.value) {
                 jobs: task.artisan.jobs,
                 createdBy: task.artisan.createdBy,
                 updatedBy: task.artisan.updatedBy,
+                fullName: `${task.artisan.firstName} ${
+                  task.artisan.lastName ?? ''
+                }`,
               }
             : null,
           doneAt: task.doneAt,
@@ -256,6 +267,32 @@ if (workId.value) {
     },
   });
 }
+
+const watchUpper = computed(() => {
+  return displayForm.find((t) => t.type == Job.DrawUpper);
+});
+
+watch(
+  () => watchUpper.value?.artisan,
+  (newArtisan) => {
+    const findLining = displayForm.find((t) => t.type == Job.DrawLining);
+    if (findLining) {
+      if (newArtisan) {
+        findLining.artisan = {
+          id: newArtisan.id,
+          firstName: newArtisan.firstName,
+          lastName: newArtisan.lastName,
+          jobs: newArtisan.jobs,
+          createdBy: newArtisan.createdBy,
+          updatedBy: newArtisan.updatedBy,
+          fullName: `${newArtisan.firstName} ${newArtisan.lastName ?? ''}`,
+        };
+      } else {
+        findLining.artisan = null;
+      }
+    }
+  }
+);
 
 watch(
   () => displayForm,
@@ -287,7 +324,7 @@ watch(form, (newValues) => {
   );
 });
 
-watchEffect(() => {
-  console.log(`Tasks Table -> ${JSON.stringify(values)}`);
-});
+// watchEffect(() => {
+//   console.log(`Tasks Table -> ${JSON.stringify(values)}`);
+// });
 </script>

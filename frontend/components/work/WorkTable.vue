@@ -54,33 +54,31 @@
         </template>
 
         <template v-slot:item.tasks="{ item }">
-          <v-list density="compact">
-            <v-list-item
-              v-for="task in item.tasks"
-              :title="$t(renderJob(task.type))"
-            >
-              {{
-                task.artisan
-                  ? `${$t('label.by', {
-                      artisan:
-                        task.artisan?.firstName +
-                        (task.artisan?.lastName
-                          ? ' ' + task.artisan.lastName
-                          : ''),
-                    })}${$t('label.at', {
-                      done_at: adapter.format(task.doneAt, 'fullDate'),
-                    })}`
-                  : ''
-              }}
-              <template v-slot:prepend>
-                <v-icon
-                  v-if="task.artisan"
-                  :icon="mdiCheckboxMarkedOutline"
-                ></v-icon>
-                <v-icon v-else :icon="mdiCheckboxBlankOutline"></v-icon>
-              </template>
-            </v-list-item>
-          </v-list>
+          <div class="mb-4">
+            <v-timeline align="start" side="end" direction="horizontal">
+              <v-timeline-item
+                v-for="task in item.tasks"
+                size="very small"
+                :dot-color="task.doneAt ? 'primary' : 'grey'"
+              >
+                <div class="d-flex flex-column">
+                  <span>
+                    {{ $t(renderJob(task.type)) }}
+                  </span>
+                  <span v-if="task.doneAt">
+                    {{ adapter.format(task.doneAt, 'fullDate') }}
+                  </span>
+                  <span v-if="task.artisan?.firstName">
+                    {{
+                      task.artisan.firstName +
+                      ' ' +
+                      (task.artisan.lastName ?? '')
+                    }}
+                  </span>
+                </div>
+              </v-timeline-item>
+            </v-timeline>
+          </div>
         </template>
 
         <template v-slot:item.actions="{ item }">
