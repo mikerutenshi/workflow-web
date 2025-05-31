@@ -42,6 +42,7 @@ services:
       - workflow-network
     ports:
       - 443:443
+      - 80:80
     restart: unless-stopped
   postgres:
     image: postgres:15.12-alpine

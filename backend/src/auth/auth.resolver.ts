@@ -40,8 +40,7 @@ export class AuthResolver {
     const { user, accessToken } = await this.authService.logIn(data);
     req.res?.cookie('jwt', accessToken, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      sameSite: 'lax',
     });
     return user;
   }
@@ -53,8 +52,7 @@ export class AuthResolver {
   ): Promise<User> {
     req.res?.clearCookie('jwt', {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      sameSite: 'lax',
     });
     return user;
   }
