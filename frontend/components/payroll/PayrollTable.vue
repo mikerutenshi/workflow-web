@@ -54,7 +54,7 @@
   <v-row>
     <v-col>
       <v-skeleton-loader type="card@3" v-if="isFetching"></v-skeleton-loader>
-      <v-expansion-panels v-else>
+      <v-expansion-panels multiple v-else>
         <v-expansion-panel
           v-for="artisan in data?.getPayroll.artisans"
           :key="artisan.id"
