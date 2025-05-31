@@ -33,7 +33,7 @@ export class PayrollService {
               },
             },
           },
-          orderBy: [{ doneAt: 'asc' }, { work: { product: { sku: 'asc' } } }],
+          orderBy: [{ type: 'asc' }, { doneAt: 'asc' }],
         },
       },
       where: {

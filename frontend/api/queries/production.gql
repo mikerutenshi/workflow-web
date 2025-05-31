@@ -138,6 +138,7 @@ mutation updateTasks($data: [TaskUpdateDto!]!) {
 query getPayroll($startDate: Date!, $endDate: Date!) {
   getPayroll(startDate: $startDate, endDate: $endDate) {
     artisans {
+      id
       firstName
       lastName
       tasks {
