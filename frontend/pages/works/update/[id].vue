@@ -2,10 +2,12 @@
   <v-container class="h-100 d-flex flex-column">
     <template v-if="clearanceLevel <= Role.Planner">
       <WorkCreateForm />
-      <v-divider class="my-4"></v-divider>
+      <!-- <v-divider class="my-4"></v-divider> -->
     </template>
-    <WorkHeader v-if="clearanceLevel >= Role.Field" class="mb-4"></WorkHeader>
-    <TaskUpdateForm />
+    <template v-if="clearanceLevel >= Role.Field">
+      <WorkHeader class="mb-4"></WorkHeader>
+      <TaskUpdateForm />
+    </template>
   </v-container>
 </template>
 

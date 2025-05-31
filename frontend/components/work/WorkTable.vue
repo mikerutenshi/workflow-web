@@ -115,15 +115,13 @@
             @close-dialog="dialog = false"
           ></WorkCreateForm>
         </template>
-        <WorkHeader
-          v-if="clearanceLevel >= Role.Field"
-          class="my-4"
-          :workId="currentWorkId"
-        ></WorkHeader>
-        <TaskUpdateForm
-          :workId="currentWorkId"
-          @close-dialog="dialog = false"
-        ></TaskUpdateForm>
+        <template v-if="clearanceLevel >= Role.Field">
+          <WorkHeader class="my-4" :workId="currentWorkId"></WorkHeader>
+          <TaskUpdateForm
+            :workId="currentWorkId"
+            @close-dialog="dialog = false"
+          ></TaskUpdateForm>
+        </template>
       </v-container>
     </v-card>
   </v-dialog>
@@ -137,13 +135,7 @@
 </style>
 
 <script setup lang="ts">
-import {
-  mdiCheckboxBlankOutline,
-  mdiCheckboxMarkedOutline,
-  mdiClose,
-  mdiMagnify,
-  mdiPencil,
-} from '@mdi/js';
+import { mdiClose, mdiMagnify, mdiPencil } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';

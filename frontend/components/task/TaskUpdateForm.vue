@@ -268,31 +268,31 @@ if (workId.value) {
   });
 }
 
-const watchUpper = computed(() => {
-  return displayForm.find((t) => t.type == Job.DrawUpper);
-});
+// const watchUpper = computed(() => {
+//   return displayForm.find((t) => t.type == Job.DrawUpper);
+// });
 
-watch(
-  () => watchUpper.value?.artisan,
-  (newArtisan) => {
-    const findLining = displayForm.find((t) => t.type == Job.DrawLining);
-    if (findLining) {
-      if (newArtisan) {
-        findLining.artisan = {
-          id: newArtisan.id,
-          firstName: newArtisan.firstName,
-          lastName: newArtisan.lastName,
-          jobs: newArtisan.jobs,
-          createdBy: newArtisan.createdBy,
-          updatedBy: newArtisan.updatedBy,
-          fullName: `${newArtisan.firstName} ${newArtisan.lastName ?? ''}`,
-        };
-      } else {
-        findLining.artisan = null;
-      }
-    }
-  }
-);
+// watch(
+//   () => watchUpper.value?.artisan,
+//   (newArtisan) => {
+//     const findLining = displayForm.find((t) => t.type == Job.DrawLining);
+//     if (findLining) {
+//       if (newArtisan) {
+//         findLining.artisan = {
+//           id: newArtisan.id,
+//           firstName: newArtisan.firstName,
+//           lastName: newArtisan.lastName,
+//           jobs: newArtisan.jobs,
+//           createdBy: newArtisan.createdBy,
+//           updatedBy: newArtisan.updatedBy,
+//           fullName: `${newArtisan.firstName} ${newArtisan.lastName ?? ''}`,
+//         };
+//       } else {
+//         findLining.artisan = null;
+//       }
+//     }
+//   }
+// );
 
 watch(
   () => displayForm,
