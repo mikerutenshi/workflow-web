@@ -150,7 +150,7 @@ const headers: ReadOnlyHeaders = [
     align: 'center',
     children: [
       { title: t('jobs.draw_upper'), key: 'drawUpper' },
-      { title: t('jobs.draw_upper'), key: 'drawLining' },
+      { title: t('jobs.draw_lining'), key: 'drawLining' },
       { title: t('jobs.stitch_upper'), key: 'stitchUpper' },
       { title: t('jobs.stitch_outsole'), key: 'stitchOutsole' },
       { title: t('jobs.stitch_insole'), key: 'stitchInsole' },
