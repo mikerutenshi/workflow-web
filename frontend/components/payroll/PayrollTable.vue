@@ -28,8 +28,10 @@
             <div
               class="d-flex flex-column align-start justify-space-between flex-grow-1"
             >
-              <p>{{ $t('label.total_payable') }}</p>
-              <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
+              <p>{{ $t('label.total_quantity') }}</p>
+              <h2>
+                {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
+              </h2>
             </div>
           </v-col>
           <v-divider vertical></v-divider>
@@ -40,10 +42,8 @@
             <div
               class="d-flex flex-column align-start justify-space-between flex-grow-1"
             >
-              <p>{{ $t('label.total_quantity') }}</p>
-              <h2>
-                {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
-              </h2>
+              <p>{{ $t('label.total_payable') }}</p>
+              <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
             </div>
           </v-col>
         </v-row>
@@ -67,15 +67,15 @@
 
             <v-card-subtitle class="w-100">
               <div class="d-flex align-end justify-space-between mb-2 mr-8">
-                <span>{{ $t('label.payable') }}</span>
-                <h3 class="ml-auto">
-                  {{ formatRupiah(artisan.payablePerArtisan) }}
-                </h3>
-              </div>
-              <div class="d-flex align-end justify-space-between mr-8">
                 <span>{{ $t('label.quantity') }}</span>
                 <h3 class="ml-auto">
                   {{ $t('label.pairs', artisan.quantityPerArtisan) }}
+                </h3>
+              </div>
+              <div class="d-flex align-end justify-space-between mr-8">
+                <span>{{ $t('label.payable') }}</span>
+                <h3 class="ml-auto">
+                  {{ formatRupiah(artisan.payablePerArtisan) }}
                 </h3>
               </div>
             </v-card-subtitle>
@@ -128,7 +128,7 @@ const now = dayjs();
 dayjs.extend(weekday);
 
 const nextThurs =
-  now.day() <= 7
+  now.day() <= 6
     ? now.weekday(4).hour(23).minute(59).second(59)
     : now
         .add(1, 'week')
@@ -200,12 +200,13 @@ const display = reactive({
 
 const { t } = useI18n();
 const headers = [
-  { title: t('label.product'), key: 'work.product.sku' },
+  { title: t('label.order_no'), key: 'work.orderNo' },
   { title: t('label.job'), key: 'type' },
   { title: t('label.done_at'), key: 'doneAt' },
-  { title: t('label.payable'), key: 'payablePerTask' },
+  { title: t('label.product'), key: 'work.product.sku' },
   { title: t('label.quantity'), key: 'quantityPerTask' },
   { title: t('label.cost'), key: 'costPerTask' },
+  { title: t('label.payable'), key: 'payablePerTask' },
 ];
 
 function manageDates(newDates: string[] | string) {

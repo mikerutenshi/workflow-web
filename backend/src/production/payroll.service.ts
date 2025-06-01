@@ -33,7 +33,11 @@ export class PayrollService {
               },
             },
           },
-          orderBy: [{ type: 'asc' }, { doneAt: 'asc' }],
+          orderBy: [
+            // { doneAt: 'asc' },
+            { work: { orderNo: 'asc' } },
+            { type: 'asc' },
+          ],
         },
       },
       where: {

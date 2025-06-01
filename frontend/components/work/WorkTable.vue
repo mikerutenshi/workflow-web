@@ -40,7 +40,7 @@
           {{ adapter.format(item.date, 'fullDate') }}
         </template>
         <template v-slot:item.sizes="{ item }">
-          <v-chip-group direction="vertical">
+          <!-- <v-chip-group direction="vertical">
             <v-chip
               v-for="size in item.sizes"
               variant="outlined"
@@ -49,7 +49,15 @@
             >
               {{ `${size.size.eu} | ${size.quantity}` }}
             </v-chip>
-          </v-chip-group>
+          </v-chip-group> -->
+          <v-table density="compact">
+            <tbody>
+              <tr v-for="size in item.sizes" :key="size.size.id">
+                <td>{{ size.size.eu }}</td>
+                <td>{{ size.quantity }}</td>
+              </tr>
+            </tbody>
+          </v-table>
         </template>
 
         <template v-slot:item.tasks="{ item }">
