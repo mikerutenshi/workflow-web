@@ -178,7 +178,7 @@ model Task {
   @@unique([workId, type])
 
   work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
-  artisan           Artisan?        @relation(fields: [artisanId], references: [id])
+  artisan           Artisan?        @relation(fields: [artisanId], references: [id], onDelete: Restrict)
   laborCost         LaborCost       @relation(fields: [laborCostId], references: [id])
 
   createdBy         Int
