@@ -171,6 +171,7 @@ const onSubmit = handleSubmit((values) => {
         ...values,
         jobs: values.jobs as Job[],
         lastName: values.lastName === '' ? null : values.lastName,
+        updatedBy: userId,
       },
     });
   } else {

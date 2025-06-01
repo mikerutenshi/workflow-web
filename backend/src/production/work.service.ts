@@ -112,6 +112,7 @@ export class WorkService {
           lte: endDate,
         },
       },
+      orderBy: [{ date: 'asc' }, { orderNo: 'asc' }],
     });
   }
 

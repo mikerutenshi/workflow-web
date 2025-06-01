@@ -26,7 +26,6 @@
         :items="data?.getWorks"
         :loading="isFetching"
         item-value="id"
-        :sort-by="[{ key: 'id', order: 'asc' }]"
         class="flex-grow-1"
         hover
         fixed-header
@@ -185,7 +184,7 @@ const { execute, data, isFetching } = useQuery({
 const { t } = useI18n();
 const search = ref('');
 const headers: ReadOnlyHeaders = [
-  { title: t('label.id'), key: 'id' },
+  // { title: t('label.id'), key: 'id' },
   { title: t('label.date'), key: 'date' },
   { title: t('label.order_no'), key: 'orderNo' },
   { title: t('label.sku'), key: 'product.sku' },

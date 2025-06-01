@@ -33,7 +33,9 @@ export class ArtisanService {
   }
 
   async getArtisans(): Promise<Artisan[]> {
-    return await this.prisma.artisan.findMany();
+    return await this.prisma.artisan.findMany({
+      orderBy: [{ jobs: 'asc' }, { firstName: 'asc' }],
+    });
   }
 
   async getArtisan(id: number): Promise<Artisan> {

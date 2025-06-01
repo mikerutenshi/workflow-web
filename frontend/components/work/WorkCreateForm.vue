@@ -223,7 +223,7 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   validationSchema,
   initialValues: {
     date: dayjs().toISOString(),
-    orderNo: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+    orderNo: new Date().toISOString().slice(0, 8).replace(/-/g, ''),
     createdBy: userId,
     sizes: [],
   },

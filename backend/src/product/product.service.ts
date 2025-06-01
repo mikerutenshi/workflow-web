@@ -42,6 +42,7 @@ export class ProductService {
           },
         },
       },
+      orderBy: [{ productGroup: { skuNumeric: 'asc' } }, { sku: 'asc' }],
     });
   }
 

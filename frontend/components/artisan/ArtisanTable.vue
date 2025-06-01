@@ -5,7 +5,6 @@
     :loading="isFetching"
     class="flex-grow-1"
     item-value="id"
-    :sort-by="[{ key: 'id', order: 'asc' }]"
     hover
   >
     <template #loading>
@@ -37,7 +36,7 @@ const { data, isFetching } = useQuery({
 
 const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: t('label.id'), key: 'id' },
+  // { title: t('label.id'), key: 'id' },
   { title: t('label.first_name'), key: 'firstName' },
   { title: t('label.last_name'), key: 'lastName' },
   { title: t('label.jobs'), key: 'jobs' },

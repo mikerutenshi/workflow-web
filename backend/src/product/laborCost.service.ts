@@ -179,6 +179,7 @@ export class LaborCostService {
         productCategory: true,
         laborCosts: true,
       },
+      orderBy: [{ productCategory: { gender: 'asc' } }, { skuNumeric: 'asc' }],
     });
   }
 

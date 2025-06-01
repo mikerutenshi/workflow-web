@@ -28,7 +28,6 @@
         :search="search"
         :loading="isFetching"
         item-value="id"
-        :sort-by="[{ key: 'id', order: 'asc' }]"
         class="flex-grow-1"
         hover
       >
@@ -138,7 +137,7 @@ const { data, isFetching, error } = useQuery({
 
 const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: t('label.id'), key: 'id' },
+  // { title: t('label.id'), key: 'id' },
   { title: t('label.product_group'), key: 'skuNumeric' },
   {
     title: t('label.product_category'),
