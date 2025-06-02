@@ -17,6 +17,16 @@
           {{ createBtn.title }}
         </v-btn>
       </NuxtLink>
+
+      <v-btn
+        v-if="currentRouteName == 'works' && clearance <= Role.Planner"
+        variant="flat"
+        class="mr-4"
+        @click="worksStore.openFormDialog()"
+      >
+        <v-icon left :icon="mdiPlus"></v-icon>
+        {{ t('create_btn.work') }}
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app temporary>
@@ -56,6 +66,7 @@ import {
 } from '@mdi/js';
 import { Role } from '~/utils/constants';
 
+const worksStore = useWorksStore();
 const drawer = ref(false);
 const createBtn = reactive({
   title: '',
@@ -163,17 +174,17 @@ const pagesWithCreate = shallowRef([
   'product-groups',
   'product-categories',
   'artisans',
-  'works',
+  // 'works',
 ]);
 
-if (clearance >= Role.Field)
-  pagesWithCreate.value = [
-    'products',
-    'colors',
-    'product-groups',
-    'product-categories',
-    'artisans',
-  ];
+// if (clearance >= Role.Field)
+//   pagesWithCreate.value = [
+//     'products',
+//     'colors',
+//     'product-groups',
+//     'product-categories',
+//     'artisans',
+//   ];
 
 watch(
   currentRouteName,

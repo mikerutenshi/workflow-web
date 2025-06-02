@@ -13,7 +13,6 @@
         v-model="search"
         :label="$t('label.search')"
         :prepend-inner-icon="mdiMagnify"
-        variant="outlined"
         hide-details
         single-line
       ></v-text-field>

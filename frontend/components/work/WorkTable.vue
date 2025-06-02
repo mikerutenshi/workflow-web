@@ -12,7 +12,6 @@
         v-model="search"
         :label="$t('label.search')"
         :prepend-inner-icon="mdiMagnify"
-        variant="outlined"
         hide-details
         single-line
       ></v-text-field>
@@ -113,25 +112,39 @@
   >
     <v-card>
       <v-toolbar>
-        <v-btn :icon="mdiClose" @click="dialog = false"></v-btn>
-        <v-toolbar-title>{{ $t('page.work_edit') }}</v-toolbar-title>
+        <v-btn :icon="mdiClose" @click="closeDialog"></v-btn>
+        <v-toolbar-title>{{
+          currentWorkId ? $t('page.work_edit') : $t('page.work_create')
+        }}</v-toolbar-title>
       </v-toolbar>
 
       <v-container class="h-100 d-flex flex-column">
-        <template v-if="clearanceLevel <= Role.Planner">
-          <WorkCreateForm
+        <template v-if="currentWorkId">
+          <template v-if="clearanceLevel <= Role.Planner">
+            <WorkCreateForm
+              :workId="currentWorkId"
+              @close-dialog="save"
+            ></WorkCreateForm>
+          </template>
+          <WorkHeader
+            v-if="clearanceLevel >= Role.Field"
+            class="my-4"
             :workId="currentWorkId"
-            @close-dialog="save"
-          ></WorkCreateForm>
-        </template>
-        <template
-          v-if="clearanceLevel >= Role.Field || clearanceLevel <= Role.Finance"
-        >
-          <WorkHeader class="my-4" :workId="currentWorkId"></WorkHeader>
+          ></WorkHeader>
+          <v-divider
+            class="my-4"
+            v-if="clearanceLevel <= Role.Finance"
+          ></v-divider>
           <TaskUpdateForm
+            v-if="
+              clearanceLevel >= Role.Field || clearanceLevel <= Role.Finance
+            "
             :workId="currentWorkId"
             @close-dialog="save"
           ></TaskUpdateForm>
+        </template>
+        <template v-else>
+          <WorkCreateForm @close-dialog="save"></WorkCreateForm>
         </template>
       </v-container>
     </v-card>
@@ -156,6 +169,8 @@ import { CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
+const worksStore = useWorksStore();
+const { isFormDialogOpen } = storeToRefs(worksStore);
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
 const pageNo = ref(1);
@@ -217,9 +232,12 @@ const currentWorkId = ref('');
 const dialog = ref(false);
 const activator = ref(undefined);
 
-function openDialog(workId: string) {
+function openDialog() {
   dialog.value = true;
-  currentWorkId.value = workId;
+}
+
+function closeDialog() {
+  dialog.value = false;
 }
 
 function edit(workId: string) {
@@ -227,13 +245,27 @@ function edit(workId: string) {
 }
 function save() {
   dialog.value = false;
+  currentWorkId.value = '';
   execute();
 }
 function register(event: any) {
   activator.value = event.currentTarget;
 }
 
+watch(isFormDialogOpen, (isOpen) => {
+  if (isOpen) {
+    openDialog();
+  }
+});
+watch(dialog, (isOpen) => {
+  if (!isOpen) {
+    worksStore.closeFormDialog();
+    currentWorkId.value = '';
+  }
+});
+
 watchEffect(() => {
+  console.log(`isFormDialogOpen: ${isFormDialogOpen.value}`);
   console.log(`Form: ${JSON.stringify(form)}`);
 });
 </script>

@@ -40,8 +40,8 @@
                     :key="size.eu"
                     class="ma-1"
                     color="primary"
-                    variant="outlined"
                     disabled
+                    rounded="lg"
                   >
                     {{ `${size.eu} | ${size.quantity}` }}
                   </v-chip>

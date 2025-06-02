@@ -29,10 +29,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       sets: { mdi },
     },
     defaults: {
-      VTextField: {
-        density: 'compact',
-        variant: 'outlined',
-      },
+      VTextField: {},
       VBtn: {
         color: 'primary',
       },
