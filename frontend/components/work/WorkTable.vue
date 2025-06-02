@@ -31,6 +31,8 @@
         fixed-header
         :height="`calc(100vh - 174px)`"
         :search="search"
+        :page="pageNo"
+        :items-per-page="itemsPerPage"
       >
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -119,14 +121,16 @@
         <template v-if="clearanceLevel <= Role.Planner">
           <WorkCreateForm
             :workId="currentWorkId"
-            @close-dialog="dialog = false"
+            @close-dialog="save"
           ></WorkCreateForm>
         </template>
-        <template v-if="clearanceLevel >= Role.Field">
+        <template
+          v-if="clearanceLevel >= Role.Field || clearanceLevel <= Role.Finance"
+        >
           <WorkHeader class="my-4" :workId="currentWorkId"></WorkHeader>
           <TaskUpdateForm
             :workId="currentWorkId"
-            @close-dialog="dialog = false"
+            @close-dialog="save"
           ></TaskUpdateForm>
         </template>
       </v-container>
@@ -154,6 +158,8 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
+const pageNo = ref(1);
+const itemsPerPage = ref(10);
 
 const adapter = useDate();
 const now = dayjs();
@@ -221,6 +227,7 @@ function edit(workId: string) {
 }
 function save() {
   dialog.value = false;
+  execute();
 }
 function register(event: any) {
   activator.value = event.currentTarget;
