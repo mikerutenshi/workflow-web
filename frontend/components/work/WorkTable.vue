@@ -28,7 +28,7 @@
         class="flex-grow-1"
         hover
         fixed-header
-        :height="`calc(100vh - 174px)`"
+        :height="`calc(100vh - 262px)`"
         :search="search"
         :page="pageNo"
         :items-per-page="itemsPerPage"
@@ -38,7 +38,7 @@
         </template>
 
         <template v-slot:item.date="{ item }">
-          {{ adapter.format(item.date, 'fullDate') }}
+          {{ adapter.format(item.date, 'fullDateWithWeekday') }}
         </template>
         <template v-slot:item.sizes="{ item }">
           <!-- <v-chip-group direction="vertical">
@@ -70,10 +70,10 @@
                 :dot-color="task.doneAt ? 'primary' : 'grey'"
               >
                 <div class="d-flex flex-column">
-                  <span>
+                  <p>
                     {{ $t(renderJob(task.type)) }}
-                  </span>
-                  <span v-if="task.doneAt">
+                  </p>
+                  <span v-if="task.doneAt" class="mt-2">
                     {{ adapter.format(task.doneAt, 'fullDate') }}
                   </span>
                   <span v-if="task.artisan?.firstName">
@@ -173,6 +173,8 @@ const worksStore = useWorksStore();
 const { isFormDialogOpen } = storeToRefs(worksStore);
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
+
+// Add 34px to height to adjust the footer position
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
 

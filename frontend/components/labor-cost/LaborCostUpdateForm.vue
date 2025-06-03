@@ -9,38 +9,43 @@
             </v-alert>
           </v-col>
         </v-row>
+
         <v-row>
           <v-col>
-            <v-text-field
-              v-model="header.skuNumeric"
-              :label="$t('label.product_group')"
-              readonly
-            />
+            <v-card>
+              <v-card-text>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="header.skuNumeric"
+                      :label="$t('label.product_group')"
+                      readonly
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="header.productCategory"
+                      :label="$t('label.product_category')"
+                      readonly
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="computeGender"
+                      :label="$t('label.gender')"
+                      readonly
+                    />
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="header.productCategory"
-              :label="$t('label.product_category')"
-              readonly
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="computeGender"
-              :label="$t('label.gender')"
-              readonly
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-divider></v-divider>
-          </v-col>
-        </v-row>
+
         <v-row>
           <v-col>
             <v-text-field
@@ -141,12 +146,16 @@
     </v-row>
 
     <v-row align="end" class="ma-1">
-      <ActionCancel></ActionCancel>
       <ActionConfirm :loading="isUpdating">{{
         $t('btn.update')
       }}</ActionConfirm>
     </v-row>
   </form>
+
+  <ActionShowSnackbarSuccess
+    v-model="snackbar"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnackbarSuccess>
 </template>
 
 <script setup lang="ts">
@@ -164,8 +173,16 @@ import {
 } from '~/api/generated/types';
 import { parseGender } from '~/utils/functions';
 
+const props = defineProps({
+  productGroupId: {
+    type: String,
+  },
+});
+const emit = defineEmits(['close-dialog']);
+const snackbar = ref(false);
+
 const route = useRoute();
-const productGroupId = route.params.id as string;
+const productGroupId = (route.params.id as string) || props.productGroupId;
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
 
@@ -265,7 +282,8 @@ const {
     CACHE_PAYROLL,
   ],
   onData() {
-    router.back();
+    snackbar.value = true;
+    // router.back();
   },
 });
 

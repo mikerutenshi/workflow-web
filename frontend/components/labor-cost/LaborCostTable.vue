@@ -28,7 +28,11 @@
         :loading="isFetching"
         item-value="id"
         class="flex-grow-1"
+        fixed-header
+        :height="`calc(100vh - 240px)`"
         hover
+        :page="pageNo"
+        :items-per-page="itemsPerPage"
       >
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -108,33 +112,60 @@
             </v-list-item>
           </v-list>
         </v-menu> -->
-          <NuxtLink :to="$localePath(`/labor-costs/update/${item.id}`)">
-            <v-btn
-              color="primary"
-              :prepend-icon="mdiPencil"
-              variant="text"
-            ></v-btn>
-          </NuxtLink>
+          <!-- <NuxtLink :to="$localePath(`/labor-costs/update/${item.id}`)"> -->
+          <v-btn
+            color="primary"
+            :prepend-icon="mdiPencil"
+            variant="text"
+            @click="
+              productGroupId = item.id;
+              dialog = true;
+            "
+          ></v-btn>
+          <!-- </NuxtLink> -->
         </template>
       </v-data-table>
     </v-col>
   </v-row>
+
+  <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
+    <v-card>
+      <v-toolbar>
+        <v-btn :icon="mdiClose" @click="dialog = false"></v-btn>
+        <v-toolbar-title>{{ $t('page.labor_cost_update') }}</v-toolbar-title>
+      </v-toolbar>
+
+      <v-container class="h-100 d-flex flex-column">
+        <LaborCostUpdateForm
+          :product-group-id="productGroupId"
+          @close-dialog="
+            dialog = false;
+            execute();
+          "
+        ></LaborCostUpdateForm>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify, mdiPencil } from '@mdi/js';
+import { mdiClose, mdiMagnify, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetLaborCostsDocument } from '~/api/generated/types';
 
-type ReadOnlyHeaders = VDataTable['$props']['headers'];
+// Add 34px to height to adjust the footer position
+const pageNo = ref(1);
+const itemsPerPage = ref(10);
 
-const { data, isFetching, error } = useQuery({
+const { execute, data, isFetching, error } = useQuery({
   query: GetLaborCostsDocument,
   tags: [CACHE_PRODUCT_GROUPS],
 });
 
 const { t } = useI18n();
+
+type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },
   { title: t('label.product_group'), key: 'skuNumeric' },
@@ -158,4 +189,7 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');
+const dialog = ref(false);
+const activator = ref(undefined);
+const productGroupId = ref('');
 </script>

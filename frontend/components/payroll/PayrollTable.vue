@@ -92,7 +92,7 @@
                 {{ $t(renderJob(item.type)) }}
               </template>
               <template #item.doneAt="{ item }">
-                {{ adapter.format(item.doneAt, 'fullDate') }}
+                {{ adapter.format(item.doneAt, 'fullDateWithWeekday') }}
               </template>
               <template #item.payablePerTask="{ item }">
                 {{ formatRupiah(item.payablePerTask) }}
@@ -201,9 +201,9 @@ const display = reactive({
 const { t } = useI18n();
 const headers = [
   { title: t('label.order_no'), key: 'work.orderNo' },
+  { title: t('label.product'), key: 'work.product.sku' },
   { title: t('label.job'), key: 'type' },
   { title: t('label.done_at'), key: 'doneAt' },
-  { title: t('label.product'), key: 'work.product.sku' },
   { title: t('label.quantity'), key: 'quantityPerTask' },
   { title: t('label.cost'), key: 'costPerTask' },
   { title: t('label.payable'), key: 'payablePerTask' },
