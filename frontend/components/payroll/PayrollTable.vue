@@ -259,7 +259,6 @@ function exportPdf() {
         }
         const imgWidth = 20;
 
-        console.log(`font: ${JSON.stringify(doc.getFontList())}`);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(16);
         const comp = 'PT Ansulindo Kharisma Lestari';

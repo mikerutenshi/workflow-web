@@ -96,7 +96,6 @@
             :prepend-icon="mdiPencil"
             variant="text"
             @click="edit(item.id)"
-            @mouseenter="register($event)"
           ></v-btn>
           <!-- </NuxtLink> -->
         </template>
@@ -104,12 +103,7 @@
     </v-col>
   </v-row>
 
-  <v-dialog
-    v-model="dialog"
-    :activator="activator"
-    fullscreen
-    transition="dialog-bottom-transition"
-  >
+  <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
     <v-card>
       <v-toolbar>
         <v-btn :icon="mdiClose" @click="closeDialog"></v-btn>
@@ -232,7 +226,6 @@ function manageDates(newDates: string[] | string) {
 
 const currentWorkId = ref('');
 const dialog = ref(false);
-const activator = ref(undefined);
 
 function openDialog() {
   dialog.value = true;
@@ -243,15 +236,13 @@ function closeDialog() {
 }
 
 function edit(workId: string) {
+  dialog.value = true;
   currentWorkId.value = workId;
 }
 function save() {
   dialog.value = false;
   currentWorkId.value = '';
   execute();
-}
-function register(event: any) {
-  activator.value = event.currentTarget;
 }
 
 watch(isFormDialogOpen, (isOpen) => {
