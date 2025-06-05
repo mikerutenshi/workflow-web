@@ -78,27 +78,31 @@
     "select_language": "Pilih Basa",
     "select_sizes": "Pilih Ukuran",
     "select_colors": "Pilih Warna",
-    "select_jobs": "Pilih Jabatan",
-    "gender": "Golongan",
+    "select_jobs": "Pilih Pakasaban",
+    "gender": "Jenis Kelamin",
     "colors": "Warna",
     "labor_costs": "Ongkos",
     "first_name": "Nami Hareup",
     "last_name": "Nami Tukang",
-    "jobs": "Jabatan",
+    "jobs": "Pakasaban",
     "job": "Tugas",
-    "payable": "Anu Kedah Dibayar",
+    "payable": "Nu Kudu Dibayar",
     "cost": "Ongkos",
-    "total_payable": "Total Anu Kedah Dibayar",
-    "total_quantity": "Total Jumlah",
-    "pairs": "Henteu Aya|Hiji Pasang|{count} pasang",
+    "total_payable": "Total Nu Kudu Dibayar",
+    "total_quantity": "Total Jumlah Digawé",
+    "pairs": "Teu Aya|Hiji Pasang|{count} pasang",
     "name": "Nami",
     "pick_color": "Pilih Warna",
     "by": "Ku: {artisan}",
     "at": ", Dina: {done_at}",
     "search": "Milarian",
     "ok": "Muhun",
-    "status_saved": "Disimpen",
-    "status_deleted": "Dipupus"
+    "payslip": "Slip Gajih Pangrajin",
+    "start_date": "Tanggal Mimitian",
+    "end_date": "Tanggal Lekasan",
+    "pay_date": "Tanggal Mayar",
+    "checked_by": "Diperiksa Ku",
+    "artisan_sign": "Tanda Tangan Pangrajin"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
@@ -155,5 +159,9 @@
     "sku_format_detail": "Format anu leres: A12345-D.Coklat/Putih",
     "nonempty": "Kudu milih sahenteuna 1"
   },
-  "N/A": "N/A"
+  "N/A": "N/A",
+  "status": {
+    "saved": "Disimpen",
+    "deleted": "Dipupus"
+  }
 }

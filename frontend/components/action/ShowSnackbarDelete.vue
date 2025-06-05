@@ -1,6 +1,6 @@
 <template>
   <v-snackbar v-model="isVisible" :color="color" :timeout="timeout"
-    >{{ $t('label.status_deleted') }}
+    >{{ $t('status.deleted') }}
     <template #actions>
       <v-btn color="white" @click="emit('close-dialog')">
         {{ $t('label.ok') }}

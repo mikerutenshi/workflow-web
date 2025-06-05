@@ -9,7 +9,7 @@
 <style scoped lang="sass">
 @use "vuetify/lib/styles/settings/_variables"  as *
 .pn-container
-  @include pn-cover-image(url("@/assets/images/elden.jpg"))
+  @include pn-cover-image(url("@/assets/images/catalogue.jpg"))
   display: flex
   align-items: center
   justify-content: center

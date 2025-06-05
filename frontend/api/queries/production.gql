@@ -141,6 +141,7 @@ query getPayroll($startDate: Date!, $endDate: Date!) {
       id
       firstName
       lastName
+      jobs
       tasks {
         payablePerTask
         costPerTask

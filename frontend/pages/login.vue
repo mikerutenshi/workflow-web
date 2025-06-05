@@ -1,11 +1,9 @@
 <template>
-  <v-main>
-    <AuthLogInForm />
-  </v-main>
+  <AuthLogInForm />
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  layout: "log-in",
+  layout: 'log-in',
 });
 </script>

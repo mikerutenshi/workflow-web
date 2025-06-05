@@ -51,6 +51,11 @@ export default defineNuxtConfig({
     vue: {
       template: { transformAssetUrls },
     },
+    resolve: {
+      alias: {
+        jspdf: 'jspdf/dist/jspdf.es.js',
+      },
+    },
   },
   sourcemap: true,
   alias: {

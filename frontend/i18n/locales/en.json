@@ -78,18 +78,18 @@
     "select_language": "Select Language",
     "select_sizes": "Select Size",
     "select_colors": "Select Color",
-    "select_jobs": "Select Job",
+    "select_jobs": "Select Jobs",
     "gender": "Gender",
     "colors": "Color",
     "labor_costs": "Labor Costs",
     "first_name": "First Name",
     "last_name": "Last Name",
-    "jobs": "Job",
+    "jobs": "Jobs",
     "job": "Task",
     "payable": "Amount Payable",
     "cost": "Cost",
     "total_payable": "Total Amount Payable",
-    "total_quantity": "Total Quantity",
+    "total_quantity": "Total Quantity Worked",
     "pairs": "None|One Pair|{count} pairs",
     "name": "Name",
     "pick_color": "Pick a Color",
@@ -97,8 +97,12 @@
     "at": ", On: {done_at}",
     "search": "Search",
     "ok": "Ok",
-    "status_saved": "Saved",
-    "status_deleted": "Deleted"
+    "payslip": "Artisan Payslip",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "pay_date": "Pay Date",
+    "checked_by": "Checked By",
+    "artisan_sign": "Artisan's Signature"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
@@ -152,5 +156,9 @@
     "sku_format_detail": "This is the proper format: A12345-D.Brown/White",
     "nonempty": "Should choose at least 1"
   },
-  "N/A": "N/A"
+  "N/A": "N/A",
+  "status": {
+    "saved": "Saved",
+    "deleted": "Deleted"
+  }
 }

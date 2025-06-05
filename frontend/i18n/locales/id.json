@@ -78,18 +78,18 @@
     "select_language": "Pilih Bahasa",
     "select_sizes": "Pilih Ukuran",
     "select_colors": "Pilih Warna",
-    "select_jobs": "Pilih Jabatan",
+    "select_jobs": "Pilih Bagian",
     "gender": "Segmen",
     "colors": "Warna",
     "labor_costs": "Biaya Tenaga Kerja",
     "first_name": "Nama Depan",
     "last_name": "Nama Belakang",
-    "jobs": "Jabatan",
+    "jobs": "Bagian",
     "job": "Tugas",
     "payable": "Yang Harus Dibayar",
     "cost": "Biaya",
-    "total_payable": "Total Yang Harus Dibayar",
-    "total_quantity": "Total Jumlah",
+    "total_payable": "Total Yang Dibayar",
+    "total_quantity": "Total Yang Dikerjakan",
     "pairs": "Tidak Ada|Satu Pasang|{count} pasang",
     "name": "Nama",
     "pick_color": "Pilih Warna",
@@ -97,8 +97,12 @@
     "at": ", Pada: {done_at}",
     "search": "Cari",
     "ok": "Oke",
-    "status_saved": "Disimpan",
-    "status_deleted": "Dihapus"
+    "payslip": "Slip Gaji Perajin",
+    "start_date": "Tanggal Mulai",
+    "end_date": "Tanggal Selesai",
+    "pay_date": "Tanggal Pembayaran",
+    "checked_by": "Diperiksa Oleh",
+    "artisan_sign": "Tanda Tangan Perajin"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
@@ -155,5 +159,9 @@
     "sku_format_detail": "Format yang benar: A12345-D.Brown/White",
     "nonempty": "Harus memilih minimal 1"
   },
-  "N/A": "N/A"
+  "N/A": "N/A",
+  "status": {
+    "saved": "Disimpan",
+    "deleted": "Dihapus"
+  }
 }

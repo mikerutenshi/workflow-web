@@ -3,7 +3,6 @@ export const useWorksStore = defineStore('works-store', () => {
 
   function openFormDialog() {
     isFormDialogOpen.value = true;
-    console.log('OpenFormDialog');
   }
   function closeFormDialog() {
     isFormDialogOpen.value = false;

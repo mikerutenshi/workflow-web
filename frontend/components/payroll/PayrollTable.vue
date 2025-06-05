@@ -122,6 +122,7 @@ import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import { GetPayrollDocument } from '~/api/generated/types';
 import weekday from 'dayjs/plugin/weekday';
+import { mdiPrinter } from '@mdi/js';
 
 const adapter = useDate();
 const now = dayjs();
@@ -215,11 +216,192 @@ function manageDates(newDates: string[] | string) {
   execute();
 }
 
+// watch(
+//   form,
+//   (newForm) => {
+//     console.log(`Payroll Form: ${JSON.stringify(newForm)}`);
+//   },
+//   { deep: true, immediate: true }
+// );
+
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import ic_borsa from '@/assets/images/ic_borsa.png';
+
+const appBarSTore = useAppBarStore();
+
 watch(
-  form,
-  (newForm) => {
-    console.log(`Payroll Form: ${JSON.stringify(newForm)}`);
-  },
-  { deep: true, immediate: true }
+  () => appBarSTore.isPrintClicked,
+  (isClicked) => {
+    if (isClicked) {
+      exportPdf();
+      appBarSTore.isPrintClicked = false;
+    }
+  }
 );
+function exportPdf() {
+  appBarSTore.isPrinting = true;
+  const img = new Image();
+  img.src = ic_borsa;
+
+  img.onload = function () {
+    const doc = new jsPDF();
+    doc.setLineHeightFactor(1.6);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 14;
+    const artisans = data.value?.getPayroll.artisans;
+
+    if (artisans) {
+      artisans.forEach((artisan, index) => {
+        if (index > 0) {
+          doc.addPage();
+        }
+        const imgWidth = 20;
+
+        console.log(`font: ${JSON.stringify(doc.getFontList())}`);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(16);
+        const comp = 'PT Ansulindo Kharisma Lestari';
+        const textWidth = doc.getTextWidth(comp);
+
+        const imgX = (pageWidth - imgWidth - textWidth - 5) / 2;
+        doc.addImage(img, 'PNG', imgX, margin, imgWidth, imgWidth);
+
+        const compX = imgX + 25;
+        const compY = 20;
+        doc.text(comp, compX, compY);
+        doc.setFontSize(12);
+        doc.text('Jl. Kopo Jaya I No. 3\nBandung, 40224', compX, compY + 8);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(24);
+        const titleY = 56;
+        doc.text(t('label.payslip'), pageWidth / 2, titleY, {
+          align: 'center',
+        });
+
+        const name =
+          artisan.firstName + (artisan.lastName ? ` ${artisan.lastName}` : '');
+        const quantity = t('label.pairs', artisan.quantityPerArtisan);
+        const payable = formatRupiah(artisan.payablePerArtisan);
+
+        const tBody =
+          artisan.tasks.map((task) => {
+            return [
+              String(task.work.orderNo),
+              String(task.work.product.sku),
+              String(t(renderJob(task.type))),
+              String(adapter.format(task.doneAt, 'fullDateWithWeekday')),
+              String(t('label.pairs', task.quantityPerTask)),
+              String(formatRupiah(task.costPerTask)),
+              String(formatRupiah(task.payablePerTask)),
+            ];
+          }) ?? [];
+
+        const dateY = titleY + 12;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
+        doc.text(
+          `${t('label.start_date')}: ${adapter.format(
+            form.startDate,
+            'fullDate'
+          )} | ${t('label.end_date')}: ${adapter.format(
+            form.endDate,
+            'fullDate'
+          )} | ${t('label.pay_date')}: ${adapter.format(now, 'fullDate')}`,
+          pageWidth / 2,
+          dateY,
+          { align: 'center' }
+        );
+        const nameY = dateY + 16;
+        doc.text(
+          `${t('label.name')}: ${name}\n${t('label.jobs')}: ${artisan.jobs
+            .map((job) => t(renderJob(job)))
+            .join(', ')}`,
+          margin,
+          nameY
+        );
+
+        const totalY = nameY;
+
+        doc.setFont('helvetica', 'bold');
+        doc.text(quantity, pageWidth - margin, totalY, { align: 'right' });
+        const qtyWidth = doc.getTextWidth(quantity);
+        doc.setFont('helvetica', 'normal');
+        doc.text(
+          `${t('label.total_quantity')}:`,
+          pageWidth - margin - qtyWidth - 5,
+          totalY,
+          { align: 'right' }
+        );
+
+        doc.setFont('helvetica', 'bold');
+        doc.text(payable, pageWidth - 13, totalY + 7, { align: 'right' });
+        const payWidth = doc.getTextWidth(payable);
+        doc.setFont('helvetica', 'normal');
+        doc.text(
+          `${t('label.total_payable')}:`,
+          pageWidth - margin - payWidth - 5,
+          totalY + 7,
+          { align: 'right' }
+        );
+
+        const tableY = nameY + 16;
+        let lastTableY = 0;
+        autoTable(doc, {
+          startY: tableY,
+          head: [
+            [
+              t('label.order_no'),
+              t('label.product'),
+              t('label.job'),
+              t('label.done_at'),
+              t('label.quantity'),
+              t('label.cost'),
+              t('label.payable'),
+            ],
+          ],
+          body: tBody,
+          styles: { fontSize: 8 },
+          didDrawPage: (d) => {
+            lastTableY = Math.round(d.cursor?.y || 120);
+          },
+        });
+
+        doc.setFont('helvetica', 'normal');
+        doc.text(`${t('label.checked_by')}:`, margin, lastTableY + 16);
+        doc.text(
+          `${t('label.artisan_sign')}:`,
+          pageWidth - margin,
+          lastTableY + 16,
+          {
+            align: 'right',
+          }
+        );
+      });
+    }
+
+    const pageCount = doc.internal.pages.length - 1;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        pageWidth - margin / 2,
+        pageHeight - margin / 2,
+        {
+          align: 'right',
+        }
+      );
+    }
+    doc.save('summary.pdf');
+    appBarSTore.isPrinting = false;
+  };
+
+  img.onerror = function () {
+    console.error('Failed to load the image');
+  };
+}
 </script>

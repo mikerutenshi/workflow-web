@@ -27,6 +27,15 @@
         <v-icon left :icon="mdiPlus"></v-icon>
         {{ t('create_btn.work') }}
       </v-btn>
+
+      <v-btn
+        v-if="currentRouteName == 'payroll' && clearance <= Role.Planner"
+        variant="flat"
+        class="mr-4"
+        @click="appBarStore.isPrintClicked = true"
+        :icon="mdiPrinter"
+        :loading="appBarStore.isPrinting"
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app temporary>
@@ -63,10 +72,12 @@ import {
   mdiHome,
   mdiShoeFormal,
   mdiPlus,
+  mdiPrinter,
 } from '@mdi/js';
 import { Role } from '~/utils/constants';
 
 const worksStore = useWorksStore();
+const appBarStore = useAppBarStore();
 const drawer = ref(false);
 const createBtn = reactive({
   title: '',
