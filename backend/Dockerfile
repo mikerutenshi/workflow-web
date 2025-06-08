@@ -23,7 +23,7 @@ COPY --from=build /app/backend/prisma ./prisma
 COPY --from=build /app/backend/.env* ./
 
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wait /wait
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wait_aarch64 /wait
 RUN chmod +x /wait
 
 COPY docker-entrypoint.sh /

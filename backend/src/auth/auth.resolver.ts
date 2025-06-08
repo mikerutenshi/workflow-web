@@ -41,6 +41,7 @@ export class AuthResolver {
     req.res?.cookie('jwt', accessToken, {
       httpOnly: true,
       sameSite: 'lax',
+      secure: true,
     });
     return user;
   }
@@ -53,6 +54,7 @@ export class AuthResolver {
     req.res?.clearCookie('jwt', {
       httpOnly: true,
       sameSite: 'lax',
+      secure: true,
     });
     return user;
   }
