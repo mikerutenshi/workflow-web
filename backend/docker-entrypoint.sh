@@ -2,6 +2,6 @@
 set -e
 
 /wait
-npx prisma migrate deploy
+npm run db:migrate
 
 exec "$@"

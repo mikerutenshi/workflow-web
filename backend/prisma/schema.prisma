@@ -98,7 +98,7 @@ model Product {
 
   productColors     ColorToProduct[]
   works             Work[]
-  inventories       Inventory[]
+  // inventories       Inventory[]
 
   productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
@@ -213,32 +213,32 @@ model SizeToWork {
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
-model Inventory {
-  id                Int             @id @default(autoincrement())
-  productId         Int
+// model Inventory {
+//   id                Int             @id @default(autoincrement())
+//   productId         Int
 
-  product           Product         @relation(fields: [productId], references: [id])
-}
+//   product           Product         @relation(fields: [productId], references: [id])
+// }
 
-model Warehouse {
-  id                Int             @id @default(autoincrement())
-  customerId        Int             @unique
+// model Warehouse {
+//   id                Int             @id @default(autoincrement())
+//   customerId        Int             @unique
 
-  customer          Customer         @relation(fields: [customerId], references: [id])
-}
+//   customer          Customer         @relation(fields: [customerId], references: [id])
+// }
 
-model Customer {
-  id                Int             @id @default(autoincrement())
-  name              String
-  address           String
-  city              String
-  state             String
-  phone             String
+// model Customer {
+//   id                Int             @id @default(autoincrement())
+//   name              String
+//   address           String
+//   city              String
+//   state             String
+//   phone             String
 
-  createdBy         Int
-  updatedBy         Int?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+//   createdBy         Int
+//   updatedBy         Int?
+//   createdAt         DateTime        @default(now())
+//   updatedAt         DateTime        @updatedAt
 
-  warehouse         Warehouse?      
-}
+//   warehouse         Warehouse?      
+// }

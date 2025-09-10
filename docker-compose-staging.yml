@@ -2,9 +2,8 @@ services:
   backend:
     build:
       context: ./backend
-      target: production
+      target: staging
     image: mikerutenshi/workflow-backend:latest
-    platform: linux/arm64
     container_name: backend
     restart: always
     environment:
@@ -20,9 +19,8 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        - ENVIRONMENT=production
+        - ENVIRONMENT=staging
     image: mikerutenshi/workflow-frontend:latest
-    platform: linux/arm64
     container_name: frontend
     restart: always
     depends_on:
@@ -33,14 +31,13 @@ services:
       - workflow-network
   nginx:
     image: nginx:1.27.4-alpine
-    platform: linux/arm64
     container_name: nginx
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/snippets:/etc/nginx/snippets
-      - ./nginx/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
-      - ./certbot/www:/var/www/certbot:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./nginx-staging/conf.d-https:/etc/nginx/conf.d
+      - ./nginx-staging/snippets:/etc/nginx/snippets
+      - ./nginx-staging/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
+      - ./nginx-staging/ssl/certs/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt
+      - ./nginx-staging/ssl/certs/nginx-selfsigned.key:/etc/ssl/certs/nginx-selfsigned.key
     depends_on:
       - frontend
     networks:
@@ -51,7 +48,6 @@ services:
     restart: unless-stopped
   postgres:
     image: postgres:15.12-alpine
-    platform: linux/arm64
     container_name: postgres
     networks:
       - workflow-network
@@ -61,15 +57,6 @@ services:
       POSTGRES_DATABASE: ${POSTGRES_DATABASE}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-  certbot:
-    image: certbot/certbot:v4.0.0
-    container_name: certbot
-    platform: linux/arm64
-    volumes:
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/conf:/etc/letsencrypt
-    # entrypoint: /bin/sh
-    # command: -c "trap exit TERM; while :; do sleep 1; done"
 
 volumes:
   postgres-data:

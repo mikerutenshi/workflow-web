@@ -7,7 +7,8 @@ COPY frontend/package*.json ./frontend/
 WORKDIR /app/frontend
 RUN npm ci
 COPY frontend/. .
-RUN npm run build
+ARG ENVIRONMENT
+RUN npm run build:${ENVIRONMENT}
 
 
 FROM node:20.19.0-alpine

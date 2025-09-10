@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build:staging": "nuxt build --dotenv .env.staging",
-    "build": "nuxt build",
+    "build:production": "nuxt build",
     "start": "node .output/server/index.mjs",
     "dev": "nuxt dev --dotenv .env.development",
     "debug": "nuxt dev --inspect=9230 --dotenv .env.development",
