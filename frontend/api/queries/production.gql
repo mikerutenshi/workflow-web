@@ -31,7 +31,7 @@ fragment WorkWithTasks on WorkWithTasks {
   date
   orderNo
   productId
-  sizes {
+  workSizes {
     size {
       ...Size
     }
@@ -54,7 +54,7 @@ fragment Work on WorkWithTasks {
   date
   orderNo
   productId
-  sizes {
+  workSizes {
     size {
       ...Size
     }
@@ -150,7 +150,7 @@ query getPayroll($startDate: Date!, $endDate: Date!) {
         doneAt
         work {
           orderNo
-          sizes {
+          workSizes {
             size {
               eu
             }

@@ -21,7 +21,7 @@ export class PayrollService {
             laborCost: true,
             work: {
               include: {
-                sizes: { include: { size: true } },
+                workSizes: { include: { size: true } },
                 product: true,
                 // {
                 // include: {
@@ -59,7 +59,7 @@ export class PayrollService {
       return {
         ...artisan,
         tasks: artisan.tasks.map((task) => {
-          const quantityPerTask = task.work.sizes.reduce(
+          const quantityPerTask = task.work.workSizes.reduce(
             (sum, workSize) => sum + workSize.quantity,
             0,
           );

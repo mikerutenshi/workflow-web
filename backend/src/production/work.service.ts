@@ -14,7 +14,7 @@ export class WorkService {
       const createdWork = await tx.work.create({
         data: {
           ...data,
-          sizes: {
+          workSizes: {
             create: data.sizes.map((size) => ({
               size: { connect: { id: size.id } },
               quantity: size.quantity,
@@ -22,7 +22,7 @@ export class WorkService {
           },
         },
         include: {
-          sizes: { include: { size: true } },
+          workSizes: { include: { size: true } },
         },
       });
 
@@ -61,7 +61,7 @@ export class WorkService {
       where: { id },
       data: {
         ...data,
-        sizes: {
+        workSizes: {
           deleteMany: { workId: id },
           create: data.sizes.map((size) => ({
             size: { connect: { id: size.id } },
@@ -70,7 +70,7 @@ export class WorkService {
         },
       },
       include: {
-        sizes: {
+        workSizes: {
           include: {
             size: true,
           },
@@ -83,7 +83,7 @@ export class WorkService {
     const work = await this.prisma.work.findUnique({
       where: { id },
       include: {
-        sizes: {
+        workSizes: {
           include: {
             size: true,
           },
@@ -102,7 +102,10 @@ export class WorkService {
   getWorks(startDate: Date, endDate: Date): Promise<WorkWithTasks[]> {
     return this.prisma.work.findMany({
       include: {
-        sizes: { include: { size: true }, orderBy: { size: { eu: 'asc' } } },
+        workSizes: {
+          include: { size: true },
+          orderBy: { size: { eu: 'asc' } },
+        },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: true,
       },

@@ -11,5 +11,5 @@ export class Work extends BaseModel {
   @Field(() => ID)
   productId: number;
   @Field(() => [SizeToWork])
-  sizes: SizeToWork[];
+  workSizes: SizeToWork[];
 }

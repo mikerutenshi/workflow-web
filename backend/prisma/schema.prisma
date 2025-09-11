@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["relationJoins"]
+  output = "../src/generated/client"
 }
 
 datasource db {
@@ -51,7 +52,7 @@ model Color {
   name              String          @unique
   hexCode           String
 
-  productColors     ColorToProduct[]
+  colorProducts     ColorToProduct[]
 }
 
 enum Gender {
@@ -96,9 +97,10 @@ model Product {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
-  productColors     ColorToProduct[]
-  works             Work[]
-  // inventories       Inventory[]
+  productColors       ColorToProduct[]
+  works               Work[]
+  productInvs         InvToProduct[]
+  productSalesTxs     ProductToSalesTx[]
 
   productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
@@ -158,7 +160,7 @@ model Work {
   date              DateTime
   orderNo           String          @unique
   productId         Int             
-  sizes             SizeToWork[]
+  workSizes         SizeToWork[]
   tasks             Task[]
 
   createdBy         Int
@@ -196,7 +198,10 @@ model Size {
   jp                String?
   gender            Gender
 
-  works             SizeToWork[]
+  sizeWorks           SizeToWork[]
+  sizeInvProducts     InvProductToSize[]
+  sizeInvTxs          InvTransferToSize[]
+  sizeSalesTxProducts SalesTxProductToSize[]
 
   @@unique([eu, gender])
   @@unique([us, gender])
@@ -213,32 +218,144 @@ model SizeToWork {
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
-// model Inventory {
-//   id                Int             @id @default(autoincrement())
-//   productId         Int
+model Inventory {
+  id                Int             @id @default(autoincrement())
+  name              String          @unique
+  address           String
+  city              String
+  state             String
 
-//   product           Product         @relation(fields: [productId], references: [id])
-// }
+  invProducts       InvToProduct[]
+  invSalesTxs       SalesTx[]
+  salesmen          Salesman[]  
 
-// model Warehouse {
-//   id                Int             @id @default(autoincrement())
-//   customerId        Int             @unique
+  fromTransfers           InvTransfer[] @relation( "FromInventory")
+  toTransfers             InvTransfer[] @relation( "ToInventory")
+}
 
-//   customer          Customer         @relation(fields: [customerId], references: [id])
-// }
+model InvToProduct {
+  id                Int             @id @default(autoincrement())
+  invId             Int
+  productId         Int
+  invProductSizes   InvProductToSize[]
+  sellingPrice      Int
+  discount          Decimal @db.Decimal(3,2) @default(0.00)
 
-// model Customer {
-//   id                Int             @id @default(autoincrement())
-//   name              String
-//   address           String
-//   city              String
-//   state             String
-//   phone             String
+  product           Product         @relation(fields: [productId], references: [id])
+  inventory         Inventory       @relation(fields: [invId], references: [id])
 
-//   createdBy         Int
-//   updatedBy         Int?
-//   createdAt         DateTime        @default(now())
-//   updatedAt         DateTime        @updatedAt
+  invTransfers InvTransfer[]
+}
 
-//   warehouse         Warehouse?      
-// }
+model InvProductToSize {
+  @@id([invProductId, sizeId])
+  invProductId      Int
+  sizeId            Int
+
+  quantity          Int
+
+  invProduct        InvToProduct    @relation(fields: [invProductId], references: [id], onDelete: Cascade)
+  size              Size            @relation(fields: [sizeId], references: [id])
+}
+
+enum TxStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model InvTransfer {
+  id                Int             @id @default(autoincrement())
+  fromInvId         Int
+  toInvId           Int
+  invProductId      Int
+  invTransferSizes  InvTransferToSize[]
+  transferDate      DateTime
+  status            TxStatus  @default(IN_PROGRESS)
+
+  fromInv           Inventory       @relation("FromInventory", fields: [fromInvId], references: [id])
+  toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
+  invProduct        InvToProduct    @relation(fields: [invProductId], references: [id])
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model InvTransferToSize {
+  @@id([invTransferId, sizeId])
+  invTransferId     Int
+  sizeId            Int
+
+  quantity          Int
+
+  invTransfer       InvTransfer     @relation(fields: [invTransferId], references: [id], onDelete: Cascade)
+  size              Size            @relation(fields: [sizeId], references: [id])
+}
+
+model SalesTx {
+  id                Int             @id @default(autoincrement())
+  date              DateTime
+  invId             Int
+  salesTxProducts   ProductToSalesTx[]
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  inventory         Inventory       @relation(fields: [invId], references: [id])
+}
+
+model ProductToSalesTx {
+  id                  Int             @id @default(autoincrement())
+  salesTxId           Int
+  productId           Int
+  salesTxProductSizes SalesTxProductToSize[]
+
+  salesTx           SalesTx         @relation(fields: [salesTxId], references: [id], onDelete: Cascade)
+  product           Product         @relation(fields: [productId], references: [id])
+}
+
+model SalesTxProductToSize {
+  @@id([salesTxProductId, sizeId])
+  salesTxProductId  Int
+  sizeId            Int
+
+  quantity          Int
+
+  salesTxProduct   ProductToSalesTx       @relation(fields: [salesTxProductId], references: [id], onDelete: Cascade)
+  size             Size                   @relation(fields: [sizeId], references: [id])
+}
+
+model Client {
+  id                Int             @id @default(autoincrement())
+  name              String
+  address           String
+  city              String
+  state             String
+  pic               String
+  phone             String
+  email             String          
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  salesmanId        Int
+  salesman          Salesman        @relation(fields: [salesmanId], references: [id])
+}
+
+model Salesman {
+  id                Int             @id @default(autoincrement())
+  firstName         String
+  lastName          String?
+  phone             String
+  email             String          @unique
+  invId             Int
+
+  clients           Client[]
+  inventory         Inventory      @relation(fields: [invId], references: [id])
+}

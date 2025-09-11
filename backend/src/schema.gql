@@ -175,7 +175,7 @@ type Work {
   date: Date!
   orderNo: String!
   productId: ID!
-  sizes: [SizeToWork!]!
+  workSizes: [SizeToWork!]!
 }
 
 type TaskWithArtisan {
@@ -200,7 +200,7 @@ type WorkWithTasks {
   date: Date!
   orderNo: String!
   productId: ID!
-  sizes: [SizeToWork!]!
+  workSizes: [SizeToWork!]!
   tasks: [TaskWithArtisan!]!
   product: Product!
 }
@@ -214,7 +214,7 @@ type WorkWithProduct {
   date: Date!
   orderNo: String!
   productId: ID!
-  sizes: [SizeToWork!]!
+  workSizes: [SizeToWork!]!
   product: Product!
 }
 

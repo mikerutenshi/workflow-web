@@ -180,7 +180,7 @@ const display = reactive({
           costPerTask: '',
           payablePerTask: '',
           work: {
-            sizes: [
+            workSizes: [
               {
                 size: {
                   eu: '',
@@ -237,7 +237,7 @@ watch(
       exportPdf();
       appBarSTore.isPrintClicked = false;
     }
-  }
+  },
 );
 function exportPdf() {
   appBarSTore.isPrinting = true;
@@ -304,14 +304,14 @@ function exportPdf() {
         doc.text(
           `${t('label.start_date')}: ${adapter.format(
             form.startDate,
-            'fullDate'
+            'fullDate',
           )} | ${t('label.end_date')}: ${adapter.format(
             form.endDate,
-            'fullDate'
+            'fullDate',
           )} | ${t('label.pay_date')}: ${adapter.format(now, 'fullDate')}`,
           pageWidth / 2,
           dateY,
-          { align: 'center' }
+          { align: 'center' },
         );
         const nameY = dateY + 16;
         doc.text(
@@ -319,7 +319,7 @@ function exportPdf() {
             .map((job) => t(renderJob(job)))
             .join(', ')}`,
           margin,
-          nameY
+          nameY,
         );
 
         const totalY = nameY;
@@ -332,7 +332,7 @@ function exportPdf() {
           `${t('label.total_quantity')}:`,
           pageWidth - margin - qtyWidth - 5,
           totalY,
-          { align: 'right' }
+          { align: 'right' },
         );
 
         doc.setFont('helvetica', 'bold');
@@ -343,7 +343,7 @@ function exportPdf() {
           `${t('label.total_payable')}:`,
           pageWidth - margin - payWidth - 5,
           totalY + 7,
-          { align: 'right' }
+          { align: 'right' },
         );
 
         const tableY = nameY + 16;
@@ -376,7 +376,7 @@ function exportPdf() {
           lastTableY + 16,
           {
             align: 'right',
-          }
+          },
         );
       });
     }
@@ -392,7 +392,7 @@ function exportPdf() {
         pageHeight - margin / 2,
         {
           align: 'right',
-        }
+        },
       );
     }
     doc.save('summary.pdf');
