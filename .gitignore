@@ -1,2 +1,3 @@
 #sql
-*_backup.sql
+*backup.sql
+backup*.sql

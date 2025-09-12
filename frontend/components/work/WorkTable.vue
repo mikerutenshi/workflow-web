@@ -53,9 +53,17 @@
           </v-chip-group> -->
           <v-table density="compact">
             <tbody>
-              <tr v-for="size in item.sizes" :key="size.size.id">
+              <tr v-for="size in item.workSizes" :key="size.size.id">
                 <td>{{ size.size.eu }}</td>
                 <td>{{ size.quantity }}</td>
+              </tr>
+              <tr>
+                <td>Total</td>
+                <td>
+                  {{
+                    item.workSizes.reduce((sum, size) => sum + size.quantity, 0)
+                  }}
+                </td>
               </tr>
             </tbody>
           </v-table>

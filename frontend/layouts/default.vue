@@ -38,7 +38,7 @@
       </v-btn>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app temporary>
+    <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
           <v-list-item

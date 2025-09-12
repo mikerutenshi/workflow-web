@@ -93,7 +93,9 @@
                       v-model.number="item.quantity"
                       :label="$t('label.quantity')"
                       type="number"
-                      :error-messages="(errors as any)[`sizes[${index}].quantity`]"
+                      :error-messages="
+                        (errors as any)[`sizes[${index}].quantity`]
+                      "
                     />
                   </template>
                 </v-data-table>
@@ -166,7 +168,7 @@ const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
 
 const computeSizeList = computed(() => {
   const product = productsData.value?.getProducts.find(
-    (product) => product.id === productId.value.value
+    (product) => product.id === productId.value.value,
   );
   const gender = product?.productGroup.productCategory.gender;
   return gender == Gender.Men || gender == Gender.Women
@@ -176,7 +178,7 @@ const computeSizeList = computed(() => {
 
 const router = useRouter();
 const submitBtnTitle = computed(() =>
-  workId.value ? t('btn.update') : t('btn.create')
+  workId.value ? t('btn.update') : t('btn.create'),
 );
 
 const snackbar = ref(false);
@@ -267,7 +269,7 @@ if (workId.value) {
         productId: work.productId,
         updatedBy: userId,
       });
-      sizes.value = work.sizes.map((item) => ({
+      sizes.value = work.workSizes.map((item) => ({
         id: item.size.id,
         eu: item.size.eu,
         gender: item.size.gender,
@@ -277,7 +279,7 @@ if (workId.value) {
       }));
       work.sizes.forEach((item) => {
         const sizeInTable = sizeQuantities.find(
-          (size) => size.id === item.size.id
+          (size) => size.id === item.size.id,
         );
         if (sizeInTable) {
           sizeInTable.quantity = item.quantity;
@@ -307,7 +309,7 @@ watch(
       isSizesDisabled.value = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(sizes, (newSizes) => {
@@ -323,7 +325,7 @@ watch(sizes, (newSizes) => {
         title: item.eu,
         quantity: existing ? existing.quantity : 1,
       };
-    })
+    }),
   );
 });
 
@@ -332,7 +334,7 @@ watch(sizeQuantities, (newItems) => {
     newItems.map((newItem) => ({
       id: newItem.id,
       quantity: newItem.quantity,
-    }))
+    })),
   );
 });
 
