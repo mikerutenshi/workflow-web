@@ -15,6 +15,7 @@ import { ArtisanModule } from './artisan/artisan.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductionModule } from './production/production.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { InventoryModule } from './inventory/inventory.module';
 
 const ENV = process.env.NODE_ENV || 'development';
 @Module({
@@ -31,6 +32,7 @@ const ENV = process.env.NODE_ENV || 'development';
         ProductModule,
         ArtisanModule,
         ProductionModule,
+        InventoryModule,
         ConfigModule,
       ],
       inject: [AuthService, ConfigService],

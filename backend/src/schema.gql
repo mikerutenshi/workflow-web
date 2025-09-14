@@ -254,6 +254,14 @@ type PayrollGetDto {
   artisans: [ArtisanWithTasks!]!
 }
 
+type Inventory {
+  id: ID!
+  name: String!
+  address: String!
+  city: String!
+  state: String!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -309,6 +317,11 @@ type Mutation {
   updateSize(id: ID!, data: SizeCreateDto!): Size!
   deleteSize(id: ID!): Boolean!
   updateTasks(data: [TaskUpdateDto!]!): [TaskWithArtisan!]!
+  createInventory(data: InventoryCreateDto!): Inventory!
+  deleteInventory(id: ID!): Boolean!
+  updateInventory(id: ID!, data: InventoryUpdateDto!): Inventory!
+  getInventory(id: ID!): Inventory
+  getInventories: [Inventory!]!
 }
 
 input RoleDto {
@@ -420,4 +433,18 @@ input TaskUpdateDto {
   doneAt: Date
   id: ID!
   updatedBy: ID!
+}
+
+input InventoryCreateDto {
+  name: String!
+  address: String!
+  city: String!
+  state: String!
+}
+
+input InventoryUpdateDto {
+  name: String
+  address: String
+  city: String
+  state: String
 }

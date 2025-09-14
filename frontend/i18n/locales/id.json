@@ -19,7 +19,8 @@
     "products": "Sepatu",
     "labor_costs": "Biaya Tenaga Kerja",
     "artisans": "Perajin",
-    "payroll": "Penggajian"
+    "payroll": "Penggajian",
+    "inventory": "Inventaris"
   },
   "page": {
     "artisan_create": "Buat Perajin Baru",
@@ -42,7 +43,8 @@
     "product_edit": "Ubah Sepatu",
     "work_create": "Buat Pekerjaan Baru",
     "works": "Produksi",
-    "work_edit": "Ubah Pekerjaan"
+    "work_edit": "Ubah Pekerjaan",
+    "inventory": "Inventaris"
   },
   "create_btn": {
     "product": "Sepatu Baru",

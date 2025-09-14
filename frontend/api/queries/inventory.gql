@@ -1,0 +1,17 @@
+fragment Work on WorkWithTasks {
+  id
+  date
+  orderNo
+  productId
+  workSizes {
+    size {
+      ...Size
+    }
+    quantity
+  }
+  product {
+    sku
+  }
+  createdBy
+  updatedBy
+}

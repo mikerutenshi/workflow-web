@@ -19,7 +19,8 @@
     "products": "Sapatu",
     "labor_costs": "Ongkos Kuli",
     "artisans": "Pangrajin",
-    "payroll": "Gajih"
+    "payroll": "Gajih",
+    "inventory": "Inventaris"
   },
   "page": {
     "artisan_create": "Nyieun Pangrajin Anyar",
@@ -42,7 +43,8 @@
     "product_edit": "Ngarobah Sapatu",
     "work_create": "Nyieun Pagawéan Anyar",
     "works": "Produksi",
-    "work_edit": "Ngarobah Pagawéan"
+    "work_edit": "Ngarobah Pagawéan",
+    "inventory": "Inventaris"
   },
   "create_btn": {
     "product": "Sapatu Anyar",

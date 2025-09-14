@@ -73,6 +73,7 @@ import {
   mdiShoeFormal,
   mdiPlus,
   mdiPrinter,
+  mdiWarehouse,
 } from '@mdi/js';
 import { Role } from '~/utils/constants';
 
@@ -111,6 +112,11 @@ const navItems = computed(() => {
         icon: mdiChartTimeline,
       },
       {
+        title: t('nav.inventory'),
+        route: localePath('/inventory'),
+        icon: mdiWarehouse,
+      },
+      {
         title: t('nav.products'),
         route: localePath('/products'),
         icon: mdiShoeFormal,
@@ -133,6 +139,11 @@ const navItems = computed(() => {
         title: t('nav.production_status'),
         route: localePath('/works'),
         icon: mdiChartTimeline,
+      },
+      {
+        title: t('nav.inventory'),
+        route: localePath('/inventory'),
+        icon: mdiWarehouse,
       },
       {
         title: t('nav.payroll'),
