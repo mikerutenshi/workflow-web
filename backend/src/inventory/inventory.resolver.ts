@@ -1,4 +1,4 @@
-import { Args, ID, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InventoryService } from './inventory.service';
 import { ParseIntPipe } from '@nestjs/common';
 import { Inventory } from '@/models/inventory.model';
@@ -29,14 +29,14 @@ export class InventoryResolver {
     return this.service.updateInventory(id, data);
   }
 
-  @Mutation(() => Inventory, { nullable: true })
+  @Query(() => Inventory, { nullable: true })
   getInventory(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
   ): Promise<Inventory | null> {
     return this.service.getInventory(id);
   }
 
-  @Mutation(() => [Inventory])
+  @Query(() => [Inventory])
   getInventories(): Promise<Inventory[]> {
     return this.service.getInventories();
   }

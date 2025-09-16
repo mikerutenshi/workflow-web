@@ -262,6 +262,32 @@ type Inventory {
   state: String!
 }
 
+type InvProductToSize {
+  invProductId: ID!
+  sizeId: ID!
+  quantity: Int!
+  size: Size!
+}
+
+type InvProduct {
+  id: ID!
+  invId: ID!
+  productId: ID!
+  invProductSizes: [InvProductToSize!]!
+  sellingPrice: Int!
+  discount: String!
+}
+
+type InvProductGetDto {
+  id: ID!
+  invId: ID!
+  productId: ID!
+  invProductSizes: [InvProductToSize!]!
+  sellingPrice: Int!
+  discount: String!
+  product: ProductGetDto!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -286,6 +312,9 @@ type Query {
   getSizes: [Size!]!
   getTasks(workId: ID!): [TaskWithArtisan!]!
   getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
+  getInventory(id: ID!): Inventory
+  getInventories: [Inventory!]!
+  getInvProducts: [InvProductGetDto!]!
 }
 
 type Mutation {
@@ -320,8 +349,9 @@ type Mutation {
   createInventory(data: InventoryCreateDto!): Inventory!
   deleteInventory(id: ID!): Boolean!
   updateInventory(id: ID!, data: InventoryUpdateDto!): Inventory!
-  getInventory(id: ID!): Inventory
-  getInventories: [Inventory!]!
+  createInvProduct(data: InvProductCreateDto!): InvProduct!
+  updateInvProduct(id: ID!, data: InvProductUpdateDto!): InvProduct!
+  deleteInvProduct(id: ID!): Boolean!
 }
 
 input RoleDto {
@@ -447,4 +477,23 @@ input InventoryUpdateDto {
   address: String
   city: String
   state: String
+}
+
+input InvProductCreateDto {
+  invId: ID!
+  productId: ID!
+  invProductSizes: [InvProductToSizeCreateDto!]!
+  sellingPrice: Int!
+  discount: String!
+}
+
+input InvProductToSizeCreateDto {
+  sizeId: ID!
+  quantity: Float!
+}
+
+input InvProductUpdateDto {
+  invProductSizes: [InvProductToSizeCreateDto!]
+  sellingPrice: Int
+  discount: String
 }

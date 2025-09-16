@@ -1,16 +1,16 @@
-fragment ProductCategoryFrag on ProductCategory {
+fragment ProductCategory on ProductCategory {
   id
   name
   gender
 }
 
-fragment ColorFrag on Color {
+fragment Color on Color {
   id
   name
   hexCode
 }
 
-fragment LaborCostFrag on LaborCost {
+fragment LaborCost on LaborCost {
   id
   type
   cost
@@ -22,7 +22,7 @@ fragment LaborCostFrag on LaborCost {
 
 mutation createPrdouctCategory($data: ProductCategoryCreateDto!) {
   createProductCategory(data: $data) {
-    ...ProductCategoryFrag
+    ...ProductCategory
   }
 }
 mutation updateProductCategory($id: ID!, $data: ProductCategoryCreateDto!) {
@@ -53,7 +53,7 @@ mutation deleteProductGroup($id: ID!) {
 
 mutation createColor($data: ColorCreateDto!) {
   createColor(data: $data) {
-    ...ColorFrag
+    ...Color
   }
 }
 
@@ -95,24 +95,24 @@ mutation updateLaborCosts($data: LaborCostUpdateDto!) {
 
 query getProductCategories {
   getProductCategories {
-    ...ProductCategoryFrag
+    ...ProductCategory
   }
 }
 query getProductCategory($id: ID!) {
   getProductCategory(id: $id) {
-    ...ProductCategoryFrag
+    ...ProductCategory
   }
 }
 
 query getColors {
   getColors {
-    ...ColorFrag
+    ...Color
   }
 }
 
 query getColor($id: ID!) {
   getColor(id: $id) {
-    ...ColorFrag
+    ...Color
   }
 }
 
@@ -122,7 +122,7 @@ query getProductGroups {
     skuNumeric
     name
     productCategory {
-      ...ProductCategoryFrag
+      ...ProductCategory
     }
   }
 }
@@ -133,7 +133,7 @@ query getProductGroup($id: ID!) {
     skuNumeric
     name
     productCategory {
-      ...ProductCategoryFrag
+      ...ProductCategory
     }
     createdBy
     updatedBy
@@ -148,14 +148,14 @@ query getProducts {
       id
       skuNumeric
       productCategory {
-        ...ProductCategoryFrag
+        ...ProductCategory
       }
       name
     }
     productColors {
       order
       color {
-        ...ColorFrag
+        ...Color
       }
     }
   }
@@ -185,10 +185,10 @@ query getLaborCost($id: ID!) {
     skuNumeric
     name
     productCategory {
-      ...ProductCategoryFrag
+      ...ProductCategory
     }
     laborCosts {
-      ...LaborCostFrag
+      ...LaborCost
     }
   }
 }
@@ -199,10 +199,10 @@ query getLaborCosts {
     skuNumeric
     name
     productCategory {
-      ...ProductCategoryFrag
+      ...ProductCategory
     }
     laborCosts {
-      ...LaborCostFrag
+      ...LaborCost
     }
   }
 }

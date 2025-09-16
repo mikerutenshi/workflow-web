@@ -1,17 +1,83 @@
-fragment Work on WorkWithTasks {
+fragment Inventory on Inventory {
   id
-  date
-  orderNo
-  productId
-  workSizes {
-    size {
-      ...Size
+  name
+  address
+  city
+  state
+}
+
+mutation createInventory($data: InventoryCreateDto!) {
+  createInventory(data: $data) {
+    id
+  }
+}
+
+query getInventories {
+  getInventories {
+    ...Inventory
+  }
+}
+
+query getInventory($id: ID!) {
+  getInventory(id: $id) {
+    ...Inventory
+  }
+}
+
+mutation updateInventory($id: ID!, $data: InventoryUpdateDto!) {
+  updateInventory(id: $id, data: $data) {
+    id
+  }
+}
+
+mutation deleteInventory($id: ID!) {
+  deleteInventory(id: $id)
+}
+
+mutation createInvProduct($data: InvProductCreateDto!) {
+  createInvProduct(data: $data) {
+    id
+  }
+}
+
+query getInvProducts {
+  getInvProducts {
+    id
+    invId
+    productId
+    product {
+      id
+      sku
+      productGroup {
+        id
+        name
+        productCategory {
+          ...ProductCategory
+        }
+      }
+      productColors {
+        color {
+          ...Color
+        }
+      }
     }
-    quantity
+    invProductSizes {
+      size {
+        ...Size
+      }
+      quantity
+    }
+    sellingPrice
+    discount
   }
-  product {
-    sku
+}
+
+mutation updateINvProduct($id: ID!, $data: InvProductUpdateDto!) {
+  updateInvProduct(id: $id, data: $data) {
+    id
   }
-  createdBy
-  updatedBy
+}
+
+mutation deleteInvProduct($id: ID!) {
+  deleteInvProduct(id: $id)
 }
