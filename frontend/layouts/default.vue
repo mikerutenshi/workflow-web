@@ -113,7 +113,7 @@ const navItems = computed(() => {
       },
       {
         title: t('nav.inventory'),
-        route: localePath('/inventory'),
+        route: localePath('/inv-products'),
         icon: mdiWarehouse,
       },
       {
@@ -142,7 +142,7 @@ const navItems = computed(() => {
       },
       {
         title: t('nav.inventory'),
-        route: localePath('/inventory'),
+        route: localePath('/inv-products'),
         icon: mdiWarehouse,
       },
       {

@@ -46,7 +46,7 @@
           {{
             formatRupiah(
               item.laborCosts?.find((found) => found?.type === JOB.DRAW_UPPER)
-                ?.cost
+                ?.cost,
             ) ?? ''
           }}
         </template>
@@ -55,7 +55,7 @@
           {{
             formatRupiah(
               item.laborCosts?.find((found) => found?.type === JOB.DRAW_LINING)
-                ?.cost
+                ?.cost,
             ) ?? ''
           }}
         </template>
@@ -64,7 +64,7 @@
           {{
             formatRupiah(
               item.laborCosts?.find((found) => found?.type === JOB.STITCH_UPPER)
-                ?.cost
+                ?.cost,
             ) ?? ''
           }}
         </template>
@@ -73,8 +73,8 @@
           {{
             formatRupiah(
               item.laborCosts?.find(
-                (found) => found?.type === JOB.STITCH_OUTSOLE
-              )?.cost
+                (found) => found?.type === JOB.STITCH_OUTSOLE,
+              )?.cost,
             ) ?? ''
           }}
         </template>
@@ -83,8 +83,8 @@
           {{
             formatRupiah(
               item.laborCosts?.find(
-                (found) => found?.type === JOB.STITCH_INSOLE
-              )?.cost
+                (found) => found?.type === JOB.STITCH_INSOLE,
+              )?.cost,
             ) ?? ''
           }}
         </template>
@@ -92,7 +92,7 @@
         <template v-slot:item.last="{ item }">
           {{
             formatRupiah(
-              item.laborCosts?.find((found) => found?.type === JOB.LAST)?.cost
+              item.laborCosts?.find((found) => found?.type === JOB.LAST)?.cost,
             ) ?? ''
           }}
         </template>
@@ -156,7 +156,7 @@ import { GetLaborCostsDocument } from '~/api/generated/types';
 
 // Add 34px to height to adjust the footer position
 const pageNo = ref(1);
-const itemsPerPage = ref(10);
+const itemsPerPage = ref(25);
 
 const { execute, data, isFetching, error } = useQuery({
   query: GetLaborCostsDocument,

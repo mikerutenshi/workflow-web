@@ -5,7 +5,11 @@
     :loading="isFetching"
     class="flex-grow-1"
     item-value="id"
+    fixed-header
+    :height="`calc(100vh - 240px)`"
     hover
+    :page="pageNo"
+    :items-per-page="itemsPerPage"
   >
     <template #loading>
       <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -28,6 +32,9 @@ import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetArtisansDocument } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
+
+const pageNo = ref(1);
+const itemsPerPage = ref(25);
 
 const { data, isFetching } = useQuery({
   query: GetArtisansDocument,

@@ -5,8 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import InvProductTable from '~/components/inventory/InvProductTable.vue';
-
 definePageMeta({
   title: 'page.inventory',
 });

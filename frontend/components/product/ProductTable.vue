@@ -29,12 +29,30 @@
         item-value="id"
         class="flex-grow-1"
         hover
+        fixed-header
+        :height="`calc(100vh - 240px)`"
+        :page="pageNo"
+        :items-per-page="itemsPerPage"
       >
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>
 
         <template v-slot:item.productColors="{ item }">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <template v-for="color in item.productColors">
+              <v-chip class="d-flex align-center">
+                <div
+                  class="color-box"
+                  :style="{ backgroundColor: color.color.hexCode }"
+                />
+                <span>{{ color.color.name }}</span>
+              </v-chip>
+            </template>
+          </div>
+        </template>
+
+        <!-- <template v-slot:item.productColors="{ item }">
           <v-list density="compact">
             <v-list-item v-for="color in item.productColors">
               <template #prepend>
@@ -49,7 +67,7 @@
         </template>
         <template v-slot:item.productGroup.productCategory.gender="{ item }">
           {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
-        </template>
+        </template> -->
 
         <template v-slot:item.actions="{ item }">
           <!-- <v-menu variant="outlined">
@@ -122,6 +140,8 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');
+const pageNo = ref(1);
+const itemsPerPage = ref(25);
 
 const extractColors = (productColors: any[]) => {
   let stringResult = '';

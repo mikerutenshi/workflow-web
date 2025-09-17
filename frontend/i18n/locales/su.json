@@ -104,7 +104,8 @@
     "end_date": "Tanggal Lekasan",
     "pay_date": "Tanggal Mayar",
     "checked_by": "Diperiksa Ku",
-    "artisan_sign": "Tanda Tangan Pangrajin"
+    "artisan_sign": "Tanda Tangan Pangrajin",
+    "status": "Status"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

@@ -104,7 +104,8 @@
     "end_date": "Tanggal Selesai",
     "pay_date": "Tanggal Pembayaran",
     "checked_by": "Diperiksa Oleh",
-    "artisan_sign": "Tanda Tangan Perajin"
+    "artisan_sign": "Tanda Tangan Perajin",
+    "status": "Status"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

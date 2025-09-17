@@ -28,7 +28,11 @@
         :loading="isFetching"
         item-value="id"
         class="flex-grow-1"
+        fixed-header
+        :height="`calc(100vh - 240px)`"
         hover
+        :page="pageNo"
+        :items-per-page="itemsPerPage"
       >
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -37,13 +41,13 @@
         <template v-slot:item.product.productColors="{ item }">
           <div style="display: flex; flex-wrap: wrap; gap: 8px">
             <template v-for="color in item.product.productColors">
-              <div style="display: flex; align-items: center">
+              <v-chip class="d-flex align-center">
                 <div
                   class="color-box"
                   :style="{ backgroundColor: color.color.hexCode }"
                 />
                 <span>{{ color.color.name }}</span>
-              </div>
+              </v-chip>
             </template>
           </div>
         </template>
@@ -64,7 +68,7 @@
                 <td>{{ size.quantity }}</td>
               </tr>
               <tr>
-                <td>Total</td>
+                <td><i>Total</i></td>
                 <td>
                   <i>
                     {{
@@ -111,7 +115,7 @@ import { GetInvProductsDocument } from '~/api/generated/types';
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 
 const pageNo = ref(1);
-const itemsPerPage = ref(10);
+const itemsPerPage = ref(25);
 
 const { execute, data, isFetching, error } = useQuery({
   query: GetInvProductsDocument,

@@ -104,7 +104,8 @@
     "end_date": "End Date",
     "pay_date": "Pay Date",
     "checked_by": "Checked By",
-    "artisan_sign": "Artisan's Signature"
+    "artisan_sign": "Artisan's Signature",
+    "status": "Status"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

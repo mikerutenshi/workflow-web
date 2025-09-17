@@ -58,11 +58,16 @@
                 <td>{{ size.quantity }}</td>
               </tr>
               <tr>
-                <td>Total</td>
+                <td><i>Total</i></td>
                 <td>
-                  {{
-                    item.workSizes.reduce((sum, size) => sum + size.quantity, 0)
-                  }}
+                  <i>
+                    {{
+                      item.workSizes.reduce(
+                        (sum, size) => sum + size.quantity,
+                        0,
+                      )
+                    }}</i
+                  >
                 </td>
               </tr>
             </tbody>
@@ -95,6 +100,19 @@
               </v-timeline-item>
             </v-timeline>
           </div>
+        </template>
+
+        <template v-slot:item.status="{ item }">
+          <v-icon
+            :icon="
+              item.tasks.every((task) => task.doneAt == null)
+                ? mdiTimerSandEmpty
+                : item.tasks.every((task) => task.doneAt)
+                  ? mdiTimerSandComplete
+                  : mdiTimerSand
+            "
+            size="x-large"
+          ></v-icon>
         </template>
 
         <template v-slot:item.actions="{ item }">
@@ -161,7 +179,16 @@
 </style>
 
 <script setup lang="ts">
-import { mdiClose, mdiMagnify, mdiPencil } from '@mdi/js';
+import {
+  mdiClose,
+  mdiMagnify,
+  mdiPencil,
+  mdiCheckAll,
+  mdiProgressClock,
+  mdiTimerSand,
+  mdiTimerSandEmpty,
+  mdiTimerSandComplete,
+} from '@mdi/js';
 import dayjs from 'dayjs';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
@@ -178,7 +205,7 @@ const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
 
 // Add 34px to height to adjust the footer position
 const pageNo = ref(1);
-const itemsPerPage = ref(10);
+const itemsPerPage = ref(25);
 
 const adapter = useDate();
 const now = dayjs();
@@ -222,6 +249,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.order_no'), key: 'orderNo' },
   { title: t('label.sku'), key: 'product.sku' },
   { title: t('label.sizes'), key: 'sizes', minWidth: '120' },
+  { title: t('label.status'), key: 'status' },
   { title: t('label.tasks'), key: 'tasks', minWidth: '300' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
