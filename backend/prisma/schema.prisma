@@ -223,7 +223,7 @@ model Inventory {
   name              String          @unique
   address           String
   city              String
-  state             String
+  province          String
 
   invProducts       InvToProduct[]
   invSalesTxs       SalesTx[]
@@ -334,7 +334,7 @@ model Client {
   name              String
   address           String
   city              String
-  state             String
+  province          String
   pic               String
   phone             String
   email             String          

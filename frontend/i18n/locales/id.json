@@ -48,6 +48,7 @@
     "works": "Produksi",
     "work_edit": "Ubah Pekerjaan",
     "inventory": "Inventaris",
+    "inventory_edit": "Ubah Gudang",
     "setting_inventories": "Pengaturan Gudang",
     "setting_colors": "Pengaturan Warna"
   },
@@ -57,7 +58,8 @@
     "product_group": "Kelompok Sepatu Baru",
     "product_category": "Kategori Sepatu Baru",
     "artisan": "Perajin Baru",
-    "work": "Pekerjaan Baru"
+    "work": "Pekerjaan Baru",
+    "inventory": "Gudang Baru"
   },
   "btn": {
     "create": "Buat",
@@ -111,7 +113,10 @@
     "checked_by": "Diperiksa Oleh",
     "artisan_sign": "Tanda Tangan Perajin",
     "status": "Status",
-    "select_inventories": "Pilih Gudang"
+    "select_inventories": "Pilih Gudang",
+    "address": "Alamat",
+    "city": "Kota",
+    "province": "Provinsi"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

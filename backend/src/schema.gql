@@ -259,7 +259,7 @@ type Inventory {
   name: String!
   address: String!
   city: String!
-  state: String!
+  province: String!
 }
 
 type InvProductToSize {
@@ -469,14 +469,14 @@ input InventoryCreateDto {
   name: String!
   address: String!
   city: String!
-  state: String!
+  province: String!
 }
 
 input InventoryUpdateDto {
   name: String
   address: String
   city: String
-  state: String
+  province: String
 }
 
 input InvProductCreateDto {

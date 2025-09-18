@@ -12,5 +12,5 @@ export class Inventory {
   @Field()
   city: string;
   @Field()
-  state: string;
+  province: string;
 }

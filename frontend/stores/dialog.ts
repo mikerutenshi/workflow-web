@@ -1,4 +1,4 @@
-export const useWorksStore = defineStore('works-store', () => {
+export const useDialogStore = defineStore('dialog-store', () => {
   const isFormDialogOpen = ref(false);
 
   function openFormDialog() {

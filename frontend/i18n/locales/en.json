@@ -48,6 +48,7 @@
     "works": "Production",
     "work_edit": "Edit a Work",
     "inventory": "Inventory",
+    "inventory_edit": "Edit a Warehouse",
     "setting_inventories": "Warehouse Setting",
     "setting_colors": "Color Setting"
   },
@@ -57,7 +58,8 @@
     "product_group": "New Shoe Group",
     "product_category": "New Shoe Category",
     "artisan": "New Artisan",
-    "work": "New Task"
+    "work": "New Task",
+    "inventory": "New Warehouse"
   },
   "btn": {
     "create": "Create",
@@ -111,7 +113,10 @@
     "checked_by": "Checked By",
     "artisan_sign": "Artisan's Signature",
     "status": "Status",
-    "select_inventories": "Select Warehouses"
+    "select_inventories": "Select Warehouses",
+    "address": "Address",
+    "city": "City",
+    "province": "Province"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

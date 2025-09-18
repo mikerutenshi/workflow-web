@@ -198,8 +198,8 @@ import { CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const worksStore = useWorksStore();
-const { isFormDialogOpen } = storeToRefs(worksStore);
+const dialogStore = useDialogStore();
+const { isFormDialogOpen } = storeToRefs(dialogStore);
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
 
@@ -288,13 +288,13 @@ watch(isFormDialogOpen, (isOpen) => {
 });
 watch(dialog, (isOpen) => {
   if (!isOpen) {
-    worksStore.closeFormDialog();
+    dialogStore.closeFormDialog();
     currentWorkId.value = '';
   }
 });
 
-watchEffect(() => {
-  console.log(`isFormDialogOpen: ${isFormDialogOpen.value}`);
-  console.log(`Form: ${JSON.stringify(form)}`);
-});
+// watchEffect(() => {
+//   console.log(`isFormDialogOpen: ${isFormDialogOpen.value}`);
+//   console.log(`Form: ${JSON.stringify(form)}`);
+// });
 </script>

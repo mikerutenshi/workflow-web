@@ -1,4 +1,4 @@
-export enum States {
+export enum Provinces {
   Aceh = 'Nanggroe Aceh Darussalam',
   NorthSumatra = 'Sumatera Utara',
   SouthSumatra = 'Sumatera Selatan',

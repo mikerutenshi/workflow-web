@@ -22,10 +22,20 @@
         v-if="currentRouteName == 'works' && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"
-        @click="worksStore.openFormDialog()"
+        @click="dialogStore.openFormDialog()"
       >
         <v-icon left :icon="mdiPlus"></v-icon>
         {{ t('create_btn.work') }}
+      </v-btn>
+
+      <v-btn
+        v-if="currentRouteName == 'setting-inventories' && clearance <= Role.Planner"
+        variant="flat"
+        class="mr-4"
+        @click="dialogStore.openFormDialog()"
+      >
+        <v-icon left :icon="mdiPlus"></v-icon>
+        {{ t('create_btn.inventory') }}
       </v-btn>
 
       <v-btn
@@ -115,7 +125,7 @@ import {
 } from '@mdi/js';
 import { Role } from '~/utils/constants';
 
-const worksStore = useWorksStore();
+const dialogStore = useDialogStore();
 const appBarStore = useAppBarStore();
 const drawer = ref(false);
 const createBtn = reactive({

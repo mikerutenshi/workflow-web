@@ -47,6 +47,8 @@
     "work_create": "Nyieun Pagawéan Anyar",
     "works": "Produksi",
     "work_edit": "Ngarobah Pagawéan",
+    "inventory": "Inventaris",
+    "inventory_edit": "Ngarobah Gudang",
     "setting_inventories": "Setélan Gudang",
     "setting_colors": "Setélan Warna"
   },
@@ -56,7 +58,8 @@
     "product_group": "Kelompok Sapatu Anyar",
     "product_category": "Kategori Sapatu Anyar",
     "artisan": "Pangrajin Anyar",
-    "work": "Pagawéan Anyar"
+    "work": "Pagawéan Anyar",
+    "inventory": "Gudang Anyar"
   },
   "btn": {
     "create": "Jieun",
@@ -110,7 +113,10 @@
     "checked_by": "Diperiksa Ku",
     "artisan_sign": "Tanda Tangan Pangrajin",
     "status": "Status",
-    "select_inventories": "Pilih Gudang"
+    "select_inventories": "Pilih Gudang",
+    "address": "Alamat",
+    "city": "Kota",
+    "province": "Provinsi"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

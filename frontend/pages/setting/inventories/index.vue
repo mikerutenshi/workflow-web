@@ -1,6 +1,6 @@
 <template>
   <v-container class="h-100 d-flex flex-column">
-    <ProductTable />
+    <InventoryTable />
   </v-container>
 </template>
 

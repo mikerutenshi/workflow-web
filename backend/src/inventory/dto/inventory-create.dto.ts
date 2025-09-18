@@ -1,5 +1,5 @@
 import { Cities } from '@/models/cities.enum';
-import { States } from '@/models/states.enum';
+import { Provinces } from '@/models/provinces.enum';
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 
@@ -15,6 +15,6 @@ export class InventoryCreateDto {
   @IsEnum(Cities)
   city: string;
   @Field()
-  @IsEnum(States)
-  state: string;
+  @IsEnum(Provinces)
+  province: string;
 }
