@@ -1,13 +1,25 @@
 <template>
-  <v-row v-if="error" class="flex-grow-0">
+  <v-row v-if="errorInvProducts || errorInventories" class="flex-grow-0">
     <v-col>
       <v-alert type="error">
-        {{ extractGraphQlError(error) }}
+        {{ extractGraphQlError(errorInvProducts || errorInventories) }}
       </v-alert>
     </v-col>
   </v-row>
 
   <v-row class="flex-grow-0">
+    <v-col>
+      <v-select
+        no-filter
+        :label="$t('label.select_inventories')"
+        :prepend-inner-icon="mdiWarehouse"
+        :items="dataInventories?.getInventories"
+        item-title="name"
+        multiple
+        auto-select-first
+        chips
+      ></v-select>
+    </v-col>
     <v-col>
       <v-text-field
         v-model="search"
@@ -23,9 +35,9 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="data?.getInvProducts"
+        :items="dataInvProducts?.getInvProducts"
         :search="search"
-        :loading="isFetching"
+        :loading="isFetchingInvProducts"
         item-value="id"
         class="flex-grow-1"
         fixed-header
@@ -108,18 +120,34 @@
 </style>
 
 <script setup lang="ts">
-import { mdiClose, mdiMagnify, mdiPencil } from '@mdi/js';
+import { mdiClose, mdiMagnify, mdiPencil, mdiWarehouse } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
-import { GetInvProductsDocument } from '~/api/generated/types';
+import {
+  GetInventoriesDocument,
+  GetInvProductsDocument,
+} from '~/api/generated/types';
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 
-const { execute, data, isFetching, error } = useQuery({
+const {
+  execute,
+  data: dataInvProducts,
+  isFetching: isFetchingInvProducts,
+  error: errorInvProducts,
+} = useQuery({
   query: GetInvProductsDocument,
   tags: [CACHE_INV_PRODUCTS],
+});
+const {
+  data: dataInventories,
+  isFetching: isFetchingInventories,
+  error: errorInventories,
+} = useQuery({
+  query: GetInventoriesDocument,
+  tags: [CACHE_INVENTORIES],
 });
 
 const { t } = useI18n();

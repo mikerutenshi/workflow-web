@@ -41,15 +41,48 @@
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <template v-for="(navItem, index) in navItems" :key="index">
+          <v-list-group
+            v-if="navItem.children"
+            :value="true"
+            :prepend-icon="navItem.icon"
+            :title="navItem.title"
+          >
+            <template #activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                :title="navItem.title"
+                slim
+                :prepend-icon="navItem.icon"
+              >
+                <template #prepend>
+                  <v-icon :icon="navItem.icon"></v-icon>
+                </template>
+              </v-list-item>
+            </template>
+            <v-list-item
+              v-for="(child, childIndex) in navItem.children"
+              :key="childIndex"
+              :to="child.route"
+              router
+              :title="child.title"
+              slim
+              :prepend-icon="child.icon"
+            >
+              <template #prepend>
+                <v-icon :icon="child.icon"></v-icon>
+              </template>
+            </v-list-item>
+          </v-list-group>
           <v-list-item
+            v-else
             :to="navItem.route"
             router
             :title="navItem.title"
             slim
             :prepend-icon="navItem.icon"
           >
-            <template #prepend
-              ><v-icon :icon="navItem.icon"></v-icon>
+            <template #prepend>
+              <v-icon :icon="navItem.icon"></v-icon>
             </template>
           </v-list-item>
         </template>
@@ -74,6 +107,11 @@ import {
   mdiPlus,
   mdiPrinter,
   mdiWarehouse,
+  mdiCogs,
+  mdiPalette,
+  mdiClipboardList,
+  mdiClipboardListOutline,
+  mdiHomeOutline,
 } from '@mdi/js';
 import { Role } from '~/utils/constants';
 
@@ -100,7 +138,7 @@ const clearance = authStore.user?.role.clearanceLevel ?? 6;
 const navItems = computed(() => {
   if (clearance <= Role.Finance) {
     return [
-      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
+      { title: t('nav.home'), route: localePath('/'), icon: mdiHome},
       {
         title: t('nav.payroll'),
         route: localePath('/payroll'),
@@ -114,7 +152,7 @@ const navItems = computed(() => {
       {
         title: t('nav.inventory'),
         route: localePath('/inv-products'),
-        icon: mdiWarehouse,
+        icon: mdiClipboardList,
       },
       {
         title: t('nav.products'),
@@ -130,6 +168,23 @@ const navItems = computed(() => {
         title: t('nav.artisans'),
         route: localePath('/artisans'),
         icon: mdiFaceMan,
+      },
+      {
+        title: t('nav.setting'),
+        route: localePath('/setting'),
+        icon: mdiCogs,
+        children: [
+          {
+        title: t('nav.setting_inventories'),
+        route: localePath('/setting/inventories'),
+        icon: mdiWarehouse,
+          },
+          {
+        title: t('nav.setting_colors'),
+        route: localePath('/setting/colors'),
+        icon: mdiPalette,
+          },
+        ],
       },
     ];
   } else if (clearance <= Role.Planner) {
@@ -159,6 +214,23 @@ const navItems = computed(() => {
         title: t('nav.artisans'),
         route: localePath('/artisans'),
         icon: mdiFaceMan,
+      },
+      {
+        title: t('nav.setting'),
+        route: localePath('/setting'),
+        icon: mdiCogs,
+        children: [
+          {
+        title: t('nav.setting_inventories'),
+        route: localePath('/setting/inventories'),
+        icon: mdiWarehouse,
+          },
+          {
+        title: t('nav.setting_colors'),
+        route: localePath('/setting/colors'),
+        icon: mdiPalette,
+          },
+        ],
       },
     ];
   } else if (clearance <= Role.Field) {

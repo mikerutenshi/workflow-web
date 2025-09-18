@@ -20,7 +20,10 @@
     "labor_costs": "Biaya Tenaga Kerja",
     "artisans": "Perajin",
     "payroll": "Penggajian",
-    "inventory": "Inventaris"
+    "inventory": "Inventaris",
+    "setting": "Pengaturan",
+    "setting_inventories": "Gudang",
+    "setting_colors": "Warna"
   },
   "page": {
     "artisan_create": "Buat Perajin Baru",
@@ -44,7 +47,9 @@
     "work_create": "Buat Pekerjaan Baru",
     "works": "Produksi",
     "work_edit": "Ubah Pekerjaan",
-    "inventory": "Inventaris"
+    "inventory": "Inventaris",
+    "setting_inventories": "Pengaturan Gudang",
+    "setting_colors": "Pengaturan Warna"
   },
   "create_btn": {
     "product": "Sepatu Baru",
@@ -105,7 +110,8 @@
     "pay_date": "Tanggal Pembayaran",
     "checked_by": "Diperiksa Oleh",
     "artisan_sign": "Tanda Tangan Perajin",
-    "status": "Status"
+    "status": "Status",
+    "select_inventories": "Pilih Gudang"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

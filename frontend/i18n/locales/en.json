@@ -20,7 +20,10 @@
     "labor_costs": "Labor Costs",
     "artisans": "Artisans",
     "payroll": "Payroll",
-    "inventory": "Inventory"
+    "inventory": "Inventory",
+    "setting": "Setting",
+    "setting_inventories": "Warehouses",
+    "setting_colors": "Colors"
   },
   "page": {
     "artisan_create": "Create a New Artisan",
@@ -44,7 +47,9 @@
     "work_create": "Create a New Work",
     "works": "Production",
     "work_edit": "Edit a Work",
-    "inventory": "Inventory"
+    "inventory": "Inventory",
+    "setting_inventories": "Warehouse Setting",
+    "setting_colors": "Color Setting"
   },
   "create_btn": {
     "product": "New Shoe",
@@ -105,7 +110,8 @@
     "pay_date": "Pay Date",
     "checked_by": "Checked By",
     "artisan_sign": "Artisan's Signature",
-    "status": "Status"
+    "status": "Status",
+    "select_inventories": "Select Warehouses"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
