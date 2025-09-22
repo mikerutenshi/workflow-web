@@ -49,6 +49,7 @@
     "work_edit": "Edit a Work",
     "inventory": "Inventory",
     "inventory_edit": "Edit a Warehouse",
+    "inventory_create": "Create a New Warehouse",
     "setting_inventories": "Warehouse Setting",
     "setting_colors": "Color Setting"
   },
@@ -116,7 +117,9 @@
     "select_inventories": "Select Warehouses",
     "address": "Address",
     "city": "City",
-    "province": "Province"
+    "province": "Province",
+    "select_city": "Select City",
+    "select_province": "Select Province"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
@@ -159,7 +162,8 @@
       },
       "invalid_type": "Wrong input type",
       "invalid_type_received_undefined": "Field is required",
-      "custom": "Date is out of accepted range"
+      "custom": "Date is out of accepted range",
+      "invalid_enum_value": "Value is outside of list. Expected {options}"
     },
     "types": {
       "object": "Type should be object",

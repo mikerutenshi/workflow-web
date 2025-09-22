@@ -51,10 +51,16 @@
   </v-row>
 
   <ActionEditItemDialog
-    :dialogTitle="$t('page.inventory_edit')"
+    :dialogTitle="
+      selectedInventoryId
+        ? $t('page.inventory_edit')
+        : $t('page.inventory_create')
+    "
     v-model="dialog"
   >
-    <WorkCreateForm></WorkCreateForm>
+    <InventoryCreateForm
+      :inventoryId="selectedInventoryId"
+    ></InventoryCreateForm>
   </ActionEditItemDialog>
 </template>
 
@@ -89,22 +95,6 @@ const dialog = ref(false);
 const selectedInventoryId = ref<string | null>(null);
 const dialogStore = useDialogStore();
 const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
-
-const deleteInventory = (id: string, index: number) => {
-  const { execute } = useMutation(DeleteInventoryDocument, {
-    clearCacheTags: [CACHE_INVENTORIES],
-    onData(data) {
-      if (data.deleteInventory)
-        alert(`Inventory deleted successfully. ${data.deleteInventory}`);
-      else alert('Failed to delete inventory');
-    },
-    onError(err) {
-      alert(`An error occurred while deleting the inventory: ${err.message}`);
-    },
-  });
-
-  execute({ id });
-};
 
 function edit(workId: string) {
   dialog.value = true;

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Cities } from '../utils/cities';
 
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
@@ -80,11 +81,11 @@ export const WorkSchema = z.object({
   date: z.string().datetime(),
   orderNo: positiveNumberString,
   productId: positiveNumberString,
-  sizes: z.array(
+  workSizes: z.array(
     z.object({
       id: positiveNumberString,
       quantity: z.number().min(1),
-    })
+    }),
   ),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
@@ -93,7 +94,7 @@ export const WorkSchema = z.object({
 export function createTaskSchema(
   minDate: string,
   maxDate: string,
-  isCleared: boolean
+  isCleared: boolean,
 ) {
   console.log(`Schema: ${minDate}, ${maxDate}, ${isCleared}`);
   if (isCleared) {
@@ -127,8 +128,15 @@ export function createTaskSchema(
                 path: ['doneAt'],
               });
             }
-          })
+          }),
       ),
     });
   }
 }
+
+export const InventorySchema = z.object({
+  name: z.string().min(2).max(100).trim(),
+  address: z.string().min(5).max(255).trim(),
+  city: z.enum([...Cities.map((c) => c.title)] as [string, ...string[]]),
+  province: z.string().min(2).max(100).trim(),
+});

@@ -1,6 +1,6 @@
 <template>
-  <v-snackbar v-model="isVisible" :color="color" :timeout="timeout"
-    >{{ $t('status.saved') }}
+  <v-snackbar v-model="isVisible" :color="props.color" :timeout="props.timeout"
+    >{{ props.message }}
     <template #actions>
       <v-btn color="white" @click="emit('close-dialog')">
         {{ $t('label.ok') }}
@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 const isVisible = defineModel({ default: false });
+const { t } = useI18n();
 const props = defineProps({
   timeout: {
     type: Number,
@@ -20,8 +21,11 @@ const props = defineProps({
     type: String,
     default: 'success',
   },
+  message: {
+    type: String,
+    default: 'Snackbar Success',
+  },
 });
-
 const emit = defineEmits(['close-dialog']);
 
 watch(isVisible, (newState) => {

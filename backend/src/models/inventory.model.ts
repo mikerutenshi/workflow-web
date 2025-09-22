@@ -1,4 +1,3 @@
-import { Salesman } from '@/generated/client';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()

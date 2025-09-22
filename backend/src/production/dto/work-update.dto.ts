@@ -21,7 +21,7 @@ export class WorkUpdateDto {
   @Field(() => [SizeToWorkCreateDto])
   @Type(() => SizeToWorkCreateDto)
   @ValidateNested({ each: true })
-  sizes: SizeToWorkCreateDto[];
+  workSizes: SizeToWorkCreateDto[];
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

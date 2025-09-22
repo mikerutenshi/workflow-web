@@ -15,7 +15,7 @@ export class WorkService {
         data: {
           ...data,
           workSizes: {
-            create: data.sizes.map((size) => ({
+            create: data.workSizes.map((size) => ({
               size: { connect: { id: size.id } },
               quantity: size.quantity,
             })),
@@ -63,7 +63,7 @@ export class WorkService {
         ...data,
         workSizes: {
           deleteMany: { workId: id },
-          create: data.sizes.map((size) => ({
+          create: data.workSizes.map((size) => ({
             size: { connect: { id: size.id } },
             quantity: size.quantity,
           })),

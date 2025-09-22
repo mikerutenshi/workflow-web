@@ -49,6 +49,7 @@
     "work_edit": "Ngarobah Pagawéan",
     "inventory": "Inventaris",
     "inventory_edit": "Ngarobah Gudang",
+    "inventory_create": "Nyieun Gudang Anyar",
     "setting_inventories": "Setélan Gudang",
     "setting_colors": "Setélan Warna"
   },
@@ -116,7 +117,9 @@
     "select_inventories": "Pilih Gudang",
     "address": "Alamat",
     "city": "Kota",
-    "province": "Provinsi"
+    "province": "Provinsi",
+    "select_city": "Pilih Kota",
+    "select_province": "Pilih Provinsi"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
@@ -162,7 +165,8 @@
       },
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom ieu wajib diisi",
-      "custom": "tanggal kaluar tina rentang ditarima"
+      "custom": "tanggal kaluar tina rentang ditarima",
+      "invalid_enum_value": "Nilai di luar daptar. Diharapkeun {options}"
     },
     "types": {
       "object": "Jenisna kudu obyék",

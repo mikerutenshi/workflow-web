@@ -432,7 +432,7 @@ input WorkCreateDto {
   date: Date!
   orderNo: String!
   productId: ID!
-  sizes: [SizeToWorkCreateDto!]!
+  workSizes: [SizeToWorkCreateDto!]!
   createdBy: ID!
 }
 
@@ -445,7 +445,7 @@ input WorkUpdateDto {
   date: Date!
   orderNo: String!
   productId: ID!
-  sizes: [SizeToWorkCreateDto!]!
+  workSizes: [SizeToWorkCreateDto!]!
   createdBy: ID!
   updatedBy: ID!
 }

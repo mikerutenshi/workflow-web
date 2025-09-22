@@ -49,6 +49,7 @@
     "work_edit": "Ubah Pekerjaan",
     "inventory": "Inventaris",
     "inventory_edit": "Ubah Gudang",
+    "inventory_create": "Buat Gudang Baru",
     "setting_inventories": "Pengaturan Gudang",
     "setting_colors": "Pengaturan Warna"
   },
@@ -116,7 +117,9 @@
     "select_inventories": "Pilih Gudang",
     "address": "Alamat",
     "city": "Kota",
-    "province": "Provinsi"
+    "province": "Provinsi",
+    "select_city": "Pilih Kota",
+    "select_province": "Pilih Provinsi"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
@@ -160,9 +163,11 @@
           "inclusive": "Maksimal {maximum} karakter"
         }
       },
+
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom wajib diisi",
-      "custom": "Tanggal di luar rentang yang diterima"
+      "custom": "Tanggal di luar rentang yang diterima",
+      "invalid_enum_value": "Nilai di luar daftar. Diharapkan {options}"
     },
     "types": {
       "object": "Tipe harus berupa objek",

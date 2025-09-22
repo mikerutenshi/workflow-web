@@ -16,7 +16,7 @@
 import { mdiTrashCan } from '@mdi/js';
 
 const props = defineProps({
-  color: { type: String, default: 'error' },
+  color: { type: String, default: 'warning' },
   loading: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   outlined: { type: Boolean, default: false },

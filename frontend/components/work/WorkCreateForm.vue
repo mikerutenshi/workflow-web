@@ -59,9 +59,9 @@
               :loading="isFetchingSizes"
               item-title="eu"
               item-value="id"
-              v-model="sizes"
+              v-model="workSizes"
               return-object
-              :error-messages="errors[`sizes`]"
+              :error-messages="errors[`workSizes`]"
               :disabled="isSizesDisabled"
             >
               <!-- <template #item="{ props, item }">
@@ -94,7 +94,7 @@
                       :label="$t('label.quantity')"
                       type="number"
                       :error-messages="
-                        (errors as any)[`sizes[${index}].quantity`]
+                        (errors as any)[`workSizes[${index}].quantity`]
                       "
                     />
                   </template>
@@ -121,13 +121,9 @@
 
   <ActionShowSnackbarSuccess
     v-model="snackbar"
+    :message="snackbarMsg"
     @close-dialog="emit('close-dialog')"
   ></ActionShowSnackbarSuccess>
-
-  <ActionShowSnackbarDelete
-    v-model="snackbarDel"
-    @close-dialog="emit('close-dialog')"
-  ></ActionShowSnackbarDelete>
 </template>
 
 <script setup lang="ts">
@@ -147,6 +143,7 @@ import {
 } from '~/api/generated/types';
 import { WorkSchema } from '~/validation/schema';
 
+const { t } = useI18n();
 const props = defineProps({
   workId: {
     type: String,
@@ -182,7 +179,7 @@ const submitBtnTitle = computed(() =>
 );
 
 const snackbar = ref(false);
-const snackbarDel = ref(false);
+const snackbarMsg = ref(t('status.saved'));
 const {
   execute: executeCreate,
   isFetching: isCreating,
@@ -190,8 +187,8 @@ const {
 } = useMutation(CreateWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData() {
+    snackbarMsg.value = t('status.saved');
     snackbar.value = true;
-    // router.back();
   },
 });
 const {
@@ -201,8 +198,8 @@ const {
 } = useMutation(UpdateWorkDocument, {
   clearCacheTags: [CACHE_WORK, CACHE_WORKS],
   onData() {
+    snackbarMsg.value = t('status.saved');
     snackbar.value = true;
-    // router.back();
   },
 });
 const {
@@ -212,8 +209,8 @@ const {
 } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData(data) {
-    snackbarDel.value = true;
-    // router.back();
+    snackbarMsg.value = t('status.deleted');
+    snackbar.value = true;
   },
 });
 
@@ -227,22 +224,21 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
     date: dayjs().toISOString(),
     orderNo: new Date().toISOString().slice(0, 8).replace(/-/g, ''),
     createdBy: userId,
-    sizes: [],
+    workSizes: [],
   },
 });
 const date = useField<string>('date');
 const orderNo = useField('orderNo');
 const productId = useField('productId');
-const { fields, push, remove, replace } = useFieldArray('sizes');
+const { fields, push, remove, replace } = useFieldArray('workSizes');
 
 const isShowSizeQuantities = ref(false);
 const isSizesDisabled = ref(true);
 
-const sizes = ref<Size[]>([]);
+const workSizes = ref<Size[]>([]);
 const sizeQuantities = reactive<
   Array<{ id: string; title: string; quantity: number }>
 >([]);
-const { t } = useI18n();
 const sizeHeaders = ref([
   { title: t('label.size'), key: 'title', sortable: false },
   { title: t('label.quantity'), key: 'quantity', sortable: false },
@@ -269,7 +265,7 @@ if (workId.value) {
         productId: work.productId,
         updatedBy: userId,
       });
-      sizes.value = work.workSizes.map((item) => ({
+      workSizes.value = work.workSizes.map((item) => ({
         id: item.size.id,
         eu: item.size.eu,
         gender: item.size.gender,
@@ -277,7 +273,7 @@ if (workId.value) {
         uk: item.size.uk,
         us: item.size.us,
       }));
-      work.sizes.forEach((item) => {
+      work.workSizes.forEach((item) => {
         const sizeInTable = sizeQuantities.find(
           (size) => size.id === item.size.id,
         );
@@ -304,7 +300,7 @@ watch(
       isSizesDisabled.value = false;
     } else if ((newId && oldId) || (newId && oldId == null)) {
       isSizesDisabled.value = false;
-      sizes.value = [];
+      workSizes.value = [];
     } else {
       isSizesDisabled.value = true;
     }
@@ -312,7 +308,7 @@ watch(
   { immediate: true },
 );
 
-watch(sizes, (newSizes) => {
+watch(workSizes, (newSizes) => {
   isShowSizeQuantities.value = newSizes.length > 0;
 
   sizeQuantities.splice(
@@ -347,20 +343,20 @@ watch(snackbar, (newStatus) => {
   }
 });
 
-watchEffect(() => {
-  //   sizesTable.splice(
-  //     0,
-  //     sizesTable.length,
-  //     ...sizes.value.map((size) => {
-  //       const existing = sizesTable.find((item) => item.id === size.id);
-  //       return {
-  //         id: size.id,
-  //         title: size.eu,
-  //         quantity: existing ? existing.quantity : 0,
-  //       };
-  //     })
-  //   );
+// watchEffect(() => {
+//   sizesTable.splice(
+//     0,
+//     sizesTable.length,
+//     ...sizes.value.map((size) => {
+//       const existing = sizesTable.find((item) => item.id === size.id);
+//       return {
+//         id: size.id,
+//         title: size.eu,
+//         quantity: existing ? existing.quantity : 0,
+//       };
+//     })
+//   );
 
-  console.log(`Form -> ${JSON.stringify(values)}`);
-});
+// console.log(`Form -> ${JSON.stringify(values)}`);
+// });
 </script>
