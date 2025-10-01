@@ -1,6 +1,7 @@
 <template>
   <ActionShowSnackbarSuccess
     v-model="snackbar"
+    :message="$t('status.saved')"
     @close-dialog="emit('close-dialog')"
   ></ActionShowSnackbarSuccess>
   <form
@@ -107,6 +108,7 @@ import {
   UpdateTasksDocument,
   type TaskUpdateDto,
 } from '~/api/generated/types';
+import { ParseStatus } from 'zod';
 
 const props = defineProps({
   workId: {
@@ -177,14 +179,14 @@ const { data } = useQuery({
 });
 
 const useFlexLayout = ref(
-  (authStore.user?.role.clearanceLevel ?? 6) > Role.Planner
+  (authStore.user?.role.clearanceLevel ?? 6) > Role.Planner,
 );
 const validationSchema = toTypedSchema(
   createTaskSchema(
     dayjs().subtract(1, 'day').toISOString(),
     dayjs().add(1, 'day').toISOString(),
-    (authStore.user?.role.clearanceLevel ?? 6) <= Role.Finance
-  )
+    (authStore.user?.role.clearanceLevel ?? 6) <= Role.Finance,
+  ),
 );
 const minDate = ref('');
 const maxDate = ref('');
@@ -202,7 +204,7 @@ watch(
         .toISOString();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const { handleSubmit, values, setValues, setFieldValue, errors } = useForm({
@@ -225,7 +227,7 @@ const { replace } = useFieldArray('tasks');
 const { t } = useI18n();
 
 const submitBtnTitle = computed(() =>
-  workId.value ? t('btn.update') : t('btn.create')
+  workId.value ? t('btn.update') : t('btn.create'),
 );
 
 const taskHeaders = ref([
@@ -262,7 +264,7 @@ if (workId.value) {
             : null,
           doneAt: task.doneAt,
           updatedBy: userId,
-        }))
+        })),
       );
     },
   });
@@ -305,7 +307,7 @@ watch(
       }
     });
   },
-  { deep: true }
+  { deep: true },
 );
 
 watch(form, (newValues) => {
@@ -320,7 +322,7 @@ watch(form, (newValues) => {
           ? dayjs(item.doneAt).isAfter(dayjs(minDate.value)) &&
             dayjs(item.doneAt).isBefore(dayjs(maxDate.value))
           : true,
-    }))
+    })),
   );
 });
 

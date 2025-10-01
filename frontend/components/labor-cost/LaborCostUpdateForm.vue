@@ -154,6 +154,7 @@
 
   <ActionShowSnackbarSuccess
     v-model="snackbar"
+    :message="snackbarMsg"
     @close-dialog="emit('close-dialog')"
   ></ActionShowSnackbarSuccess>
 </template>
@@ -173,6 +174,7 @@ import {
 } from '~/api/generated/types';
 import { parseGender } from '~/utils/functions';
 
+const { t } = useI18n();
 const props = defineProps({
   productGroupId: {
     type: String,
@@ -180,9 +182,11 @@ const props = defineProps({
 });
 const emit = defineEmits(['close-dialog']);
 const snackbar = ref(false);
+const snackbarMsg = ref(t('status.saved'));
 
 const route = useRoute();
-const productGroupId = (route.params.id as string) || props.productGroupId;
+const productGroupId =
+  (route.params.id as string) || props.productGroupId || '';
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
 
@@ -261,8 +265,6 @@ useQuery({
   },
   tags: [CACHE_PRODUCT_GROUP],
 });
-
-const { t } = useI18n();
 
 const onSubmit = handleSubmit((values) => {
   execute({ data: values });
