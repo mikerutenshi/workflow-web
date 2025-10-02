@@ -74,11 +74,12 @@
     </v-row>
   </v-form>
 
-  <ActionShowSnackbarSuccess
-    v-model="snackbar"
-    :message="snackbarMsg"
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
     @close-dialog="emit('close-dialog')"
-  ></ActionShowSnackbarSuccess>
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -115,8 +116,11 @@ const submitBtnTitle = computed(() =>
 );
 
 const emit = defineEmits(['close-dialog']);
-const snackbar = ref(false);
-const snackbarMsg = ref(t('status.saved'));
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
+});
 
 if (invId) {
   useQuery({
@@ -141,7 +145,7 @@ const {
   error: createError,
 } = useMutation(CreateInventoryDocument, {
   onData() {
-    snackbar.value = true;
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_INVENTORIES],
 });
@@ -151,7 +155,7 @@ const {
   error: updateError,
 } = useMutation(UpdateInventoryDocument, {
   onData() {
-    snackbar.value = true;
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_INVENTORIES],
 });
@@ -163,12 +167,17 @@ const {
   clearCacheTags: [CACHE_INVENTORIES],
   onData(data) {
     if (data.deleteInventory) {
-      snackbarMsg.value = `${t('status.deleted')}`;
-      snackbar.value = true;
-    } else alert('Failed to delete inventory');
+      snack.message = `${t('status.deleted')}`;
+    } else {
+      snack.color = SnackColor.Error;
+      snack.message = `${t('status.failed')}`;
+    }
+    snack.isVisible = true;
   },
   onError(err) {
-    alert(`An error occurred while deleting the inventory: ${err.message}`);
+    snack.color = SnackColor.Error;
+    snack.message = `${t('status.failed')}`;
+    snack.isVisible = true;
   },
 });
 

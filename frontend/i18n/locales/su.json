@@ -180,6 +180,7 @@
   "N/A": "N/A",
   "status": {
     "saved": "Disimpen",
-    "deleted": "Dipupus"
+    "deleted": "Dipupus",
+    "failed": "Teu hasil"
   }
 }

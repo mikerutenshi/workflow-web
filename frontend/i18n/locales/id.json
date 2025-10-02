@@ -181,6 +181,7 @@
   "N/A": "N/A",
   "status": {
     "saved": "Disimpan",
-    "deleted": "Dihapus"
+    "deleted": "Dihapus",
+    "failed": "Gagal"
   }
 }

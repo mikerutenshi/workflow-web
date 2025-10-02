@@ -152,11 +152,11 @@
     </v-row>
   </form>
 
-  <ActionShowSnackbarSuccess
+  <ActionShowSnack
     v-model="snackbar"
     :message="snackbarMsg"
     @close-dialog="emit('close-dialog')"
-  ></ActionShowSnackbarSuccess>
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">

@@ -28,4 +28,11 @@ enum Role {
   Field = 6,
 }
 
-export { JOB, JOBS, GENDERS, Role };
+enum SnackColor {
+  Success = 'success',
+  Error = 'error',
+  Warning = 'warning',
+  Info = 'info',
+}
+
+export { JOB, JOBS, GENDERS, Role, SnackColor };

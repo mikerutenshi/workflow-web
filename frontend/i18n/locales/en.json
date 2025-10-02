@@ -177,6 +177,7 @@
   "N/A": "N/A",
   "status": {
     "saved": "Saved",
-    "deleted": "Deleted"
+    "deleted": "Deleted",
+    "failed": "Failed"
   }
 }

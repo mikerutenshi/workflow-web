@@ -1,6 +1,10 @@
 <template>
-  <v-snackbar v-model="isVisible" :color="props.color" :timeout="props.timeout"
-    >{{ props.message }}
+  <v-snackbar
+    v-model="isVisible"
+    :color="props.color"
+    :timeout="props.timeout"
+    :text="props.message"
+  >
     <template #actions>
       <v-btn color="white" @click="emit('close-dialog')">
         {{ $t('label.ok') }}
@@ -19,7 +23,7 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: 'success',
+    default: SnackColor.Success,
   },
   message: {
     type: String,

@@ -1,9 +1,9 @@
 <template>
-  <ActionShowSnackbarSuccess
+  <ActionShowSnack
     v-model="snackbar"
     :message="$t('status.saved')"
     @close-dialog="emit('close-dialog')"
-  ></ActionShowSnackbarSuccess>
+  ></ActionShowSnack>
   <form
     @submit.prevent="onSubmit"
     :class="useFlexLayout ? 'h-100 d-flex flex-column' : ''"
