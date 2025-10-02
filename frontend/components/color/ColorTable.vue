@@ -1,0 +1,122 @@
+<template>
+  <v-row v-if="error" class="flex-grow-0">
+    <v-col>
+      <v-alert type="error">
+        {{ extractGraphQlError(error) }}
+      </v-alert>
+    </v-col>
+  </v-row>
+
+  <v-row class="flex-grow-0">
+    <v-col>
+      <v-text-field
+        v-model="search"
+        :label="$t('label.search')"
+        :prepend-inner-icon="mdiMagnify"
+        hide-details
+        single-line
+      ></v-text-field>
+    </v-col>
+  </v-row>
+
+  <v-row>
+    <v-col class="d-flex flex-column">
+      <v-data-table
+        :headers="headers"
+        :items="data?.getColors"
+        :search="search"
+        :loading="isFetching"
+        item-value="id"
+        class="flex-grow-1"
+        hover
+        fixed-header
+        :height="`calc(100vh - 240px)`"
+        :page="pageNo"
+        :items-per-page="itemsPerPage"
+      >
+        <template #loading>
+          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+        </template>
+
+        <template v-slot:item.hexCode="{ item }">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <v-chip class="d-flex align-center">
+              <div
+                class="color-box"
+                :style="{ backgroundColor: item.hexCode }"
+              />
+              <span>{{ item.hexCode }}</span>
+            </v-chip>
+          </div>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            color="primary"
+            :prepend-icon="mdiPencil"
+            variant="text"
+            @click="edit(item.id)"
+          ></v-btn>
+        </template>
+      </v-data-table>
+    </v-col>
+  </v-row>
+
+  <ActionEditItemDialog
+    :dialogTitle="selectionId ? $t('page.color_edit') : $t('page.color_create')"
+    v-model="dialog"
+  >
+    <ColorCreateForm
+      :color-id="selectionId"
+      @close-dialog="
+        dialog = false;
+        execute();
+      "
+    ></ColorCreateForm>
+  </ActionEditItemDialog>
+</template>
+
+<script setup lang="ts">
+import { mdiMagnify, mdiPencil } from '@mdi/js';
+import { useQuery } from 'villus';
+import type { VDataTable } from 'vuetify/components';
+import { GetColorsDocument } from '~/api/generated/types';
+type ReadOnlyHeaders = VDataTable['$props']['headers'];
+
+const { execute, data, isFetching, error } = useQuery({
+  query: GetColorsDocument,
+  tags: [CACHE_COLORS],
+});
+
+const { t } = useI18n();
+const headers: ReadOnlyHeaders = [
+  // { title: t('label.id'), key: 'id' },
+  { title: t('label.name'), key: 'name' },
+  { title: t('label.colors'), key: 'hexCode', minWidth: '140' },
+  { title: '', key: 'actions', sortable: false, align: 'end' },
+];
+const search = ref('');
+const pageNo = ref(1);
+const itemsPerPage = ref(25);
+const dialog = ref(false);
+const selectionId = ref<string | null>(null);
+const dialogStore = useDialogStore();
+const { isFormDialogOpen: isDialogOpen } = storeToRefs(dialogStore);
+
+function edit(colorId: string) {
+  dialog.value = true;
+  selectionId.value = colorId;
+}
+
+watch(isDialogOpen, (isOpen) => {
+  if (isOpen) {
+    dialog.value = true;
+  }
+});
+watch(dialog, (isOpen) => {
+  if (!isOpen) {
+    dialogStore.closeFormDialog();
+    selectionId.value = null;
+  }
+});
+</script>

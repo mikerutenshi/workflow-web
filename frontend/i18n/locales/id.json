@@ -119,7 +119,8 @@
     "city": "Kota",
     "province": "Provinsi",
     "select_city": "Pilih Kota",
-    "select_province": "Pilih Provinsi"
+    "select_province": "Pilih Provinsi",
+    "hex_code": "Kode Hexadesimal"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

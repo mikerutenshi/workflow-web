@@ -39,6 +39,16 @@
       </v-btn>
 
       <v-btn
+        v-if="currentRouteName == 'setting-colors' && clearance <= Role.Planner"
+        variant="flat"
+        class="mr-4"
+        @click="dialogStore.openFormDialog()"
+      >
+        <v-icon left :icon="mdiPlus"></v-icon>
+        {{ t('create_btn.color') }}
+      </v-btn>
+
+      <v-btn
         v-if="currentRouteName == 'payroll' && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"

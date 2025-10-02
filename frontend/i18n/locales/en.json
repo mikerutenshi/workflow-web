@@ -119,7 +119,8 @@
     "city": "City",
     "province": "Province",
     "select_city": "Select City",
-    "select_province": "Select Province"
+    "select_province": "Select Province",
+    "hex_code": "Hexadecimal Code"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

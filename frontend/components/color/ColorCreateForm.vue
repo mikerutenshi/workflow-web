@@ -47,10 +47,7 @@
       </v-col>
     </v-row>
 
-    <!-- <v-row class="flex-grow-1"></v-row> -->
-
     <v-row align="end" class="ma-1">
-      <ActionCancel></ActionCancel>
       <ActionConfirm v-if="colorId" :loading="isUpdating">{{
         $t('btn.update')
       }}</ActionConfirm>
@@ -64,6 +61,13 @@
       ></ActionDelete>
     </v-row>
   </v-form>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -74,14 +78,19 @@ import {
   GetColorDocument,
   UpdateColorDocument,
 } from '~/api/generated/types';
-import { useRouter } from 'vue-router';
-import { useRoute } from 'vue-router';
 import { ColorSchema } from '~/validation/schema';
 
-const route = useRoute();
-const router = useRouter();
-
-const colorId = ref(route.params.id as string);
+const { t } = useI18n();
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
+});
+const emit = defineEmits(['close-dialog']);
+const props = defineProps<{
+  colorId?: string | null;
+}>();
+const colorId = props.colorId;
 // const form = reactive({
 //   name: '',
 //   hexCode: '',
@@ -96,7 +105,7 @@ const { handleSubmit, values, setValues } = useForm({
 const name = useField('name');
 const hexCode = useField<string>('hexCode');
 const mode = ref<'hex' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hexa' | undefined>(
-  'hex'
+  'hex',
 );
 
 const {
@@ -105,7 +114,7 @@ const {
   isFetching: isCreating,
 } = useMutation(CreateColorDocument, {
   onData() {
-    goPrevious();
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_COLORS],
 });
@@ -115,7 +124,7 @@ const {
   isFetching: isUpdating,
 } = useMutation(UpdateColorDocument, {
   onData() {
-    goPrevious();
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_COLORS, CACHE_COLOR],
 });
@@ -123,22 +132,31 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
   DeleteColorDocument,
   {
     clearCacheTags: [CACHE_COLORS],
-    onData() {
-      goPrevious();
+    onData(data) {
+      if (data.deleteColor) {
+        snack.message = `${t('status.deleted')}`;
+        snack.isVisible = true;
+      } else {
+        snack.color = SnackColor.Error;
+        snack.message = `${t('status.failed')}`;
+        snack.isVisible = true;
+      }
     },
     onError(err) {
-      alert(`Error while deleting color -> ${err}`);
+      snack.color = SnackColor.Error;
+      snack.message = `${t('status.failed')} - ${err.message}`;
+      snack.isVisible = true;
     },
-  }
+  },
 );
 
-if (colorId.value) {
+if (colorId) {
   useQuery({
     query: GetColorDocument,
-    variables: { id: colorId.value },
+    variables: { id: colorId },
     tags: [CACHE_COLOR],
-    onData(colorData) {
-      const color = colorData.getColor;
+    onData(data) {
+      const color = data.getColor;
       if (color) {
         setValues({
           name: color.name,
@@ -149,18 +167,11 @@ if (colorId.value) {
   });
 }
 
-const goPrevious = () => {
-  router.go(-1);
-};
 const onSubmit = handleSubmit((data) => {
-  if (colorId.value) {
-    executeUpdate({ id: colorId.value, data });
+  if (colorId) {
+    executeUpdate({ id: colorId, data });
   } else {
     executeCreate({ data });
   }
-});
-
-watchEffect(() => {
-  console.log(JSON.stringify(values));
 });
 </script>

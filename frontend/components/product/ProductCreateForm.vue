@@ -104,7 +104,7 @@
                       :style="{ backgroundColor: item.value.hexCode }"
                     />
                   </template>
-                  <template #append>
+                  <!-- <template #append>
                     <NuxtLink
                       :to="$localePath(`/colors/update/${item.raw.id}`)"
                     >
@@ -115,7 +115,7 @@
                         variant="text"
                       ></v-btn>
                     </NuxtLink>
-                  </template>
+                  </template> -->
                 </v-list-item>
               </template>
 
@@ -133,13 +133,13 @@
             </v-select>
           </v-col>
 
-          <v-col cols="12" md="4" class="d-flex justify-end align-center">
+          <!-- <v-col cols="12" md="4" class="d-flex justify-end align-center">
             <NuxtLink :to="$localePath('/colors/create')">
               <v-btn :prepend-icon="mdiPlus" color="primary">
                 {{ $t('create_btn.color') }}
               </v-btn>
             </NuxtLink>
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-col>
     </v-row>
@@ -162,19 +162,6 @@
     </v-row>
   </v-form>
 </template>
-
-<style scoped>
-.color-box {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-.offset-appbar {
-  padding-top: 64px;
-}
-</style>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';

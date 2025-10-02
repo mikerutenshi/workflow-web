@@ -100,15 +100,6 @@
   </v-row>
 </template>
 
-<style scoped>
-.color-box {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-</style>
-
 <script setup lang="ts">
 import { mdiMagnify, mdiPencil } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
