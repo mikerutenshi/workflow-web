@@ -52,14 +52,16 @@
 
   <ActionEditItemDialog
     :dialogTitle="
-      selectedInventoryId
-        ? $t('page.inventory_edit')
-        : $t('page.inventory_create')
+      selectedInvId ? $t('page.inventory_edit') : $t('page.inventory_create')
     "
     v-model="dialog"
   >
     <InventoryCreateForm
-      :inventoryId="selectedInventoryId"
+      :inv-id="selectedInvId"
+      @close-dialog="
+        dialog = false;
+        execute();
+      "
     ></InventoryCreateForm>
   </ActionEditItemDialog>
 </template>
@@ -74,7 +76,7 @@ import {
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data, isFetching, error } = useQuery({
+const { execute, data, isFetching, error } = useQuery({
   query: GetInventoriesDocument,
   tags: [CACHE_INVENTORIES],
 });
@@ -92,13 +94,13 @@ const search = ref('');
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 const dialog = ref(false);
-const selectedInventoryId = ref<string | null>(null);
+const selectedInvId = ref<string | null>(null);
 const dialogStore = useDialogStore();
 const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
 
-function edit(workId: string) {
+function edit(invId: string) {
   dialog.value = true;
-  selectedInventoryId.value = workId;
+  selectedInvId.value = invId;
 }
 
 watch(isCreateDialogOpen, (isOpen) => {
@@ -109,7 +111,7 @@ watch(isCreateDialogOpen, (isOpen) => {
 watch(dialog, (isOpen) => {
   if (!isOpen) {
     dialogStore.closeFormDialog();
-    selectedInventoryId.value = '';
+    selectedInvId.value = '';
   }
 });
 </script>

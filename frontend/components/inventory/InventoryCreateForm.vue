@@ -67,22 +67,28 @@
     </v-row>
 
     <v-row align="end" class="ma-1 mt-4">
-      <ActionConfirm :loading="isCreating">{{ submitBtnTitle }}</ActionConfirm>
-      <ActionDelete
-        v-if="props.inventoryId"
-        @click="deleteInventory(props.inventoryId)"
-      ></ActionDelete>
+      <ActionConfirm :loading="isCreating || isUpdating">{{
+        submitBtnTitle
+      }}</ActionConfirm>
+      <ActionDelete v-if="invId" @click="deleteInventory(invId)"></ActionDelete>
     </v-row>
   </v-form>
+
+  <ActionShowSnackbarSuccess
+    v-model="snackbar"
+    :message="snackbarMsg"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnackbarSuccess>
 </template>
 
 <script setup lang="ts">
 import { Cities } from '#imports';
 import { Provinces } from '#imports';
-import { useMutation } from 'villus';
+import { useMutation, useQuery } from 'villus';
 import {
   CreateInventoryDocument,
   DeleteInventoryDocument,
+  GetInventoryDocument,
   UpdateInventoryDocument,
 } from '~/api/generated/types';
 import { InventorySchema } from '~/validation/schema';
@@ -91,8 +97,9 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 
 const props = defineProps<{
-  inventoryId?: string | null;
+  invId?: string | null;
 }>();
+const invId = props.invId;
 
 const validateInventorySchema = toTypedSchema(InventorySchema);
 const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
@@ -104,8 +111,29 @@ const city = useField('city');
 const province = useField('province');
 
 const submitBtnTitle = computed(() =>
-  props.inventoryId ? t('btn.update') : t('btn.create'),
+  invId ? t('btn.update') : t('btn.create'),
 );
+
+const emit = defineEmits(['close-dialog']);
+const snackbar = ref(false);
+const snackbarMsg = ref(t('status.saved'));
+
+if (invId) {
+  useQuery({
+    query: GetInventoryDocument,
+    variables: { id: invId || '' },
+    onData(data) {
+      if (data && data.getInventory) {
+        setValues({
+          name: data.getInventory.name,
+          address: data.getInventory.address,
+          city: data.getInventory.city,
+          province: data.getInventory.province,
+        });
+      }
+    },
+  });
+}
 
 const {
   isFetching: isCreating,
@@ -113,7 +141,7 @@ const {
   error: createError,
 } = useMutation(CreateInventoryDocument, {
   onData() {
-    navigateTo(localePath('/setting/inventories'));
+    snackbar.value = true;
   },
   clearCacheTags: [CACHE_INVENTORIES],
 });
@@ -123,7 +151,7 @@ const {
   error: updateError,
 } = useMutation(UpdateInventoryDocument, {
   onData() {
-    navigateTo(localePath('/setting/inventories'));
+    snackbar.value = true;
   },
   clearCacheTags: [CACHE_INVENTORIES],
 });
@@ -134,9 +162,10 @@ const {
 } = useMutation(DeleteInventoryDocument, {
   clearCacheTags: [CACHE_INVENTORIES],
   onData(data) {
-    if (data.deleteInventory)
-      alert(`Inventory deleted successfully. ${data.deleteInventory}`);
-    else alert('Failed to delete inventory');
+    if (data.deleteInventory) {
+      snackbarMsg.value = `${t('status.deleted')}`;
+      snackbar.value = true;
+    } else alert('Failed to delete inventory');
   },
   onError(err) {
     alert(`An error occurred while deleting the inventory: ${err.message}`);
@@ -144,8 +173,8 @@ const {
 });
 
 const onSubmit = handleSubmit((data) => {
-  if (props.inventoryId) {
-    executeUpdate({ id: props.inventoryId, data });
+  if (invId) {
+    executeUpdate({ id: invId, data });
   } else {
     executeCreate({ data });
   }
