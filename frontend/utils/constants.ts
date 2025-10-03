@@ -13,6 +13,13 @@ const GENDERS = {
   KIDS: 'genders.kids',
 };
 
+const INV_TYPE = {
+  FACTORY: 'inv_type.factory',
+  STORAGE: 'inv_type.storage',
+  CONSIGNMENT: 'inv_type.consignment',
+  STOREFRONT: 'inv_type.storefront',
+};
+
 enum JOB {
   DRAW_UPPER = 'DRAW_UPPER',
   DRAW_LINING = 'DRAW_LINING',
@@ -35,4 +42,4 @@ enum SnackColor {
   Info = 'info',
 }
 
-export { JOB, JOBS, GENDERS, Role, SnackColor };
+export { JOB, JOBS, GENDERS, INV_TYPE, Role, SnackColor };

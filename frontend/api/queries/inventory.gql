@@ -4,6 +4,7 @@ fragment Inventory on Inventory {
   address
   city
   province
+  type
 }
 
 mutation createInventory($data: InventoryCreateDto!) {

@@ -120,6 +120,8 @@
     "province": "Province",
     "select_city": "Select City",
     "select_province": "Select Province",
+    "select_inv_type": "Select Inventory Type",
+    "inv_type": "Inventory Type",
     "hex_code": "Hexadecimal Code"
   },
   "card": {
@@ -138,6 +140,12 @@
     "men": "Men",
     "women": "Women",
     "kids": "Kids"
+  },
+  "inv_type": {
+    "factory": "Factory",
+    "storage": "Storage",
+    "consignment": "Consignment",
+    "storefront": "Storefront"
   },
   "zodI18n": {
     "errors": {

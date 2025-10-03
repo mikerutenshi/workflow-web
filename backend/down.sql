@@ -46,6 +46,9 @@ ALTER TABLE "Client" DROP CONSTRAINT "Client_salesmanId_fkey";
 -- DropForeignKey
 ALTER TABLE "Salesman" DROP CONSTRAINT "Salesman_invId_fkey";
 
+-- AlterTable
+ALTER TABLE "Work" DROP COLUMN "progress";
+
 -- DropTable
 DROP TABLE "Inventory";
 
@@ -77,5 +80,8 @@ DROP TABLE "Client";
 DROP TABLE "Salesman";
 
 -- DropEnum
-DROP TYPE "TxStatus";
+DROP TYPE "Progress";
+
+-- DropEnum
+DROP TYPE "InvType";
 

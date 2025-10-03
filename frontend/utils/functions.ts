@@ -1,5 +1,5 @@
 import type { CombinedError } from 'villus';
-import { Gender, type Job } from '~/api/generated/types';
+import { Gender, InvType, type Job } from '~/api/generated/types';
 
 function renderJobs(jobs: Job[]): string {
   return jobs
@@ -11,6 +11,10 @@ function renderJobs(jobs: Job[]): string {
 
 function renderJob(job: Job): string {
   return job in JOBS ? JOBS[job] : 'N/A';
+}
+
+function renderInvType(type: InvType): string {
+  return type in INV_TYPE ? INV_TYPE[type] : 'N/A';
 }
 
 function formatRupiah(amount: number | null | undefined): string {
@@ -64,7 +68,7 @@ function extractGraphQlError(error?: CombinedError | null): string {
       ?.flatMap(
         (e) =>
           (e.extensions?.originalError as { message?: string })?.message ||
-          e.message
+          e.message,
       )
       .join(', ') || error.message
   );
@@ -76,6 +80,7 @@ export {
   formatRupiah,
   parseRupiah,
   renderGender,
+  renderInvType,
   parseGender,
   formatLocalDate,
   extractGraphQlError,

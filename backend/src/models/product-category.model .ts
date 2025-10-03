@@ -1,5 +1,5 @@
+import { Gender } from '@/generated/client';
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { Gender } from '@prisma/client';
 
 registerEnumType(Gender, { name: 'Gender' });
 

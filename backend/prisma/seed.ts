@@ -1,4 +1,4 @@
-import { Gender, PrismaClient } from '@prisma/client';
+import { Gender, PrismaClient } from '@/generated/client';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient({

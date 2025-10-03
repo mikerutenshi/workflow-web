@@ -15,6 +15,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Gender {
+  MEN
+  WOMEN
+  KIDS  
+}
+
+enum Job {
+  DRAW_UPPER
+  DRAW_LINING
+  STITCH_UPPER
+  STITCH_OUTSOLE
+  STITCH_INSOLE
+  LAST
+}
+
+enum Progress {
+  INITIATED
+  PENDING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+enum InvType {
+  FACTORY
+  STORAGE
+  CONSIGNMENT
+  STOREFRONT
+}
+
 model Role {
   id                Int             @id @default(autoincrement())
   name              String          @unique
@@ -53,12 +85,6 @@ model Color {
   hexCode           String
 
   colorProducts     ColorToProduct[]
-}
-
-enum Gender {
-  MEN
-  WOMEN
-  KIDS  
 }
 
 model ProductCategory {
@@ -116,15 +142,6 @@ model ColorToProduct {
   color             Color           @relation(fields: [colorId], references: [id])
 }
 
-enum Job {
-  DRAW_UPPER
-  DRAW_LINING
-  STITCH_UPPER
-  STITCH_OUTSOLE
-  STITCH_INSOLE
-  LAST
-}
-
 model LaborCost {
   id                Int             @id @default(autoincrement())
   type              Job
@@ -162,6 +179,7 @@ model Work {
   productId         Int             
   workSizes         SizeToWork[]
   tasks             Task[]
+  progress          Progress        @default(INITIATED)
 
   createdBy         Int
   updatedBy         Int?
@@ -224,6 +242,7 @@ model Inventory {
   address           String
   city              String
   province          String
+  type              InvType
 
   invProducts       InvToProduct[]
   invSalesTxs       SalesTx[]
@@ -258,22 +277,16 @@ model InvProductToSize {
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
-enum TxStatus {
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-}
-
 model InvTransfer {
   id                Int             @id @default(autoincrement())
-  fromInvId         Int
+  fromInvId         Int?
   toInvId           Int
   invProductId      Int
   invTransferSizes  InvTransferToSize[]
   transferDate      DateTime
-  status            TxStatus  @default(IN_PROGRESS)
+  progress          Progress        @default(INITIATED)
 
-  fromInv           Inventory       @relation("FromInventory", fields: [fromInvId], references: [id])
+  fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
   invProduct        InvToProduct    @relation(fields: [invProductId], references: [id])
 

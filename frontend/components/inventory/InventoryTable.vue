@@ -46,6 +46,10 @@
             @click="edit(item.id)"
           ></v-btn>
         </template>
+
+        <template v-slot:item.type="{ item }">
+          {{ $t(renderInvType(item.type)) }}
+        </template>
       </v-data-table>
     </v-col>
   </v-row>
@@ -83,11 +87,11 @@ const { execute, data, isFetching, error } = useQuery({
 
 const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  // { title: t('label.id'), key: 'id' },
   { title: t('label.sku'), key: 'name' },
   { title: t('label.address'), key: 'address' },
   { title: t('label.city'), key: 'city' },
   { title: t('label.province'), key: 'province' },
+  { title: t('label.inv_type'), key: 'type' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');

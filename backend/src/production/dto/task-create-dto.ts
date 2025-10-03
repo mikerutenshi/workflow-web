@@ -1,5 +1,5 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
-import { Job } from '@prisma/client';
+import { Job } from '@/generated/client';
 import { Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsOptional, Min } from 'class-validator';
 

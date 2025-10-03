@@ -63,6 +63,22 @@
             </v-autocomplete>
           </v-col>
         </v-row>
+
+        <v-row>
+          <v-col>
+            <v-select
+              v-model="type.value.value"
+              :items="invTypes"
+              :return-object="false"
+              :label="$t('label.select_inv_type')"
+              chips
+              auto-select-first
+              item-title="title"
+              item-value="id"
+              :error-messages="type.errorMessage.value"
+            ></v-select>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -91,11 +107,15 @@ import {
   DeleteInventoryDocument,
   GetInventoryDocument,
   UpdateInventoryDocument,
+  InvType,
 } from '~/api/generated/types';
 import { InventorySchema } from '~/validation/schema';
 
 const { t } = useI18n();
-const localePath = useLocalePath();
+const invTypes = Object.entries(InvType).map(([key, value]) => ({
+  id: value,
+  title: t(renderInvType(value)),
+}));
 
 const props = defineProps<{
   invId?: string | null;
@@ -110,6 +130,7 @@ const name = useField('name');
 const address = useField('address');
 const city = useField('city');
 const province = useField('province');
+const type = useField('type');
 
 const submitBtnTitle = computed(() =>
   invId ? t('btn.update') : t('btn.create'),
@@ -133,6 +154,7 @@ if (invId) {
           address: data.getInventory.address,
           city: data.getInventory.city,
           province: data.getInventory.province,
+          type: data.getInventory.type,
         });
       }
     },

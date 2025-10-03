@@ -1,3 +1,4 @@
+import { InvType } from '@/generated/client';
 import { Cities } from '@/models/cities.enum';
 import { Provinces } from '@/models/provinces.enum';
 import { Field, InputType } from '@nestjs/graphql';
@@ -17,4 +18,7 @@ export class InventoryCreateDto {
   @Field()
   @IsEnum(Provinces)
   province: string;
+  @Field(() => InvType)
+  @IsEnum(InvType)
+  type: InvType;
 }

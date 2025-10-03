@@ -260,6 +260,14 @@ type Inventory {
   address: String!
   city: String!
   province: String!
+  type: InvType!
+}
+
+enum InvType {
+  FACTORY
+  STORAGE
+  CONSIGNMENT
+  STOREFRONT
 }
 
 type InvProductToSize {
@@ -470,6 +478,7 @@ input InventoryCreateDto {
   address: String!
   city: String!
   province: String!
+  type: InvType!
 }
 
 input InventoryUpdateDto {
@@ -477,6 +486,7 @@ input InventoryUpdateDto {
   address: String
   city: String
   province: String
+  type: InvType
 }
 
 input InvProductCreateDto {

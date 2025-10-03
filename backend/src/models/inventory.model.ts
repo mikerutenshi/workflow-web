@@ -1,4 +1,7 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { InvType } from '@/generated/client';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+
+registerEnumType(InvType, { name: 'InvType' });
 
 @ObjectType()
 export class Inventory {
@@ -12,4 +15,6 @@ export class Inventory {
   city: string;
   @Field()
   province: string;
+  @Field(() => InvType)
+  type: InvType;
 }

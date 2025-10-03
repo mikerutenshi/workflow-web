@@ -120,6 +120,8 @@
     "province": "Provinsi",
     "select_city": "Pilih Kota",
     "select_province": "Pilih Provinsi",
+    "select_inv_type": "Pilih Tipe Gudang",
+    "inv_type": "Tipe Gudang",
     "hex_code": "Kode Hexadesimal"
   },
   "card": {
@@ -138,6 +140,12 @@
     "men": "Laki-laki",
     "women": "Perempuan",
     "kids": "Anak-anak"
+  },
+  "inv_type": {
+    "factory": "Pabrik",
+    "storage": "Penyimpanan",
+    "consignment": "Konsinyasi",
+    "storefront": "Toko"
   },
   "zodI18n": {
     "validations": {

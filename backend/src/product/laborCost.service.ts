@@ -4,7 +4,7 @@ import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
 import { LaborCost } from '@/models/labor-cost.model';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
 import { LaborCostUpdateDto } from './dto/labor-cost-update.dto';
-import { Job } from '@prisma/client';
+import { Job } from '@/generated/client';
 
 @Injectable()
 export class LaborCostService {

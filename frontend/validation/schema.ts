@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { Cities } from '#imports';
 import { Provinces } from '#imports';
+import { InvType, Job, Gender } from '~/api/generated/types';
 
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
@@ -15,14 +16,6 @@ export const AuthSchema = z.object({
   password: z.string().min(8).trim(),
 });
 
-const JobEnum = z.enum([
-  'DRAW_UPPER',
-  'DRAW_LINING',
-  'STITCH_UPPER',
-  'STITCH_OUTSOLE',
-  'STITCH_INSOLE',
-  'LAST',
-]);
 const positiveNumberString = z
   .string()
   .trim()
@@ -32,7 +25,7 @@ const positiveNumberString = z
 export const ArtisanSchema = z.object({
   firstName: z.string().min(1).trim(),
   lastName: z.string().trim().optional().nullable(),
-  jobs: JobEnum.array(),
+  jobs: z.nativeEnum(Job).array(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });
@@ -64,10 +57,9 @@ export const ColorSchema = z.object({
   hexCode: z.string().min(1).trim(),
 });
 
-const GenderEnum = z.enum(['MEN', 'WOMEN', 'KIDS']);
 export const ProductCategorySchema = z.object({
   name: z.string().min(1).trim(),
-  gender: GenderEnum,
+  gender: z.nativeEnum(Gender),
 });
 
 export const ProductGroupSchema = z.object({
@@ -140,4 +132,5 @@ export const InventorySchema = z.object({
   address: z.string().min(5).max(255).trim(),
   city: z.enum([...Cities.map((c) => c.title)] as [string, ...string[]]),
   province: z.enum([...Provinces.map((c) => c.title)] as [string, ...string[]]),
+  type: z.nativeEnum(InvType),
 });

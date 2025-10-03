@@ -64,10 +64,10 @@
               <span>{{ color.color.name }}</span>
             </v-list-item>
           </v-list>
-        </template>
+        </template> -->
         <template v-slot:item.productGroup.productCategory.gender="{ item }">
           {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
-        </template> -->
+        </template>
 
         <template v-slot:item.actions="{ item }">
           <!-- <v-menu variant="outlined">

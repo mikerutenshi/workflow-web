@@ -1,5 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { Job } from '@prisma/client';
+import { Job } from '@/generated/client';
 import { BaseModel } from './base.model';
 
 registerEnumType(Job, { name: 'Job' });

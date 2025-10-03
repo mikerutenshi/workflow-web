@@ -1,7 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-import { Job } from '@prisma/client';
-import { Artisan } from './artisan.model';
+import { Job } from '@/generated/client';
 
 @ObjectType()
 export class Task extends BaseModel {

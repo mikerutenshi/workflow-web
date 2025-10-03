@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-import { Job } from '@prisma/client';
+import { Job } from '@/generated/client';
 
 @ObjectType()
 export class LaborCost extends BaseModel {
