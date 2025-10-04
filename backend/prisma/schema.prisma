@@ -127,8 +127,9 @@ model Product {
   works               Work[]
   productInvs         InvToProduct[]
   productSalesTxs     ProductToSalesTx[]
+  invTransfers        InvTransfer[]
 
-  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
+  productGroup        ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
 
 model ColorToProduct {
@@ -253,27 +254,29 @@ model Inventory {
 }
 
 model InvToProduct {
-  id                Int             @id @default(autoincrement())
+  @@id([invId, productId])
   invId             Int
-  productId         Int             @unique
+  productId         Int             
+
   invProductSizes   InvProductToSize[]
   sellingPrice      Int
   discount          Decimal         @db.Decimal(3,2) @default(0.00)
 
   product           Product         @relation(fields: [productId], references: [id])
   inventory         Inventory       @relation(fields: [invId], references: [id])
-
-  invTransfers InvTransfer[]
+  inTransfers       InvTransfer[]   @relation("InTransfer")
+  outTransfers      InvTransfer[]   @relation("OutTransfer")
 }
 
 model InvProductToSize {
-  @@id([invProductId, sizeId])
-  invProductId      Int
+  @@id([invId, productId, sizeId])
+  invId             Int
+  productId         Int
   sizeId            Int
 
   quantity          Int
 
-  invProduct        InvToProduct    @relation(fields: [invProductId], references: [id], onDelete: Cascade)
+  invProduct        InvToProduct    @relation(fields: [invId, productId], references: [invId, productId], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
@@ -281,14 +284,16 @@ model InvTransfer {
   id                Int             @id @default(autoincrement())
   fromInvId         Int?
   toInvId           Int
-  invProductId      Int
+  productId         Int
   invTransferSizes  InvTransferToSize[]
   transferDate      DateTime
   progress          Progress        @default(INITIATED)
 
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
-  invProduct        InvToProduct    @relation(fields: [invProductId], references: [id])
+  product           Product         @relation(fields: [productId], references: [id])
+  inInvProduct      InvToProduct    @relation("InTransfer", fields: [toInvId, productId], references: [invId, productId])
+  outInvProduct     InvToProduct?   @relation("OutTransfer", fields: [fromInvId, productId], references: [invId, productId])
 
   createdBy         Int
   updatedBy         Int?
