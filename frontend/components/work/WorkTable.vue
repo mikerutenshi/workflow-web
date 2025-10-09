@@ -111,8 +111,8 @@
                   ? mdiTimerSandComplete
                   : mdiTimerSand
             "
-            size="x-large"
           ></v-icon>
+          <span>{{ item.progress }}</span>
         </template>
 
         <template v-slot:item.actions="{ item }">
@@ -223,7 +223,7 @@ while (currentDate.isBefore(findEnd)) {
   dates.value.push(currentDate.format('YYYY-MM-DD'));
   currentDate = currentDate.add(1, 'day');
 }
-console.log(`Dates: ${dates.value}`);
+// console.log(`Dates: ${dates.value}`);
 
 const form = reactive({
   startDate: findStart.toISOString(),

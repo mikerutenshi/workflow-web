@@ -176,6 +176,7 @@ type Work {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWork!]!
+  progress: ID!
 }
 
 type TaskWithArtisan {
@@ -201,6 +202,7 @@ type WorkWithTasks {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWork!]!
+  progress: ID!
   tasks: [TaskWithArtisan!]!
   product: Product!
 }
@@ -215,6 +217,7 @@ type WorkWithProduct {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWork!]!
+  progress: ID!
   product: Product!
 }
 

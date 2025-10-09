@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
 import { SizeToWork } from './size-to-work.model';
+import { Progress } from '@/generated/client';
 
 @ObjectType()
 export class Work extends BaseModel {
@@ -12,4 +13,6 @@ export class Work extends BaseModel {
   productId: number;
   @Field(() => [SizeToWork])
   workSizes: SizeToWork[];
+  @Field(() => ID)
+  progress: Progress;
 }

@@ -43,6 +43,7 @@ fragment WorkWithTasks on WorkWithTasks {
   product {
     sku
   }
+  progress
   createdBy
   updatedBy
   createdAt
