@@ -61,12 +61,13 @@ export class InvProductService {
   }
 
   async updateInvProduct(
-    id: number,
+    invId: number,
+    productId: number,
     data: InvProductUpdateDto,
   ): Promise<InvProduct> {
     const { invProductSizes, discount, ...rest } = data;
     const updatedProduct = await this.prisma.invToProduct.update({
-      where: { id },
+      where: { invId_productId: { invId, productId } },
       data: {
         ...rest,
         ...(discount !== undefined && { discount: Prisma.Decimal(discount) }),
@@ -90,12 +91,14 @@ export class InvProductService {
     } as InvProduct;
   }
 
-  async deleteInvProduct(id: number): Promise<Boolean> {
+  async deleteInvProduct(invId: number, productId: number): Promise<Boolean> {
     const invProduct = await this.prisma.invToProduct.delete({
-      where: { id },
+      where: { invId_productId: { invId, productId } },
     });
     if (!invProduct) {
-      throw new Error(`Delete invProduct with ID ${id} failed.`);
+      throw new Error(
+        `Delete invProduct with invId ${invId}, productId ${productId} failed.`,
+      );
     }
 
     return true;

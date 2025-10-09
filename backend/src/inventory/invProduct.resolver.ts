@@ -24,16 +24,18 @@ export class InvProductResolver {
 
   @Mutation(() => InvProduct)
   updateInvProduct(
-    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+    @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
+    @Args('productId', { type: () => ID }, ParseIntPipe) productId: number,
     @Args('data') data: InvProductUpdateDto,
   ): Promise<InvProduct> {
-    return this.service.updateInvProduct(id, data);
+    return this.service.updateInvProduct(invId, productId, data);
   }
 
   @Mutation(() => Boolean)
   deleteInvProduct(
-    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+    @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
+    @Args('productId', { type: () => ID }, ParseIntPipe) productId: number,
   ): Promise<Boolean> {
-    return this.service.deleteInvProduct(id);
+    return this.service.deleteInvProduct(invId, productId);
   }
 }

@@ -37,13 +37,13 @@ mutation deleteInventory($id: ID!) {
 
 mutation createInvProduct($data: InvProductCreateDto!) {
   createInvProduct(data: $data) {
-    id
+    invId
+    productId
   }
 }
 
 query getInvProducts {
   getInvProducts {
-    id
     invId
     productId
     product {
@@ -73,12 +73,17 @@ query getInvProducts {
   }
 }
 
-mutation updateINvProduct($id: ID!, $data: InvProductUpdateDto!) {
-  updateInvProduct(id: $id, data: $data) {
-    id
+mutation updateInvProduct(
+  $invId: ID!
+  $productId: ID!
+  $data: InvProductUpdateDto!
+) {
+  updateInvProduct(invId: $invId, productId: $productId, data: $data) {
+    invId
+    productId
   }
 }
 
-mutation deleteInvProduct($id: ID!) {
-  deleteInvProduct(id: $id)
+mutation deleteInvProduct($invId: ID!, $productId: ID!) {
+  deleteInvProduct(invId: $invId, productId: $productId)
 }

@@ -4,9 +4,6 @@ import { InvProductToSize } from './inv-product-to-size.model';
 @ObjectType()
 export class InvProduct {
   @Field(() => ID)
-  id: number;
-
-  @Field(() => ID)
   invId: number;
 
   @Field(() => ID)

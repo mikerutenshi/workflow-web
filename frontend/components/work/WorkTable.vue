@@ -116,14 +116,12 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <!-- <NuxtLink :to="$localePath(`/works/update/${item.id}`)"> -->
           <v-btn
             color="primary"
             :prepend-icon="mdiPencil"
             variant="text"
             @click="edit(item.id)"
           ></v-btn>
-          <!-- </NuxtLink> -->
         </template>
       </v-data-table>
     </v-col>

@@ -271,14 +271,14 @@ enum InvType {
 }
 
 type InvProductToSize {
-  invProductId: ID!
+  invId: ID!
+  productId: ID!
   sizeId: ID!
   quantity: Int!
   size: Size!
 }
 
 type InvProduct {
-  id: ID!
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
@@ -287,7 +287,6 @@ type InvProduct {
 }
 
 type InvProductGetDto {
-  id: ID!
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
@@ -358,8 +357,8 @@ type Mutation {
   deleteInventory(id: ID!): Boolean!
   updateInventory(id: ID!, data: InventoryUpdateDto!): Inventory!
   createInvProduct(data: InvProductCreateDto!): InvProduct!
-  updateInvProduct(id: ID!, data: InvProductUpdateDto!): InvProduct!
-  deleteInvProduct(id: ID!): Boolean!
+  updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
+  deleteInvProduct(invId: ID!, productId: ID!): Boolean!
 }
 
 input RoleDto {

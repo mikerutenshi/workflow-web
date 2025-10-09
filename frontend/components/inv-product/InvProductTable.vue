@@ -97,13 +97,11 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
-            <v-btn
-              color="primary"
-              :prepend-icon="mdiPencil"
-              variant="text"
-            ></v-btn>
-          </NuxtLink>
+          <v-btn
+            color="primary"
+            :prepend-icon="mdiPencil"
+            variant="text"
+          ></v-btn>
         </template>
       </v-data-table>
     </v-col>
