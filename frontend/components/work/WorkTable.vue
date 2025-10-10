@@ -208,17 +208,27 @@ const itemsPerPage = ref(25);
 const adapter = useDate();
 const now = dayjs();
 
-const findEnd = now.hour(23).minute(59).second(59).millisecond(999);
-const findStart = now
-  .subtract(2, 'weeks')
-  .hour(0)
-  .minute(0)
-  .second(0)
-  .millisecond(0);
+const storedDates = sessionStorage.getItem('workTableDates');
+let findStart, findEnd;
+
+if (storedDates) {
+  const parsed = JSON.parse(storedDates);
+  findStart = dayjs(parsed.startDate);
+  findEnd = dayjs(parsed.endDate);
+} else {
+  findEnd = now.hour(23).minute(59).second(59).millisecond(999);
+  findStart = now
+    .subtract(2, 'weeks')
+    .hour(0)
+    .minute(0)
+    .second(0)
+    .millisecond(0);
+}
 
 const dates = ref<string[]>([]);
 
 let currentDate = findStart.clone();
+
 while (currentDate.isBefore(findEnd)) {
   dates.value.push(currentDate.format('YYYY-MM-DD'));
   currentDate = currentDate.add(1, 'day');
@@ -255,6 +265,15 @@ const headers: ReadOnlyHeaders = [
 function manageDates(newDates: string[] | string) {
   form.startDate = newDates[0];
   form.endDate = newDates[newDates.length - 1];
+
+  sessionStorage.setItem(
+    'workTableDates',
+    JSON.stringify({
+      startDate: form.startDate,
+      endDate: form.endDate,
+    }),
+  );
+
   execute();
 }
 
@@ -290,7 +309,6 @@ watch(dialog, (isOpen) => {
     currentWorkId.value = '';
   }
 });
-
 // watchEffect(() => {
 //   console.log(`isFormDialogOpen: ${isFormDialogOpen.value}`);
 //   console.log(`Form: ${JSON.stringify(form)}`);

@@ -13,11 +13,6 @@ export class TaskService {
   ) {}
 
   updateTasks(tasks: TaskUpdateDto[]): Promise<TaskWithArtisan[]> {
-    // Check if at least one task has doneAt not null, or all tasks have doneAt not null
-    const hasAtLeastOneDone = tasks.some((task) => task.doneAt !== null);
-    const allDone = tasks.every((task) => task.doneAt !== null);
-    const allNotDone = tasks.every((task) => task.doneAt === null);
-
     return this.prisma.$transaction(async (prisma) => {
       // Update tasks first
       const updatedTasks = await Promise.all(
@@ -46,6 +41,11 @@ export class TaskService {
 
         let progress: Progress;
 
+        // Check if at least one task has doneAt not null, or all tasks have doneAt not null
+        const hasAtLeastOneDone = tasks.some((task) => task.doneAt !== null);
+        const allDone = tasks.every((task) => task.doneAt !== null);
+        const allNotDone = tasks.every((task) => task.doneAt === null);
+
         if (allDone) {
           progress = Progress.COMPLETED;
         } else if (allNotDone) {
@@ -61,24 +61,129 @@ export class TaskService {
           data: { progress },
         });
 
+        const factory = await prisma.inventory.findFirst({
+          where: { type: 'FACTORY' },
+        });
+
+        const existingInvProduct = await prisma.invToProduct.findFirst({
+          where: { productId: initialWork!.productId },
+          include: { invProductSizes: true },
+        });
+
         //Create new inv product if grogress == completed
         if (initialProgress !== Progress.COMPLETED && allDone) {
-          const factory = await prisma.inventory.findFirst({
-            where: { type: 'FACTORY' },
-          });
+          //Look for existing storage
 
-          const invProductDto = {
-            invId: factory?.id || 1,
-            productId: initialWork!.productId,
-            invProductSizes: initialWork!.workSizes.map((workSize) => ({
-              sizeId: workSize.sizeId,
-              quantity: workSize.quantity,
-            })),
-            sellingPrice: 0,
-            discount: '0.0',
-          };
+          if (existingInvProduct) {
+            const { invProductSizes } = existingInvProduct;
+            // Update existing inventory product by adding quantities
+            for (const workSize of initialWork!.workSizes) {
+              const existingSize = invProductSizes.find(
+                (invSize) => invSize.sizeId === workSize.sizeId,
+              );
 
-          await this.invProductService.createInvProduct(invProductDto);
+              if (existingSize) {
+                // Update existing size by adding quantity
+                await prisma.invProductToSize.update({
+                  where: {
+                    invId_productId_sizeId: {
+                      invId: existingInvProduct.invId,
+                      productId: existingInvProduct.productId,
+                      sizeId: existingSize.sizeId,
+                    },
+                  },
+                  data: {
+                    quantity: existingSize.quantity + workSize.quantity,
+                  },
+                });
+              } else {
+                // Create new size entry
+                await prisma.invProductToSize.create({
+                  data: {
+                    invId: existingInvProduct.invId,
+                    productId: existingInvProduct.productId,
+                    sizeId: workSize.sizeId,
+                    quantity: workSize.quantity,
+                  },
+                });
+              }
+            }
+          } else {
+            //Else create new entities
+            const invProductDto = {
+              invId: factory?.id || 1,
+              productId: initialWork!.productId,
+              invProductSizes: initialWork!.workSizes.map((workSize) => ({
+                sizeId: workSize.sizeId,
+                quantity: workSize.quantity,
+              })),
+              sellingPrice: 0,
+              discount: '0.0',
+            };
+
+            await this.invProductService.createInvProduct(invProductDto);
+          }
+        } else if (initialProgress === Progress.COMPLETED && !allDone) {
+          // Reverse the effect: subtract quantities from inventory
+          if (existingInvProduct) {
+            const { invProductSizes } = existingInvProduct;
+
+            for (const workSize of initialWork!.workSizes) {
+              const existingSize = invProductSizes.find(
+                (invSize) => invSize.sizeId === workSize.sizeId,
+              );
+
+              if (existingSize) {
+                const newQuantity = existingSize.quantity - workSize.quantity;
+
+                if (newQuantity > 0) {
+                  // Update existing size by subtracting quantity
+                  await prisma.invProductToSize.update({
+                    where: {
+                      invId_productId_sizeId: {
+                        invId: existingInvProduct.invId,
+                        productId: existingInvProduct.productId,
+                        sizeId: existingSize.sizeId,
+                      },
+                    },
+                    data: {
+                      quantity: newQuantity,
+                    },
+                  });
+                } else {
+                  // Delete size entry if quantity becomes 0 or negative
+                  await prisma.invProductToSize.delete({
+                    where: {
+                      invId_productId_sizeId: {
+                        invId: existingInvProduct.invId,
+                        productId: existingInvProduct.productId,
+                        sizeId: existingSize.sizeId,
+                      },
+                    },
+                  });
+                }
+              }
+            }
+
+            // Check if all sizes have been removed and delete the invProduct if empty
+            const remainingSizes = await prisma.invProductToSize.findMany({
+              where: {
+                invId: existingInvProduct.invId,
+                productId: existingInvProduct.productId,
+              },
+            });
+
+            if (remainingSizes.length === 0) {
+              await prisma.invToProduct.delete({
+                where: {
+                  invId_productId: {
+                    invId: existingInvProduct.invId,
+                    productId: existingInvProduct.productId,
+                  },
+                },
+              });
+            }
+          }
         }
       }
 
