@@ -127,7 +127,7 @@ model Product {
   works               Work[]
   productInvs         InvToProduct[]
   productSalesTxs     ProductToSalesTx[]
-  invTransfers        InvTransfer[]
+  InvXferItem         InvXferItem[]
 
   productGroup        ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
@@ -219,7 +219,7 @@ model Size {
 
   sizeWorks           SizeToWork[]
   sizeInvProducts     InvProductToSize[]
-  sizeInvTxs          InvTransferToSize[]
+  InvXferItemToSize   InvXferItemToSize[]
   sizeSalesTxProducts SalesTxProductToSize[]
 
   @@unique([eu, gender])
@@ -249,8 +249,8 @@ model Inventory {
   invSalesTxs       SalesTx[]
   salesmen          Salesman[]  
 
-  fromTransfers           InvTransfer[] @relation( "FromInventory")
-  toTransfers             InvTransfer[] @relation( "ToInventory")
+  fromXfers           InvTransfer[] @relation( "FromInventory")
+  toXfers             InvTransfer[] @relation( "ToInventory")
 }
 
 model InvToProduct {
@@ -264,8 +264,6 @@ model InvToProduct {
 
   product           Product         @relation(fields: [productId], references: [id])
   inventory         Inventory       @relation(fields: [invId], references: [id])
-  inTransfers       InvTransfer[]   @relation("InTransfer")
-  outTransfers      InvTransfer[]   @relation("OutTransfer")
 }
 
 model InvProductToSize {
@@ -284,16 +282,12 @@ model InvTransfer {
   id                Int             @id @default(autoincrement())
   fromInvId         Int?
   toInvId           Int
-  productId         Int
-  invTransferSizes  InvTransferToSize[]
   transferDate      DateTime
   progress          Progress        @default(INITIATED)
+  InvXferItem       InvXferItem[]
 
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
-  product           Product         @relation(fields: [productId], references: [id])
-  inInvProduct      InvToProduct    @relation("InTransfer", fields: [toInvId, productId], references: [invId, productId])
-  outInvProduct     InvToProduct?   @relation("OutTransfer", fields: [fromInvId, productId], references: [invId, productId])
 
   createdBy         Int
   updatedBy         Int?
@@ -301,14 +295,25 @@ model InvTransfer {
   updatedAt         DateTime        @updatedAt
 }
 
-model InvTransferToSize {
-  @@id([invTransferId, sizeId])
-  invTransferId     Int
+model InvXferItem {
+  @@id([invXferId, productId])
+  invXferId         Int
+  productId         Int
+  invXferItemSizes  InvXferItemToSize[]
+
+  invXfer           InvTransfer     @relation(fields: [invXferId], references: [id])
+  product           Product         @relation(fields: [productId], references: [id])
+}
+
+model InvXferItemToSize {
+  @@id([invXferId, productId, sizeId])
+  invXferId         Int
+  productId         Int
   sizeId            Int
 
   quantity          Int
 
-  invTransfer       InvTransfer     @relation(fields: [invTransferId], references: [id], onDelete: Cascade)
+  invXferItem       InvXferItem     @relation(fields: [invXferId, productId], references: [invXferId, productId], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 

@@ -41,7 +41,7 @@
         item-value="id"
         class="flex-grow-1"
         fixed-header
-        :height="`calc(100vh - 240px)`"
+        :height="`calc(100vh - 262px)`"
         hover
         :page="pageNo"
         :items-per-page="itemsPerPage"
@@ -97,19 +97,51 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-btn
-            color="primary"
-            :prepend-icon="mdiPencil"
-            variant="text"
-          ></v-btn>
+          <v-menu transition="slide-y-transition">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :prepend-icon="mdiDotsVertical"
+                color="primary"
+                v-bind="props"
+                variant="text"
+              >
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in menuItems"
+                :key="index"
+                :value="index"
+                @click="index === 0 ? (dialog = true) : null"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
       </v-data-table>
     </v-col>
   </v-row>
+
+  <v-dialog v-model="dialog" transition="fade-transition">
+    <v-card>
+      <v-toolbar>
+        <v-toolbar-title>Detail</v-toolbar-title>
+      </v-toolbar>
+
+      <v-container class="h-100 d-flex flex-column"> </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { mdiClose, mdiMagnify, mdiPencil, mdiWarehouse } from '@mdi/js';
+import {
+  mdiClose,
+  mdiDotsVertical,
+  mdiMagnify,
+  mdiPencil,
+  mdiWarehouse,
+} from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import {
@@ -120,6 +152,7 @@ import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
+const menuItems = [{ title: 'Show Details' }, { title: 'Edit' }];
 
 const {
   execute,
