@@ -1,7 +1,5 @@
 import { InvType } from '@/generated/client';
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-
-registerEnumType(InvType, { name: 'InvType' });
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Inventory {

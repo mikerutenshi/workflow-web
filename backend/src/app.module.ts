@@ -1,21 +1,22 @@
-import { Module } from '@nestjs/common';
+import { Gender, InvType, Job, Progress } from '@/generated/client';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { Module, OnModuleInit } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GraphQLModule, registerEnumType } from '@nestjs/graphql';
+import { Request } from 'express';
+import { PrismaModule } from 'nestjs-prisma';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from 'nestjs-prisma';
-import { AuthModule } from './auth/auth.module';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { AuthService } from './auth/auth.service';
-import { join } from 'path';
-import { Request } from 'express';
-import { DateScalar } from './scalars/date.scalar';
-import { authenticateUserByRequest } from './auth/auth.middleware';
-import { ProductModule } from './product/product.module';
 import { ArtisanModule } from './artisan/artisan.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ProductionModule } from './production/production.module';
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { authenticateUserByRequest } from './auth/auth.middleware';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
 import { InventoryModule } from './inventory/inventory.module';
+import { ProductModule } from './product/product.module';
+import { ProductionModule } from './production/production.module';
+import { DateScalar } from './scalars/date.scalar';
 
 const ENV = process.env.NODE_ENV || 'development';
 @Module({
@@ -55,3 +56,8 @@ const ENV = process.env.NODE_ENV || 'development';
   providers: [AppService, DateScalar],
 })
 export class AppModule {}
+
+registerEnumType(Job, { name: 'Job' });
+registerEnumType(Gender, { name: 'Gender' });
+registerEnumType(Progress, { name: 'Progress' });
+registerEnumType(InvType, { name: 'InvType' });

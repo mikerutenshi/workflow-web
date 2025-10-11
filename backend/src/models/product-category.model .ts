@@ -1,7 +1,5 @@
 import { Gender } from '@/generated/client';
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-
-registerEnumType(Gender, { name: 'Gender' });
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class ProductCategory {

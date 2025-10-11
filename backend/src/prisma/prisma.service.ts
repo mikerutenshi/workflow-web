@@ -1,12 +1,11 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Prisma, PrismaClient } from '@/generated/client';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '@/generated/client';
-import { Prisma } from '@/generated/client';
 
 @Injectable()
 export class PrismaService
   extends PrismaClient<Prisma.PrismaClientOptions, 'query'>
-  implements OnModuleDestroy
+  implements OnModuleDestroy, OnModuleInit
 {
   constructor(configService: ConfigService) {
     super({
@@ -45,4 +44,6 @@ export class PrismaService
   async onModuleDestroy() {
     await this.$disconnect();
   }
+
+  onModuleInit() {}
 }

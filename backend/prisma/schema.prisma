@@ -284,7 +284,7 @@ model InvXfer {
   toInvId           Int
   xferDate          DateTime
   progress          Progress        @default(INITIATED)
-  InvXferItems      InvXferItem[]
+  invXferItems      InvXferItem[]
 
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
@@ -301,7 +301,7 @@ model InvXferItem {
   productId         Int
   invXferItemSizes  InvXferItemToSize[]
 
-  invXfer           InvXfer     @relation(fields: [invXferId], references: [id])
+  invXfer           InvXfer         @relation(fields: [invXferId], references: [id])
   product           Product         @relation(fields: [productId], references: [id])
 }
 
@@ -310,7 +310,6 @@ model InvXferItemToSize {
   invXferId         Int
   productId         Int
   sizeId            Int
-
   quantity          Int
 
   invXferItem       InvXferItem     @relation(fields: [invXferId, productId], references: [invXferId, productId], onDelete: Cascade)

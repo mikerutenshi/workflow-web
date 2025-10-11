@@ -2,6 +2,26 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Artisan {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  firstName: String!
+  lastName: String
+  jobs: [Job!]!
+}
+
+enum Job {
+  DRAW_UPPER
+  DRAW_LINING
+  STITCH_UPPER
+  STITCH_OUTSOLE
+  STITCH_INSOLE
+  LAST
+}
+
 type Role {
   id: ID!
   name: String!
@@ -24,6 +44,53 @@ type User {
   updatedBy: ID
 }
 
+type Inventory {
+  id: ID!
+  name: String!
+  address: String!
+  city: String!
+  province: String!
+  type: InvType!
+}
+
+enum InvType {
+  FACTORY
+  STORAGE
+  CONSIGNMENT
+  STOREFRONT
+}
+
+type Size {
+  id: ID!
+  eu: String!
+  us: String
+  uk: String
+  jp: String
+  gender: Gender!
+}
+
+enum Gender {
+  MEN
+  WOMEN
+  KIDS
+}
+
+type InvProductToSize {
+  invId: ID!
+  productId: ID!
+  sizeId: ID!
+  quantity: Int!
+  size: Size!
+}
+
+type InvProduct {
+  invId: ID!
+  productId: ID!
+  invProductSizes: [InvProductToSize!]!
+  sellingPrice: Int!
+  discount: String!
+}
+
 type Product {
   id: ID!
   createdBy: ID!
@@ -38,12 +105,6 @@ type ProductCategory {
   id: ID!
   name: String!
   gender: Gender!
-}
-
-enum Gender {
-  MEN
-  WOMEN
-  KIDS
 }
 
 type ProductGroup {
@@ -94,6 +155,15 @@ type ProductGetDto {
   productColors: [ColorToProductWithColor!]!
 }
 
+type InvProductGetDto {
+  invId: ID!
+  productId: ID!
+  invProductSizes: [InvProductToSize!]!
+  sellingPrice: Int!
+  discount: String!
+  product: ProductGetDto!
+}
+
 type ProductGroupGetDto {
   id: ID!
   createdBy: ID!
@@ -130,35 +200,6 @@ type LaborCostGetDto {
   laborCosts: [LaborCost]
 }
 
-type Artisan {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  firstName: String!
-  lastName: String
-  jobs: [Job!]!
-}
-
-enum Job {
-  DRAW_UPPER
-  DRAW_LINING
-  STITCH_UPPER
-  STITCH_OUTSOLE
-  STITCH_INSOLE
-  LAST
-}
-
-type Size {
-  id: ID!
-  eu: String!
-  us: String
-  uk: String
-  jp: String
-  gender: Gender!
-}
-
 type SizeToWork {
   workId: ID!
   sizeId: ID!
@@ -176,7 +217,17 @@ type Work {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWork!]!
-  progress: ID!
+  progress: Progress!
+}
+
+enum Progress {
+  INITIATED
+  PENDING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+  FAILED
 }
 
 type TaskWithArtisan {
@@ -202,7 +253,7 @@ type WorkWithTasks {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWork!]!
-  progress: ID!
+  progress: Progress!
   tasks: [TaskWithArtisan!]!
   product: Product!
 }
@@ -217,7 +268,7 @@ type WorkWithProduct {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWork!]!
-  progress: ID!
+  progress: Progress!
   product: Product!
 }
 
@@ -255,47 +306,6 @@ type PayrollGetDto {
   totalPayable: Float!
   totalQuantity: Float!
   artisans: [ArtisanWithTasks!]!
-}
-
-type Inventory {
-  id: ID!
-  name: String!
-  address: String!
-  city: String!
-  province: String!
-  type: InvType!
-}
-
-enum InvType {
-  FACTORY
-  STORAGE
-  CONSIGNMENT
-  STOREFRONT
-}
-
-type InvProductToSize {
-  invId: ID!
-  productId: ID!
-  sizeId: ID!
-  quantity: Int!
-  size: Size!
-}
-
-type InvProduct {
-  invId: ID!
-  productId: ID!
-  invProductSizes: [InvProductToSize!]!
-  sellingPrice: Int!
-  discount: String!
-}
-
-type InvProductGetDto {
-  invId: ID!
-  productId: ID!
-  invProductSizes: [InvProductToSize!]!
-  sellingPrice: Int!
-  discount: String!
-  product: ProductGetDto!
 }
 
 """Date custom scalar type"""

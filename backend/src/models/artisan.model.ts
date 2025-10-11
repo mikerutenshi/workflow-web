@@ -1,8 +1,6 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Job } from '@/generated/client';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-
-registerEnumType(Job, { name: 'Job' });
 
 @ObjectType()
 export class Artisan extends BaseModel {
