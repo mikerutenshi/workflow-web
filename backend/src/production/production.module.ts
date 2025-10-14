@@ -9,6 +9,7 @@ import { TaskService } from './task.service';
 import { PayrollResolver } from './payroll.resolver';
 import { PayrollService } from './payroll.service';
 import { InvProductService } from '@/inventory/invProduct.service';
+import { InvXferService } from '@/inventory/invXfer.service';
 
 @Module({
   providers: [
@@ -21,6 +22,7 @@ import { InvProductService } from '@/inventory/invProduct.service';
     PayrollResolver,
     PayrollService,
     InvProductService,
+    InvXferService,
   ],
   imports: [PrismaModule],
 })

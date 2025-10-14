@@ -552,7 +552,7 @@ input InvProductUpdateDto {
 }
 
 input InvXferCreateDto {
-  fromInvId: ID!
+  fromInvId: ID
   toInvId: ID!
   xferDate: Date!
   progress: Progress!

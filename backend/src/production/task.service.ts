@@ -4,17 +4,20 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Progress } from '@/generated/client';
 import { InvProductService } from '@/inventory/invProduct.service';
+import { InvXferService } from '@/inventory/invXfer.service';
 
 @Injectable()
 export class TaskService {
   constructor(
     private prisma: PrismaService,
     private invProductService: InvProductService,
+    private invXferService: InvXferService,
   ) {}
 
   updateTasks(tasks: TaskUpdateDto[]): Promise<TaskWithArtisan[]> {
     return this.prisma.$transaction(async (prisma) => {
       // Update tasks first
+      var userId = +tasks.at(0)!.updatedBy;
       const updatedTasks = await Promise.all(
         tasks.map((task) =>
           prisma.task.update({
@@ -72,8 +75,25 @@ export class TaskService {
 
         //Create new inv product if grogress == completed
         if (initialProgress !== Progress.COMPLETED && allDone) {
-          //Look for existing storage
+          //create new transfer entity
 
+          this.invXferService.createInvXfer({
+            fromInvId: null,
+            toInvId: factory!.id,
+            progress: Progress.COMPLETED,
+            invXferItems: [
+              {
+                productId: initialWork!.productId,
+                invXferItemSizes: initialWork!.workSizes.map((workSize) => ({
+                  sizeId: workSize.sizeId,
+                  quantity: workSize.quantity,
+                })),
+              },
+            ],
+            createdBy: userId,
+          });
+
+          //Look for existing storage
           if (existingInvProduct) {
             const { invProductSizes } = existingInvProduct;
             // Update existing inventory product by adding quantities
@@ -111,7 +131,7 @@ export class TaskService {
           } else {
             //Else create new entities
             const invProductDto = {
-              invId: factory?.id || 1,
+              invId: factory!.id,
               productId: initialWork!.productId,
               invProductSizes: initialWork!.workSizes.map((workSize) => ({
                 sizeId: workSize.sizeId,

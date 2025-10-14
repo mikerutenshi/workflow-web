@@ -27,7 +27,6 @@
         :search="search"
         :loading="isFetchingInvXfers"
         item-value="id"
-        class="flex-grow-1"
         fixed-header
         hover
         :page="pageNo"
@@ -37,12 +36,16 @@
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>
 
-        <template v-slot:item.invProductSizes="{ item }">
+        <template v-slot:item.invXfer.xferDate="{ item }">
+          {{ adapter.format(item.invXfer.xferDate, 'fullDateWithWeekday') }}
+        </template>
+
+        <template v-slot:item.invXferItemSizes="{ item }">
           <v-table density="compact">
             <tbody>
-              <tr v-for="size in item.invXferItemSizes" :key="size.size.id">
-                <td>{{ size.size.eu }}</td>
-                <td>{{ size.quantity }}</td>
+              <tr v-for="i in item.invXferItemSizes" :key="i.size.id">
+                <td>{{ i.size.eu }}</td>
+                <td>{{ i.quantity }}</td>
               </tr>
               <tr>
                 <td><i>Total</i></td>
@@ -68,6 +71,7 @@
 <script setup lang="ts">
 import { mdiMagnify } from '@mdi/js';
 import { useQuery } from 'villus';
+import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import { GetInvXfersPerItemDocument } from '~/api/generated/types';
 
@@ -95,6 +99,7 @@ const {
 });
 
 const { t } = useI18n();
+const adapter = useDate();
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
@@ -102,7 +107,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.from_inv'), key: 'invXfer.fromInv.name' },
   { title: t('label.to_inv'), key: 'invXfer.toInv.name' },
   { title: t('label.status'), key: 'invXfer.progress' },
-  { title: t('label.sizes'), key: 'invXferItemSizes.', minWidth: '120' },
+  { title: t('label.sizes'), key: 'invXferItemSizes', minWidth: '120' },
 ];
 const search = ref('');
 </script>

@@ -6,10 +6,10 @@ import { InvXferItemCreateDto } from './inv-xfer-item-create.dto';
 
 @InputType()
 export class InvXferCreateDto {
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  fromInvId: number;
+  fromInvId: number | null;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
@@ -18,7 +18,7 @@ export class InvXferCreateDto {
 
   @Field(() => Date)
   @IsDate()
-  xferDate: Date;
+  xferDate?: Date;
 
   @Field(() => Progress)
   @IsEnum(Progress)

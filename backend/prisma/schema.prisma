@@ -282,7 +282,7 @@ model InvXfer {
   id                Int             @id @default(autoincrement())
   fromInvId         Int?
   toInvId           Int
-  xferDate          DateTime
+  xferDate          DateTime        @default(now())
   progress          Progress        @default(INITIATED)
   invXferItems      InvXferItem[]
 
