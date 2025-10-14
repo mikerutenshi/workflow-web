@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { InvXferCreateDto } from './dto/inv-xfer-create.dto';
 import { InvXfer } from '@/models/inv-xfer.model';
+import { InvXferPerItemDto } from './dto/inv-xfer-per-item.dto';
 
 @Injectable()
 export class InvXferService {
@@ -25,11 +26,28 @@ export class InvXferService {
         },
       },
       include: {
-        invXferItems: {
-          include: {
-            invXferItemSizes: { include: { size: true } },
-          },
-        },
+        invXferItems: true,
+        fromInv: true,
+        toInv: true
+      },
+    });
+  }
+
+  async getInvXfersPerItem(
+    invId: number,
+    productId: number,
+  ): Promise<InvXferPerItemDto[]> {
+    return await this.prisma.invXferItem.findMany({
+      include: {
+        invXfer: { include: { fromInv: true, toInv: true } },
+        invXferItemSizes: { include: { size: true } },
+      },
+      where: {
+        OR: [
+          { invXfer: { toInvId: invId } },
+          { invXfer: { fromInvId: invId } },
+        ],
+        productId,
       },
     });
   }

@@ -87,3 +87,33 @@ mutation updateInvProduct(
 mutation deleteInvProduct($invId: ID!, $productId: ID!) {
   deleteInvProduct(invId: $invId, productId: $productId)
 }
+
+query getInvXfersPerItem($invId: ID!, $productId: ID!) {
+  getInvXfersPerItem(invId: $invId, productId: $productId) {
+    invXferId
+    productId
+    invXferItemSizes {
+      invXferId
+      productId
+      sizeId
+      size {
+        ...Size
+      }
+      quantity
+    }
+    invXfer {
+      fromInvId
+      toInvId
+      xferDate
+      progress
+      fromInv {
+        name
+        type
+      }
+      toInv {
+        name
+        type
+      }
+    }
+  }
+}

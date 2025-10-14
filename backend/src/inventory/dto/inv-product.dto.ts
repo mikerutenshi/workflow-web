@@ -3,7 +3,7 @@ import { ProductGetDto } from '@/product/dto/product-get.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class InvProductGetDto extends InvProduct {
+export class InvProductDto extends InvProduct {
   @Field(() => ProductGetDto)
   product: ProductGetDto;
 }

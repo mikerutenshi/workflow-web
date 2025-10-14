@@ -4,6 +4,8 @@ import { InventoryService } from './inventory.service';
 import { InventoryResolver } from './inventory.resolver';
 import { InvProductService } from './invProduct.service';
 import { InvProductResolver } from './invProduct.resolver';
+import { InvXferService } from './invXfer.service';
+import { InvXferResolver } from './invXfer.resolver';
 
 @Module({
   providers: [
@@ -11,6 +13,8 @@ import { InvProductResolver } from './invProduct.resolver';
     InventoryResolver,
     InvProductService,
     InvProductResolver,
+    InvXferResolver,
+    InvXferService,
   ],
   imports: [PrismaModule],
 })

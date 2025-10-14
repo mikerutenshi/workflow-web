@@ -155,13 +155,52 @@ type ProductGetDto {
   productColors: [ColorToProductWithColor!]!
 }
 
-type InvProductGetDto {
+type InvProductDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
   sellingPrice: Int!
   discount: String!
   product: ProductGetDto!
+}
+
+type InvXfer {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  fromInvId: ID
+  toInvId: ID!
+  xferDate: Date!
+  progress: Progress!
+  fromInv: Inventory
+  toInv: Inventory!
+}
+
+enum Progress {
+  INITIATED
+  PENDING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+type InvXferItemToSize {
+  invXferId: ID!
+  productId: ID!
+  sizeId: ID!
+  quantity: Float!
+  size: Size!
+}
+
+type InvXferPerItemDto {
+  invXferId: ID!
+  productId: ID!
+  invXferItemSizes: [InvXferItemToSize!]!
+  invXfer: InvXfer!
 }
 
 type ProductGroupGetDto {
@@ -218,16 +257,6 @@ type Work {
   productId: ID!
   workSizes: [SizeToWork!]!
   progress: Progress!
-}
-
-enum Progress {
-  INITIATED
-  PENDING
-  IN_PROGRESS
-  ON_HOLD
-  COMPLETED
-  CANCELLED
-  FAILED
 }
 
 type TaskWithArtisan {
@@ -334,7 +363,8 @@ type Query {
   getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
   getInventory(id: ID!): Inventory
   getInventories: [Inventory!]!
-  getInvProducts: [InvProductGetDto!]!
+  getInvProducts: [InvProductDto!]!
+  getInvXfersPerItem(invId: ID!, productId: ID!): [InvXferPerItemDto!]!
 }
 
 type Mutation {
@@ -372,6 +402,7 @@ type Mutation {
   createInvProduct(data: InvProductCreateDto!): InvProduct!
   updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
+  createInvXfer(data: InvXferCreateDto!): InvXfer!
 }
 
 input RoleDto {
@@ -518,4 +549,23 @@ input InvProductUpdateDto {
   invProductSizes: [InvProductToSizeCreateDto!]
   sellingPrice: Int
   discount: String
+}
+
+input InvXferCreateDto {
+  fromInvId: ID!
+  toInvId: ID!
+  xferDate: Date!
+  progress: Progress!
+  invXferItems: [InvXferItemCreateDto!]!
+  createdBy: ID!
+}
+
+input InvXferItemCreateDto {
+  productId: ID!
+  invXferItemSizes: [InvXferItemSizeCreateDto!]!
+}
+
+input InvXferItemSizeCreateDto {
+  sizeId: ID!
+  quantity: Float!
 }

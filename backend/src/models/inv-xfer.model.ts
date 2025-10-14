@@ -1,7 +1,7 @@
 import { Progress } from '@/generated/client';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-import { InvXferItem } from './inv-xfer-item.model';
+import { Inventory } from './inventory.model';
 
 @ObjectType()
 export class InvXfer extends BaseModel {
@@ -13,6 +13,9 @@ export class InvXfer extends BaseModel {
   xferDate: Date;
   @Field(() => Progress)
   progress: Progress;
-  @Field(() => [InvXferItem])
-  invXferItems: InvXferItem[];
+
+  @Field(() => Inventory, {nullable: true})
+  fromInv: Inventory | null;
+  @Field(() => Inventory)
+  toInv: Inventory;
 }

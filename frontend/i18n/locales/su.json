@@ -122,7 +122,10 @@
     "select_province": "Pilih Provinsi",
     "select_inv_type": "Pilih Tipe Gudang",
     "inv_type": "Tipe Gudang",
-    "hex_code": "Kode Hexadesimal"
+    "hex_code": "Kode Hexadesimal",
+    "xfer_date": "Tanggal Mindahkeun",
+    "from_inv": "Ti Gudang ",
+    "to_inv": "Ka Gudang"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

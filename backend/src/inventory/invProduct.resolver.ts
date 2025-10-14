@@ -4,7 +4,7 @@ import { InvProduct } from '@/models/inv-product.model';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { ParseIntPipe } from '@nestjs/common';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
-import { InvProductGetDto } from './dto/inv-product-get.dto';
+import { InvProductDto } from './dto/inv-product.dto';
 
 @Resolver(() => InvProduct)
 export class InvProductResolver {
@@ -17,8 +17,8 @@ export class InvProductResolver {
     return this.service.createInvProduct(data);
   }
 
-  @Query(() => [InvProductGetDto])
-  getInvProducts(): Promise<InvProductGetDto[]> {
+  @Query(() => [InvProductDto])
+  getInvProducts(): Promise<InvProductDto[]> {
     return this.service.getInvProducts();
   }
 

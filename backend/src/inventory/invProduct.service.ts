@@ -4,7 +4,7 @@ import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { InvProduct } from '@/models/inv-product.model';
 import { Prisma } from '@/generated/client';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
-import { InvProductGetDto } from './dto/inv-product-get.dto';
+import { InvProductDto } from './dto/inv-product.dto';
 
 @Injectable()
 export class InvProductService {
@@ -39,7 +39,7 @@ export class InvProductService {
       throw error;
     }
   }
-  async getInvProducts(): Promise<InvProductGetDto[]> {
+  async getInvProducts(): Promise<InvProductDto[]> {
     const products = await this.prisma.invToProduct.findMany({
       include: {
         invProductSizes: {
@@ -57,7 +57,7 @@ export class InvProductService {
     return products.map((product) => ({
       ...product,
       discount: Prisma.Decimal(product.discount).toString(),
-    })) as InvProductGetDto[];
+    })) as InvProductDto[];
   }
 
   async updateInvProduct(

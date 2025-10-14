@@ -10,14 +10,12 @@
   <v-row class="flex-grow-0">
     <v-col>
       <v-select
-        no-filter
         :label="$t('label.select_inventories')"
         :prepend-inner-icon="mdiWarehouse"
         :items="dataInventories?.getInventories"
+        v-model="selectInv"
         item-title="name"
-        multiple
-        auto-select-first
-        chips
+        item-value="id"
       ></v-select>
     </v-col>
     <v-col>
@@ -109,12 +107,12 @@
             </template>
             <v-list>
               <v-list-item
-                v-for="(item, index) in menuItems"
+                v-for="(menuItem, index) in menuItems"
                 :key="index"
                 :value="index"
-                @click="index === 0 ? (dialog = true) : null"
+                @click="index === 0 ? showItemDialog(item as InvProductDto) : null"
               >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                <v-list-item-title>{{ menuItem.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -123,13 +121,16 @@
     </v-col>
   </v-row>
 
-  <v-dialog v-model="dialog" transition="fade-transition">
+  <v-dialog v-model="dialog" transition="fade-transition" max-width="1200px">
     <v-card>
       <v-toolbar>
-        <v-toolbar-title>Detail</v-toolbar-title>
+        <v-toolbar-title
+          >Transfer Details for {{ selected.productSku }}</v-toolbar-title
+        >
       </v-toolbar>
-
-      <v-container class="h-100 d-flex flex-column"> </v-container>
+      <v-container class="d-flex flex-column">
+        <InvProductXferTable :inv-id="selectInv.id" :product-id="selected.productId"></InvProductXferTable>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>
@@ -147,12 +148,37 @@ import type { VDataTable } from 'vuetify/components';
 import {
   GetInventoriesDocument,
   GetInvProductsDocument,
+  type InvProductDto,
 } from '~/api/generated/types';
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 const menuItems = [{ title: 'Show Details' }, { title: 'Edit' }];
+
+const {
+  data: dataInventories,
+  isFetching: isFetchingInventories,
+  error: errorInventories,
+} = useQuery({
+  query: GetInventoriesDocument,
+  tags: [CACHE_INVENTORIES],
+  onData(data) {
+    let firstItem = data.getInventories.at(0);
+    if (firstItem) {
+      selectInv.value = {id: firstItem.id, name: firstItem.name}
+    }
+  }
+});
+
+const selectInv = shallowRef({
+  id: '1',
+  name: 'Some Warehouse'
+})
+const selected = reactive({
+  productId: '',
+  productSku: ''
+});
 
 const {
   execute,
@@ -162,14 +188,6 @@ const {
 } = useQuery({
   query: GetInvProductsDocument,
   tags: [CACHE_INV_PRODUCTS],
-});
-const {
-  data: dataInventories,
-  isFetching: isFetchingInventories,
-  error: errorInventories,
-} = useQuery({
-  query: GetInventoriesDocument,
-  tags: [CACHE_INVENTORIES],
 });
 
 const { t } = useI18n();
@@ -193,4 +211,10 @@ const headers: ReadOnlyHeaders = [
 const search = ref('');
 const dialog = ref(false);
 const activator = ref(undefined);
+
+function showItemDialog(item: InvProductDto) {
+  dialog.value = true;
+  selected.productId = item.productId;
+  selected.productSku = item.product.sku;
+}
 </script>

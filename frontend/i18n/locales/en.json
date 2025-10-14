@@ -122,7 +122,10 @@
     "select_province": "Select Province",
     "select_inv_type": "Select Inventory Type",
     "inv_type": "Inventory Type",
-    "hex_code": "Hexadecimal Code"
+    "hex_code": "Hexadecimal Code",
+    "xfer_date": "Transfer Date",
+    "from_inv": "From Warehouse",
+    "to_inv": "To Warehouse"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

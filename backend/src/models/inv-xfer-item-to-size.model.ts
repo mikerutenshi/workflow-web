@@ -7,6 +7,8 @@ export class InvXferItemToSize {
   invXferId: number;
   @Field(() => ID)
   productId: number;
+  @Field(() => ID)
+  sizeId: number;
   @Field()
   quantity: number;
   @Field(() => Size)
