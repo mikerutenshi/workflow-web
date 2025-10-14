@@ -41,7 +41,6 @@
               :label="$t('label.select_jobs')"
               multiple
               chips
-              auto-select-first
               item-title="title"
               item-value="id"
               :error-messages="jobs.errorMessage.value"
@@ -90,7 +89,7 @@ const jobOptions = computed(() =>
   (Object.keys(JOBS) as Array<keyof typeof JOBS>).map((key) => ({
     id: key,
     title: t(JOBS[key]),
-  }))
+  })),
 );
 const validationSchema = toTypedSchema(ArtisanSchema);
 const {
@@ -151,7 +150,7 @@ if (artisanId.value) {
         jobs.setValue(
           artisan.jobs && artisan.jobs.length > 0
             ? (artisan.jobs as [Job, ...Job[]])
-            : [Job.DrawUpper]
+            : [Job.DrawUpper],
         );
 
         setValues({

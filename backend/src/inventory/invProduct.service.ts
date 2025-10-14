@@ -39,7 +39,7 @@ export class InvProductService {
       throw error;
     }
   }
-  async getInvProducts(): Promise<InvProductDto[]> {
+  async getInvProducts(invId: number): Promise<InvProductDto[]> {
     const products = await this.prisma.invToProduct.findMany({
       include: {
         invProductSizes: {
@@ -51,6 +51,9 @@ export class InvProductService {
             productColors: { include: { color: true } },
           },
         },
+      },
+      where: {
+        invId,
       },
     });
 

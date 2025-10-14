@@ -16,7 +16,6 @@
               v-model="productCategoryId.value.value"
               :error-messages="productCategoryId.errorMessage.value"
               :label="$t('label.product_category')"
-              auto-select-first
               item-value="id"
               item-title="name"
               :items="data?.getProductCategories"
@@ -168,7 +167,7 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
     onError(err) {
       alert(`Error while deleting product group -> ${err}`);
     },
-  }
+  },
 );
 const onSubmit = handleSubmit((data) => {
   if (productGroupId.value) {

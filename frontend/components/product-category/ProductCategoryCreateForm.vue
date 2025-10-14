@@ -25,7 +25,6 @@
             <v-select
               v-model="gender.value.value"
               :label="$t('label.gender')"
-              auto-select-first
               item-value="id"
               item-title="name"
               :items="genders"
@@ -34,7 +33,11 @@
               <template v-slot:item="{ props, item }">
                 <v-list-item
                   v-bind="props"
-                  :title="item.title !== '' ? $t(renderGender(item.title as Gender)) : ''"
+                  :title="
+                    item.title !== ''
+                      ? $t(renderGender(item.title as Gender))
+                      : ''
+                  "
                 ></v-list-item>
               </template>
               <template v-slot:selection="{ item }">
@@ -124,7 +127,7 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
     onError(err) {
       alert(`Error while deleting product category -> ${err}`);
     },
-  }
+  },
 );
 const onSubmit = handleSubmit((data) => {
   if (productCategoryId.value) {

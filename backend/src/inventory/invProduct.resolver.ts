@@ -18,8 +18,8 @@ export class InvProductResolver {
   }
 
   @Query(() => [InvProductDto])
-  getInvProducts(): Promise<InvProductDto[]> {
-    return this.service.getInvProducts();
+  getInvProducts(@Args('invId',{ type: () => ID }, ParseIntPipe) invId: number ): Promise<InvProductDto[]> {
+    return this.service.getInvProducts(invId);
   }
 
   @Mutation(() => InvProduct)

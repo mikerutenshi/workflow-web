@@ -363,7 +363,7 @@ type Query {
   getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
   getInventory(id: ID!): Inventory
   getInventories: [Inventory!]!
-  getInvProducts: [InvProductDto!]!
+  getInvProducts(invId: ID!): [InvProductDto!]!
   getInvXfersPerItem(invId: ID!, productId: ID!): [InvXferPerItemDto!]!
 }
 

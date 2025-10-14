@@ -54,7 +54,6 @@
               :label="$t('label.select_sizes')"
               multiple
               chips
-              auto-select-first
               :items="computeSizeList"
               :loading="isFetchingSizes"
               item-title="eu"

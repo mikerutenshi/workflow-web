@@ -42,8 +42,8 @@ mutation createInvProduct($data: InvProductCreateDto!) {
   }
 }
 
-query getInvProducts {
-  getInvProducts {
+query getInvProducts($invId: ID!) {
+  getInvProducts(invId: $invId) {
     invId
     productId
     product {

@@ -44,7 +44,6 @@
               <template #item.artisan="{ item, index }">
                 <v-select
                   :label="$t('label.artisan')"
-                  auto-select-first
                   item-value="id"
                   item-title="fullName"
                   :items="

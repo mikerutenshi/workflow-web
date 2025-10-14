@@ -72,7 +72,6 @@
               :return-object="false"
               :label="$t('label.select_inv_type')"
               chips
-              auto-select-first
               item-title="title"
               item-value="id"
               :error-messages="type.errorMessage.value"

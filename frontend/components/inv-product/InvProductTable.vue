@@ -13,7 +13,7 @@
         :label="$t('label.select_inventories')"
         :prepend-inner-icon="mdiWarehouse"
         :items="dataInventories?.getInventories"
-        v-model="selectInv"
+        v-model="selectInvId"
         item-title="name"
         item-value="id"
       ></v-select>
@@ -110,7 +110,9 @@
                 v-for="(menuItem, index) in menuItems"
                 :key="index"
                 :value="index"
-                @click="index === 0 ? showItemDialog(item as InvProductDto) : null"
+                @click="
+                  index === 0 ? showItemDialog(item as InvProductDto) : null
+                "
               >
                 <v-list-item-title>{{ menuItem.title }}</v-list-item-title>
               </v-list-item>
@@ -125,11 +127,14 @@
     <v-card>
       <v-toolbar>
         <v-toolbar-title
-          >Transfer Details for {{ selected.productSku }}</v-toolbar-title
+          >Transfer Details for {{ selectItem.productSku }}</v-toolbar-title
         >
       </v-toolbar>
       <v-container class="d-flex flex-column">
-        <InvProductXferTable :inv-id="selectInv.id" :product-id="selected.productId"></InvProductXferTable>
+        <InvProductXferTable
+          :inv-id="selectInvId"
+          :product-id="selectItem.productId"
+        ></InvProductXferTable>
       </v-container>
     </v-card>
   </v-dialog>
@@ -166,18 +171,15 @@ const {
   onData(data) {
     let firstItem = data.getInventories.at(0);
     if (firstItem) {
-      selectInv.value = {id: firstItem.id, name: firstItem.name}
+      selectInvId.value = firstItem.id;
     }
-  }
+  },
 });
 
-const selectInv = shallowRef({
-  id: '1',
-  name: 'Some Warehouse'
-})
-const selected = reactive({
+const selectInvId = ref('');
+const selectItem = reactive({
   productId: '',
-  productSku: ''
+  productSku: '',
 });
 
 const {
@@ -187,6 +189,7 @@ const {
   error: errorInvProducts,
 } = useQuery({
   query: GetInvProductsDocument,
+  variables: computed(() => ({ invId: selectInvId.value })),
   tags: [CACHE_INV_PRODUCTS],
 });
 
@@ -214,7 +217,7 @@ const activator = ref(undefined);
 
 function showItemDialog(item: InvProductDto) {
   dialog.value = true;
-  selected.productId = item.productId;
-  selected.productSku = item.product.sku;
+  selectItem.productId = item.productId;
+  selectItem.productSku = item.product.sku;
 }
 </script>
