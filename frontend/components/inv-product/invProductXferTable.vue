@@ -7,7 +7,7 @@
     </v-col>
   </v-row>
 
-  <v-row class="flex-grow-0">
+  <!-- <v-row class="flex-grow-0">
     <v-col>
       <v-text-field
         v-model="search"
@@ -17,7 +17,7 @@
         single-line
       ></v-text-field>
     </v-col>
-  </v-row>
+  </v-row> -->
 
   <v-row>
     <v-col class="d-flex flex-column">

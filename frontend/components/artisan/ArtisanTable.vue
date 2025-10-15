@@ -20,14 +20,18 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <NuxtLink :to="$localePath(`/artisans/update/${item.id}`)">
-        <v-btn color="primary" :prepend-icon="mdiPencil" variant="text"></v-btn>
+        <v-btn
+          color="primary"
+          :icon="mdiFileDocumentEditOutline"
+          variant="text"
+        ></v-btn>
       </NuxtLink>
     </template>
   </v-data-table>
 </template>
 
 <script setup lang="ts">
-import { mdiPencil } from '@mdi/js';
+import { mdiFileDocumentEditOutline, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetArtisansDocument } from '~/api/generated/types';

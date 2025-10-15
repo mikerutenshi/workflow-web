@@ -118,7 +118,7 @@
         <template v-slot:item.actions="{ item }">
           <v-btn
             color="primary"
-            :prepend-icon="mdiPencil"
+            :icon="mdiFileDocumentEditOutline"
             variant="text"
             @click="edit(item.id)"
           ></v-btn>
@@ -186,6 +186,8 @@ import {
   mdiTimerSand,
   mdiTimerSandEmpty,
   mdiTimerSandComplete,
+  mdiFileDocumentEdit,
+  mdiFileDocumentEditOutline,
 } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useQuery } from 'villus';

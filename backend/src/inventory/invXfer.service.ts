@@ -28,7 +28,7 @@ export class InvXferService {
       include: {
         invXferItems: true,
         fromInv: true,
-        toInv: true
+        toInv: true,
       },
     });
   }
@@ -48,6 +48,9 @@ export class InvXferService {
           { invXfer: { fromInvId: invId } },
         ],
         productId,
+      },
+      orderBy: {
+        invXferId: 'desc',
       },
     });
   }

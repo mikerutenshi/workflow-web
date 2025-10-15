@@ -94,8 +94,8 @@
           </v-table>
         </template>
 
-        <template v-slot:item.actions="{ item }">
-          <v-menu transition="slide-y-transition">
+        <!-- <template v-slot:item.actions="{ item }">
+          <v-menu transition="slide-y-transition" open-on-hover>
             <template v-slot:activator="{ props }">
               <v-btn
                 :prepend-icon="mdiDotsVertical"
@@ -118,6 +118,15 @@
               </v-list-item>
             </v-list>
           </v-menu>
+        </template> -->
+
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            color="primary"
+            :icon="mdiFileDocumentArrowRightOutline"
+            variant="text"
+            @click="showItemDialog(item as InvProductDto)"
+          ></v-btn>
         </template>
       </v-data-table>
     </v-col>
@@ -144,6 +153,10 @@
 import {
   mdiClose,
   mdiDotsVertical,
+  mdiEye,
+  mdiFileDocumentArrowRight,
+  mdiFileDocumentArrowRightOutline,
+  mdiFileDocumentEdit,
   mdiMagnify,
   mdiPencil,
   mdiWarehouse,

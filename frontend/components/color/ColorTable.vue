@@ -53,7 +53,7 @@
         <template v-slot:item.actions="{ item }">
           <v-btn
             color="primary"
-            :prepend-icon="mdiPencil"
+            :icon="mdiFileDocumentEditOutline"
             variant="text"
             @click="edit(item.id)"
           ></v-btn>
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify, mdiPencil } from '@mdi/js';
+import { mdiFileDocumentEditOutline, mdiMagnify, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetColorsDocument } from '~/api/generated/types';

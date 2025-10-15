@@ -90,7 +90,7 @@
           <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
             <v-btn
               color="primary"
-              :prepend-icon="mdiPencil"
+              :icon="mdiFileDocumentEditOutline"
               variant="text"
             ></v-btn>
           </NuxtLink>
@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify, mdiPencil } from '@mdi/js';
+import { mdiFileDocumentEditOutline, mdiMagnify, mdiPencil } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import {

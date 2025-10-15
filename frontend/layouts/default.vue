@@ -116,23 +116,20 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
 import {
+  mdiAccountWrench,
   mdiCalculator,
-  mdiCashRegister,
-  mdiChartTimeline,
-  mdiFaceMan,
+  mdiCashMultiple,
+  mdiCogs,
+  mdiFactory,
   mdiHome,
-  mdiShoeFormal,
+  mdiPalette,
   mdiPlus,
   mdiPrinter,
-  mdiWarehouse,
-  mdiCogs,
-  mdiPalette,
-  mdiClipboardList,
-  mdiClipboardListOutline,
-  mdiHomeOutline,
+  mdiShoeSneaker,
+  mdiWarehouse
 } from '@mdi/js';
+import { useRoute } from 'vue-router';
 import { Role } from '~/utils/constants';
 
 const dialogStore = useDialogStore();
@@ -162,22 +159,22 @@ const navItems = computed(() => {
       {
         title: t('nav.payroll'),
         route: localePath('/payroll'),
-        icon: mdiCashRegister,
+        icon: mdiCashMultiple,
       },
       {
         title: t('nav.production_status'),
         route: localePath('/works'),
-        icon: mdiChartTimeline,
+        icon: mdiFactory,
       },
       {
         title: t('nav.inventory'),
         route: localePath('/inv-products'),
-        icon: mdiClipboardList,
+        icon: mdiWarehouse,
       },
       {
         title: t('nav.products'),
         route: localePath('/products'),
-        icon: mdiShoeFormal,
+        icon: mdiShoeSneaker,
       },
       {
         title: t('nav.labor_costs'),
@@ -187,7 +184,7 @@ const navItems = computed(() => {
       {
         title: t('nav.artisans'),
         route: localePath('/artisans'),
-        icon: mdiFaceMan,
+        icon: mdiAccountWrench,
       },
       {
         title: t('nav.setting'),
@@ -213,7 +210,7 @@ const navItems = computed(() => {
       {
         title: t('nav.production_status'),
         route: localePath('/works'),
-        icon: mdiChartTimeline,
+        icon: mdiFactory,
       },
       {
         title: t('nav.inventory'),
@@ -223,17 +220,17 @@ const navItems = computed(() => {
       {
         title: t('nav.payroll'),
         route: localePath('/payroll'),
-        icon: mdiCashRegister,
+        icon: mdiCashMultiple,
       },
       {
         title: t('nav.products'),
         route: localePath('/products'),
-        icon: mdiShoeFormal,
+        icon: mdiShoeSneaker,
       },
       {
         title: t('nav.artisans'),
         route: localePath('/artisans'),
-        icon: mdiFaceMan,
+        icon: mdiAccountWrench,
       },
       {
         title: t('nav.setting'),
@@ -259,17 +256,17 @@ const navItems = computed(() => {
       {
         title: t('nav.production_status'),
         route: localePath('/works'),
-        icon: mdiChartTimeline,
+        icon: mdiFactory,
       },
       {
         title: t('nav.artisans'),
         route: localePath('/artisans'),
-        icon: mdiFaceMan,
+        icon: mdiAccountWrench,
       },
       {
         title: t('nav.products'),
         route: localePath('/products'),
-        icon: mdiShoeFormal,
+        icon: mdiShoeSneaker,
       },
     ];
   }
