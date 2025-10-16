@@ -3,24 +3,26 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { Progress } from '@/generated/client';
-import { InvProductService } from '@/inventory/invProduct.service';
-import { InvXferService } from '@/inventory/invXfer.service';
+import { InvProductService } from '@/inventory/inv-product.service';
+import { InvTrfService } from '@/inventory/inv-trf.service';
+import { generateId } from '@/utils/id-generator.util';
+import { Operation } from '@/models/operation.enum';
 
 @Injectable()
 export class TaskService {
   constructor(
     private prisma: PrismaService,
     private invProductService: InvProductService,
-    private invXferService: InvXferService,
+    private invTrfService: InvTrfService,
   ) {}
 
   updateTasks(tasks: TaskUpdateDto[]): Promise<TaskWithArtisan[]> {
-    return this.prisma.$transaction(async (prisma) => {
+    return this.prisma.$transaction(async (tx) => {
       // Update tasks first
       var userId = +tasks.at(0)!.updatedBy;
       const updatedTasks = await Promise.all(
         tasks.map((task) =>
-          prisma.task.update({
+          tx.task.update({
             where: { id: +task.id },
             data: {
               artisanId: task.artisanId !== null ? +task.artisanId : null,
@@ -36,7 +38,7 @@ export class TaskService {
       if (tasks.length > 0) {
         const workId = updatedTasks[0].workId;
 
-        const initialWork = await prisma.work.findUnique({
+        const initialWork = await tx.work.findUnique({
           where: { id: workId },
           include: { product: true, workSizes: true },
         });
@@ -59,32 +61,40 @@ export class TaskService {
           progress = Progress.PENDING;
         }
 
-        await prisma.work.update({
+        await tx.work.update({
           where: { id: workId },
           data: { progress },
         });
 
-        const factory = await prisma.inventory.findFirst({
+        const factory = await tx.inventory.findFirst({
           where: { type: 'FACTORY' },
         });
 
-        const existingInvProduct = await prisma.invToProduct.findFirst({
+        if (!factory) throw Error('Factory is not present');
+
+        const existingInvProduct = await tx.invToProduct.findFirst({
           where: { productId: initialWork!.productId },
           include: { invProductSizes: true },
         });
 
         //Create new inv product if grogress == completed
         if (initialProgress !== Progress.COMPLETED && allDone) {
-          //create new transfer entity
+          const lastTrf = await tx.invTrf.findFirst({
+            orderBy: { id: 'desc' },
+          });
+          const lastTrfNo = lastTrf?.trfNo || null;
+          const trfNo = generateId(Operation.Produce, lastTrfNo);
+          console.log(`trfNo: ${trfNo}`);
 
-          this.invXferService.createInvXfer({
+          await this.invTrfService.createInvTrf({
+            trfNo,
             fromInvId: null,
-            toInvId: factory!.id,
+            toInvId: factory.id,
             progress: Progress.COMPLETED,
-            invXferItems: [
+            invTrfItems: [
               {
                 productId: initialWork!.productId,
-                invXferItemSizes: initialWork!.workSizes.map((workSize) => ({
+                invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
                   sizeId: workSize.sizeId,
                   quantity: workSize.quantity,
                 })),
@@ -93,56 +103,16 @@ export class TaskService {
             createdBy: userId,
           });
 
-          //Look for existing storage
-          if (existingInvProduct) {
-            const { invProductSizes } = existingInvProduct;
-            // Update existing inventory product by adding quantities
-            for (const workSize of initialWork!.workSizes) {
-              const existingSize = invProductSizes.find(
-                (invSize) => invSize.sizeId === workSize.sizeId,
-              );
-
-              if (existingSize) {
-                // Update existing size by adding quantity
-                await prisma.invProductToSize.update({
-                  where: {
-                    invId_productId_sizeId: {
-                      invId: existingInvProduct.invId,
-                      productId: existingInvProduct.productId,
-                      sizeId: existingSize.sizeId,
-                    },
-                  },
-                  data: {
-                    quantity: existingSize.quantity + workSize.quantity,
-                  },
-                });
-              } else {
-                // Create new size entry
-                await prisma.invProductToSize.create({
-                  data: {
-                    invId: existingInvProduct.invId,
-                    productId: existingInvProduct.productId,
-                    sizeId: workSize.sizeId,
-                    quantity: workSize.quantity,
-                  },
-                });
-              }
-            }
-          } else {
-            //Else create new entities
-            const invProductDto = {
-              invId: factory!.id,
-              productId: initialWork!.productId,
-              invProductSizes: initialWork!.workSizes.map((workSize) => ({
-                sizeId: workSize.sizeId,
-                quantity: workSize.quantity,
-              })),
-              sellingPrice: 0,
-              discount: '0.0',
-            };
-
-            await this.invProductService.createInvProduct(invProductDto);
-          }
+          await this.invProductService.upsertInvProduct({
+            invId: factory.id,
+            productId: initialWork!.productId,
+            invProductSizes: initialWork!.workSizes.map((workSize) => ({
+              sizeId: workSize.sizeId,
+              quantity: workSize.quantity,
+            })),
+            sellingPrice: 0,
+            discount: '0.00',
+          });
         } else if (initialProgress === Progress.COMPLETED && !allDone) {
           // Reverse the effect: subtract quantities from inventory
           if (existingInvProduct) {
@@ -158,7 +128,7 @@ export class TaskService {
 
                 if (newQuantity > 0) {
                   // Update existing size by subtracting quantity
-                  await prisma.invProductToSize.update({
+                  await tx.invProductToSize.update({
                     where: {
                       invId_productId_sizeId: {
                         invId: existingInvProduct.invId,
@@ -172,7 +142,7 @@ export class TaskService {
                   });
                 } else {
                   // Delete size entry if quantity becomes 0 or negative
-                  await prisma.invProductToSize.delete({
+                  await tx.invProductToSize.delete({
                     where: {
                       invId_productId_sizeId: {
                         invId: existingInvProduct.invId,
@@ -186,7 +156,7 @@ export class TaskService {
             }
 
             // Check if all sizes have been removed and delete the invProduct if empty
-            const remainingSizes = await prisma.invProductToSize.findMany({
+            const remainingSizes = await tx.invProductToSize.findMany({
               where: {
                 invId: existingInvProduct.invId,
                 productId: existingInvProduct.productId,
@@ -194,7 +164,7 @@ export class TaskService {
             });
 
             if (remainingSizes.length === 0) {
-              await prisma.invToProduct.delete({
+              await tx.invToProduct.delete({
                 where: {
                   invId_productId: {
                     invId: existingInvProduct.invId,

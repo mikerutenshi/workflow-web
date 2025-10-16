@@ -19,7 +19,7 @@ const { t } = useI18n();
 const props = defineProps({
   timeout: {
     type: Number,
-    default: 3000,
+    default: 1500,
   },
   color: {
     type: String,

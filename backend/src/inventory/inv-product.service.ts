@@ -94,6 +94,66 @@ export class InvProductService {
     } as InvProduct;
   }
 
+  upsertInvProduct(data: InvProductCreateDto): Promise<InvProduct> {
+    const { invProductSizes, discount, ...rest } = data;
+
+    return this.prisma.$transaction(async (tx) => {
+      const upsertProduct = await tx.invToProduct.upsert({
+        where: {
+          invId_productId: { invId: data.invId, productId: data.productId },
+        },
+        update: {
+          ...rest,
+          ...(discount !== undefined && { discount: Prisma.Decimal(discount) }),
+        },
+        create: {
+          ...rest,
+          discount: Prisma.Decimal(discount),
+        },
+      });
+
+      if (invProductSizes && invProductSizes.length > 0) {
+        invProductSizes.map(async (productSize) => {
+          await tx.invProductToSize.upsert({
+            where: {
+              invId_productId_sizeId: {
+                invId: upsertProduct.invId,
+                productId: upsertProduct.productId,
+                sizeId: productSize.sizeId,
+              },
+            },
+            update: { quantity: { increment: productSize.quantity } },
+            create: {
+              invId: upsertProduct.invId,
+              productId: upsertProduct.productId,
+              sizeId: productSize.sizeId,
+              quantity: productSize.quantity,
+            },
+          });
+        });
+      }
+
+      const result = await tx.invToProduct.findUnique({
+        where: {
+          invId_productId: {
+            invId: upsertProduct.invId,
+            productId: upsertProduct.productId,
+          },
+        },
+        include: {
+          invProductSizes: {
+            include: { size: true },
+          },
+        },
+      });
+      console.log(`Result: ${JSON.stringify(result)}`);
+      return {
+        ...result,
+        discount: Prisma.Decimal(result!.discount).toString(),
+      } as InvProduct;
+    });
+  }
+
   async deleteInvProduct(invId: number, productId: number): Promise<Boolean> {
     const invProduct = await this.prisma.invToProduct.delete({
       where: { invId_productId: { invId, productId } },

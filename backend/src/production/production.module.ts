@@ -8,8 +8,8 @@ import { TaskResolver } from './task.resolver';
 import { TaskService } from './task.service';
 import { PayrollResolver } from './payroll.resolver';
 import { PayrollService } from './payroll.service';
-import { InvProductService } from '@/inventory/invProduct.service';
-import { InvXferService } from '@/inventory/invXfer.service';
+import { InvProductService } from '@/inventory/inv-product.service';
+import { InvTrfService } from '@/inventory/inv-trf.service';
 
 @Module({
   providers: [
@@ -22,7 +22,7 @@ import { InvXferService } from '@/inventory/invXfer.service';
     PayrollResolver,
     PayrollService,
     InvProductService,
-    InvXferService,
+    InvTrfService,
   ],
   imports: [PrismaModule],
 })

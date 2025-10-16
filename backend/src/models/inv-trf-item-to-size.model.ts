@@ -2,9 +2,9 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Size } from './size.model';
 
 @ObjectType()
-export class InvXferItemToSize {
+export class InvTrfItemToSize {
   @Field(() => ID)
-  invXferId: number;
+  invTrfId: number;
   @Field(() => ID)
   productId: number;
   @Field(() => ID)

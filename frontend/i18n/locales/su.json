@@ -21,6 +21,7 @@
     "artisans": "Pangrajin",
     "payroll": "Gajih",
     "inventory": "Inventaris",
+    "inventory_transfers": "Mindahkeun Inventaris",
     "setting": "Setélan",
     "setting_inventories": "Gudang",
     "setting_colors": "Warna"
@@ -48,6 +49,7 @@
     "works": "Produksi",
     "work_edit": "Ngarobah Pagawéan",
     "inventory": "Inventaris",
+    "inventory_transfers": "Mindahkeun Inventaris",
     "inventory_edit": "Ngarobah Gudang",
     "inventory_create": "Nyieun Gudang Anyar",
     "setting_inventories": "Setélan Gudang",
@@ -123,7 +125,8 @@
     "select_inv_type": "Pilih Tipe Gudang",
     "inv_type": "Tipe Gudang",
     "hex_code": "Kode Hexadesimal",
-    "xfer_date": "Tanggal Mindahkeun",
+    "trf_no": "No. Mindahkeun",
+    "trf_date": "Tanggal Mindahkeun",
     "from_inv": "Ti Gudang ",
     "to_inv": "Ka Gudang"
   },

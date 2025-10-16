@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async createUser(data: UserCreateDto): Promise<User> {
-    const password = await bcrypt.hash(data.password, 10);
+    const password = await bcrypt.hash(data.password, 12);
 
     return this.prisma.user.create({
       data: {

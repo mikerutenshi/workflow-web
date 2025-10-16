@@ -127,6 +127,7 @@ import {
   mdiPlus,
   mdiPrinter,
   mdiShoeSneaker,
+  mdiTransfer,
   mdiWarehouse
 } from '@mdi/js';
 import { useRoute } from 'vue-router';
@@ -170,6 +171,11 @@ const navItems = computed(() => {
         title: t('nav.inventory'),
         route: localePath('/inv-products'),
         icon: mdiWarehouse,
+      },
+      {
+        title: t('nav.inventory_transfers'),
+        route: localePath('/inv-product-transfers'),
+        icon: mdiTransfer,
       },
       {
         title: t('nav.products'),
@@ -216,6 +222,11 @@ const navItems = computed(() => {
         title: t('nav.inventory'),
         route: localePath('/inv-products'),
         icon: mdiWarehouse,
+      },
+      {
+        title: t('nav.inventory_transfers'),
+        route: localePath('/inv-product-transfers'),
+        icon: mdiTransfer,
       },
       {
         title: t('nav.payroll'),

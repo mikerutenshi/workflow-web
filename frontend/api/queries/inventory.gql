@@ -88,12 +88,12 @@ mutation deleteInvProduct($invId: ID!, $productId: ID!) {
   deleteInvProduct(invId: $invId, productId: $productId)
 }
 
-query getInvXfersPerItem($invId: ID!, $productId: ID!) {
-  getInvXfersPerItem(invId: $invId, productId: $productId) {
-    invXferId
+query getInvTrfsPerItem($invId: ID!, $productId: ID!) {
+  getInvTrfsPerItem(invId: $invId, productId: $productId) {
+    invTrfId
     productId
-    invXferItemSizes {
-      invXferId
+    invTrfItemSizes {
+      invTrfId
       productId
       sizeId
       size {
@@ -101,10 +101,11 @@ query getInvXfersPerItem($invId: ID!, $productId: ID!) {
       }
       quantity
     }
-    invXfer {
+    invTrf {
+      trfNo
       fromInvId
       toInvId
-      xferDate
+      trfDate
       progress
       fromInv {
         name
@@ -113,6 +114,33 @@ query getInvXfersPerItem($invId: ID!, $productId: ID!) {
       toInv {
         name
         type
+      }
+    }
+  }
+}
+
+query getInvTrfs {
+  getInvTrfs {
+    trfNo
+    fromInv {
+      name
+      type
+    }
+    toInv {
+      name
+      type
+    }
+    trfDate
+    progress
+    invTrfItems {
+      invTrfItemSizes {
+        invTrfId
+        productId
+        sizeId
+        size {
+          ...Size
+        }
+        quantity
       }
     }
   }

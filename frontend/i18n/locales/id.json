@@ -21,6 +21,7 @@
     "artisans": "Perajin",
     "payroll": "Penggajian",
     "inventory": "Inventaris",
+    "inventory_transfers": "Transfer Inventaris",
     "setting": "Pengaturan",
     "setting_inventories": "Gudang",
     "setting_colors": "Warna"
@@ -48,6 +49,7 @@
     "works": "Produksi",
     "work_edit": "Ubah Pekerjaan",
     "inventory": "Inventaris",
+    "inventory_transfers": "Transfer Inventaris",
     "inventory_edit": "Ubah Gudang",
     "inventory_create": "Buat Gudang Baru",
     "setting_inventories": "Pengaturan Gudang",
@@ -71,7 +73,7 @@
   "label": {
     "id": "ID",
     "date": "Tanggal",
-    "order_no": "SPK",
+    "order_no": "No. SPK",
     "sku": "SKU",
     "sku_numeric": "SKU Angka Saja",
     "size": "Ukuran",
@@ -123,7 +125,8 @@
     "select_inv_type": "Pilih Tipe Gudang",
     "inv_type": "Tipe Gudang",
     "hex_code": "Kode Hexadesimal",
-    "xfer_date": "Tanggal Transfer",
+    "trf_no": "No. Transfer",
+    "trf_date": "Tanggal Transfer",
     "from_inv": "Dari Gudang ",
     "to_inv": "Ke Gudang"
   },

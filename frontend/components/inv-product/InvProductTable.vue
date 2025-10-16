@@ -132,7 +132,7 @@
     </v-col>
   </v-row>
 
-  <v-dialog v-model="dialog" transition="fade-transition" max-width="1200px">
+  <v-dialog v-model="dialog" max-width="1200px">
     <v-card>
       <v-toolbar>
         <v-toolbar-title
@@ -140,10 +140,10 @@
         >
       </v-toolbar>
       <v-container class="d-flex flex-column">
-        <InvProductXferTable
+        <InvProductTrfItemTable
           :inv-id="selectInvId"
           :product-id="selectItem.productId"
-        ></InvProductXferTable>
+        ></InvProductTrfItemTable>
       </v-container>
     </v-card>
   </v-dialog>

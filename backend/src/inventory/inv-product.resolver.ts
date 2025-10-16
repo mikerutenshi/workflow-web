@@ -1,5 +1,5 @@
 import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
-import { InvProductService } from './invProduct.service';
+import { InvProductService } from './inv-product.service';
 import { InvProduct } from '@/models/inv-product.model';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { ParseIntPipe } from '@nestjs/common';
@@ -18,7 +18,9 @@ export class InvProductResolver {
   }
 
   @Query(() => [InvProductDto])
-  getInvProducts(@Args('invId',{ type: () => ID }, ParseIntPipe) invId: number ): Promise<InvProductDto[]> {
+  getInvProducts(
+    @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
+  ): Promise<InvProductDto[]> {
     return this.service.getInvProducts(invId);
   }
 

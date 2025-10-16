@@ -1,8 +1,8 @@
 <template>
-  <v-row v-if="invXfersError" class="flex-grow-0">
+  <v-row v-if="invTrfsError" class="flex-grow-0">
     <v-col>
       <v-alert type="error">
-        {{ extractGraphQlError(invXfersError) }}
+        {{ extractGraphQlError(invTrfsError) }}
       </v-alert>
     </v-col>
   </v-row>
@@ -23,11 +23,10 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="invXfersData?.getInvXfersPerItem"
+        :items="invTrfsData?.getInvTrfsPerItem"
         :search="search"
-        :loading="isFetchingInvXfers"
+        :loading="isFetchingInvTrfs"
         item-value="id"
-        fixed-header
         hover
         :page="pageNo"
         :items-per-page="itemsPerPage"
@@ -36,14 +35,14 @@
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>
 
-        <template v-slot:item.invXfer.xferDate="{ item }">
-          {{ adapter.format(item.invXfer.xferDate, 'fullDateWithWeekday') }}
+        <template v-slot:item.invTrf.trfDate="{ item }">
+          {{ adapter.format(item.invTrf.trfDate, 'fullDateTime12h') }}
         </template>
 
-        <template v-slot:item.invXferItemSizes="{ item }">
+        <template v-slot:item.invTrfItemSizes="{ item }">
           <v-table density="compact">
             <tbody>
-              <tr v-for="i in item.invXferItemSizes" :key="i.size.id">
+              <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
                 <td>{{ i.size.eu }}</td>
                 <td>{{ i.quantity }}</td>
               </tr>
@@ -52,7 +51,7 @@
                 <td>
                   <i>
                     {{
-                      item.invXferItemSizes.reduce(
+                      item.invTrfItemSizes.reduce(
                         (sum, size) => sum + size.quantity,
                         0,
                       )
@@ -69,11 +68,10 @@
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify } from '@mdi/js';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetInvXfersPerItemDocument } from '~/api/generated/types';
+import { GetInvTrfsPerItemDocument } from '~/api/generated/types';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
@@ -89,13 +87,13 @@ const props = defineProps({
 });
 
 const {
-  data: invXfersData,
-  isFetching: isFetchingInvXfers,
-  error: invXfersError,
+  data: invTrfsData,
+  isFetching: isFetchingInvTrfs,
+  error: invTrfsError,
 } = useQuery({
   variables: { invId: props.invId, productId: props.productId },
-  query: GetInvXfersPerItemDocument,
-  tags: [CACHE_INV_XFERS_PER_ITEM],
+  query: GetInvTrfsPerItemDocument,
+  tags: [CACHE_INV_TRFS_PER_ITEM],
 });
 
 const { t } = useI18n();
@@ -103,11 +101,12 @@ const adapter = useDate();
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
-  { title: t('label.xfer_date'), key: 'invXfer.xferDate' },
-  { title: t('label.from_inv'), key: 'invXfer.fromInv.name' },
-  { title: t('label.to_inv'), key: 'invXfer.toInv.name' },
-  { title: t('label.status'), key: 'invXfer.progress' },
-  { title: t('label.sizes'), key: 'invXferItemSizes', minWidth: '120' },
+  { title: t('label.trf_date'), key: 'invTrf.trfDate' },
+  { title: t('label.trf_no'), key: 'invTrf.trfNo' },
+  { title: t('label.from_inv'), key: 'invTrf.fromInv.name' },
+  { title: t('label.to_inv'), key: 'invTrf.toInv.name' },
+  { title: t('label.status'), key: 'invTrf.progress' },
+  { title: t('label.sizes'), key: 'invTrfItemSizes', minWidth: '120' },
 ];
 const search = ref('');
 </script>

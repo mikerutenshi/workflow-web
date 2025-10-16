@@ -21,6 +21,7 @@
     "artisans": "Artisans",
     "payroll": "Payroll",
     "inventory": "Inventory",
+    "inventory_transfers": "Inventory Transfers",
     "setting": "Setting",
     "setting_inventories": "Warehouses",
     "setting_colors": "Colors"
@@ -51,6 +52,7 @@
     "inventory_edit": "Edit a Warehouse",
     "inventory_create": "Create a New Warehouse",
     "setting_inventories": "Warehouse Setting",
+    "inventory_transfers": "Inventory Transfers",
     "setting_colors": "Color Setting"
   },
   "create_btn": {
@@ -71,7 +73,7 @@
   "label": {
     "id": "ID",
     "date": "Date",
-    "order_no": "Order No",
+    "order_no": "Order No.",
     "sku": "SKU",
     "sku_numeric": "Numeric SKU Only",
     "size": "Size",
@@ -123,7 +125,8 @@
     "select_inv_type": "Select Inventory Type",
     "inv_type": "Inventory Type",
     "hex_code": "Hexadecimal Code",
-    "xfer_date": "Transfer Date",
+    "trf_no": "Transfer No.",
+    "trf_date": "Transfer Date",
     "from_inv": "From Warehouse",
     "to_inv": "To Warehouse"
   },

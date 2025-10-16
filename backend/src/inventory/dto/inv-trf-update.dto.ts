@@ -1,11 +1,11 @@
 import { Field, ID, InputType, OmitType, PartialType } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
 import { Min } from 'class-validator';
-import { InvXferCreateDto } from './inv-xfer-create.dto';
+import { InvTrfCreateDto } from './inv-trf-create.dto';
 
 @InputType()
-export class InvXferUpdateDto extends PartialType(
-  OmitType(InvXferCreateDto, ['createdBy']),
+export class InvTrfUpdateDto extends PartialType(
+  OmitType(InvTrfCreateDto, ['createdBy']),
 ) {
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

@@ -126,8 +126,8 @@ model Product {
   productColors       ColorToProduct[]
   works               Work[]
   productInvs         InvToProduct[]
-  productSalesTxs     ProductToSalesTx[]
-  InvXferItem         InvXferItem[]
+  productsale         ProductToSale[]
+  InvTrfItem          InvTrfItem[]
 
   productGroup        ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
@@ -219,8 +219,8 @@ model Size {
 
   sizeWorks           SizeToWork[]
   sizeInvProducts     InvProductToSize[]
-  InvXferItemToSize   InvXferItemToSize[]
-  sizeSalesTxProducts SalesTxProductToSize[]
+  InvTrfItemToSize    InvTrfItemToSize[]
+  sizeSaleProducts    SaleProductToSize[]
 
   @@unique([eu, gender])
   @@unique([us, gender])
@@ -246,11 +246,11 @@ model Inventory {
   type              InvType
 
   invProducts       InvToProduct[]
-  invSalesTxs       SalesTx[]
-  salesmen          Salesman[]  
+  invsale           Sale[]
+  salemen           Salesman[]  
 
-  fromXfers           InvXfer[] @relation( "FromInventory")
-  toXfers             InvXfer[] @relation( "ToInventory")
+  fromTrfs           InvTrf[] @relation( "FromInventory")
+  toTrfs             InvTrf[] @relation( "ToInventory")
 }
 
 model InvToProduct {
@@ -278,13 +278,14 @@ model InvProductToSize {
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
-model InvXfer {
+model InvTrf {
   id                Int             @id @default(autoincrement())
+  trfNo             String          
   fromInvId         Int?
   toInvId           Int
-  xferDate          DateTime        @default(now())
+  trfDate           DateTime        @default(now())
   progress          Progress        @default(INITIATED)
-  invXferItems      InvXferItem[]
+  invTrfItems       InvTrfItem[]
 
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
@@ -295,32 +296,33 @@ model InvXfer {
   updatedAt         DateTime        @updatedAt
 }
 
-model InvXferItem {
-  @@id([invXferId, productId])
-  invXferId         Int
+model InvTrfItem {
+  @@id([invTrfId, productId])
+  invTrfId          Int
   productId         Int
-  invXferItemSizes  InvXferItemToSize[]
+  invTrfItemSizes   InvTrfItemToSize[]
 
-  invXfer           InvXfer         @relation(fields: [invXferId], references: [id])
+  invTrf            InvTrf         @relation(fields: [invTrfId], references: [id], onDelete: Cascade)
   product           Product         @relation(fields: [productId], references: [id])
 }
 
-model InvXferItemToSize {
-  @@id([invXferId, productId, sizeId])
-  invXferId         Int
+model InvTrfItemToSize {
+  @@id([invTrfId, productId, sizeId])
+  invTrfId          Int
   productId         Int
   sizeId            Int
   quantity          Int
 
-  invXferItem       InvXferItem     @relation(fields: [invXferId, productId], references: [invXferId, productId], onDelete: Cascade)
+  invTrfItem        InvTrfItem     @relation(fields: [invTrfId, productId], references: [invTrfId, productId], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
-model SalesTx {
+model Sale {
   id                Int             @id @default(autoincrement())
+  saleNo            String
   date              DateTime
   invId             Int
-  salesTxProducts   ProductToSalesTx[]
+  saleProducts      ProductToSale[]
 
   createdBy         Int
   updatedBy         Int?
@@ -330,25 +332,25 @@ model SalesTx {
   inventory         Inventory       @relation(fields: [invId], references: [id])
 }
 
-model ProductToSalesTx {
-  id                  Int             @id @default(autoincrement())
-  salesTxId           Int
-  productId           Int
-  salesTxProductSizes SalesTxProductToSize[]
+model ProductToSale {
+  id                Int             @id @default(autoincrement())
+  saleId            Int
+  productId         Int
+  saleProductSizes  SaleProductToSize[]
 
-  salesTx           SalesTx         @relation(fields: [salesTxId], references: [id], onDelete: Cascade)
+  sale              Sale         @relation(fields: [saleId], references: [id], onDelete: Cascade)
   product           Product         @relation(fields: [productId], references: [id])
 }
 
-model SalesTxProductToSize {
-  @@id([salesTxProductId, sizeId])
-  salesTxProductId  Int
+model SaleProductToSize {
+  @@id([saleProductId, sizeId])
+  saleProductId     Int
   sizeId            Int
 
   quantity          Int
 
-  salesTxProduct   ProductToSalesTx       @relation(fields: [salesTxProductId], references: [id], onDelete: Cascade)
-  size             Size                   @relation(fields: [sizeId], references: [id])
+  saleProduct       ProductToSale   @relation(fields: [saleProductId], references: [id], onDelete: Cascade)
+  size              Size            @relation(fields: [sizeId], references: [id])
 }
 
 model Client {
@@ -379,5 +381,5 @@ model Salesman {
   invId             Int
 
   clients           Client[]
-  inventory         Inventory      @relation(fields: [invId], references: [id])
+  inventory         Inventory       @relation(fields: [invId], references: [id])
 }

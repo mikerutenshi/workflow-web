@@ -164,15 +164,16 @@ type InvProductDto {
   product: ProductGetDto!
 }
 
-type InvXfer {
+type InvTrf {
   id: ID!
   createdBy: ID!
   updatedBy: ID
   createdAt: Date!
   updatedAt: Date!
+  trfNo: String!
   fromInvId: ID
   toInvId: ID!
-  xferDate: Date!
+  trfDate: Date!
   progress: Progress!
   fromInv: Inventory
   toInv: Inventory!
@@ -188,19 +189,42 @@ enum Progress {
   FAILED
 }
 
-type InvXferItemToSize {
-  invXferId: ID!
+type InvTrfItemToSize {
+  invTrfId: ID!
   productId: ID!
   sizeId: ID!
   quantity: Float!
   size: Size!
 }
 
-type InvXferPerItemDto {
-  invXferId: ID!
+type InvTrfPerItemDto {
+  invTrfId: ID!
   productId: ID!
-  invXferItemSizes: [InvXferItemToSize!]!
-  invXfer: InvXfer!
+  invTrfItemSizes: [InvTrfItemToSize!]!
+  invTrf: InvTrf!
+}
+
+type InvTrfItemDto {
+  invTrfId: ID!
+  productId: ID!
+  invTrfItemSizes: [InvTrfItemToSize!]!
+  product: Product!
+}
+
+type InvTrfDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  trfNo: String!
+  fromInvId: ID
+  toInvId: ID!
+  trfDate: Date!
+  progress: Progress!
+  fromInv: Inventory
+  toInv: Inventory!
+  invTrfItems: [InvTrfItemDto!]!
 }
 
 type ProductGroupGetDto {
@@ -364,7 +388,8 @@ type Query {
   getInventory(id: ID!): Inventory
   getInventories: [Inventory!]!
   getInvProducts(invId: ID!): [InvProductDto!]!
-  getInvXfersPerItem(invId: ID!, productId: ID!): [InvXferPerItemDto!]!
+  getInvTrfsPerItem(invId: ID!, productId: ID!): [InvTrfPerItemDto!]!
+  getInvTrfs: [InvTrfDto!]!
 }
 
 type Mutation {
@@ -402,7 +427,7 @@ type Mutation {
   createInvProduct(data: InvProductCreateDto!): InvProduct!
   updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
-  createInvXfer(data: InvXferCreateDto!): InvXfer!
+  createInvTrf(data: InvTrfCreateDto!): InvTrf!
 }
 
 input RoleDto {
@@ -551,21 +576,22 @@ input InvProductUpdateDto {
   discount: String
 }
 
-input InvXferCreateDto {
+input InvTrfCreateDto {
+  trfNo: String!
   fromInvId: ID
   toInvId: ID!
-  xferDate: Date!
+  trfDate: Date!
   progress: Progress!
-  invXferItems: [InvXferItemCreateDto!]!
+  invTrfItems: [InvTrfItemCreateDto!]!
   createdBy: ID!
 }
 
-input InvXferItemCreateDto {
+input InvTrfItemCreateDto {
   productId: ID!
-  invXferItemSizes: [InvXferItemSizeCreateDto!]!
+  invTrfItemSizes: [InvTrfItemSizeCreateDto!]!
 }
 
-input InvXferItemSizeCreateDto {
+input InvTrfItemSizeCreateDto {
   sizeId: ID!
   quantity: Float!
 }
