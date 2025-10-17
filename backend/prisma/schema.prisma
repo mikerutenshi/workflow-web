@@ -231,6 +231,7 @@ model SizeToWork {
   @@id([workId, sizeId])
   workId            Int
   sizeId            Int
+
   quantity          Int
 
   work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)

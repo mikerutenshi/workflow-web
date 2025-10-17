@@ -83,7 +83,7 @@ export class TaskService {
             orderBy: { id: 'desc' },
           });
           const lastTrfNo = lastTrf?.trfNo || null;
-          const trfNo = generateId(Operation.Produce, lastTrfNo);
+          const trfNo = generateId(Operation.Produce, initialWork!.orderNo);
           console.log(`trfNo: ${trfNo}`);
 
           await this.invTrfService.createInvTrf({

@@ -140,10 +140,10 @@
         >
       </v-toolbar>
       <v-container class="d-flex flex-column">
-        <InvProductTrfItemTable
+        <InvProductItemTrfTable
           :inv-id="selectInvId"
           :product-id="selectItem.productId"
-        ></InvProductTrfItemTable>
+        ></InvProductItemTrfTable>
       </v-container>
     </v-card>
   </v-dialog>

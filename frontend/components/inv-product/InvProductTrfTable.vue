@@ -54,20 +54,53 @@
             )
           }}
         </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            color="primary"
+            :icon="mdiFileDocumentArrowRightOutline"
+            variant="text"
+            @click="showItemDialog(item as InvTrfDto)"
+          ></v-btn>
+        </template>
       </v-data-table>
     </v-col>
+
+    <v-dialog v-model="dialog" max-width="1200px">
+      <v-card>
+        <v-toolbar>
+          <v-toolbar-title
+            >Transfer Item Details for {{ selectItem.trfNo }}</v-toolbar-title
+          >
+        </v-toolbar>
+        <v-container class="d-flex flex-column">
+          <InvProductTrfItemTable
+            :inv-trf-dto="selectItemObject"
+          ></InvProductTrfItemTable>
+        </v-container>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify } from '@mdi/js';
+import { mdiFileDocumentArrowRightOutline, mdiMagnify } from '@mdi/js';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetInvTrfsDocument } from '~/api/generated/types';
+import { GetInvTrfsDocument, type InvTrfDto } from '~/api/generated/types';
+import InvProductTrfItemTable from './InvProductTrfItemTable.vue';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
+const search = ref('');
+const dialog = ref(false);
+
+const selectItem = reactive({
+  trfNo: '',
+});
+
+const selectItemObject = shallowRef({} as InvTrfDto);
 
 const {
   data: invTrfsData,
@@ -89,6 +122,12 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.to_inv'), key: 'toInv.name' },
   { title: t('label.status'), key: 'progress' },
   { title: t('label.quantity'), key: 'invTrfItems' },
+  { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
-const search = ref('');
+
+function showItemDialog(item: InvTrfDto) {
+  dialog.value = true;
+  selectItem.trfNo = item.trfNo;
+  selectItemObject.value = item;
+}
 </script>

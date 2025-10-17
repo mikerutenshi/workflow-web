@@ -5,9 +5,11 @@ export function generateId(op: Operation, lastId: string | null): string {
   const today = dayjs();
   const format = 'YYMMDD';
 
-  if (!lastId) {
+  if (op === Operation.Produce) {
+    return `${op}-${today.format(format)}-${lastId}`;
+  } else if (lastId === null) {
     return `${op}-${today.format(format)}-0001`;
-  } else {
+  } else if (lastId) {
     const split = lastId.split('-');
     const lastOp = split[0];
     const lastDate = split[1];
@@ -24,5 +26,7 @@ export function generateId(op: Operation, lastId: string | null): string {
     } else {
       throw Error('Operations do not match');
     }
+  } else {
+    throw Error('Incomplete ID generator parameter');
   }
 }

@@ -133,6 +133,9 @@ query getInvTrfs {
     trfDate
     progress
     invTrfItems {
+      product {
+        sku
+      }
       invTrfItemSizes {
         invTrfId
         productId
