@@ -49,10 +49,11 @@
     "works": "Produksi",
     "work_edit": "Ubah Pekerjaan",
     "inventory": "Inventaris",
-    "inventory_transfers": "Transfer Inventaris",
     "inventory_edit": "Ubah Gudang",
     "inventory_create": "Buat Gudang Baru",
     "setting_inventories": "Pengaturan Gudang",
+    "inventory_transfers": "Transfer Inventaris",
+    "inv_trf_create": "Buat Transfer Inventoris Baru",
     "setting_colors": "Pengaturan Warna"
   },
   "create_btn": {
@@ -62,7 +63,8 @@
     "product_category": "Kategori Sepatu Baru",
     "artisan": "Perajin Baru",
     "work": "Pekerjaan Baru",
-    "inventory": "Gudang Baru"
+    "inventory": "Gudang Baru",
+    "inv_trf": "Transfer Inventaris Baru"
   },
   "btn": {
     "create": "Buat",

@@ -23,7 +23,7 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="props.invTrfDto.invTrfItems"
+        :items="props.invTrfDto?.invTrfItems"
         :search="search"
         item-value="invTrfId"
         hover
@@ -68,6 +68,7 @@
 
 <script setup lang="ts">
 import { useQuery } from 'villus';
+import type { PropType } from 'vue';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import {
@@ -79,13 +80,9 @@ const pageNo = ref(1);
 const itemsPerPage = ref(10);
 const props = defineProps({
   invTrfDto: {
-    type: Object as () => InvTrfDto,
-    required: true,
+    type: Object as PropType<InvTrfDto | null>,
+    required: false,
   },
-});
-
-watchEffect(() => {
-  console.log(`invTrfDto: ${JSON.stringify(props.invTrfDto.invTrfItems)}`);
 });
 
 // const {

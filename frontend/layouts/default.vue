@@ -29,6 +29,16 @@
       </v-btn>
 
       <v-btn
+        v-if="currentRouteName == 'inv-product-transfers' && clearance <= Role.Planner"
+        variant="flat"
+        class="mr-4"
+        @click="dialogStore.openFormDialog()"
+      >
+        <v-icon left :icon="mdiPlus"></v-icon>
+        {{ t('create_btn.inv_trf') }}
+      </v-btn>
+
+      <v-btn
         v-if="currentRouteName == 'setting-inventories' && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"

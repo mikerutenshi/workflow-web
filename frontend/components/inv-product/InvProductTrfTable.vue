@@ -66,11 +66,12 @@
       </v-data-table>
     </v-col>
 
-    <v-dialog v-model="dialog" max-width="1200px">
+    <v-dialog v-model="viewDialog" max-width="1200px">
       <v-card>
         <v-toolbar>
           <v-toolbar-title
-            >Transfer Item Details for {{ selectItem.trfNo }}</v-toolbar-title
+            >Transfer Item Details for
+            {{ selectItemObject?.trfNo }}</v-toolbar-title
           >
         </v-toolbar>
         <v-container class="d-flex flex-column">
@@ -81,6 +82,14 @@
       </v-card>
     </v-dialog>
   </v-row>
+
+  <ActionEditItemDialog
+    :dialogTitle="
+      selectItemObject ? $t('page.inv_trf_edit') : $t('page.inv_trf_create')
+    "
+    v-model="formDialog"
+  >
+  </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
@@ -94,13 +103,13 @@ import InvProductTrfItemTable from './InvProductTrfItemTable.vue';
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
 const search = ref('');
-const dialog = ref(false);
+const viewDialog = ref(false);
+const formDialog = ref(false);
 
-const selectItem = reactive({
-  trfNo: '',
-});
+const dialogStore = useDialogStore();
+const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
 
-const selectItemObject = shallowRef({} as InvTrfDto);
+const selectItemObject = shallowRef<InvTrfDto | null>(null);
 
 const {
   data: invTrfsData,
@@ -126,8 +135,29 @@ const headers: ReadOnlyHeaders = [
 ];
 
 function showItemDialog(item: InvTrfDto) {
-  dialog.value = true;
-  selectItem.trfNo = item.trfNo;
+  viewDialog.value = true;
   selectItemObject.value = item;
 }
+
+watch(isCreateDialogOpen, (isOpen) => {
+  if (isOpen) {
+    formDialog.value = true;
+  }
+});
+watch(formDialog, (isOpen) => {
+  if (!isOpen) {
+    dialogStore.closeFormDialog();
+    selectItemObject.value = null;
+  }
+});
+watch(viewDialog, (isOpen) => {
+  if (!isOpen) {
+    setTimeout(() => {
+      selectItemObject.value = null;
+    }, 500);
+  }
+});
+watchEffect(() => {
+  console.log(`selectItemObject: ${JSON.stringify(selectItemObject.value)}`);
+});
 </script>

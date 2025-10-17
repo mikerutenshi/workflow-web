@@ -49,10 +49,11 @@
     "works": "Produksi",
     "work_edit": "Ngarobah Pagawéan",
     "inventory": "Inventaris",
-    "inventory_transfers": "Mindahkeun Inventaris",
     "inventory_edit": "Ngarobah Gudang",
     "inventory_create": "Nyieun Gudang Anyar",
     "setting_inventories": "Setélan Gudang",
+    "inventory_transfers": "Mindahkeun Inventaris",
+    "inv_trf_create": "Nyieun Mindahkeun Inventoris Anyar",
     "setting_colors": "Setélan Warna"
   },
   "create_btn": {
@@ -62,7 +63,8 @@
     "product_category": "Kategori Sapatu Anyar",
     "artisan": "Pangrajin Anyar",
     "work": "Pagawéan Anyar",
-    "inventory": "Gudang Anyar"
+    "inventory": "Gudang Anyar",
+    "inv_trf": "Mindahkeun Inventaris Baru"
   },
   "btn": {
     "create": "Jieun",

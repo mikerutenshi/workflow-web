@@ -53,6 +53,7 @@
     "inventory_create": "Create a New Warehouse",
     "setting_inventories": "Warehouse Setting",
     "inventory_transfers": "Inventory Transfers",
+    "inv_trf_create": "Create a New Inventory Transfer",
     "setting_colors": "Color Setting"
   },
   "create_btn": {
@@ -62,7 +63,8 @@
     "product_category": "New Shoe Category",
     "artisan": "New Artisan",
     "work": "New Task",
-    "inventory": "New Warehouse"
+    "inventory": "New Warehouse",
+    "inv_trf": "New Inventory Transfer"
   },
   "btn": {
     "create": "Create",
