@@ -3,6 +3,7 @@ import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
 import { IsDate, IsEnum, Matches, Min, ValidateNested } from 'class-validator';
 import { InvTrfItemCreateDto } from './inv-trf-item-create.dto';
+import { Optional } from '@nestjs/common';
 
 @InputType()
 export class InvTrfCreateDto {
@@ -28,7 +29,8 @@ export class InvTrfCreateDto {
 
   @Field(() => Progress)
   @IsEnum(Progress)
-  progress: Progress;
+  @Optional()
+  progress?: Progress;
 
   @Field(() => [InvTrfItemCreateDto])
   @Type(() => InvTrfItemCreateDto)

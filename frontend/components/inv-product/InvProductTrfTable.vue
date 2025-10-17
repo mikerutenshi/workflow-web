@@ -89,6 +89,7 @@
     "
     v-model="formDialog"
   >
+    <InvProductTrfForm></InvProductTrfForm>
   </ActionEditItemDialog>
 </template>
 

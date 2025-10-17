@@ -148,3 +148,9 @@ query getInvTrfs {
     }
   }
 }
+
+mutation createInvTrf($data: InvTrfCreateDto!) {
+  createInvTrf(data: $data) {
+    id
+  }
+}

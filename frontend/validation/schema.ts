@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Cities } from '#imports';
 import { Provinces } from '#imports';
-import { InvType, Job, Gender } from '~/api/generated/types';
+import { InvType, Job, Gender, Progress } from '~/api/generated/types';
 
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
@@ -133,4 +133,25 @@ export const InventorySchema = z.object({
   city: z.enum([...Cities.map((c) => c.title)] as [string, ...string[]]),
   province: z.enum([...Provinces.map((c) => c.title)] as [string, ...string[]]),
   type: z.nativeEnum(InvType),
+});
+
+export const InvTrfSchema = z.object({
+  trfDate: z.string().datetime(),
+  trfNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
+  fromInvId: positiveNumberString,
+  toInvId: positiveNumberString,
+  progress: z.nativeEnum(Progress),
+  createdBy: positiveNumberString,
+  invTrfItems: z.array(
+    z.object({
+      productId: positiveNumberString,
+      invTrfItemSizes: z.array(
+        z.object({
+          sizeId: positiveNumberString,
+          quantity: z.number().min(1),
+        }),
+      ),
+    }),
+  ),
+  updatedBy: positiveNumberString.optional().nullable(),
 });
