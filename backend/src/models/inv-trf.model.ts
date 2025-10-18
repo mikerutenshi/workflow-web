@@ -1,7 +1,6 @@
 import { Progress } from '@/generated/client';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-import { Inventory } from './inventory.model';
 
 @ObjectType()
 export class InvTrf extends BaseModel {
@@ -15,9 +14,4 @@ export class InvTrf extends BaseModel {
   trfDate: Date;
   @Field(() => Progress)
   progress: Progress;
-
-  @Field(() => Inventory, { nullable: true })
-  fromInv: Inventory | null;
-  @Field(() => Inventory)
-  toInv: Inventory;
 }

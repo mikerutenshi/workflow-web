@@ -175,8 +175,6 @@ type InvTrf {
   toInvId: ID!
   trfDate: Date!
   progress: Progress!
-  fromInv: Inventory
-  toInv: Inventory!
 }
 
 enum Progress {
@@ -190,24 +188,43 @@ enum Progress {
 }
 
 type InvTrfItemToSize {
-  invTrfId: ID!
-  productId: ID!
+  invTrfItemId: ID!
   sizeId: ID!
   quantity: Float!
   size: Size!
 }
 
-type InvTrfPerItemDto {
-  invTrfId: ID!
+type InvTrfItemTrfDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  invTrfId: ID
+  fromInvId: ID
+  toInvId: ID!
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
-  invTrf: InvTrf!
+  progress: Progress!
+  fromInv: Inventory
+  toInv: Inventory!
+  invTrf: InvTrf
 }
 
 type InvTrfItemDto {
-  invTrfId: ID!
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  invTrfId: ID
+  fromInvId: ID
+  toInvId: ID!
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
+  progress: Progress!
+  fromInv: Inventory
+  toInv: Inventory!
   product: Product!
 }
 
@@ -388,7 +405,7 @@ type Query {
   getInventory(id: ID!): Inventory
   getInventories: [Inventory!]!
   getInvProducts(invId: ID!): [InvProductDto!]!
-  getInvTrfsPerItem(invId: ID!, productId: ID!): [InvTrfPerItemDto!]!
+  getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
   getInvTrfs: [InvTrfDto!]!
 }
 
@@ -582,16 +599,6 @@ input InvTrfCreateDto {
   toInvId: ID!
   trfDate: Date!
   progress: Progress!
-  invTrfItems: [InvTrfItemCreateDto!]!
+  invTrfItemIds: [ID!]!
   createdBy: ID!
-}
-
-input InvTrfItemCreateDto {
-  productId: ID!
-  invTrfItemSizes: [InvTrfItemSizeCreateDto!]!
-}
-
-input InvTrfItemSizeCreateDto {
-  sizeId: ID!
-  quantity: Float!
 }

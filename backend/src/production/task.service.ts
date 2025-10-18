@@ -70,7 +70,7 @@ export class TaskService {
           where: { type: 'FACTORY' },
         });
 
-        if (!factory) throw Error('Factory is not present');
+        if (!factory) throw Error('Factory is not found');
 
         const existingInvProduct = await tx.invToProduct.findFirst({
           where: { productId: initialWork!.productId },
@@ -86,20 +86,23 @@ export class TaskService {
           const trfNo = generateId(Operation.Produce, initialWork!.orderNo);
           console.log(`trfNo: ${trfNo}`);
 
+          const invTrfItem = await this.invTrfService.createInvTrfItem({
+            fromInvId: null,
+            toInvId: factory.id,
+            productId: initialWork!.productId,
+            invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
+              sizeId: workSize.sizeId,
+              quantity: workSize.quantity,
+            })),
+            progress: Progress.COMPLETED,
+            createdBy: userId,
+          });
           await this.invTrfService.createInvTrf({
             trfNo,
             fromInvId: null,
             toInvId: factory.id,
             progress: Progress.COMPLETED,
-            invTrfItems: [
-              {
-                productId: initialWork!.productId,
-                invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
-                  sizeId: workSize.sizeId,
-                  quantity: workSize.quantity,
-                })),
-              },
-            ],
+            invTrfItemIds: [invTrfItem.id],
             createdBy: userId,
           });
 

@@ -1,12 +1,26 @@
+import { Progress } from '@/generated/client';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { BaseModel } from './base.model';
 import { InvTrfItemToSize } from './inv-trf-item-to-size.model';
+import { Inventory } from './inventory.model';
 
 @ObjectType()
-export class InvTrfItem {
+export class InvTrfItem extends BaseModel {
+  @Field(() => ID, { nullable: true })
+  invTrfId: number | null;
+  @Field(() => ID, { nullable: true })
+  fromInvId: number | null;
   @Field(() => ID)
-  invTrfId: number;
+  toInvId: number;
   @Field(() => ID)
   productId: number;
   @Field(() => [InvTrfItemToSize])
   invTrfItemSizes: InvTrfItemToSize[];
+  @Field(() => Progress)
+  progress: Progress;
+
+  @Field(() => Inventory, { nullable: true })
+  fromInv: Inventory | null;
+  @Field(() => Inventory)
+  toInv: Inventory;
 }

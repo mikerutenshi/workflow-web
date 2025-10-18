@@ -71,10 +71,7 @@ import { useQuery } from 'villus';
 import type { PropType } from 'vue';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import {
-  GetInvTrfsPerItemDocument,
-  type InvTrfDto,
-} from '~/api/generated/types';
+import { type InvTrfDto } from '~/api/generated/types';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(10);

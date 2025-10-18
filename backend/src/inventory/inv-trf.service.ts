@@ -2,47 +2,60 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
 import { InvTrf } from '@/models/inv-trf.model';
-import { InvTrfPerItemDto } from './dto/inv-trf-per-item.dto';
+import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
+import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
+import { InvTrfItem } from '@/models/inv-trf-item.model';
 
 @Injectable()
 export class InvTrfService {
   constructor(private prisma: PrismaService) {}
 
-  createInvTrf(data: InvTrfCreateDto): Promise<InvTrf> {
-    console.log(`data: ${JSON.stringify(data)}`);
-    return this.prisma.invTrf.create({
+  createInvTrfItem(data: InvTrfItemCreateDto): Promise<InvTrfItem> {
+    return this.prisma.invTrfItem.create({
       data: {
         ...data,
-        invTrfItems: {
-          create: data.invTrfItems.map((item) => ({
-            ...item,
-            invTrfItemSizes: {
-              create: item.invTrfItemSizes.map((detail) => ({
-                ...detail,
-                sizeId: detail.sizeId,
-                quantity: detail.quantity,
-              })),
-            },
+        invTrfItemSizes: {
+          create: data.invTrfItemSizes.map((item) => ({
+            size: { connect: { id: item.sizeId } },
+            quantity: item.quantity,
           })),
         },
       },
       include: {
-        invTrfItems: true,
         fromInv: true,
         toInv: true,
+        invTrfItemSizes: { include: { size: true } },
       },
     });
   }
 
-  getInvTrfsPerItem(
+  createInvTrf(data: InvTrfCreateDto): Promise<InvTrf> {
+    console.log(`Create Dto: ${JSON.stringify(data)}`);
+    const { invTrfItemIds, ...rest } = data;
+    return this.prisma.invTrf.create({
+      data: {
+        ...rest,
+        invTrfItems: {
+          connect: invTrfItemIds.map((id) => ({ id })),
+        },
+      },
+      include: {
+        invTrfItems: true,
+      },
+    });
+  }
+
+  getInvTrfItemTrfs(
     invId: number,
     productId: number,
-  ): Promise<InvTrfPerItemDto[]> {
+  ): Promise<InvTrfItemTrfDto[]> {
     return this.prisma.invTrfItem.findMany({
       include: {
         invTrf: { include: { fromInv: true, toInv: true } },
         invTrfItemSizes: { include: { size: true } },
+        fromInv: true,
+        toInv: true,
       },
       where: {
         OR: [{ invTrf: { toInvId: invId } }, { invTrf: { fromInvId: invId } }],
@@ -61,6 +74,8 @@ export class InvTrfService {
         toInv: true,
         invTrfItems: {
           include: {
+            fromInv: true,
+            toInv: true,
             product: true,
             invTrfItemSizes: { include: { size: true } },
           },

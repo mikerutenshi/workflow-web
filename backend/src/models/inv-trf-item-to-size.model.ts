@@ -4,9 +4,7 @@ import { Size } from './size.model';
 @ObjectType()
 export class InvTrfItemToSize {
   @Field(() => ID)
-  invTrfId: number;
-  @Field(() => ID)
-  productId: number;
+  invTrfItemId: number;
   @Field(() => ID)
   sizeId: number;
   @Field()

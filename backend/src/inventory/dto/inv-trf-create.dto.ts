@@ -1,9 +1,14 @@
 import { Progress } from '@/generated/client';
 import { Field, ID, InputType } from '@nestjs/graphql';
-import { Transform, Type } from 'class-transformer';
-import { IsDate, IsEnum, Matches, Min, ValidateNested } from 'class-validator';
-import { InvTrfItemCreateDto } from './inv-trf-item-create.dto';
-import { Optional } from '@nestjs/common';
+import { Transform } from 'class-transformer';
+import {
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  Matches,
+  Min,
+} from 'class-validator';
 
 @InputType()
 export class InvTrfCreateDto {
@@ -29,13 +34,19 @@ export class InvTrfCreateDto {
 
   @Field(() => Progress)
   @IsEnum(Progress)
-  @Optional()
+  @IsOptional()
   progress?: Progress;
 
-  @Field(() => [InvTrfItemCreateDto])
-  @Type(() => InvTrfItemCreateDto)
-  @ValidateNested({ each: true })
-  invTrfItems: InvTrfItemCreateDto[];
+  @Field(() => [ID])
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) {
+      return value.map((v) => parseInt(v, 10));
+    }
+    return [];
+  })
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  invTrfItemIds: number[];
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

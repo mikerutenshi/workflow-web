@@ -23,7 +23,7 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="invTrfsData?.getInvTrfsPerItem"
+        :items="invTrfsData?.getInvTrfItemTrfs"
         :search="search"
         :loading="isFetchingInvTrfs"
         item-value="id"
@@ -36,7 +36,11 @@
         </template>
 
         <template v-slot:item.invTrf.trfDate="{ item }">
-          {{ adapter.format(item.invTrf.trfDate, 'fullDateTime12h') }}
+          {{
+            item.invTrf
+              ? adapter.format(item.invTrf.trfDate, 'fullDateTime12h')
+              : ''
+          }}
         </template>
 
         <template v-slot:item.invTrfItemSizes="{ item }">
@@ -71,7 +75,7 @@
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetInvTrfsPerItemDocument } from '~/api/generated/types';
+import { GetInvTrfItemTrfsDocument } from '~/api/generated/types';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
@@ -92,7 +96,7 @@ const {
   error: invTrfsError,
 } = useQuery({
   variables: { invId: props.invId, productId: props.productId },
-  query: GetInvTrfsPerItemDocument,
+  query: GetInvTrfItemTrfsDocument,
   tags: [CACHE_INV_TRFS_PER_ITEM],
 });
 
@@ -103,9 +107,9 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
   { title: t('label.trf_date'), key: 'invTrf.trfDate' },
   { title: t('label.trf_no'), key: 'invTrf.trfNo' },
-  { title: t('label.from_inv'), key: 'invTrf.fromInv.name' },
-  { title: t('label.to_inv'), key: 'invTrf.toInv.name' },
-  { title: t('label.status'), key: 'invTrf.progress' },
+  { title: t('label.from_inv'), key: 'fromInv.name' },
+  { title: t('label.to_inv'), key: 'toInv.name' },
+  { title: t('label.status'), key: 'progress' },
   { title: t('label.sizes'), key: 'invTrfItemSizes', minWidth: '120' },
 ];
 const search = ref('');

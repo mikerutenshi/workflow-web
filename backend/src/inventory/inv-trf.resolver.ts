@@ -2,7 +2,7 @@ import { InvTrf } from '@/models/inv-trf.model';
 import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 import { InvTrfService } from './inv-trf.service';
 import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
-import { InvTrfPerItemDto } from './dto/inv-trf-per-item.dto';
+import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
 import { ParseIntPipe } from '@nestjs/common';
 import { InvTrfDto } from './dto/inv-trf.dto';
 
@@ -14,12 +14,12 @@ export class InvTrfResolver {
     return this.service.createInvTrf(data);
   }
 
-  @Query(() => [InvTrfPerItemDto])
-  getInvTrfsPerItem(
+  @Query(() => [InvTrfItemTrfDto])
+  getInvTrfItemTrfs(
     @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
     @Args('productId', { type: () => ID }, ParseIntPipe) productId: number,
-  ): Promise<InvTrfPerItemDto[]> {
-    return this.service.getInvTrfsPerItem(invId, productId);
+  ): Promise<InvTrfItemTrfDto[]> {
+    return this.service.getInvTrfItemTrfs(invId, productId);
   }
 
   @Query(() => [InvTrfDto])

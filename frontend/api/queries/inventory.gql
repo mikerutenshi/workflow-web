@@ -88,33 +88,30 @@ mutation deleteInvProduct($invId: ID!, $productId: ID!) {
   deleteInvProduct(invId: $invId, productId: $productId)
 }
 
-query getInvTrfsPerItem($invId: ID!, $productId: ID!) {
-  getInvTrfsPerItem(invId: $invId, productId: $productId) {
-    invTrfId
+query getInvTrfItemTrfs($invId: ID!, $productId: ID!) {
+  getInvTrfItemTrfs(invId: $invId, productId: $productId) {
+    id
+    fromInv {
+      name
+      type
+    }
+    toInv {
+      name
+      type
+    }
     productId
+    progress
     invTrfItemSizes {
-      invTrfId
-      productId
-      sizeId
       size {
         ...Size
       }
       quantity
     }
     invTrf {
+      id
       trfNo
-      fromInvId
-      toInvId
       trfDate
       progress
-      fromInv {
-        name
-        type
-      }
-      toInv {
-        name
-        type
-      }
     }
   }
 }
@@ -137,9 +134,7 @@ query getInvTrfs {
         sku
       }
       invTrfItemSizes {
-        invTrfId
-        productId
-        sizeId
+        invTrfItemId
         size {
           ...Size
         }
