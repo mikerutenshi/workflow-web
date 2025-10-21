@@ -67,7 +67,6 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery } from 'villus';
 import type { PropType } from 'vue';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -78,7 +77,7 @@ const itemsPerPage = ref(10);
 const props = defineProps({
   invTrfDto: {
     type: Object as PropType<InvTrfDto | null>,
-    required: false,
+    required: true,
   },
 });
 

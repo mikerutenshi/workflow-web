@@ -149,3 +149,9 @@ mutation createInvTrf($data: InvTrfCreateDto!) {
     id
   }
 }
+
+mutation createInvTrfItem($data: InvTrfItemCreateDto!) {
+  createInvTrfItem(data: $data) {
+    id
+  }
+}

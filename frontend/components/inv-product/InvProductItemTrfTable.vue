@@ -75,27 +75,27 @@
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetInvTrfItemTrfsDocument } from '~/api/generated/types';
+import {
+  GetInvTrfItemTrfsDocument,
+  type InvProductDto,
+} from '~/api/generated/types';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
 const props = defineProps({
-  invId: {
-    type: String,
-    required: true,
-  },
-  productId: {
-    type: String,
+  invProductDto: {
+    type: Object as PropType<InvProductDto | null>,
     required: true,
   },
 });
-
+const invId = props.invProductDto?.invId;
+const productId = props.invProductDto?.productId;
 const {
   data: invTrfsData,
   isFetching: isFetchingInvTrfs,
   error: invTrfsError,
 } = useQuery({
-  variables: { invId: props.invId, productId: props.productId },
+  variables: invId && productId ? { invId, productId } : undefined,
   query: GetInvTrfItemTrfsDocument,
   tags: [CACHE_INV_TRFS_PER_ITEM],
 });

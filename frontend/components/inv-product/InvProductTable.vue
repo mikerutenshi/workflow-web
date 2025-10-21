@@ -94,11 +94,11 @@
           </v-table>
         </template>
 
-        <!-- <template v-slot:item.actions="{ item }">
+        <template v-slot:item.actions="{ item }">
           <v-menu transition="slide-y-transition" open-on-hover>
             <template v-slot:activator="{ props }">
               <v-btn
-                :prepend-icon="mdiDotsVertical"
+                :icon="mdiDotsVertical"
                 color="primary"
                 v-bind="props"
                 variant="text"
@@ -110,40 +110,46 @@
                 v-for="(menuItem, index) in menuItems"
                 :key="index"
                 :value="index"
-                @click="
-                  index === 0 ? showItemDialog(item as InvProductDto) : null
-                "
+                @click="onMenuItemClick(index, item as InvProductDto)"
+                :prepend-icon="menuItem.icon"
               >
-                <v-list-item-title>{{ menuItem.title }}</v-list-item-title>
+                <v-list-item-title>
+                  {{ menuItem.title }}
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
-        </template> -->
-
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            color="primary"
-            :icon="mdiFileDocumentArrowRightOutline"
-            variant="text"
-            @click="showItemDialog(item as InvProductDto)"
-          ></v-btn>
         </template>
       </v-data-table>
     </v-col>
   </v-row>
 
-  <v-dialog v-model="dialog" max-width="1200px">
+  <v-dialog v-model="viewDialog" max-width="1200px">
     <v-card>
       <v-toolbar>
         <v-toolbar-title
-          >Transfer Details for {{ selectItem.productSku }}</v-toolbar-title
+          >Transfer Detail for
+          {{ itemSelectionObject?.product.sku }}</v-toolbar-title
         >
       </v-toolbar>
       <v-container class="d-flex flex-column">
         <InvProductItemTrfTable
-          :inv-id="selectInvId"
-          :product-id="selectItem.productId"
+          :inv-product-dto="itemSelectionObject"
         ></InvProductItemTrfTable>
+      </v-container>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="formDialog" max-width="1200px">
+    <v-card>
+      <v-toolbar>
+        <v-toolbar-title>Send Item To </v-toolbar-title>
+      </v-toolbar>
+      <v-container class="d-flex flex-column">
+        <InvProductTrfItemForm
+          :inv-product-dto="itemSelectionObject"
+          @close-dialog="closeItemFormDialog"
+        ></InvProductTrfItemForm>
       </v-container>
     </v-card>
   </v-dialog>
@@ -151,14 +157,10 @@
 
 <script setup lang="ts">
 import {
-  mdiClose,
   mdiDotsVertical,
-  mdiEye,
-  mdiFileDocumentArrowRight,
   mdiFileDocumentArrowRightOutline,
-  mdiFileDocumentEdit,
   mdiMagnify,
-  mdiPencil,
+  mdiTransferRight,
   mdiWarehouse,
 } from '@mdi/js';
 import { useQuery } from 'villus';
@@ -172,7 +174,10 @@ import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
-const menuItems = [{ title: 'Show Details' }, { title: 'Edit' }];
+const menuItems = [
+  { title: 'Show Detail', icon: mdiFileDocumentArrowRightOutline },
+  { title: 'Send To', icon: mdiTransferRight },
+];
 
 const {
   data: dataInventories,
@@ -190,10 +195,7 @@ const {
 });
 
 const selectInvId = ref('');
-const selectItem = reactive({
-  productId: '',
-  productSku: '',
-});
+const itemSelectionObject = shallowRef<InvProductDto | null>(null);
 
 const {
   execute,
@@ -225,12 +227,31 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');
-const dialog = ref(false);
+const viewDialog = ref(false);
+const formDialog = ref(false);
 const activator = ref(undefined);
 
-function showItemDialog(item: InvProductDto) {
-  dialog.value = true;
-  selectItem.productId = item.productId;
-  selectItem.productSku = item.product.sku;
+const onMenuItemClick = (index: number, item: InvProductDto) => {
+  switch (index) {
+    case 0:
+      showItemDetailDialog(item);
+      break;
+    case 1:
+      showItemFormDialog(item);
+      break;
+  }
+};
+
+function showItemDetailDialog(item: InvProductDto) {
+  viewDialog.value = true;
+  itemSelectionObject.value = item;
+}
+function showItemFormDialog(item: InvProductDto) {
+  formDialog.value = true;
+  itemSelectionObject.value = item;
+}
+function closeItemFormDialog() {
+  formDialog.value = false;
+  itemSelectionObject.value = null;
 }
 </script>

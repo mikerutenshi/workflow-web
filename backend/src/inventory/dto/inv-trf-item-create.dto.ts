@@ -33,7 +33,7 @@ export class InvTrfItemCreateDto {
   @ValidateNested({ each: true })
   invTrfItemSizes: InvTrfItemSizeCreateDto[];
 
-  @Field(() => Progress)
+  @Field(() => Progress, { nullable: true })
   @IsEnum(Progress)
   @IsOptional()
   progress?: Progress;

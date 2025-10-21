@@ -53,16 +53,19 @@ export class InvTrfService {
     return this.prisma.invTrfItem.findMany({
       include: {
         invTrf: { include: { fromInv: true, toInv: true } },
-        invTrfItemSizes: { include: { size: true } },
+        invTrfItemSizes: {
+          include: { size: true },
+          orderBy: { sizeId: 'asc' },
+        },
         fromInv: true,
         toInv: true,
       },
       where: {
-        OR: [{ invTrf: { toInvId: invId } }, { invTrf: { fromInvId: invId } }],
+        OR: [{ fromInvId: invId }, { toInvId: invId }],
         productId,
       },
       orderBy: {
-        invTrfId: 'desc',
+        id: 'desc',
       },
     });
   }

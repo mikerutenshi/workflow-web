@@ -194,6 +194,22 @@ type InvTrfItemToSize {
   size: Size!
 }
 
+type InvTrfItem {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  invTrfId: ID
+  fromInvId: ID
+  toInvId: ID!
+  productId: ID!
+  invTrfItemSizes: [InvTrfItemToSize!]!
+  progress: Progress!
+  fromInv: Inventory
+  toInv: Inventory!
+}
+
 type InvTrfItemTrfDto {
   id: ID!
   createdBy: ID!
@@ -445,6 +461,7 @@ type Mutation {
   updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
   createInvTrf(data: InvTrfCreateDto!): InvTrf!
+  createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!
 }
 
 input RoleDto {
@@ -601,4 +618,18 @@ input InvTrfCreateDto {
   progress: Progress!
   invTrfItemIds: [ID!]!
   createdBy: ID!
+}
+
+input InvTrfItemCreateDto {
+  fromInvId: ID
+  toInvId: ID!
+  productId: ID!
+  invTrfItemSizes: [InvTrfItemSizeCreateDto!]!
+  progress: Progress
+  createdBy: ID!
+}
+
+input InvTrfItemSizeCreateDto {
+  sizeId: ID!
+  quantity: Float!
 }

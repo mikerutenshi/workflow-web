@@ -155,3 +155,16 @@ export const InvTrfSchema = z.object({
   ),
   updatedBy: positiveNumberString.optional().nullable(),
 });
+
+export const InvTrfItemSchema = z.object({
+  fromInvId: positiveNumberString,
+  toInvId: positiveNumberString,
+  createdBy: positiveNumberString,
+  productId: positiveNumberString,
+  invTrfItemSizes: z.array(
+    z.object({
+      sizeId: positiveNumberString,
+      quantity: z.number().min(0),
+    }),
+  ),
+});
