@@ -79,7 +79,7 @@
           <v-col class="d-flex flex-column">
             <v-data-table
               :headers="headers"
-              :items="invTrfsData?.getInvTrfItemTrfs"
+              :items="data?.getInvTrfItems"
               :search="search"
               :loading="isFetchingInvTrfs"
               item-value="id"
@@ -147,6 +147,7 @@ import type { VDataTable } from 'vuetify/components';
 import {
   CreateInvTrfDocument,
   GetInventoriesDocument,
+  GetInvTrfItemsDocument,
   GetInvTrfItemTrfsDocument,
   Progress,
 } from '~/api/generated/types';
@@ -173,7 +174,6 @@ const { handleSubmit, values } = useForm({
   initialValues: {
     trfDate: dayjs().toISOString(),
     progress: Progress.Initiated,
-    fromInvId: '11',
     trfNo: 'PRD-251022-25080464',
   },
 });
@@ -207,15 +207,20 @@ const {
   },
   clearCacheTags: [CACHE_INVENTORIES],
 });
+const variables = reactive({
+  fromInvId: '',
+  toInvId: '',
+});
 const {
   execute: executeFetch,
-  data: invTrfsData,
+  data,
   isFetching: isFetchingInvTrfs,
   error: invTrfsError,
 } = useQuery({
-  variables: { invId: '11', productId: '29' },
-  query: GetInvTrfItemTrfsDocument,
-  tags: [CACHE_INV_TRFS_PER_ITEM],
+  variables,
+  query: GetInvTrfItemsDocument,
+  tags: [CACHE_INV_TRF_ITEMS],
+  fetchOnMount: false,
 });
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
@@ -245,6 +250,11 @@ watch(itemIdSelections, (newValues) => {
 });
 
 watchEffect(() => {
+  if (fromInvId.value.value && toInvId.value.value) {
+    console.log('Triggered');
+    variables.fromInvId = fromInvId.value.value as string;
+    variables.toInvId = toInvId.value.value as string;
+  }
   console.log(`form values: ${JSON.stringify(values)}`);
 });
 </script>

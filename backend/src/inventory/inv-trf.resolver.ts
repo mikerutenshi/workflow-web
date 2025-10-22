@@ -11,6 +11,7 @@ import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
 import { AuthGuard } from '@/guards/auth.guard';
+import { InvTrfItemDto } from './dto/inv-trf-item.dto';
 
 @Resolver(() => InvTrf)
 export class InvTrfResolver {
@@ -33,6 +34,14 @@ export class InvTrfResolver {
     @Args('productId', { type: () => ID }, ParseIntPipe) productId: number,
   ): Promise<InvTrfItemTrfDto[]> {
     return this.service.getInvTrfItemTrfs(invId, productId);
+  }
+
+  @Query(() => [InvTrfItemDto])
+  getInvTrfItems(
+    @Args('fromInvId', { type: () => ID }, ParseIntPipe) fromInvId: number,
+    @Args('toInvId', { type: () => ID }, ParseIntPipe) toInvId: number,
+  ): Promise<InvTrfItemDto[]> {
+    return this.service.getInvTrfItems(fromInvId, toInvId);
   }
 
   @Query(() => [InvTrfDto])

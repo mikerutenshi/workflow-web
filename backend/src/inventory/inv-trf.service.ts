@@ -6,6 +6,8 @@ import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
+import { InvTrfItemDto } from './dto/inv-trf-item.dto';
+import { Progress } from '@/generated/client';
 
 @Injectable()
 export class InvTrfService {
@@ -66,6 +68,21 @@ export class InvTrfService {
       },
       orderBy: {
         id: 'desc',
+      },
+    });
+  }
+
+  getInvTrfItems(fromInvId: number, toInvId: number): Promise<InvTrfItemDto[]> {
+    return this.prisma.invTrfItem.findMany({
+      where: { fromInvId, toInvId, progress: { not: Progress.COMPLETED } },
+      include: {
+        product: true,
+        fromInv: true,
+        toInv: true,
+        invTrfItemSizes: {
+          include: { size: true },
+          orderBy: { sizeId: 'asc' },
+        },
       },
     });
   }
