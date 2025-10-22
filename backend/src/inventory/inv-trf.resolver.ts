@@ -3,10 +3,14 @@ import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 import { InvTrfService } from './inv-trf.service';
 import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
 import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
-import { ParseIntPipe } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
+import { RoleGuard } from '@/guards/role.guard';
+import { Roles } from '@/guards/roles.decorator';
+import { Role } from '@/models/role.enum';
+import { AuthGuard } from '@/guards/auth.guard';
 
 @Resolver(() => InvTrf)
 export class InvTrfResolver {
@@ -34,5 +38,15 @@ export class InvTrfResolver {
   @Query(() => [InvTrfDto])
   getInvTrfs(): Promise<InvTrfDto[]> {
     return this.service.getInvTrfs();
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles(Role.Planner)
+  @Mutation(() => Boolean)
+  @UseGuards(AuthGuard)
+  deleteInvTrfItem(
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+  ): Promise<Boolean> {
+    return this.service.deleteInvTrfItem(id);
   }
 }

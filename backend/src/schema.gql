@@ -463,6 +463,7 @@ type Mutation {
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
   createInvTrf(data: InvTrfCreateDto!): InvTrf!
   createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!
+  deleteInvTrfItem(id: ID!): Boolean!
 }
 
 input RoleDto {

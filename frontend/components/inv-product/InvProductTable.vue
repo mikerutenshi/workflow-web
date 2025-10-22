@@ -142,6 +142,7 @@
       <v-container class="d-flex flex-column">
         <InvProductItemTrfTable
           :inv-product-dto="itemSelectionObject"
+          @refresh-table="executeFetch"
         ></InvProductItemTrfTable>
       </v-container>
     </v-card>
@@ -206,7 +207,7 @@ const selectInvId = ref('');
 const itemSelectionObject = shallowRef<InvProductDto | null>(null);
 
 const {
-  execute,
+  execute: executeFetch,
   data: dataInvProducts,
   isFetching: isFetchingInvProducts,
   error: errorInvProducts,
@@ -265,5 +266,6 @@ function showItemFormDialog(item: InvProductDto) {
 function closeItemFormDialog() {
   formDialog.value = false;
   itemSelectionObject.value = null;
+  executeFetch();
 }
 </script>

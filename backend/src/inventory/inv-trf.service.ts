@@ -87,4 +87,16 @@ export class InvTrfService {
       orderBy: { id: 'desc' },
     });
   }
+
+  async deleteInvTrfItem(id: number): Promise<Boolean> {
+    const invTrfItem = await this.prisma.invTrfItem.delete({
+      where: { id },
+    });
+
+    if (!invTrfItem) {
+      throw new Error(`Delete invTrfItem with id ${id} failed.`);
+    } else {
+      return true;
+    }
+  }
 }
