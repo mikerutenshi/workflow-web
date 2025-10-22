@@ -267,6 +267,7 @@ model InvToProduct {
 
   product           Product         @relation(fields: [productId], references: [id])
   inventory         Inventory       @relation(fields: [invId], references: [id])
+  invTrfItems       InvTrfItem[]
 }
 
 model InvProductToSize {
@@ -294,6 +295,7 @@ model InvTrfItem {
   product           Product         @relation(fields: [productId], references: [id])
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
+  invProduct        InvToProduct?   @relation(fields: [fromInvId, productId], references: [invId, productId])
 
   createdBy         Int
   updatedBy         Int?

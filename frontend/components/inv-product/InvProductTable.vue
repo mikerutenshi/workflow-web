@@ -94,6 +94,13 @@
           </v-table>
         </template>
 
+        <template v-slot:item.invTrfItems="{ item }">
+          {{
+            item.invTrfItems.filter((i) => i.progress === Progress.Pending)
+              .length
+          }}
+        </template>
+
         <template v-slot:item.actions="{ item }">
           <v-menu transition="slide-y-transition" open-on-hover>
             <template v-slot:activator="{ props }">
@@ -168,6 +175,7 @@ import type { VDataTable } from 'vuetify/components';
 import {
   GetInventoriesDocument,
   GetInvProductsDocument,
+  Progress,
   type InvProductDto,
 } from '~/api/generated/types';
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
@@ -175,7 +183,7 @@ import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 const menuItems = [
-  { title: 'Show Detail', icon: mdiFileDocumentArrowRightOutline },
+  { title: 'Show Transfer Detail', icon: mdiFileDocumentArrowRightOutline },
   { title: 'Send To', icon: mdiTransferRight },
 ];
 
@@ -224,6 +232,10 @@ const headers: ReadOnlyHeaders = [
     key: 'product.productGroup.productCategory.gender',
   },
   { title: t('label.sizes'), key: 'invProductSizes', minWidth: '120' },
+  {
+    title: 'Pending Trfs',
+    key: 'invTrfItems',
+  },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');

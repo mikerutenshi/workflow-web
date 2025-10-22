@@ -51,6 +51,7 @@ export class InvProductService {
             productColors: { include: { color: true } },
           },
         },
+        invTrfItems: true,
       },
       where: {
         invId,

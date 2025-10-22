@@ -1,4 +1,5 @@
 import { InvProduct } from '@/models/inv-product.model';
+import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { ProductGetDto } from '@/product/dto/product-get.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
 
@@ -6,4 +7,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class InvProductDto extends InvProduct {
   @Field(() => ProductGetDto)
   product: ProductGetDto;
+
+  @Field(() => [InvTrfItem])
+  invTrfItems: InvTrfItem[];
 }

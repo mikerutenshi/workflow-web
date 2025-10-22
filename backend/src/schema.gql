@@ -91,6 +91,39 @@ type InvProduct {
   discount: String!
 }
 
+type InvTrfItemToSize {
+  invTrfItemId: ID!
+  sizeId: ID!
+  quantity: Float!
+  size: Size!
+}
+
+type InvTrfItem {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  invTrfId: ID
+  fromInvId: ID
+  toInvId: ID!
+  productId: ID!
+  invTrfItemSizes: [InvTrfItemToSize!]!
+  progress: Progress!
+  fromInv: Inventory
+  toInv: Inventory!
+}
+
+enum Progress {
+  INITIATED
+  PENDING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
 type Product {
   id: ID!
   createdBy: ID!
@@ -162,6 +195,7 @@ type InvProductDto {
   sellingPrice: Int!
   discount: String!
   product: ProductGetDto!
+  invTrfItems: [InvTrfItem!]!
 }
 
 type InvTrf {
@@ -175,39 +209,6 @@ type InvTrf {
   toInvId: ID!
   trfDate: Date!
   progress: Progress!
-}
-
-enum Progress {
-  INITIATED
-  PENDING
-  IN_PROGRESS
-  ON_HOLD
-  COMPLETED
-  CANCELLED
-  FAILED
-}
-
-type InvTrfItemToSize {
-  invTrfItemId: ID!
-  sizeId: ID!
-  quantity: Float!
-  size: Size!
-}
-
-type InvTrfItem {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  invTrfId: ID
-  fromInvId: ID
-  toInvId: ID!
-  productId: ID!
-  invTrfItemSizes: [InvTrfItemToSize!]!
-  progress: Progress!
-  fromInv: Inventory
-  toInv: Inventory!
 }
 
 type InvTrfItemTrfDto {
