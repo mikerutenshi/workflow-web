@@ -114,15 +114,28 @@
             </template>
             <v-list>
               <v-list-item
-                v-for="(menuItem, index) in menuItems"
-                :key="index"
-                :value="index"
-                @click="onMenuItemClick(index, item as InvProductDto)"
-                :prepend-icon="menuItem.icon"
+                @click="showItemDetailDialog(item as InvProductDto)"
+                :prepend-icon="mdiFileDocumentArrowRightOutline"
               >
-                <v-list-item-title>
-                  {{ menuItem.title }}
-                </v-list-item-title>
+                <v-list-item-title>Show Transfer Detail</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                v-if="
+                  item.invProductSizes.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0,
+                  ) >
+                  item.invTrfItems.reduce(
+                    (sum, item) =>
+                      sum +
+                      item.invTrfItemSizes.reduce((s, i) => s + i.quantity, 0),
+                    0,
+                  )
+                "
+                @click="showItemFormDialog(item as InvProductDto)"
+                :prepend-icon="mdiTransferRight"
+              >
+                <v-list-item-title> Send To </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -183,10 +196,10 @@ import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
-const menuItems = [
-  { title: 'Show Transfer Detail', icon: mdiFileDocumentArrowRightOutline },
-  { title: 'Send To', icon: mdiTransferRight },
-];
+// const menuItems = [
+//   { title: 'Show Transfer Detail', icon: mdiFileDocumentArrowRightOutline },
+//   { title: 'Send To', icon: mdiTransferRight },
+// ];
 
 const {
   data: dataInventories,
@@ -234,7 +247,7 @@ const headers: ReadOnlyHeaders = [
   },
   { title: t('label.sizes'), key: 'invProductSizes', minWidth: '120' },
   {
-    title: 'Pending Trfs',
+    title: 'Incomplete Transfers',
     key: 'invTrfItems',
   },
   { title: '', key: 'actions', sortable: false, align: 'end' },
@@ -244,16 +257,16 @@ const viewDialog = ref(false);
 const formDialog = ref(false);
 const activator = ref(undefined);
 
-const onMenuItemClick = (index: number, item: InvProductDto) => {
-  switch (index) {
-    case 0:
-      showItemDetailDialog(item);
-      break;
-    case 1:
-      showItemFormDialog(item);
-      break;
-  }
-};
+// const onMenuItemClick = (index: number, item: InvProductDto) => {
+//   switch (index) {
+//     case 0:
+//       showItemDetailDialog(item);
+//       break;
+//     case 1:
+//       showItemFormDialog(item);
+//       break;
+//   }
+// };
 
 function showItemDetailDialog(item: InvProductDto) {
   viewDialog.value = true;

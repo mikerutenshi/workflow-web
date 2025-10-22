@@ -97,7 +97,7 @@ const availProductSizes = invProduct?.invProductSizes.map((item) => {
     (sum, i) =>
       sum +
       i.invTrfItemSizes.reduce(
-        (s, q) => (q.size.id === item.size.id ? s + q.quantity : s),
+        (s, i) => (i.size.id === item.size.id ? s + i.quantity : s),
         0,
       ),
     0,

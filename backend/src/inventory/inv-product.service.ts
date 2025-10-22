@@ -56,7 +56,7 @@ export class InvProductService {
             invTrfItemSizes: { include: { size: true } },
           },
           where: {
-            progress: Progress.PENDING,
+            NOT: { progress: Progress.COMPLETED },
           },
         },
       },
