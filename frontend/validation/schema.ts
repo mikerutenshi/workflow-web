@@ -137,22 +137,13 @@ export const InventorySchema = z.object({
 
 export const InvTrfSchema = z.object({
   trfDate: z.string().datetime(),
-  trfNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
+  // trfNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
+  trfNo: z.string(),
   fromInvId: positiveNumberString,
   toInvId: positiveNumberString,
   progress: z.nativeEnum(Progress),
   createdBy: positiveNumberString,
-  invTrfItems: z.array(
-    z.object({
-      productId: positiveNumberString,
-      invTrfItemSizes: z.array(
-        z.object({
-          sizeId: positiveNumberString,
-          quantity: z.number().min(1),
-        }),
-      ),
-    }),
-  ),
+  invTrfItemIds: z.array(positiveNumberString),
   updatedBy: positiveNumberString.optional().nullable(),
 });
 

@@ -96,7 +96,7 @@
 
         <template v-slot:item.invTrfItems="{ item }">
           {{
-            item.invTrfItems.filter((i) => i.progress === Progress.Pending)
+            item.invTrfItems.filter((i) => i.progress !== Progress.Completed)
               .length
           }}
         </template>
