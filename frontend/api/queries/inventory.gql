@@ -70,6 +70,12 @@ query getInvProducts($invId: ID!) {
     }
     invTrfItems {
       progress
+      invTrfItemSizes {
+        size {
+          ...Size
+        }
+        quantity
+      }
     }
     sellingPrice
     discount

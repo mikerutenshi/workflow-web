@@ -2,7 +2,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { InvProduct } from '@/models/inv-product.model';
-import { Prisma } from '@/generated/client';
+import { Prisma, Progress } from '@/generated/client';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductDto } from './dto/inv-product.dto';
 
@@ -51,7 +51,14 @@ export class InvProductService {
             productColors: { include: { color: true } },
           },
         },
-        invTrfItems: true,
+        invTrfItems: {
+          include: {
+            invTrfItemSizes: { include: { size: true } },
+          },
+          where: {
+            progress: Progress.PENDING,
+          },
+        },
       },
       where: {
         invId,

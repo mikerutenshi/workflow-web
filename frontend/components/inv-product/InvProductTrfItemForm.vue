@@ -92,6 +92,21 @@ const props = defineProps({
 });
 const availInventories = shallowRef<Inventory[]>([]);
 const invProduct = props.invProductDto;
+const availProductSizes = invProduct?.invProductSizes.map((item) => {
+  const pendingQty = invProduct!.invTrfItems.reduce(
+    (sum, i) =>
+      sum +
+      i.invTrfItemSizes.reduce(
+        (s, q) => (q.size.id === item.size.id ? s + q.quantity : s),
+        0,
+      ),
+    0,
+  );
+  return {
+    ...item,
+    quantity: item.quantity - pendingQty,
+  };
+});
 const emit = defineEmits(['close-dialog']);
 const snack = reactive({
   isVisible: false,
@@ -106,11 +121,13 @@ const sizeHeaders = ref([
 const sizeQuantities = reactive<
   Array<{ id: string; title: string; quantity: number }>
 >(
-  invProduct!.invProductSizes.map((item) => ({
-    id: item.size.id,
-    title: item.size.eu,
-    quantity: item.quantity,
-  })),
+  availProductSizes!.map((item) => {
+    return {
+      id: item.size.id,
+      title: item.size.eu,
+      quantity: item.quantity,
+    };
+  }),
 );
 
 const authStore = useAuthStore();
@@ -164,7 +181,7 @@ watch(
       if (newItem.quantity <= 0) {
         newItem.quantity = 0;
       }
-      const originalItem = invProduct?.invProductSizes.find(
+      const originalItem = availProductSizes!.find(
         (item) => item.size.id === newItem.id,
       );
 
@@ -175,12 +192,14 @@ watch(
       }
     });
     replace(
-      newValues.map((item) => {
-        return {
-          sizeId: item.id,
-          quantity: item.quantity,
-        };
-      }),
+      newValues
+        .filter((item) => item.quantity > 0)
+        .map((item) => {
+          return {
+            sizeId: item.id,
+            quantity: item.quantity,
+          };
+        }),
     );
   },
   { immediate: true },
