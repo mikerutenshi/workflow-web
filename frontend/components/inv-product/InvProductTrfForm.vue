@@ -75,11 +75,14 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <v-row v-if="fromInvId.value.value && toInvId.value.value">
           <v-col class="d-flex flex-column">
+            <span :style="{ color: errorColor }">
+              {{ errors['invTrfItemIds'] }}
+            </span>
             <v-data-table
               :headers="headers"
-              :items="data?.getInvTrfItems"
+              :items="fetchData?.getInvTrfItems"
               :search="search"
               :loading="isFetchingInvTrfs"
               item-value="id"
@@ -143,16 +146,19 @@
 import { mdiTransferRight } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
+import { useTheme } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import {
   CreateInvTrfDocument,
   GetInventoriesDocument,
   GetInvTrfItemsDocument,
   GetInvTrfItemTrfsDocument,
+  GetLastInvTrfNoDocument,
   Progress,
 } from '~/api/generated/types';
 import { InvTrfSchema } from '~/validation/schema';
 
+const errorColor = useTheme().themes.value.light.colors.error;
 const { t } = useI18n();
 const props = defineProps<{
   invTrfId?: string | null;
@@ -168,13 +174,16 @@ const submitBtnTitle = computed(() =>
   props.invTrfId ? t('btn.update') : t('btn.create'),
 );
 
+const authStore = useAuthStore();
+const userId = authStore.user?.id || '';
+
 const validationSchema = toTypedSchema(InvTrfSchema);
-const { handleSubmit, values } = useForm({
+const { handleSubmit, values, errors } = useForm({
   validationSchema,
   initialValues: {
     trfDate: dayjs().toISOString(),
     progress: Progress.Initiated,
-    trfNo: 'PRD-251022-25080464',
+    createdBy: userId,
   },
 });
 const trfNo = useField('trfNo');
@@ -195,6 +204,13 @@ const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,
   tags: [CACHE_INVENTORIES],
 });
+const { isFetching: isFetchingTrfNo } = useQuery({
+  query: GetLastInvTrfNoDocument,
+  cachePolicy: 'network-only',
+  onData(data) {
+    trfNo.setValue(generateId(Operation.Transfer, data.getLastInvTrfNo));
+  },
+});
 const {
   isFetching: isCreating,
   execute: executeCreate,
@@ -203,9 +219,10 @@ const {
   onData(data) {
     const id = data.createInvTrf.id;
     console.log(`Created Id: ${id}`);
+    snack.message = t('status.saved');
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INVENTORIES],
+  clearCacheTags: [CACHE_INV_TRFS],
 });
 const variables = reactive({
   fromInvId: '',
@@ -213,18 +230,19 @@ const variables = reactive({
 });
 const {
   execute: executeFetch,
-  data,
+  data: fetchData,
   isFetching: isFetchingInvTrfs,
   error: invTrfsError,
 } = useQuery({
   variables,
   query: GetInvTrfItemsDocument,
-  tags: [CACHE_INV_TRF_ITEMS],
+  tags: [CACHE_INV_TRFS],
   fetchOnMount: false,
 });
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
+  { title: t('label.sku'), key: 'product.sku' },
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
   { title: t('label.status'), key: 'progress' },
@@ -238,7 +256,7 @@ const itemIdSelections = ref<string[]>([]);
 
 const onSubmit = handleSubmit((data) => {
   console.log(`data: ${JSON.stringify(data)}`);
-  // executeCreate({ data });
+  executeCreate({ data });
 });
 const deleteInvTrf = (id: string) => {
   //todo

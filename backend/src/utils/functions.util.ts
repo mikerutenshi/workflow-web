@@ -7,7 +7,7 @@ export function generateId(op: Operation, lastId: string | null): string {
 
   if (op === Operation.Produce) {
     return `${op}-${today.format(format)}-${lastId}`;
-  } else if (lastId === null) {
+  } else if (!lastId) {
     return `${op}-${today.format(format)}-0001`;
   } else if (lastId) {
     const split = lastId.split('-');
@@ -21,7 +21,7 @@ export function generateId(op: Operation, lastId: string | null): string {
       if (lastDateObject.isBefore(today, 'month')) {
         return `${op}-${today.format(format)}-0001`;
       } else {
-        return `${op}-${today.format(format)}-${+lastSequence + 1}`;
+        return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
       }
     } else {
       throw Error('Operations do not match');

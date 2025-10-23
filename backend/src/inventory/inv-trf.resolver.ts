@@ -49,6 +49,11 @@ export class InvTrfResolver {
     return this.service.getInvTrfs();
   }
 
+  @Query(() => String)
+  getLastInvTrfNo(): Promise<string | null> {
+    return this.service.getLastInvTrfNo();
+  }
+
   @UseGuards(RoleGuard)
   @Roles(Role.Planner)
   @Mutation(() => Boolean)

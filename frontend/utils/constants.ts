@@ -1,4 +1,4 @@
-const JOBS = {
+export const JOBS = {
   DRAW_UPPER: 'jobs.draw_upper',
   DRAW_LINING: 'jobs.draw_lining',
   STITCH_UPPER: 'jobs.stitch_upper',
@@ -7,20 +7,20 @@ const JOBS = {
   LAST: 'jobs.last',
 };
 
-const GENDERS = {
+export const GENDERS = {
   MEN: 'genders.men',
   WOMEN: 'genders.women',
   KIDS: 'genders.kids',
 };
 
-const INV_TYPE = {
+export const INV_TYPE = {
   FACTORY: 'inv_type.factory',
   STORAGE: 'inv_type.storage',
   CONSIGNMENT: 'inv_type.consignment',
   STOREFRONT: 'inv_type.storefront',
 };
 
-enum JOB {
+export enum JOB {
   DRAW_UPPER = 'DRAW_UPPER',
   DRAW_LINING = 'DRAW_LINING',
   STITCH_UPPER = 'STITCH_UPPER',
@@ -28,18 +28,26 @@ enum JOB {
   STITCH_INSOLE = 'STITCH_INSOLE',
   LAST = 'LAST',
 }
-enum Role {
+
+export enum Role {
   Superuser = 0,
   Finance = 2,
   Planner = 4,
   Field = 6,
 }
 
-enum SnackColor {
+export enum SnackColor {
   Success = 'success',
   Error = 'error',
   Warning = 'warning',
   Info = 'info',
 }
 
-export { JOB, JOBS, GENDERS, INV_TYPE, Role, SnackColor };
+export enum Operation {
+  Transfer = 'TRF',
+  Return = 'RTR',
+  Sale = 'SAL',
+  Purchase = 'PUR',
+  Adjustment = 'ADJ',
+  Produce = 'PRD',
+}

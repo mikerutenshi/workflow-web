@@ -5,7 +5,7 @@ import { TaskUpdateDto } from './dto/task-update.dto';
 import { Progress } from '@/generated/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTrfService } from '@/inventory/inv-trf.service';
-import { generateId } from '@/utils/id-generator.util';
+import { generateId } from '@/utils/functions.util';
 import { Operation } from '@/models/operation.enum';
 
 @Injectable()
@@ -79,10 +79,6 @@ export class TaskService {
 
         //Create new inv product if grogress == completed
         if (initialProgress !== Progress.COMPLETED && allDone) {
-          const lastTrf = await tx.invTrf.findFirst({
-            orderBy: { id: 'desc' },
-          });
-          const lastTrfNo = lastTrf?.trfNo || null;
           const trfNo = generateId(Operation.Produce, initialWork!.orderNo);
           console.log(`trfNo: ${trfNo}`);
 

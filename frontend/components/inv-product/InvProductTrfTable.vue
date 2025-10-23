@@ -89,7 +89,7 @@
     "
     v-model="formDialog"
   >
-    <InvProductTrfForm></InvProductTrfForm>
+    <InvProductTrfForm @close-dialog="formDialog = false"></InvProductTrfForm>
   </ActionEditItemDialog>
 </template>
 
@@ -113,6 +113,7 @@ const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
 const selectItemObject = shallowRef<InvTrfDto | null>(null);
 
 const {
+  execute: executeFetch,
   data: invTrfsData,
   isFetching: isFetchingInvTrfs,
   error: invTrfsError,
@@ -147,6 +148,7 @@ watch(isCreateDialogOpen, (isOpen) => {
 });
 watch(formDialog, (isOpen) => {
   if (!isOpen) {
+    executeFetch();
     dialogStore.closeFormDialog();
     selectItemObject.value = null;
   }
@@ -155,7 +157,7 @@ watch(viewDialog, (isOpen) => {
   if (!isOpen) {
     setTimeout(() => {
       selectItemObject.value = null;
-    }, 500);
+    }, 200);
   }
 });
 watchEffect(() => {

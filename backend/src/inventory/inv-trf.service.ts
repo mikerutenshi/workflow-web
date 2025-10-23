@@ -35,16 +35,26 @@ export class InvTrfService {
   createInvTrf(data: InvTrfCreateDto): Promise<InvTrf> {
     console.log(`Create Dto: ${JSON.stringify(data)}`);
     const { invTrfItemIds, ...rest } = data;
-    return this.prisma.invTrf.create({
-      data: {
-        ...rest,
-        invTrfItems: {
-          connect: invTrfItemIds.map((id) => ({ id })),
+    return this.prisma.$transaction(async (tx) => {
+      invTrfItemIds.map(async (id) => {
+        await tx.invTrfItem.update({
+          where: { id },
+          data: { progress: data.progress },
+        });
+      });
+      const result = await tx.invTrf.create({
+        data: {
+          ...rest,
+          invTrfItems: {
+            connect: invTrfItemIds.map((id) => ({ id })),
+          },
         },
-      },
-      include: {
-        invTrfItems: true,
-      },
+        include: {
+          invTrfItems: true,
+        },
+      });
+
+      return result;
     });
   }
 
@@ -74,7 +84,7 @@ export class InvTrfService {
 
   getInvTrfItems(fromInvId: number, toInvId: number): Promise<InvTrfItemDto[]> {
     return this.prisma.invTrfItem.findMany({
-      where: { fromInvId, toInvId, progress: { not: Progress.COMPLETED } },
+      where: { fromInvId, toInvId, progress: Progress.PENDING },
       include: {
         product: true,
         fromInv: true,
@@ -103,6 +113,14 @@ export class InvTrfService {
       },
       orderBy: { id: 'desc' },
     });
+  }
+
+  async getLastInvTrfNo(): Promise<string | null> {
+    const lastTrf = await this.prisma.invTrf.findFirst({
+      orderBy: { id: 'desc' },
+    });
+    const lastTrfNo = lastTrf?.trfNo || null;
+    return Promise.resolve(lastTrfNo);
   }
 
   async deleteInvTrfItem(id: number): Promise<Boolean> {

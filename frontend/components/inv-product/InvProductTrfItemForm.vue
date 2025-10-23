@@ -163,7 +163,11 @@ const {
   isFetching: isCreating,
   error: createError,
 } = useMutation(CreateInvTrfItemDocument, {
-  clearCacheTags: [CACHE_INV_TRFS_PER_ITEM, CACHE_INV_PRODUCTS],
+  clearCacheTags: [
+    CACHE_INV_TRFS_PER_ITEM,
+    CACHE_INV_PRODUCTS,
+    CACHE_INV_TRF_ITEMS,
+  ],
   onData() {
     snack.message = t('status.saved');
     snack.isVisible = true;

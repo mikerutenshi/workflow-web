@@ -143,7 +143,7 @@ export const InvTrfSchema = z.object({
   toInvId: positiveNumberString,
   progress: z.nativeEnum(Progress),
   createdBy: positiveNumberString,
-  invTrfItemIds: z.array(positiveNumberString),
+  invTrfItemIds: z.array(positiveNumberString).nonempty(),
   updatedBy: positiveNumberString.optional().nullable(),
 });
 

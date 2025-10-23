@@ -69,7 +69,7 @@
 
         <template v-slot:item.actions="{ item }">
           <v-btn
-            v-if="item.progress !== Progress.Completed"
+            v-if="item.progress === Progress.Pending"
             color="primary"
             :icon="mdiDeleteOutline"
             variant="text"

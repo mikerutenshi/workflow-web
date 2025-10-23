@@ -195,3 +195,7 @@ mutation createInvTrfItem($data: InvTrfItemCreateDto!) {
 mutation deleteInvTrfItem($id: ID!) {
   deleteInvTrfItem(id: $id)
 }
+
+query getLastInvTrfNo {
+  getLastInvTrfNo
+}

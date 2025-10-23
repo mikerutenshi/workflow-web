@@ -1,7 +1,8 @@
+import dayjs from 'dayjs';
 import type { CombinedError } from 'villus';
 import { Gender, InvType, type Job } from '~/api/generated/types';
 
-function renderJobs(jobs: Job[]): string {
+export function renderJobs(jobs: Job[]): string {
   return jobs
     .map((key) => {
       return key in JOBS ? JOBS[key] : 'N/A';
@@ -9,15 +10,15 @@ function renderJobs(jobs: Job[]): string {
     .join(', ');
 }
 
-function renderJob(job: Job): string {
+export function renderJob(job: Job): string {
   return job in JOBS ? JOBS[job] : 'N/A';
 }
 
-function renderInvType(type: InvType): string {
+export function renderInvType(type: InvType): string {
   return type in INV_TYPE ? INV_TYPE[type] : 'N/A';
 }
 
-function formatRupiah(amount: number | null | undefined): string {
+export function formatRupiah(amount: number | null | undefined): string {
   if (amount === undefined) return '-';
   if (amount === null) return '-';
   return new Intl.NumberFormat('id-ID', {
@@ -27,24 +28,24 @@ function formatRupiah(amount: number | null | undefined): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
-function parseRupiah(rupiah: string): number | null {
+export function parseRupiah(rupiah: string): number | null {
   // Hapus semua karakter kecuali digit dan koma
   const cleaned = rupiah.replace(/[^0-9,]/g, '').replace(',', '.'); // Ganti koma dengan titik untuk desimal
   const parsed = parseFloat(cleaned);
   return !Number.isNaN(parsed) ? parsed : null;
 }
 
-function renderGender(gender: Gender): string {
+export function renderGender(gender: Gender): string {
   const title = GENDERS[gender];
   return title ?? 'N/A';
 }
 
-function parseGender(title: string): Gender {
+export function parseGender(title: string): Gender {
   const entry = Object.entries(GENDERS).find(([_, value]) => value === title);
   return entry ? (entry[0] as Gender) : Gender.Kids;
 }
 
-function formatLocalDate(utcDate: string) {
+export function formatLocalDate(utcDate: string) {
   return utcDate ? new Date(utcDate).toLocaleDateString() : '-';
 }
 
@@ -60,7 +61,7 @@ interface VillusError {
   }>;
 }
 
-function extractGraphQlError(error?: CombinedError | null): string {
+export function extractGraphQlError(error?: CombinedError | null): string {
   if (!error) return '';
 
   return (
@@ -74,14 +75,32 @@ function extractGraphQlError(error?: CombinedError | null): string {
   );
 }
 
-export {
-  renderJob,
-  renderJobs,
-  formatRupiah,
-  parseRupiah,
-  renderGender,
-  renderInvType,
-  parseGender,
-  formatLocalDate,
-  extractGraphQlError,
-};
+export function generateId(op: Operation, lastId: string | null): string {
+  const today = dayjs();
+  const format = 'YYMMDD';
+
+  if (op === Operation.Produce) {
+    return `${op}-${today.format(format)}-${lastId}`;
+  } else if (!lastId) {
+    return `${op}-${today.format(format)}-0001`;
+  } else if (lastId) {
+    const split = lastId.split('-');
+    const lastOp = split[0];
+    const lastDate = split[1];
+    const lastSequence = split[2];
+
+    if (lastOp === op) {
+      const lastDateObject = dayjs(lastDate, 'YYMMDD');
+
+      if (lastDateObject.isBefore(today, 'month')) {
+        return `${op}-${today.format(format)}-0001`;
+      } else {
+        return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
+      }
+    } else {
+      throw Error('Operations do not match');
+    }
+  } else {
+    throw Error('Incomplete ID generator parameter');
+  }
+}
