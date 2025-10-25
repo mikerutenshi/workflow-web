@@ -95,7 +95,7 @@ if (workId.value) {
       form.date = work.date;
       form.orderNo = work.orderNo;
       form.sku = work.product.sku;
-      form.sizes = work.sizes.map((item) => ({
+      form.sizes = work.workSizes.map((item) => ({
         eu: item.size.eu,
         quantity: item.quantity,
       }));

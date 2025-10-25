@@ -33,7 +33,7 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="dataInvProducts?.getInvProducts"
+        :items="invProductsDisplay"
         :search="search"
         :loading="isFetchingInvProducts"
         item-value="id"
@@ -95,10 +95,11 @@
         </template>
 
         <template v-slot:item.invTrfItems="{ item }">
-          {{
-            item.invTrfItems.filter((i) => i.progress !== Progress.Completed)
-              .length
-          }}
+          <v-icon
+            v-if="item.pendingCount > 0"
+            :icon="mdiProgressAlert"
+          ></v-icon>
+          {{ item.pendingCount }}
         </template>
 
         <template v-slot:item.actions="{ item }">
@@ -114,7 +115,12 @@
             </template>
             <v-list>
               <v-list-item
-                @click="showItemDetailDialog(item as InvProductDto)"
+                @click="
+                  () => {
+                    const { pendingCount, ...rest } = item;
+                    showItemDetailDialog(rest as InvProductDto);
+                  }
+                "
                 :prepend-icon="mdiFileDocumentArrowRightOutline"
               >
                 <v-list-item-title>Show Transfer Detail</v-list-item-title>
@@ -132,7 +138,12 @@
                     0,
                   )
                 "
-                @click="showItemFormDialog(item as InvProductDto)"
+                @click="
+                  () => {
+                    const { pendingCount, ...rest } = item;
+                    showItemFormDialog(rest as InvProductDto);
+                  }
+                "
                 :prepend-icon="mdiTransferRight"
               >
                 <v-list-item-title> Send To </v-list-item-title>
@@ -181,6 +192,7 @@ import {
   mdiDotsVertical,
   mdiFileDocumentArrowRightOutline,
   mdiMagnify,
+  mdiProgressAlert,
   mdiTransferRight,
   mdiWarehouse,
 } from '@mdi/js';
@@ -218,6 +230,18 @@ const {
 
 const selectInvId = ref('');
 const itemSelectionObject = shallowRef<InvProductDto | null>(null);
+const invProductsDisplay = computed(() => {
+  return dataInvProducts.value?.getInvProducts.map((product) => {
+    const pendingCount = product.invTrfItems.filter(
+      (i) => i.progress === Progress.Pending,
+    ).length;
+
+    return {
+      ...product,
+      pendingCount,
+    };
+  });
+});
 
 const {
   execute: executeFetch,
@@ -247,7 +271,7 @@ const headers: ReadOnlyHeaders = [
   },
   { title: t('label.sizes'), key: 'invProductSizes', minWidth: '120' },
   {
-    title: 'Incomplete Transfers',
+    title: 'Pending Transfers',
     key: 'invTrfItems',
   },
   { title: '', key: 'actions', sortable: false, align: 'end' },

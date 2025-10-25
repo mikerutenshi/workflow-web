@@ -77,49 +77,52 @@
 
         <v-row v-if="fromInvId.value.value && toInvId.value.value">
           <v-col class="d-flex flex-column">
-            <span :style="{ color: errorColor }">
-              {{ errors['invTrfItemIds'] }}
-            </span>
-            <v-data-table
-              :headers="headers"
-              :items="fetchData?.getInvTrfItems"
-              :search="search"
-              :loading="isFetchingInvTrfs"
-              item-value="id"
-              v-model="itemIdSelections"
-              hover
-              :page="pageNo"
-              :items-per-page="itemsPerPage"
-              show-select
-            >
-              <template #loading>
-                <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-              </template>
+            <v-card>
+              <v-card-title>Shoes to Transfer</v-card-title>
+              <v-data-table
+                :headers="headers"
+                :items="fetchData?.getInvTrfItems"
+                :search="search"
+                :loading="isFetchingInvTrfs"
+                item-value="id"
+                v-model="itemIdSelections"
+                hover
+                :page="pageNo"
+                :items-per-page="itemsPerPage"
+                show-select
+              >
+                <template #loading>
+                  <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+                </template>
 
-              <template v-slot:item.invTrfItemSizes="{ item }">
-                <v-table density="compact">
-                  <tbody>
-                    <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
-                      <td>{{ i.size.eu }}</td>
-                      <td>{{ i.quantity }}</td>
-                    </tr>
-                    <tr>
-                      <td><i>Total</i></td>
-                      <td>
-                        <i>
-                          {{
-                            item.invTrfItemSizes.reduce(
-                              (sum, size) => sum + size.quantity,
-                              0,
-                            )
-                          }}
-                        </i>
-                      </td>
-                    </tr>
-                  </tbody>
-                </v-table>
-              </template>
-            </v-data-table>
+                <template v-slot:item.invTrfItemSizes="{ item }">
+                  <v-table density="compact">
+                    <tbody>
+                      <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
+                        <td>{{ i.size.eu }}</td>
+                        <td>{{ i.quantity }}</td>
+                      </tr>
+                      <tr>
+                        <td><i>Total</i></td>
+                        <td>
+                          <i>
+                            {{
+                              item.invTrfItemSizes.reduce(
+                                (sum, size) => sum + size.quantity,
+                                0,
+                              )
+                            }}
+                          </i>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </v-table>
+                </template>
+              </v-data-table>
+              <!-- <span :style="{ color: errorColor }">
+              {{ errors['invTrfItemIds'] }}
+            </span> -->
+            </v-card>
           </v-col>
         </v-row>
       </v-col>
