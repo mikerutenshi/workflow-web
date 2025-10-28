@@ -53,7 +53,7 @@
         <template v-slot:item.actions="{ item }">
           <v-btn
             color="primary"
-            :icon="mdiFileDocumentEditOutline"
+            :icon="mdiPencil"
             variant="text"
             @click="edit(item.id)"
           ></v-btn>

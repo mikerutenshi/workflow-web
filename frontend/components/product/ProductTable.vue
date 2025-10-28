@@ -88,11 +88,7 @@
           </v-list>
         </v-menu> -->
           <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
-            <v-btn
-              color="primary"
-              :icon="mdiFileDocumentEditOutline"
-              variant="text"
-            ></v-btn>
+            <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
           </NuxtLink>
         </template>
       </v-data-table>

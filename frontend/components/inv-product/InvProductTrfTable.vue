@@ -56,45 +56,72 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-btn
-            color="primary"
-            :icon="mdiFileDocumentArrowRightOutline"
-            variant="text"
-            @click="showItemDialog(item as InvTrfDto)"
-          ></v-btn>
+          <v-menu transition="slide-y-transition" open-on-hover>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :icon="mdiDotsVertical"
+                color="primary"
+                v-bind="props"
+                variant="text"
+              >
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                :prepend-icon="mdiFileDocumentArrowRightOutline"
+                @click="showItemDialog(item as InvTrfDto)"
+              >
+                <v-list-item-title>Show Transfer Item Detail</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                :prepend-icon="mdiPencil"
+                @click="showItemFormDialog(item as InvTrfDto)"
+              >
+                <v-list-item-title>Edit</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
       </v-data-table>
     </v-col>
-
-    <v-dialog v-model="viewDialog" max-width="1200px">
-      <v-card>
-        <v-toolbar>
-          <v-toolbar-title
-            >Transfer Item Details for
-            {{ selectItemObject?.trfNo }}</v-toolbar-title
-          >
-        </v-toolbar>
-        <v-container class="d-flex flex-column">
-          <InvProductTrfItemTable
-            :inv-trf-dto="selectItemObject"
-          ></InvProductTrfItemTable>
-        </v-container>
-      </v-card>
-    </v-dialog>
   </v-row>
+
+  <v-dialog v-model="dialogView" max-width="1200px">
+    <v-card>
+      <v-toolbar>
+        <v-toolbar-title
+          >Transfer Item Details for
+          {{ selectItemObject?.trfNo }}</v-toolbar-title
+        >
+      </v-toolbar>
+      <v-container class="d-flex flex-column">
+        <InvProductTrfItemTable
+          :inv-trf-dto="selectItemObject"
+        ></InvProductTrfItemTable>
+      </v-container>
+    </v-card>
+  </v-dialog>
 
   <ActionEditItemDialog
     :dialogTitle="
       selectItemObject ? $t('page.inv_trf_edit') : $t('page.inv_trf_create')
     "
-    v-model="formDialog"
+    v-model="dialogForm"
   >
-    <InvProductTrfForm @close-dialog="formDialog = false"></InvProductTrfForm>
+    <InvProductTrfForm
+      @close-dialog="dialogForm = false"
+      :inv-trf-id="selectItemObject?.id || null"
+    ></InvProductTrfForm>
   </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
-import { mdiFileDocumentArrowRightOutline, mdiMagnify } from '@mdi/js';
+import {
+  mdiDotsVertical,
+  mdiFileDocumentArrowRightOutline,
+  mdiMagnify,
+  mdiPencil,
+} from '@mdi/js';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -104,8 +131,8 @@ import InvProductTrfItemTable from './InvProductTrfItemTable.vue';
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
 const search = ref('');
-const viewDialog = ref(false);
-const formDialog = ref(false);
+const dialogView = ref(false);
+const dialogForm = ref(false);
 
 const dialogStore = useDialogStore();
 const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
@@ -137,23 +164,27 @@ const headers: ReadOnlyHeaders = [
 ];
 
 function showItemDialog(item: InvTrfDto) {
-  viewDialog.value = true;
   selectItemObject.value = item;
+  dialogView.value = true;
+}
+function showItemFormDialog(item: InvTrfDto) {
+  selectItemObject.value = item;
+  dialogForm.value = true;
 }
 
 watch(isCreateDialogOpen, (isOpen) => {
   if (isOpen) {
-    formDialog.value = true;
+    dialogForm.value = true;
   }
 });
-watch(formDialog, (isOpen) => {
+watch(dialogForm, (isOpen) => {
   if (!isOpen) {
     executeFetch();
     dialogStore.closeFormDialog();
     selectItemObject.value = null;
   }
 });
-watch(viewDialog, (isOpen) => {
+watch(dialogView, (isOpen) => {
   if (!isOpen) {
     setTimeout(() => {
       selectItemObject.value = null;

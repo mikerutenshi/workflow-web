@@ -154,6 +154,7 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!) {
 
 query getInvTrfs {
   getInvTrfs {
+    id
     trfNo
     fromInv {
       name
@@ -169,6 +170,47 @@ query getInvTrfs {
       product {
         sku
       }
+      invTrfItemSizes {
+        invTrfItemId
+        size {
+          ...Size
+        }
+        quantity
+      }
+    }
+  }
+}
+
+query getInvTrf($id: ID!) {
+  getInvTrf(id: $id) {
+    id
+    trfNo
+    fromInv {
+      id
+      name
+      type
+    }
+    toInv {
+      id
+      name
+      type
+    }
+    trfDate
+    progress
+    invTrfItems {
+      id
+      product {
+        sku
+      }
+      fromInv {
+        name
+        type
+      }
+      toInv {
+        name
+        type
+      }
+      progress
       invTrfItemSizes {
         invTrfItemId
         size {

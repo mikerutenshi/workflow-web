@@ -425,6 +425,7 @@ type Query {
   getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
   getInvTrfItems(fromInvId: ID!, toInvId: ID!): [InvTrfItemDto!]!
   getInvTrfs: [InvTrfDto!]!
+  getInvTrf(id: ID!): InvTrfDto!
   getLastInvTrfNo: String!
 }
 

@@ -81,9 +81,9 @@
               <v-card-title>Shoes to Transfer</v-card-title>
               <v-data-table
                 :headers="headers"
-                :items="fetchData?.getInvTrfItems"
+                :items="computeTrfItems"
                 :search="search"
-                :loading="isFetchingInvTrfs"
+                :loading="isFetchingTrfItems"
                 item-value="id"
                 v-model="itemIdSelections"
                 hover
@@ -155,7 +155,7 @@ import {
   CreateInvTrfDocument,
   GetInventoriesDocument,
   GetInvTrfItemsDocument,
-  GetInvTrfItemTrfsDocument,
+  GetInvTrfDocument,
   GetLastInvTrfNoDocument,
   Progress,
 } from '~/api/generated/types';
@@ -163,9 +163,12 @@ import { InvTrfSchema } from '~/validation/schema';
 
 const errorColor = useTheme().themes.value.light.colors.error;
 const { t } = useI18n();
-const props = defineProps<{
-  invTrfId?: string | null;
-}>();
+const props = defineProps({
+  invTrfId: {
+    type: [String, null] as PropType<string | null>,
+    required: true,
+  },
+});
 
 const emit = defineEmits(['close-dialog']);
 const snack = reactive({
@@ -185,7 +188,6 @@ const { handleSubmit, values, errors } = useForm({
   validationSchema,
   initialValues: {
     trfDate: dayjs().toISOString(),
-    progress: Progress.Initiated,
     createdBy: userId,
   },
 });
@@ -207,12 +209,13 @@ const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,
   tags: [CACHE_INVENTORIES],
 });
-const { isFetching: isFetchingTrfNo } = useQuery({
+const { isFetching: isFetchingTrfNo, execute: fetchLastInvTrf } = useQuery({
   query: GetLastInvTrfNoDocument,
   cachePolicy: 'network-only',
   onData(data) {
     trfNo.setValue(generateId(Operation.Transfer, data.getLastInvTrfNo));
   },
+  fetchOnMount: false,
 });
 const {
   isFetching: isCreating,
@@ -231,17 +234,50 @@ const variables = reactive({
   fromInvId: '',
   toInvId: '',
 });
+const computeTrfItems = computed(() => {
+  if (!props.invTrfId) {
+    return trfItemsData.value?.getInvTrfItems;
+  } else {
+    return transferData.value?.getInvTrf.invTrfItems;
+  }
+});
 const {
-  execute: executeFetch,
-  data: fetchData,
-  isFetching: isFetchingInvTrfs,
-  error: invTrfsError,
+  data: trfItemsData,
+  isFetching: isFetchingTrfItems,
+  error: trfItemsError,
 } = useQuery({
   variables,
   query: GetInvTrfItemsDocument,
   tags: [CACHE_INV_TRFS],
   fetchOnMount: false,
 });
+
+const {
+  execute: fetchTransfer,
+  data: transferData,
+  isFetching: isFetchingInvTrfs,
+  error: invTrfsError,
+} = useQuery({
+  variables: { id: props.invTrfId! },
+  query: GetInvTrfDocument,
+  tags: [CACHE_INV_TRF],
+  fetchOnMount: false,
+  onData(data) {
+    const invTrf = data.getInvTrf;
+    trfDate.setValue(invTrf.trfDate);
+    trfNo.setValue(invTrf.trfNo);
+    if (invTrf.fromInv) fromInvId.setValue(invTrf.fromInv.id);
+    toInvId.setValue(invTrf.toInv.id);
+    progress.setValue(invTrf.progress);
+    itemIdSelections.value = invTrf.invTrfItems.map((item) => item.id);
+  },
+});
+
+if (props.invTrfId) {
+  fetchTransfer();
+} else {
+  fetchLastInvTrf();
+}
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
@@ -273,8 +309,10 @@ watch(itemIdSelections, (newValues) => {
 watchEffect(() => {
   if (fromInvId.value.value && toInvId.value.value) {
     console.log('Triggered');
-    variables.fromInvId = fromInvId.value.value as string;
-    variables.toInvId = toInvId.value.value as string;
+    if (!props.invTrfId) {
+      variables.fromInvId = fromInvId.value.value as string;
+      variables.toInvId = toInvId.value.value as string;
+    }
   }
   console.log(`form values: ${JSON.stringify(values)}`);
 });

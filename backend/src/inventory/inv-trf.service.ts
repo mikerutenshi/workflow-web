@@ -115,6 +115,29 @@ export class InvTrfService {
     });
   }
 
+  async getInvTrf(id: number): Promise<InvTrfDto> {
+    const result = await this.prisma.invTrf.findUnique({
+      where: { id },
+      include: {
+        fromInv: true,
+        toInv: true,
+        invTrfItems: {
+          include: {
+            fromInv: true,
+            toInv: true,
+            product: true,
+            invTrfItemSizes: { include: { size: true } },
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      throw new Error(`Inventory Transfer with ID ${id} not found.`);
+    }
+    return result;
+  }
+
   async getLastInvTrfNo(): Promise<string | null> {
     const lastTrf = await this.prisma.invTrf.findFirst({
       orderBy: { id: 'desc' },

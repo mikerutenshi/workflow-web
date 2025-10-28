@@ -115,7 +115,7 @@
           <!-- <NuxtLink :to="$localePath(`/labor-costs/update/${item.id}`)"> -->
           <v-btn
             color="primary"
-            :icon="mdiFileDocumentEditOutline"
+            :icon="mdiPencil"
             variant="text"
             @click="
               productGroupId = item.id;
@@ -153,8 +153,10 @@ import {
   mdiClose,
   mdiFileDocumentEdit,
   mdiFileDocumentEditOutline,
+  mdiLeadPencil,
   mdiMagnify,
   mdiPencil,
+  mdiPencilBox,
 } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
