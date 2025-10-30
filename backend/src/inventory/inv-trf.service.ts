@@ -8,6 +8,7 @@ import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrfItemDto } from './dto/inv-trf-item.dto';
 import { Progress } from '@/generated/client';
+import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 
 @Injectable()
 export class InvTrfService {
@@ -49,8 +50,29 @@ export class InvTrfService {
             connect: invTrfItemIds.map((id) => ({ id })),
           },
         },
-        include: {
-          invTrfItems: true,
+      });
+
+      return result;
+    });
+  }
+
+  updateInvTrf(id: number, data: InvTrfUpdateDto): Promise<InvTrf> {
+    const { invTrfItemIds, ...rest } = data;
+    return this.prisma.$transaction(async (tx) => {
+      invTrfItemIds.map(async (id) => {
+        await tx.invTrfItem.update({
+          where: { id },
+          data: { progress: data.progress },
+        });
+      });
+
+      const result = await tx.invTrf.update({
+        where: { id },
+        data: {
+          ...rest,
+          invTrfItems: {
+            set: invTrfItemIds.map((id) => ({ id })),
+          },
         },
       });
 

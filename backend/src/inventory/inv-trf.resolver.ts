@@ -12,6 +12,7 @@ import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
 import { AuthGuard } from '@/guards/auth.guard';
 import { InvTrfItemDto } from './dto/inv-trf-item.dto';
+import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 
 @Resolver(() => InvTrf)
 export class InvTrfResolver {
@@ -19,6 +20,14 @@ export class InvTrfResolver {
   @Mutation(() => InvTrf)
   createInvTrf(@Args('data') data: InvTrfCreateDto): Promise<InvTrf> {
     return this.service.createInvTrf(data);
+  }
+
+  @Mutation(() => InvTrf)
+  updateInvTrf(
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+    @Args('data') data: InvTrfUpdateDto,
+  ): Promise<InvTrf> {
+    return this.service.updateInvTrf(id, data);
   }
 
   @Mutation(() => InvTrfItem)

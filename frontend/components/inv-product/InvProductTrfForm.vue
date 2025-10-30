@@ -2,10 +2,10 @@
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-row v-if="createError">
+        <v-row v-if="createError || updateError">
           <v-col>
             <v-alert type="error">
-              {{ extractGraphQlError(createError) }}
+              {{ extractGraphQlError(createError || updateError) }}
             </v-alert>
           </v-col>
         </v-row>
@@ -119,9 +119,9 @@
                   </v-table>
                 </template>
               </v-data-table>
-              <!-- <span :style="{ color: errorColor }">
-              {{ errors['invTrfItemIds'] }}
-            </span> -->
+              <span :style="{ color: errorColor }">
+                {{ errors['invTrfItemIds'] }}
+              </span>
             </v-card>
           </v-col>
         </v-row>
@@ -153,6 +153,7 @@ import { useTheme } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import {
   CreateInvTrfDocument,
+  UpdateInvTrfDocument,
   GetInventoriesDocument,
   GetInvTrfItemsDocument,
   GetInvTrfDocument,
@@ -184,7 +185,7 @@ const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 
 const validationSchema = toTypedSchema(InvTrfSchema);
-const { handleSubmit, values, errors } = useForm({
+const { handleSubmit, values, errors, setFieldValue } = useForm({
   validationSchema,
   initialValues: {
     trfDate: dayjs().toISOString(),
@@ -230,6 +231,20 @@ const {
   },
   clearCacheTags: [CACHE_INV_TRFS],
 });
+const {
+  isFetching: isUpdating,
+  execute: executeUpdate,
+  error: updateError,
+} = useMutation(UpdateInvTrfDocument, {
+  onData(data) {
+    const id = data.updateInvTrf.id;
+    console.log(`Updated Id: ${id}`);
+    snack.message = t('status.saved');
+    snack.isVisible = true;
+  },
+  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF],
+});
+
 const variables = reactive({
   fromInvId: '',
   toInvId: '',
@@ -275,6 +290,7 @@ const {
 
 if (props.invTrfId) {
   fetchTransfer();
+  setFieldValue('updatedBy', userId);
 } else {
   fetchLastInvTrf();
 }
@@ -295,7 +311,15 @@ const itemIdSelections = ref<string[]>([]);
 
 const onSubmit = handleSubmit((data) => {
   console.log(`data: ${JSON.stringify(data)}`);
-  executeCreate({ data });
+  if (!props.invTrfId) {
+    executeCreate({ data });
+  } else {
+    const { createdBy, ...updateData } = {
+      ...data,
+      updatedBy: data.updatedBy || userId,
+    };
+    executeUpdate({ id: props.invTrfId, data: updateData });
+  }
 });
 const deleteInvTrf = (id: string) => {
   //todo

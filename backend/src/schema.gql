@@ -465,6 +465,7 @@ type Mutation {
   updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
   createInvTrf(data: InvTrfCreateDto!): InvTrf!
+  updateInvTrf(id: ID!, data: InvTrfUpdateDto!): InvTrf!
   createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!
   deleteInvTrfItem(id: ID!): Boolean!
 }
@@ -623,6 +624,16 @@ input InvTrfCreateDto {
   progress: Progress!
   invTrfItemIds: [ID!]!
   createdBy: ID!
+}
+
+input InvTrfUpdateDto {
+  trfNo: String
+  fromInvId: ID
+  toInvId: ID
+  trfDate: Date
+  progress: Progress
+  invTrfItemIds: [ID!]!
+  updatedBy: ID!
 }
 
 input InvTrfItemCreateDto {
