@@ -54,6 +54,7 @@
     "setting_inventories": "Setélan Gudang",
     "inventory_transfers": "Mindahkeun Inventaris",
     "inv_trf_create": "Nyieun Mindahkeun Inventoris Anyar",
+    "inv_trf_edit": "Ngarobah Mindahkeun Inventoris",
     "setting_colors": "Setélan Warna"
   },
   "create_btn": {

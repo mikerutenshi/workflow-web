@@ -54,6 +54,7 @@
     "setting_inventories": "Warehouse Setting",
     "inventory_transfers": "Inventory Transfers",
     "inv_trf_create": "Create a New Inventory Transfer",
+    "inv_trf_edit": "Edit an Inventory Transfer",
     "setting_colors": "Color Setting"
   },
   "create_btn": {

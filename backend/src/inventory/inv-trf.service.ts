@@ -160,6 +160,18 @@ export class InvTrfService {
     return result;
   }
 
+  async deleteInvTrf(id: number): Promise<Boolean> {
+    const result = await this.prisma.invTrf.delete({
+      where: { id },
+    });
+
+    if (!result) {
+      throw new Error(`Delete Transfer with ID: ${id} failed`);
+    }
+
+    return true;
+  }
+
   async getLastInvTrfNo(): Promise<string | null> {
     const lastTrf = await this.prisma.invTrf.findFirst({
       orderBy: { id: 'desc' },

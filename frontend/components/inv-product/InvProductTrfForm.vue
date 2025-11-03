@@ -2,10 +2,12 @@
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-row v-if="createError || updateError">
+        <v-row v-if="createError || updateError || deleteError">
           <v-col>
             <v-alert type="error">
-              {{ extractGraphQlError(createError || updateError) }}
+              {{
+                extractGraphQlError(createError || updateError || deleteError)
+              }}
             </v-alert>
           </v-col>
         </v-row>
@@ -154,6 +156,7 @@ import type { VDataTable } from 'vuetify/components';
 import {
   CreateInvTrfDocument,
   UpdateInvTrfDocument,
+  DeleteInvTrfDocument,
   GetInventoriesDocument,
   GetInvTrfItemsDocument,
   GetInvTrfDocument,
@@ -204,6 +207,8 @@ const progressList = [
   { key: Progress.InProgress, value: 'In Progress' },
   { key: Progress.Completed, value: 'Completed' },
   { key: Progress.Cancelled, value: 'Cancelled' },
+  { key: Progress.OnHold, value: 'On Hold' },
+  { key: Progress.Pending, value: 'Pending' },
 ];
 
 const { data: inventories, isFetching: isFetchingInventories } = useQuery({
@@ -238,8 +243,18 @@ const {
 } = useMutation(UpdateInvTrfDocument, {
   onData(data) {
     const id = data.updateInvTrf.id;
-    console.log(`Updated Id: ${id}`);
     snack.message = t('status.saved');
+    snack.isVisible = true;
+  },
+  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF],
+});
+const {
+  execute: executeDelete,
+  error: deleteError,
+  isFetching: isDeleting,
+} = useMutation(DeleteInvTrfDocument, {
+  onData(data) {
+    snack.message = t('status.deleted');
     snack.isVisible = true;
   },
   clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF],
@@ -322,7 +337,7 @@ const onSubmit = handleSubmit((data) => {
   }
 });
 const deleteInvTrf = (id: string) => {
-  //todo
+  executeDelete({ id });
 };
 
 watch(itemIdSelections, (newValues) => {

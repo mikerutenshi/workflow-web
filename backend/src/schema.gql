@@ -468,6 +468,7 @@ type Mutation {
   updateInvTrf(id: ID!, data: InvTrfUpdateDto!): InvTrf!
   createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!
   deleteInvTrfItem(id: ID!): Boolean!
+  deleteInvTrf(id: ID!): Boolean!
 }
 
 input RoleDto {

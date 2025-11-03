@@ -234,6 +234,10 @@ mutation updateInvTrf($id: ID!, $data: InvTrfUpdateDto!) {
   }
 }
 
+mutation deleteInvTrf($id: ID!) {
+  deleteInvTrf(id: $id)
+}
+
 mutation createInvTrfItem($data: InvTrfItemCreateDto!) {
   createInvTrfItem(data: $data) {
     id

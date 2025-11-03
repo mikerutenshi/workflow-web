@@ -70,13 +70,21 @@ export class InvTrfResolver {
     return this.service.getLastInvTrfNo();
   }
 
-  @UseGuards(RoleGuard)
-  @Roles(Role.Planner)
+  // @UseGuards(RoleGuard)
+  // @Roles(Role.Planner)
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   deleteInvTrfItem(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
   ): Promise<Boolean> {
     return this.service.deleteInvTrfItem(id);
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(AuthGuard)
+  deleteInvTrf(
+    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+  ): Promise<Boolean> {
+    return this.service.deleteInvTrf(id);
   }
 }

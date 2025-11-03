@@ -54,6 +54,7 @@
     "setting_inventories": "Pengaturan Gudang",
     "inventory_transfers": "Transfer Inventaris",
     "inv_trf_create": "Buat Transfer Inventoris Baru",
+    "inv_trf_edit": "Ubah Transfer Inventaris",
     "setting_colors": "Pengaturan Warna"
   },
   "create_btn": {
