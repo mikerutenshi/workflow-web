@@ -110,6 +110,7 @@ type InvTrfItem {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
+  workId: ID
   fromInv: Inventory
   toInv: Inventory!
 }
@@ -223,6 +224,7 @@ type InvTrfItemTrfDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
+  workId: ID
   fromInv: Inventory
   toInv: Inventory!
   invTrf: InvTrf
@@ -240,6 +242,7 @@ type InvTrfItemDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
+  workId: ID
   fromInv: Inventory
   toInv: Inventory!
   product: Product!
@@ -643,6 +646,7 @@ input InvTrfItemCreateDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemSizeCreateDto!]!
   progress: Progress
+  workId: ID
   createdBy: ID!
 }
 

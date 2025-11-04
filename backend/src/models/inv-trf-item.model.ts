@@ -18,6 +18,8 @@ export class InvTrfItem extends BaseModel {
   invTrfItemSizes: InvTrfItemToSize[];
   @Field(() => Progress)
   progress: Progress;
+  @Field(() => ID, { nullable: true })
+  workId: number | null;
 
   @Field(() => Inventory, { nullable: true })
   fromInv: Inventory | null;

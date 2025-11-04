@@ -91,6 +91,7 @@ export class TaskService {
               quantity: workSize.quantity,
             })),
             progress: Progress.COMPLETED,
+            workId: initialWork!.id,
             createdBy: userId,
           });
           await this.invTrfService.createInvTrf({
