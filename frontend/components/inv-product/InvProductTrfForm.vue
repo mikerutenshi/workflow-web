@@ -135,6 +135,8 @@
       <ActionDelete
         v-if="props.invTrfId"
         @click="deleteInvTrf(props.invTrfId)"
+        :item-title="transferData?.getInvTrf.trfNo"
+        :loading="isDeleting"
       ></ActionDelete>
     </v-row>
   </v-form>

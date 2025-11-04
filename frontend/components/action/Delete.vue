@@ -5,14 +5,19 @@
     :disabled="loading || disabled"
     :outlined="outlined"
     :prepend-icon="mdiTrashCan"
-    @click="handleClick"
+    @click="dialog = true"
     class="ml-auto"
   >
     <slot>{{ $t('btn.delete') }}</slot>
   </v-btn>
+  <ActionDeleteConfirmDialog
+    v-model="dialog"
+    :item-title="itemTitle"
+    @confirm="emit('click')"
+  ></ActionDeleteConfirmDialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { mdiTrashCan } from '@mdi/js';
 
 const props = defineProps({
@@ -22,11 +27,9 @@ const props = defineProps({
   outlined: { type: Boolean, default: false },
   prependIcon: { type: Boolean, default: false },
   text: { type: String, default: '' },
+  itemTitle: { type: String, default: 'this item' },
 });
+const dialog = ref(false);
 
 const emit = defineEmits(['click']);
-
-function handleClick(event) {
-  emit('click', event);
-}
 </script>
