@@ -252,6 +252,7 @@ const {
   query: GetInvProductsDocument,
   variables: computed(() => ({ invId: selectInvId.value })),
   tags: [CACHE_INV_PRODUCTS],
+  fetchOnMount: false,
 });
 
 const { t } = useI18n();
@@ -305,4 +306,10 @@ function closeItemFormDialog() {
   itemSelectionObject.value = null;
   executeFetch();
 }
+
+watchEffect(() => {
+  if (selectInvId && selectInvId.value !== '') {
+    executeFetch();
+  }
+});
 </script>

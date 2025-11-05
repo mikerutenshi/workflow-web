@@ -22,7 +22,7 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="data?.getWorks"
+        :items="computedWorks"
         :loading="isFetching"
         item-value="id"
         class="flex-grow-1"
@@ -79,8 +79,8 @@
             <v-timeline align="start" side="end" direction="horizontal">
               <v-timeline-item
                 v-for="task in item.tasks"
-                size="very small"
-                :dot-color="task.doneAt ? 'primary' : 'grey'"
+                size="very-small"
+                :dot-color="task.doneAt ? 'surface-variant' : 'grey'"
               >
                 <div class="d-flex flex-column">
                   <p>
@@ -105,39 +105,92 @@
         <template v-slot:item.status="{ item }">
           <v-icon
             :icon="
-              item.tasks.every((task) => task.doneAt == null)
+              item.displayProgress === Progress.Initiated
                 ? mdiTimerSandEmpty
-                : item.tasks.every((task) => task.doneAt)
+                : item.displayProgress === Progress.Completed
                   ? mdiTimerSandComplete
                   : mdiTimerSand
             "
           ></v-icon>
-          <span>{{ item.progress }}</span>
+          <span>{{ item.displayProgress }}</span>
         </template>
 
-        <template v-slot:item.actions="{ item }">
+        <!-- <template v-slot:item.actions="{ item }">
           <v-btn
             color="primary"
             :icon="mdiPencil"
             variant="text"
             @click="edit(item.id)"
           ></v-btn>
+        </template> -->
+
+        <template v-slot:item.actions="{ item }">
+          <v-menu transition="slide-y-transition" open-on-hover>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :icon="mdiDotsVertical"
+                color="primary"
+                v-bind="props"
+                variant="text"
+              >
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                :prepend-icon="mdiPencil"
+                @click="showEditWorkDialog(item.id)"
+              >
+                <v-list-item-title>Edit Work</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                :prepend-icon="mdiPencil"
+                @click="showEditTaskDialog(item.id)"
+              >
+                <v-list-item-title>Edit Task</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
       </v-data-table>
     </v-col>
   </v-row>
 
-  <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
+  <v-dialog
+    v-model="dialog.isVisible"
+    fullscreen
+    transition="dialog-bottom-transition"
+  >
     <v-card>
       <v-toolbar>
         <v-btn :icon="mdiClose" @click="closeDialog"></v-btn>
         <v-toolbar-title>{{
-          currentWorkId ? $t('page.work_edit') : $t('page.work_create')
+          dialog.content === DialogContent.CreateWork
+            ? $t('page.work_create')
+            : dialog.content === DialogContent.EditWork
+              ? $t('page.work_edit')
+              : dialog.content === DialogContent.EditTask
+                ? $t('page.task_edit')
+                : ''
         }}</v-toolbar-title>
       </v-toolbar>
 
       <v-container class="h-100 d-flex flex-column">
-        <template v-if="currentWorkId">
+        <template v-if="dialog.content === DialogContent.CreateWork">
+          <WorkCreateForm @close-dialog="save"></WorkCreateForm>
+        </template>
+        <template v-if="dialog.content === DialogContent.EditWork">
+          <WorkCreateForm
+            :workId="currentWorkId"
+            @close-dialog="save"
+          ></WorkCreateForm>
+        </template>
+        <template v-if="dialog.content === DialogContent.EditTask">
+          <TaskUpdateForm
+            :workId="currentWorkId"
+            @close-dialog="save"
+          ></TaskUpdateForm>
+        </template>
+        <!-- <template v-if="currentWorkId">
           <template v-if="clearanceLevel <= Role.Planner">
             <WorkCreateForm
               :workId="currentWorkId"
@@ -163,7 +216,7 @@
         </template>
         <template v-else>
           <WorkCreateForm @close-dialog="save"></WorkCreateForm>
-        </template>
+        </template> -->
       </v-container>
     </v-card>
   </v-dialog>
@@ -188,18 +241,27 @@ import {
   mdiTimerSandComplete,
   mdiFileDocumentEdit,
   mdiFileDocumentEditOutline,
+  mdiDotsVertical,
 } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetWorksDocument } from '~/api/generated/types';
+import { GetWorksDocument, Progress } from '~/api/generated/types';
 import { CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
+enum DialogContent {
+  None = 'NONE',
+  EditWork = 'EDIT_WORK',
+  EditTask = 'EDIT_TASK',
+  CreateWork = 'CREATE_WORK',
+}
 
+const { t } = useI18n();
 const dialogStore = useDialogStore();
 const { isFormDialogOpen } = storeToRefs(dialogStore);
+
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
 
@@ -250,8 +312,26 @@ const { execute, data, isFetching } = useQuery({
     endDate: form.endDate,
   })),
 });
+const computedWorks = computed(() => {
+  return data.value?.getWorks.map((work) => {
+    var displayProgress = Progress.Initiated;
 
-const { t } = useI18n();
+    if (work.progress !== Progress.Initiated) {
+      displayProgress = work.progress;
+    } else {
+      if (work.tasks.every((task) => task.doneAt === null)) {
+        displayProgress = Progress.Initiated;
+      } else if (work.tasks.every((task) => task.doneAt)) {
+        displayProgress = Progress.Completed;
+      } else {
+        displayProgress = Progress.InProgress;
+      }
+    }
+
+    return { ...work, displayProgress };
+  });
+});
+
 const search = ref('');
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },
@@ -280,35 +360,59 @@ function manageDates(newDates: string[] | string) {
 }
 
 const currentWorkId = ref('');
-const dialog = ref(false);
+const dialog = reactive({
+  isVisible: false,
+  content: DialogContent.None,
+});
 
 function openDialog() {
-  dialog.value = true;
+  dialog.isVisible = true;
 }
 
 function closeDialog() {
-  dialog.value = false;
+  dialog.isVisible = false;
 }
 
 function edit(workId: string) {
-  dialog.value = true;
+  dialog.isVisible = true;
   currentWorkId.value = workId;
 }
 function save() {
-  dialog.value = false;
+  dialog.isVisible = false;
   currentWorkId.value = '';
   execute();
 }
+function showEditWorkDialog(workId: string) {
+  currentWorkId.value = workId;
+  dialog.content = DialogContent.EditWork;
+  dialog.isVisible = true;
+}
+function showEditTaskDialog(workId: string) {
+  currentWorkId.value = workId;
+  dialog.content = DialogContent.EditTask;
+  dialog.isVisible = true;
+}
 
-watch(isFormDialogOpen, (isOpen) => {
-  if (isOpen) {
-    openDialog();
-  }
-});
-watch(dialog, (isOpen) => {
-  if (!isOpen) {
-    dialogStore.closeFormDialog();
-    currentWorkId.value = '';
+// watch(isFormDialogOpen, (isOpen) => {
+//   if (isOpen) {
+//     dialog.content = DialogContent.CreateWork;
+//     dialog.isVisible = true;
+//   }
+// });
+watch(
+  () => dialog.isVisible,
+  (isOpen) => {
+    if (!isOpen) {
+      dialogStore.closeFormDialog();
+      currentWorkId.value = '';
+    }
+  },
+);
+
+watchEffect(() => {
+  if (isFormDialogOpen.value) {
+    dialog.content = DialogContent.CreateWork;
+    dialog.isVisible = true;
   }
 });
 // watchEffect(() => {
