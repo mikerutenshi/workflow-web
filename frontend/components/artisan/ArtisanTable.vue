@@ -19,15 +19,54 @@
       {{ item.jobs.map((job) => $t(renderJob(job))).join(', ') }}
     </template>
     <template v-slot:item.actions="{ item }">
-      <NuxtLink :to="$localePath(`/artisans/update/${item.id}`)">
+      <!-- <NuxtLink :to="$localePath(`/artisans/update/${item.id}`)">
         <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
-      </NuxtLink>
+      </NuxtLink> -->
+      <v-btn
+        color="primary"
+        :icon="mdiPencil"
+        variant="text"
+        @click="showDialog(item.id)"
+      ></v-btn>
     </template>
   </v-data-table>
+
+  <v-dialog
+    v-model="dialog.isVisible"
+    fullscreen
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <v-toolbar>
+        <v-btn :icon="mdiClose" @click="dialog.isVisible = false"></v-btn>
+        <v-toolbar-title>{{
+          dialog.content === DialogContent.Create
+            ? $t('page.artisan_create')
+            : dialog.content === DialogContent.Edit
+              ? $t('page.artisan_edit')
+              : 'Title'
+        }}</v-toolbar-title>
+      </v-toolbar>
+
+      <v-container class="h-100 d-flex flex-column">
+        <template v-if="dialog.content === DialogContent.Create">
+          <ArtisanCreateForm
+            @close-dialog="handleDialogClose"
+          ></ArtisanCreateForm>
+        </template>
+        <template v-else-if="dialog.content === DialogContent.Edit">
+          <ArtisanCreateForm
+            :artisan-id="selectionId"
+            @close-dialog="handleDialogClose"
+          ></ArtisanCreateForm>
+        </template>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { mdiFileDocumentEditOutline, mdiPencil } from '@mdi/js';
+import { mdiClose, mdiFileDocumentEditOutline, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetArtisansDocument } from '~/api/generated/types';
@@ -36,7 +75,11 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 
-const { data, isFetching } = useQuery({
+const {
+  data,
+  isFetching,
+  execute: executeFetch,
+} = useQuery({
   query: GetArtisansDocument,
   tags: [CACHE_ARTISANS],
 });
@@ -49,4 +92,43 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.jobs'), key: 'jobs' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
+
+const selectionId = ref('');
+enum DialogContent {
+  None = 'NONE',
+  Edit = 'EDIT',
+  Create = 'CREATE',
+}
+const dialogStore = useDialogStore();
+const { isFormDialogOpen } = storeToRefs(dialogStore);
+
+const dialog = reactive({
+  isVisible: false,
+  content: DialogContent.None,
+});
+function showDialog(productId: string) {
+  selectionId.value = productId;
+  dialog.content = DialogContent.Edit;
+  dialog.isVisible = true;
+}
+function handleDialogClose() {
+  executeFetch();
+  dialogStore.closeFormDialog();
+  dialog.isVisible = false;
+  selectionId.value = '';
+}
+watch(
+  () => dialog.isVisible,
+  (isVisible) => {
+    if (!isVisible) {
+      handleDialogClose();
+    }
+  },
+);
+watchEffect(() => {
+  if (isFormDialogOpen.value) {
+    dialog.content = DialogContent.Create;
+    dialog.isVisible = true;
+  }
+});
 </script>

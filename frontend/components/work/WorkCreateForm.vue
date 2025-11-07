@@ -177,8 +177,11 @@ const submitBtnTitle = computed(() =>
   workId.value ? t('btn.update') : t('btn.create'),
 );
 
-const snackbar = ref(false);
-const snackbarMsg = ref(t('status.saved'));
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
+});
 const {
   execute: executeCreate,
   isFetching: isCreating,
@@ -186,8 +189,8 @@ const {
 } = useMutation(CreateWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData() {
-    snackbarMsg.value = t('status.saved');
-    snackbar.value = true;
+    snack.message = t('status.saved');
+    snack.isVisible = true;
   },
 });
 const {
@@ -197,8 +200,8 @@ const {
 } = useMutation(UpdateWorkDocument, {
   clearCacheTags: [CACHE_WORK, CACHE_WORKS],
   onData() {
-    snackbarMsg.value = t('status.saved');
-    snackbar.value = true;
+    snack.message = t('status.saved');
+    snack.isVisible = true;
   },
 });
 const {
@@ -208,8 +211,13 @@ const {
 } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData(data) {
-    snackbarMsg.value = t('status.deleted');
-    snackbar.value = true;
+    snack.message = t('status.deleted');
+    snack.isVisible = true;
+  },
+  onError(err) {
+    snack.color = SnackColor.Error;
+    snack.message = `${t('status.failed')} ${err.message}`;
+    snack.isVisible = true;
   },
 });
 
@@ -331,15 +339,6 @@ watch(sizeQuantities, (newItems) => {
       quantity: newItem.quantity,
     })),
   );
-});
-
-const localePath = useLocalePath();
-watch(snackbar, (newStatus) => {
-  if (!newStatus) {
-    if (!workId.value) {
-      navigateTo(localePath('/works'));
-    }
-  }
 });
 
 // watchEffect(() => {

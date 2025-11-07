@@ -197,7 +197,7 @@ const {
   },
   onError(err) {
     snack.color = SnackColor.Error;
-    snack.message = `${t('status.failed')}`;
+    snack.message = `${t('status.failed')} ${err.message}`;
     snack.isVisible = true;
   },
 });

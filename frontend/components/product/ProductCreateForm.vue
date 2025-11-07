@@ -85,15 +85,12 @@
         <v-row align="center">
           <v-col>
             <v-select
-              no-filter
               v-model="selectedColors"
               :label="$t('label.select_colors')"
               multiple
               chips
-              auto-select-first
-              :items="filteredColors"
+              :items="sortedColors"
               :loading="isFetchingColors"
-              @update:search="onSearch"
               :error-messages="colorIds.errorMessage.value"
             >
               <template #item="{ item, props }">
@@ -147,7 +144,6 @@
     <v-row class="flex-grow-1"></v-row>
 
     <v-row align="end" class="ma-1">
-      <ActionCancel></ActionCancel>
       <ActionConfirm v-if="productId" :loading="isUpdating">{{
         $t('btn.update')
       }}</ActionConfirm>
@@ -161,7 +157,20 @@
       ></ActionDelete>
     </v-row>
   </v-form>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnack>
 </template>
+
+<style scoped>
+.v-select .v-chip {
+  pointer-events: none;
+}
+</style>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
@@ -180,11 +189,23 @@ import { CACHE_COLORS } from '~/utils/cache-tags';
 import { mdiPencil, mdiPlus } from '@mdi/js';
 import { ProductSchema } from '~/validation/schema';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
 
 const route = useRoute();
-const productId = route.params.id as string;
+const props = defineProps({
+  productId: {
+    type: String,
+  },
+});
+const productId = (route.params.id as string) || props.productId;
+const emit = defineEmits(['close-dialog']);
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
+});
 
 const validationSchema = toTypedSchema(ProductSchema);
 const { handleSubmit, values, setValues, setFieldValue } = useForm({
@@ -202,7 +223,7 @@ const {
   error: errorCreate,
 } = useMutation(CreateProductDocument, {
   onData() {
-    navigateTo(localePath('/products'));
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_PRODUCTS],
 });
@@ -212,7 +233,7 @@ const {
   error: errorUpdate,
 } = useMutation(UpdateProductDocument, {
   onData() {
-    navigateTo(localePath('/products'));
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
 });
@@ -222,8 +243,19 @@ const {
   error: errorDelete,
 } = useMutation(DeleteProductDocument, {
   clearCacheTags: [CACHE_PRODUCTS],
-  onData() {
-    navigateTo(localePath('/products'));
+  onData(data) {
+    if (data.deleteProduct) {
+      snack.message = `${t('status.deleted')}`;
+    } else {
+      snack.color = SnackColor.Error;
+      snack.message = `${t('status.failed')}`;
+    }
+    snack.isVisible = true;
+  },
+  onError(err) {
+    snack.color = SnackColor.Error;
+    snack.message = `${t('status.failed')} ${err.message}`;
+    snack.isVisible = true;
   },
 });
 
@@ -243,6 +275,12 @@ const {
   query: GetColorsDocument,
   tags: [CACHE_COLORS],
 });
+const sortedColors = computed(() => {
+  if (!colorsData.value?.getColors) return [];
+  return [...colorsData.value.getColors].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+});
 const {
   data: productGroupsData,
   isFetching: isFetchingProductGroups,
@@ -252,19 +290,19 @@ const {
   tags: [CACHE_PRODUCT_GROUPS],
 });
 
-const searchQuery = ref('');
-const onSearch = (query: string) => {
-  searchQuery.value = query;
-};
+// const searchQuery = ref('');
+// const onSearch = (query: string) => {
+//   searchQuery.value = query;
+// };
 const selectedColors = ref<Color[]>([] as Color[]);
-const filteredColors = computed(() => {
-  if (colorsData.value) {
-    return colorsData.value.getColors.filter((color) => {
-      return color.name.toLowerCase().includes(searchQuery.value.toLowerCase());
-    });
-  }
-  return [];
-});
+// const filteredColors = computed(() => {
+//   if (colorsData.value) {
+//     return colorsData.value.getColors.filter((color) => {
+//       return color.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+//     });
+//   }
+//   return [];
+// });
 
 const remove = (index: number) => {
   if (index > -1) {
@@ -291,7 +329,7 @@ if (productId) {
 
       const colors = ids
         .map((id) => {
-          const matched = filteredColors.value.find((color) => {
+          const matched = sortedColors.value.find((color) => {
             return color.id == id;
           });
           return matched ? { ...matched } : null;

@@ -1,73 +1,78 @@
 <template>
-  <v-row v-if="error" class="flex-grow-0">
-    <v-col>
-      <v-alert type="error">
-        {{ extractGraphQlError(error) }}
-      </v-alert>
-    </v-col>
-  </v-row>
+  <template v-if="isComingSoon">
+    <ComingSoon></ComingSoon>
+  </template>
+  <template v-else>
+    <v-row v-if="error" class="flex-grow-0">
+      <v-col>
+        <v-alert type="error">
+          {{ extractGraphQlError(error) }}
+        </v-alert>
+      </v-col>
+    </v-row>
 
-  <v-row class="flex-grow-0">
-    <v-col>
-      <v-text-field
-        v-model="search"
-        :label="$t('label.search')"
-        :prepend-inner-icon="mdiMagnify"
-        hide-details
-        single-line
-      ></v-text-field>
-    </v-col>
-  </v-row>
+    <v-row class="flex-grow-0">
+      <v-col>
+        <v-text-field
+          v-model="search"
+          :label="$t('label.search')"
+          :prepend-inner-icon="mdiMagnify"
+          hide-details
+          single-line
+        ></v-text-field>
+      </v-col>
+    </v-row>
 
-  <v-row>
-    <v-col class="d-flex flex-column">
-      <v-data-table
-        :headers="headers"
-        :items="data?.getInventories"
-        :search="search"
-        :loading="isFetching"
-        item-value="id"
-        class="flex-grow-1"
-        hover
-        fixed-header
-        :height="`calc(100vh - 240px)`"
-        :page="pageNo"
-        :items-per-page="itemsPerPage"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-        </template>
+    <v-row>
+      <v-col class="d-flex flex-column">
+        <v-data-table
+          :headers="headers"
+          :items="data?.getInventories"
+          :search="search"
+          :loading="isFetching"
+          item-value="id"
+          class="flex-grow-1"
+          hover
+          fixed-header
+          :height="`calc(100vh - 240px)`"
+          :page="pageNo"
+          :items-per-page="itemsPerPage"
+        >
+          <template #loading>
+            <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+          </template>
 
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            color="primary"
-            :icon="mdiPencil"
-            variant="text"
-            @click="edit(item.id)"
-          ></v-btn>
-        </template>
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              color="primary"
+              :icon="mdiPencil"
+              variant="text"
+              @click="edit(item.id)"
+            ></v-btn>
+          </template>
 
-        <template v-slot:item.type="{ item }">
-          {{ $t(renderInvType(item.type)) }}
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
+          <template v-slot:item.type="{ item }">
+            {{ $t(renderInvType(item.type)) }}
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
 
-  <ActionEditItemDialog
-    :dialogTitle="
-      selectedInvId ? $t('page.inventory_edit') : $t('page.inventory_create')
-    "
-    v-model="dialog"
-  >
-    <InventoryCreateForm
-      :inv-id="selectedInvId"
-      @close-dialog="
-        dialog = false;
-        execute();
+    <ActionEditItemDialog
+      :dialogTitle="
+        selectedInvId ? $t('page.inventory_edit') : $t('page.inventory_create')
       "
-    ></InventoryCreateForm>
-  </ActionEditItemDialog>
+      v-model="dialog"
+    >
+      <InventoryCreateForm
+        :inv-id="selectedInvId"
+        @close-dialog="
+          dialog = false;
+          execute();
+        "
+      ></InventoryCreateForm>
+    </ActionEditItemDialog>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -79,6 +84,12 @@ import {
   GetInventoriesDocument,
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
+
+const authStore = useAuthStore();
+const clearance = authStore.user?.role.clearanceLevel ?? 6;
+const isComingSoon = computed(() => {
+  return clearance > Role.Superuser;
+});
 
 const { execute, data, isFetching, error } = useQuery({
   query: GetInventoriesDocument,

@@ -1,190 +1,198 @@
 <template>
-  <v-row v-if="errorInvProducts || errorInventories" class="flex-grow-0">
-    <v-col>
-      <v-alert type="error">
-        {{ extractGraphQlError(errorInvProducts || errorInventories) }}
-      </v-alert>
-    </v-col>
-  </v-row>
+  <template v-if="isComingSoon">
+    <ComingSoon></ComingSoon>
+  </template>
+  <template v-else>
+    <v-row v-if="errorInvProducts || errorInventories" class="flex-grow-0">
+      <v-col>
+        <v-alert type="error">
+          {{ extractGraphQlError(errorInvProducts || errorInventories) }}
+        </v-alert>
+      </v-col>
+    </v-row>
 
-  <v-row class="flex-grow-0">
-    <v-col>
-      <v-select
-        :label="$t('label.select_inventories')"
-        :prepend-inner-icon="mdiWarehouse"
-        :items="dataInventories?.getInventories"
-        v-model="selectInvId"
-        item-title="name"
-        item-value="id"
-      ></v-select>
-    </v-col>
-    <v-col>
-      <v-text-field
-        v-model="search"
-        :label="$t('label.search')"
-        :prepend-inner-icon="mdiMagnify"
-        hide-details
-        single-line
-      ></v-text-field>
-    </v-col>
-  </v-row>
+    <v-row class="flex-grow-0">
+      <v-col>
+        <v-select
+          :label="$t('label.select_inventories')"
+          :prepend-inner-icon="mdiWarehouse"
+          :items="dataInventories?.getInventories"
+          v-model="selectInvId"
+          item-title="name"
+          item-value="id"
+        ></v-select>
+      </v-col>
+      <v-col>
+        <v-text-field
+          v-model="search"
+          :label="$t('label.search')"
+          :prepend-inner-icon="mdiMagnify"
+          hide-details
+          single-line
+        ></v-text-field>
+      </v-col>
+    </v-row>
 
-  <v-row>
-    <v-col class="d-flex flex-column">
-      <v-data-table
-        :headers="headers"
-        :items="invProductsDisplay"
-        :search="search"
-        :loading="isFetchingInvProducts"
-        item-value="id"
-        class="flex-grow-1"
-        fixed-header
-        :height="`calc(100vh - 262px)`"
-        hover
-        :page="pageNo"
-        :items-per-page="itemsPerPage"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-        </template>
-
-        <template v-slot:item.product.productColors="{ item }">
-          <div style="display: flex; flex-wrap: wrap; gap: 8px">
-            <template v-for="color in item.product.productColors">
-              <v-chip class="d-flex align-center">
-                <div
-                  class="color-box"
-                  :style="{ backgroundColor: color.color.hexCode }"
-                />
-                <span>{{ color.color.name }}</span>
-              </v-chip>
-            </template>
-          </div>
-        </template>
-
-        <template
-          v-slot:item.product.productGroup.productCategory.gender="{ item }"
+    <v-row>
+      <v-col class="d-flex flex-column">
+        <v-data-table
+          :headers="headers"
+          :items="invProductsDisplay"
+          :search="search"
+          :loading="isFetchingInvProducts"
+          item-value="id"
+          class="flex-grow-1"
+          fixed-header
+          :height="`calc(100vh - 262px)`"
+          hover
+          :page="pageNo"
+          :items-per-page="itemsPerPage"
         >
-          {{
-            $t(renderGender(item.product.productGroup.productCategory.gender))
-          }}
-        </template>
+          <template #loading>
+            <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+          </template>
 
-        <template v-slot:item.invProductSizes="{ item }">
-          <v-table density="compact">
-            <tbody>
-              <tr v-for="size in item.invProductSizes" :key="size.size.id">
-                <td>{{ size.size.eu }}</td>
-                <td>{{ size.quantity }}</td>
-              </tr>
-              <tr>
-                <td><i>Total</i></td>
-                <td>
-                  <i>
-                    {{
-                      item.invProductSizes.reduce(
-                        (sum, size) => sum + size.quantity,
-                        0,
-                      )
-                    }}
-                  </i>
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
-        </template>
+          <template v-slot:item.product.productColors="{ item }">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <template v-for="color in item.product.productColors">
+                <v-chip class="d-flex align-center">
+                  <div
+                    class="color-box"
+                    :style="{ backgroundColor: color.color.hexCode }"
+                  />
+                  <span>{{ color.color.name }}</span>
+                </v-chip>
+              </template>
+            </div>
+          </template>
 
-        <template v-slot:item.invTrfItems="{ item }">
-          <v-icon
-            v-if="item.pendingCount > 0"
-            :icon="mdiProgressAlert"
-          ></v-icon>
-          {{ item.pendingCount }}
-        </template>
+          <template
+            v-slot:item.product.productGroup.productCategory.gender="{ item }"
+          >
+            {{
+              $t(renderGender(item.product.productGroup.productCategory.gender))
+            }}
+          </template>
 
-        <template v-slot:item.actions="{ item }">
-          <v-menu transition="slide-y-transition" open-on-hover>
-            <template v-slot:activator="{ props }">
-              <v-btn
-                :icon="mdiDotsVertical"
-                color="primary"
-                v-bind="props"
-                variant="text"
-              >
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item
-                @click="
-                  () => {
-                    const { pendingCount, ...rest } = item;
-                    showItemDetailDialog(rest as InvProductDto);
-                  }
-                "
-                :prepend-icon="mdiFileDocumentArrowRightOutline"
-              >
-                <v-list-item-title>Show Transfer Detail</v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                v-if="
-                  item.invProductSizes.reduce(
-                    (sum, item) => sum + item.quantity,
-                    0,
-                  ) >
-                  item.invTrfItems.reduce(
-                    (sum, item) =>
-                      sum +
-                      item.invTrfItemSizes.reduce((s, i) => s + i.quantity, 0),
-                    0,
-                  )
-                "
-                @click="
-                  () => {
-                    const { pendingCount, ...rest } = item;
-                    showItemFormDialog(rest as InvProductDto);
-                  }
-                "
-                :prepend-icon="mdiTransferRight"
-              >
-                <v-list-item-title> Send To </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
+          <template v-slot:item.invProductSizes="{ item }">
+            <v-table density="compact">
+              <tbody>
+                <tr v-for="size in item.invProductSizes" :key="size.size.id">
+                  <td>{{ size.size.eu }}</td>
+                  <td>{{ size.quantity }}</td>
+                </tr>
+                <tr>
+                  <td><i>Total</i></td>
+                  <td>
+                    <i>
+                      {{
+                        item.invProductSizes.reduce(
+                          (sum, size) => sum + size.quantity,
+                          0,
+                        )
+                      }}
+                    </i>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </template>
 
-  <v-dialog v-model="viewDialog" max-width="1200px">
-    <v-card>
-      <v-toolbar>
-        <v-toolbar-title
-          >Transfer Detail for
-          {{ itemSelectionObject?.product.sku }}</v-toolbar-title
-        >
-      </v-toolbar>
-      <v-container class="d-flex flex-column">
-        <InvProductItemTrfTable
-          :inv-product-dto="itemSelectionObject"
-          @refresh-table="executeFetch"
-        ></InvProductItemTrfTable>
-      </v-container>
-    </v-card>
-  </v-dialog>
+          <template v-slot:item.invTrfItems="{ item }">
+            <v-icon
+              v-if="item.pendingCount > 0"
+              :icon="mdiProgressAlert"
+            ></v-icon>
+            {{ item.pendingCount }}
+          </template>
 
-  <v-dialog v-model="formDialog" max-width="1200px">
-    <v-card>
-      <v-toolbar>
-        <v-toolbar-title>Send Item To </v-toolbar-title>
-      </v-toolbar>
-      <v-container class="d-flex flex-column">
-        <InvProductTrfItemForm
-          :inv-product-dto="itemSelectionObject"
-          @close-dialog="closeItemFormDialog"
-        ></InvProductTrfItemForm>
-      </v-container>
-    </v-card>
-  </v-dialog>
+          <template v-slot:item.actions="{ item }">
+            <v-menu transition="slide-y-transition" open-on-hover>
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  :icon="mdiDotsVertical"
+                  color="primary"
+                  v-bind="props"
+                  variant="text"
+                >
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  @click="
+                    () => {
+                      const { pendingCount, ...rest } = item;
+                      showItemDetailDialog(rest as InvProductDto);
+                    }
+                  "
+                  :prepend-icon="mdiFileDocumentArrowRightOutline"
+                >
+                  <v-list-item-title>Show Transfer Detail</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  v-if="
+                    item.invProductSizes.reduce(
+                      (sum, item) => sum + item.quantity,
+                      0,
+                    ) >
+                    item.invTrfItems.reduce(
+                      (sum, item) =>
+                        sum +
+                        item.invTrfItemSizes.reduce(
+                          (s, i) => s + i.quantity,
+                          0,
+                        ),
+                      0,
+                    )
+                  "
+                  @click="
+                    () => {
+                      const { pendingCount, ...rest } = item;
+                      showItemFormDialog(rest as InvProductDto);
+                    }
+                  "
+                  :prepend-icon="mdiTransferRight"
+                >
+                  <v-list-item-title> Send To </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
+
+    <v-dialog v-model="viewDialog" max-width="1200px">
+      <v-card>
+        <v-toolbar>
+          <v-toolbar-title
+            >Transfer Detail for
+            {{ itemSelectionObject?.product.sku }}</v-toolbar-title
+          >
+        </v-toolbar>
+        <v-container class="d-flex flex-column">
+          <InvProductItemTrfTable
+            :inv-product-dto="itemSelectionObject"
+            @refresh-table="executeFetch"
+          ></InvProductItemTrfTable>
+        </v-container>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="formDialog" max-width="1200px">
+      <v-card>
+        <v-toolbar>
+          <v-toolbar-title>Send Item To </v-toolbar-title>
+        </v-toolbar>
+        <v-container class="d-flex flex-column">
+          <InvProductTrfItemForm
+            :inv-product-dto="itemSelectionObject"
+            @close-dialog="closeItemFormDialog"
+          ></InvProductTrfItemForm>
+        </v-container>
+      </v-card>
+    </v-dialog>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -205,6 +213,13 @@ import {
   type InvProductDto,
 } from '~/api/generated/types';
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
+import { Role } from '~/utils/constants';
+
+const authStore = useAuthStore();
+const clearance = authStore.user?.role.clearanceLevel ?? 6;
+const isComingSoon = computed(() => {
+  return clearance > Role.Superuser;
+});
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);

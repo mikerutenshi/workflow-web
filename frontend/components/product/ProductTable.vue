@@ -71,33 +71,77 @@
 
         <template v-slot:item.actions="{ item }">
           <!-- <v-menu variant="outlined">
-          <template v-slot:activator="{ props }">
-            <v-btn icon v-bind="props" variant="text">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item>
-              <NuxtLink :to="`/products/update/${item.id}`">
-                <v-list-item-title>Edit</v-list-item-title>
-              </NuxtLink>
-            </v-list-item>
-            <v-list-item @click="deleteProduct(item.id, index)">
-              <v-list-item-title>Delete</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu> -->
+            <template v-slot:activator="{ props }">
+              <v-btn icon v-bind="props" variant="text">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item>
+                <NuxtLink :to="`/products/update/${item.id}`">
+                  <v-list-item-title>Edit</v-list-item-title>
+                </NuxtLink>
+              </v-list-item>
+              <v-list-item @click="deleteProduct(item.id, index)">
+                <v-list-item-title>Delete</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
             <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
-          </NuxtLink>
+          </NuxtLink> -->
+          <v-btn
+            color="primary"
+            :icon="mdiPencil"
+            variant="text"
+            @click="showDialog(item.id)"
+          ></v-btn>
         </template>
       </v-data-table>
     </v-col>
   </v-row>
+
+  <v-dialog
+    v-model="dialog.isVisible"
+    fullscreen
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <v-toolbar>
+        <v-btn :icon="mdiClose" @click="dialog.isVisible = false"></v-btn>
+        <v-toolbar-title>{{
+          dialog.content === DialogContent.Create
+            ? $t('page.product_create')
+            : dialog.content === DialogContent.Edit
+              ? $t('page.product_edit')
+              : 'Title'
+        }}</v-toolbar-title>
+      </v-toolbar>
+
+      <v-container class="h-100 d-flex flex-column">
+        <template v-if="dialog.content === DialogContent.Create">
+          <ProductCreateForm
+            @close-dialog="handleDialogClose"
+          ></ProductCreateForm>
+        </template>
+        <template v-else-if="dialog.content === DialogContent.Edit">
+          <ProductCreateForm
+            :product-id="selectedProductId"
+            @close-dialog="handleDialogClose"
+          ></ProductCreateForm>
+        </template>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { mdiFileDocumentEditOutline, mdiMagnify, mdiPencil } from '@mdi/js';
+import {
+  mdiClose,
+  mdiFileDocumentEditOutline,
+  mdiMagnify,
+  mdiPencil,
+} from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import {
@@ -107,7 +151,12 @@ import {
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
-const { data, isFetching, error } = useQuery({
+const {
+  data,
+  isFetching,
+  error,
+  execute: executeFetch,
+} = useQuery({
   query: GetProductsDocument,
   tags: [CACHE_PRODUCTS],
 });
@@ -129,6 +178,31 @@ const headers: ReadOnlyHeaders = [
 const search = ref('');
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
+
+const selectedProductId = ref('');
+enum DialogContent {
+  None = 'NONE',
+  Edit = 'EDIT',
+  Create = 'CREATE',
+}
+const dialogStore = useDialogStore();
+const { isFormDialogOpen } = storeToRefs(dialogStore);
+
+const dialog = reactive({
+  isVisible: false,
+  content: DialogContent.None,
+});
+function showDialog(productId: string) {
+  selectedProductId.value = productId;
+  dialog.content = DialogContent.Edit;
+  dialog.isVisible = true;
+}
+function handleDialogClose() {
+  executeFetch();
+  dialogStore.closeFormDialog();
+  dialog.isVisible = false;
+  selectedProductId.value = '';
+}
 
 const extractColors = (productColors: any[]) => {
   let stringResult = '';
@@ -157,4 +231,18 @@ const deleteProduct = (id: string, index: number) => {
       alert('An error occurred while deleting the product.');
     });
 };
+watch(
+  () => dialog.isVisible,
+  (isVisible) => {
+    if (!isVisible) {
+      handleDialogClose();
+    }
+  },
+);
+watchEffect(() => {
+  if (isFormDialogOpen.value) {
+    dialog.content = DialogContent.Create;
+    dialog.isVisible = true;
+  }
+});
 </script>

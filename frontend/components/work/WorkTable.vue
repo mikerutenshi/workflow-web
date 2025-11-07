@@ -190,13 +190,13 @@
         </template>
         <template v-if="dialog.content === DialogContent.EditWork">
           <WorkCreateForm
-            :workId="currentWorkId"
+            :work-id="currentWorkId"
             @close-dialog="save"
           ></WorkCreateForm>
         </template>
         <template v-if="dialog.content === DialogContent.EditTask">
           <TaskUpdateForm
-            :workId="currentWorkId"
+            :work-id="currentWorkId"
             @close-dialog="save"
           ></TaskUpdateForm>
         </template>

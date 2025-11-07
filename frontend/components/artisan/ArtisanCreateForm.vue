@@ -53,7 +53,6 @@
     <v-row class="flex-grow-1"></v-row>
 
     <v-row align="end" class="ma-1">
-      <ActionCancel></ActionCancel>
       <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
         $t('btn.update')
       }}</ActionConfirm>
@@ -66,6 +65,13 @@
       ></ActionDelete>
     </v-row>
   </form>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -80,11 +86,22 @@ import {
 import { useRoute } from 'vue-router';
 import { ArtisanSchema } from '~/validation/schema';
 
+const { t } = useI18n();
 const route = useRoute();
-const artisanId = ref(route.params.id as string);
+const props = defineProps({
+  artisanId: {
+    type: String,
+  },
+});
+const emit = defineEmits(['close-dialog']);
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
+});
+const artisanId = (route.params.id as string) || props.artisanId;
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
-const { t } = useI18n();
 const jobOptions = computed(() =>
   (Object.keys(JOBS) as Array<keyof typeof JOBS>).map((key) => ({
     id: key,
@@ -113,7 +130,7 @@ const {
   error: createError,
 } = useMutation(CreateArtisanDocument, {
   onData() {
-    navigateTo(localePath('/artisans'));
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_ARTISANS],
 });
@@ -123,24 +140,32 @@ const {
   error: updateError,
 } = useMutation(UpdateArtisanDocument, {
   onData() {
-    navigateTo(localePath('/artisans'));
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_ARTISANS, CACHE_ARTISAN],
 });
 const { execute: executeDelete } = useMutation(DeleteArtisanDocument, {
   clearCacheTags: [CACHE_ARTISANS],
-  onData() {
-    navigateTo(localePath('/artisans'));
+  onData(data) {
+    if (data.deleteArtisan) {
+      snack.message = `${t('status.deleted')}`;
+    } else {
+      snack.color = SnackColor.Error;
+      snack.message = `${t('status.failed')}`;
+    }
+    snack.isVisible = true;
   },
   onError(err) {
-    alert(`Error while deleting artisan -> ${err}`);
+    snack.color = SnackColor.Error;
+    snack.message = `${t('status.failed')} ${err.message}`;
+    snack.isVisible = true;
   },
 });
 
-if (artisanId.value) {
+if (artisanId) {
   useQuery({
     query: GetArtisanDocument,
-    variables: { id: artisanId.value },
+    variables: { id: artisanId },
     tags: [CACHE_ARTISAN],
     onData(artisanData) {
       const artisan = artisanData.getArtisan;
@@ -163,9 +188,9 @@ if (artisanId.value) {
 }
 
 const onSubmit = handleSubmit((values) => {
-  if (artisanId.value) {
+  if (artisanId) {
     executeUpdate({
-      id: artisanId.value,
+      id: artisanId,
       data: {
         ...values,
         jobs: values.jobs as Job[],

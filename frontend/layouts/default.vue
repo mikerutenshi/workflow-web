@@ -113,6 +113,9 @@ import {
 import { useRoute } from 'vue-router';
 import { Role } from '~/utils/constants';
 
+const authStore = useAuthStore();
+const clearance = authStore.user?.role.clearanceLevel ?? 6;
+
 const dialogStore = useDialogStore();
 const appBarStore = useAppBarStore();
 const drawer = ref(false);
@@ -120,10 +123,15 @@ const createBtn = reactive({
   title: '',
   route: '',
 });
-const createBtnTitles: Record<string, string> = {
+const createBtnTitles: Record<string, string> = clearance > Role.Superuser ? {
   'works': 'create_btn.work',
-  // 'products': 'create_btn.product',
-  // 'artisans': 'create_btn.artisan',
+  'products': 'create_btn.product',
+  'artisans': 'create_btn.artisan',
+  'setting-colors': 'create_btn.color'
+} : {
+  'works': 'create_btn.work',
+  'products': 'create_btn.product',
+  'artisans': 'create_btn.artisan',
   'inv-product-transfers': 'create_btn.inv_trf',
   'setting-inventories': 'create_btn.inventory',
   'setting-colors': 'create_btn.color'
@@ -139,8 +147,6 @@ const closeDrawer = () => {
 const { t } = useI18n();
 const localePath = useLocalePath();
 
-const authStore = useAuthStore();
-const clearance = authStore.user?.role.clearanceLevel ?? 6;
 const navItems = computed(() => {
   if (clearance <= Role.Finance) {
     return [
@@ -208,14 +214,12 @@ const navItems = computed(() => {
       },
       {
         title: t('nav.inventory'),
-        // route: localePath('/inv-products'),
-        route: localePath('/coming-soon'),
+        route: localePath('/inv-products'),
         icon: mdiWarehouse,
       },
       {
         title: t('nav.inventory_transfers'),
-        // route: localePath('/inv-product-transfers'),
-        route: localePath('/coming-soon'),
+        route: localePath('/inv-product-transfers'),
         icon: mdiTransfer,
       },
       {
@@ -240,8 +244,7 @@ const navItems = computed(() => {
         children: [
           {
         title: t('nav.setting_inventories'),
-        // route: localePath('/setting/inventories'),
-        route: localePath('/coming-soon'),
+        route: localePath('/setting/inventories'),
         icon: mdiWarehouse,
           },
           {
@@ -282,10 +285,8 @@ const currentRouteName = computed(() => {
 const pageTitle = computed(() => t(route.meta.title as string));
 
 const pagesWithCreate = shallowRef([
-  'products',
   'product-groups',
   'product-categories',
-  'artisans',
 ]);
 
 // if (clearance >= Role.Field)
@@ -301,12 +302,6 @@ watch(
   currentRouteName,
   (newName) => {
     switch (newName) {
-      case 'products': {
-        createBtn.route = localePath('/products/create');
-        createBtn.title = t('create_btn.product');
-        break;
-      }
-
       case 'product-groups': {
         createBtn.route = localePath('/product-groups/create');
         createBtn.title = t('create_btn.product_group');
@@ -316,12 +311,6 @@ watch(
       case 'product-categories': {
         createBtn.route = localePath('/product-categories/create');
         createBtn.title = t('create_btn.product_category');
-        break;
-      }
-
-      case 'artisans': {
-        createBtn.route = localePath('/artisans/create');
-        createBtn.title = t('create_btn.artisan');
         break;
       }
 
