@@ -19,43 +19,13 @@
       </NuxtLink>
 
       <v-btn
-        v-if="currentRouteName == 'works' && clearance <= Role.Planner"
+        v-if="currentRouteName && currentRouteName in createBtnTitles && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"
         @click="dialogStore.openFormDialog()"
       >
         <v-icon left :icon="mdiPlus"></v-icon>
-        {{ t('create_btn.work') }}
-      </v-btn>
-
-      <v-btn
-        v-if="currentRouteName == 'inv-product-transfers' && clearance <= Role.Planner"
-        variant="flat"
-        class="mr-4"
-        @click="dialogStore.openFormDialog()"
-      >
-        <v-icon left :icon="mdiPlus"></v-icon>
-        {{ t('create_btn.inv_trf') }}
-      </v-btn>
-
-      <v-btn
-        v-if="currentRouteName == 'setting-inventories' && clearance <= Role.Planner"
-        variant="flat"
-        class="mr-4"
-        @click="dialogStore.openFormDialog()"
-      >
-        <v-icon left :icon="mdiPlus"></v-icon>
-        {{ t('create_btn.inventory') }}
-      </v-btn>
-
-      <v-btn
-        v-if="currentRouteName == 'setting-colors' && clearance <= Role.Planner"
-        variant="flat"
-        class="mr-4"
-        @click="dialogStore.openFormDialog()"
-      >
-        <v-icon left :icon="mdiPlus"></v-icon>
-        {{ t('create_btn.color') }}
+        {{ t(`${createBtnTitles[currentRouteName]}`) }}
       </v-btn>
 
       <v-btn
@@ -150,6 +120,14 @@ const createBtn = reactive({
   title: '',
   route: '',
 });
+const createBtnTitles: Record<string, string> = {
+  'works': 'create_btn.work',
+  // 'products': 'create_btn.product',
+  // 'artisans': 'create_btn.artisan',
+  'inv-product-transfers': 'create_btn.inv_trf',
+  'setting-inventories': 'create_btn.inventory',
+  'setting-colors': 'create_btn.color'
+}
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
@@ -230,12 +208,14 @@ const navItems = computed(() => {
       },
       {
         title: t('nav.inventory'),
-        route: localePath('/inv-products'),
+        // route: localePath('/inv-products'),
+        route: localePath('/coming-soon'),
         icon: mdiWarehouse,
       },
       {
         title: t('nav.inventory_transfers'),
-        route: localePath('/inv-product-transfers'),
+        // route: localePath('/inv-product-transfers'),
+        route: localePath('/coming-soon'),
         icon: mdiTransfer,
       },
       {
@@ -260,7 +240,8 @@ const navItems = computed(() => {
         children: [
           {
         title: t('nav.setting_inventories'),
-        route: localePath('/setting/inventories'),
+        // route: localePath('/setting/inventories'),
+        route: localePath('/coming-soon'),
         icon: mdiWarehouse,
           },
           {
@@ -302,11 +283,9 @@ const pageTitle = computed(() => t(route.meta.title as string));
 
 const pagesWithCreate = shallowRef([
   'products',
-  'colors',
   'product-groups',
   'product-categories',
   'artisans',
-  // 'works',
 ]);
 
 // if (clearance >= Role.Field)
@@ -328,12 +307,6 @@ watch(
         break;
       }
 
-      case 'colors': {
-        createBtn.route = localePath('/colors/create');
-        createBtn.title = t('create_btn.color');
-        break;
-      }
-
       case 'product-groups': {
         createBtn.route = localePath('/product-groups/create');
         createBtn.title = t('create_btn.product_group');
@@ -349,12 +322,6 @@ watch(
       case 'artisans': {
         createBtn.route = localePath('/artisans/create');
         createBtn.title = t('create_btn.artisan');
-        break;
-      }
-
-      case 'works': {
-        createBtn.route = localePath('/works/create');
-        createBtn.title = t('create_btn.work');
         break;
       }
 

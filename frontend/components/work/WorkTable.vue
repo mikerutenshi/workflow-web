@@ -125,31 +125,41 @@
         </template> -->
 
         <template v-slot:item.actions="{ item }">
-          <v-menu transition="slide-y-transition" open-on-hover>
-            <template v-slot:activator="{ props }">
-              <v-btn
-                :icon="mdiDotsVertical"
-                color="primary"
-                v-bind="props"
-                variant="text"
-              >
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item
-                :prepend-icon="mdiPencil"
-                @click="showEditWorkDialog(item.id)"
-              >
-                <v-list-item-title>Edit Work</v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                :prepend-icon="mdiPencil"
-                @click="showEditTaskDialog(item.id)"
-              >
-                <v-list-item-title>Edit Task</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <template v-if="clearanceLevel <= Role.Planner">
+            <v-menu transition="slide-y-transition" open-on-hover>
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  :icon="mdiDotsVertical"
+                  color="primary"
+                  v-bind="props"
+                  variant="text"
+                >
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  :prepend-icon="mdiPencil"
+                  @click="showEditWorkDialog(item.id)"
+                >
+                  <v-list-item-title>Edit Work</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  :prepend-icon="mdiPencil"
+                  @click="showEditTaskDialog(item.id)"
+                >
+                  <v-list-item-title>Edit Task</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+          <template v-else>
+            <v-btn
+              color="primary"
+              :icon="mdiPencil"
+              variant="text"
+              @click="showEditTaskDialog(item.id)"
+            ></v-btn>
+          </template>
         </template>
       </v-data-table>
     </v-col>
