@@ -101,38 +101,26 @@
     </v-col>
   </v-row>
 
-  <v-dialog
+  <ActionEditItemDialog
+    :dialogTitle="
+      dialog.content === DialogContent.Create
+        ? $t('page.product_create')
+        : dialog.content === DialogContent.Edit
+          ? $t('page.product_edit')
+          : 'Title'
+    "
     v-model="dialog.isVisible"
-    fullscreen
-    transition="dialog-bottom-transition"
   >
-    <v-card>
-      <v-toolbar>
-        <v-btn :icon="mdiClose" @click="dialog.isVisible = false"></v-btn>
-        <v-toolbar-title>{{
-          dialog.content === DialogContent.Create
-            ? $t('page.product_create')
-            : dialog.content === DialogContent.Edit
-              ? $t('page.product_edit')
-              : 'Title'
-        }}</v-toolbar-title>
-      </v-toolbar>
-
-      <v-container class="h-100 d-flex flex-column">
-        <template v-if="dialog.content === DialogContent.Create">
-          <ProductCreateForm
-            @close-dialog="handleDialogClose"
-          ></ProductCreateForm>
-        </template>
-        <template v-else-if="dialog.content === DialogContent.Edit">
-          <ProductCreateForm
-            :product-id="selectedProductId"
-            @close-dialog="handleDialogClose"
-          ></ProductCreateForm>
-        </template>
-      </v-container>
-    </v-card>
-  </v-dialog>
+    <template v-if="dialog.content === DialogContent.Create">
+      <ProductCreateForm @close-dialog="handleDialogClose"></ProductCreateForm>
+    </template>
+    <template v-else-if="dialog.content === DialogContent.Edit">
+      <ProductCreateForm
+        :product-id="selectedProductId"
+        @close-dialog="handleDialogClose"
+      ></ProductCreateForm>
+    </template>
+  </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">

@@ -44,7 +44,7 @@ export class ProductCategoryService {
   }
 
   async deleteProductCategory(id: number): Promise<Boolean> {
-    const productCategory = await this.prisma.productGroup.delete({
+    const productCategory = await this.prisma.productCategory.delete({
       where: { id },
     });
 

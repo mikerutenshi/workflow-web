@@ -28,18 +28,13 @@
                   :subtitle="$t(renderGender(item.raw.gender))"
                 >
                   <template #append>
-                    <NuxtLink
-                      :to="
-                        $localePath(`/product-categories/update/${item.raw.id}`)
-                      "
-                    >
-                      <v-btn
-                        color="primary"
-                        :icon="mdiPencil"
-                        size="small"
-                        variant="text"
-                      ></v-btn>
-                    </NuxtLink>
+                    <v-btn
+                      color="primary"
+                      :icon="mdiPencil"
+                      size="small"
+                      variant="text"
+                      @click="showDialogWithId(item.value)"
+                    ></v-btn>
                   </template>
                 </v-list-item>
               </template>
@@ -47,11 +42,12 @@
           </v-col>
 
           <v-col cols="12" md="4" class="d-flex align-center justify-end">
-            <NuxtLink :to="$localePath('/product-categories/create')">
-              <v-btn :prepend-icon="mdiPlus" color="primary">{{
-                $t('create_btn.product_category')
-              }}</v-btn>
-            </NuxtLink>
+            <v-btn
+              :prepend-icon="mdiPlus"
+              color="primary"
+              @click="dialogForm = true"
+              >{{ $t('create_btn.product_category') }}</v-btn
+            >
           </v-col>
         </v-row>
 
@@ -80,7 +76,6 @@
     <v-row class="flex-grow-1"></v-row>
 
     <v-row align="end" class="ma-1">
-      <ActionCancel></ActionCancel>
       <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
         $t('btn.update')
       }}</ActionConfirm>
@@ -94,6 +89,27 @@
       ></ActionDelete>
     </v-row>
   </v-form>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnack>
+
+  <ActionEditItemDialog
+    :dialogTitle="
+      selectionId
+        ? $t('page.product_category_edit')
+        : $t('page.product_category_create')
+    "
+    v-model="dialogForm"
+  >
+    <ProductCategoryCreateForm
+      @close-dialog="handleDialogClose"
+      :product-category-id="selectionId"
+    ></ProductCategoryCreateForm>
+  </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
@@ -111,8 +127,22 @@ import { useRoute } from 'vue-router';
 import { mdiPencil, mdiPlus } from '@mdi/js';
 import { ProductGroupSchema } from '~/validation/schema';
 
+const { t } = useI18n();
 const route = useRoute();
-const productGroupId = ref(route.params.id as string);
+const props = defineProps({
+  productGroupId: {
+    type: String,
+  },
+});
+const productGroupId = (route.params.id as string) || props.productGroupId;
+const emit = defineEmits(['close-dialog']);
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
+});
+const dialogForm = ref(false);
+const selectionId = ref('');
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -135,7 +165,7 @@ const {
   isFetching: isCreating,
 } = useMutation(CreateProductGroupDocument, {
   onData() {
-    goPrevious();
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_PRODUCT_GROUPS],
 });
@@ -145,11 +175,12 @@ const {
   isFetching: isUpdating,
 } = useMutation(UpdateProductGroupDocument, {
   onData() {
-    goPrevious();
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
 });
 const {
+  execute: executeFetchProductCategory,
   data,
   error: queryError,
   isFetching: isFetchingQuery,
@@ -161,33 +192,40 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
   DeleteProductGroupDocument,
   {
     clearCacheTags: [CACHE_PRODUCT_GROUPS],
-    onData() {
-      goPrevious();
+    onData(data) {
+      if (data.deleteProductGroup) {
+        snack.message = `${t('status.deleted')}`;
+      } else {
+        snack.color = SnackColor.Error;
+        snack.message = `${t('status.failed')}`;
+      }
+      snack.isVisible = true;
     },
     onError(err) {
-      alert(`Error while deleting product group -> ${err}`);
+      snack.color = SnackColor.Error;
+      snack.message = `${t('status.failed')} ${err.message}`;
+      snack.isVisible = true;
     },
   },
 );
 const onSubmit = handleSubmit((data) => {
-  if (productGroupId.value) {
-    executeUpdate({ id: productGroupId.value, data });
+  if (productGroupId) {
+    executeUpdate({ id: productGroupId, data });
   } else {
     executeCreate({ data });
   }
 });
 
-if (productGroupId.value) {
+if (productGroupId) {
   useQuery({
     query: GetProductGroupDocument,
-    variables: { id: productGroupId.value },
+    variables: { id: productGroupId },
     onData(data) {
       const pg = data.getProductGroup;
       setValues({
         skuNumeric: pg.skuNumeric,
         name: pg.name,
         productCategoryId: pg.productCategory.id,
-        createdBy: pg.createdBy,
         updatedBy: userId,
       });
     },
@@ -197,9 +235,21 @@ if (productGroupId.value) {
     tags: [CACHE_PRODUCT_GROUP],
   });
 }
-const goPrevious = () => {
-  router.go(-1);
-};
+
+function showDialogWithId(id: string) {
+  dialogForm.value = true;
+  selectionId.value = id;
+}
+function handleDialogClose() {
+  if (dialogForm) dialogForm.value = false;
+  selectionId.value = '';
+  executeFetchProductCategory();
+  if (productCategoryId) productCategoryId.setValue(undefined);
+}
+
+// function goPrevious() {
+//   router.go(-1);
+// }
 
 // watchEffect(() => {
 //   console.log(JSON.stringify(values));

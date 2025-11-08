@@ -43,7 +43,7 @@
                     `"
                 >
                   <template #append>
-                    <NuxtLink
+                    <!-- <NuxtLink
                       :to="$localePath(`/product-groups/update/${item.raw.id}`)"
                     >
                       <v-btn
@@ -52,18 +52,31 @@
                         size="small"
                         variant="text"
                       ></v-btn>
-                    </NuxtLink>
+                    </NuxtLink> -->
+                    <v-btn
+                      color="primary"
+                      :icon="mdiPencil"
+                      size="small"
+                      variant="text"
+                      @click="showDialogWithId(item.value)"
+                    ></v-btn>
                   </template>
                 </v-list-item>
               </template>
             </v-autocomplete>
           </v-col>
           <v-col cols="12" md="4" class="d-flex justify-end align-center">
-            <NuxtLink :to="$localePath('/product-groups/create')">
+            <!-- <NuxtLink :to="$localePath('/product-groups/create')">
               <v-btn :prepend-icon="mdiPlus" color="primary">{{
                 $t('create_btn.product_group')
               }}</v-btn>
-            </NuxtLink>
+            </NuxtLink> -->
+            <v-btn
+              :prepend-icon="mdiPlus"
+              color="primary"
+              @click="dialogForm = true"
+              >{{ $t('create_btn.product_group') }}</v-btn
+            >
           </v-col>
         </v-row>
 
@@ -164,6 +177,20 @@
     :color="snack.color"
     @close-dialog="emit('close-dialog')"
   ></ActionShowSnack>
+
+  <ActionEditItemDialog
+    :dialogTitle="
+      selectionId
+        ? $t('page.product_group_edit')
+        : $t('page.product_group_create')
+    "
+    v-model="dialogForm"
+  >
+    <ProductGroupCreateForm
+      @close-dialog="handleDialogClose"
+      :product-group-id="selectionId"
+    ></ProductGroupCreateForm>
+  </ActionEditItemDialog>
 </template>
 
 <style scoped>
@@ -206,6 +233,8 @@ const snack = reactive({
   message: t('status.saved'),
   color: SnackColor.Success,
 });
+const dialogForm = ref(false);
+const selectionId = ref('');
 
 const validationSchema = toTypedSchema(ProductSchema);
 const { handleSubmit, values, setValues, setFieldValue } = useForm({
@@ -285,24 +314,13 @@ const {
   data: productGroupsData,
   isFetching: isFetchingProductGroups,
   error: productGroupsError,
+  execute: executeFetchProductGroups,
 } = useQuery({
   query: GetProductGroupsDocument,
   tags: [CACHE_PRODUCT_GROUPS],
 });
 
-// const searchQuery = ref('');
-// const onSearch = (query: string) => {
-//   searchQuery.value = query;
-// };
 const selectedColors = ref<Color[]>([] as Color[]);
-// const filteredColors = computed(() => {
-//   if (colorsData.value) {
-//     return colorsData.value.getColors.filter((color) => {
-//       return color.name.toLowerCase().includes(searchQuery.value.toLowerCase());
-//     });
-//   }
-//   return [];
-// });
 
 const remove = (index: number) => {
   if (index > -1) {
@@ -343,11 +361,27 @@ if (productId) {
   });
 }
 
+function showDialogWithId(id: string) {
+  dialogForm.value = true;
+  selectionId.value = id;
+}
+function handleDialogClose() {
+  if (dialogForm) dialogForm.value = false;
+  selectionId.value = '';
+  executeFetchProductGroups();
+  if (productGroupId) productGroupId.setValue(undefined);
+}
+
 watch(selectedColors, (newColors) => {
   const colorIds = newColors.map((color) => color.id);
   setFieldValue('colorIds', colorIds);
 });
 
+watch(dialogForm, (newState) => {
+  if (!newState) {
+    handleDialogClose();
+  }
+});
 // watchEffect(() => {
 //   console.log(JSON.stringify(values));
 // });

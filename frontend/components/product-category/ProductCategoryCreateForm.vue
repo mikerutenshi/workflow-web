@@ -56,7 +56,6 @@
     <v-row class="flex-grow-1"></v-row>
 
     <v-row align="end" class="ma-1">
-      <ActionCancel></ActionCancel>
       <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
         $t('btn.update')
       }}</ActionConfirm>
@@ -70,6 +69,13 @@
       ></ActionDelete>
     </v-row>
   </v-form>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -84,8 +90,21 @@ import {
   UpdateProductCategoryDocument,
 } from '~/api/generated/types';
 
+const { t } = useI18n();
 const route = useRoute();
-const productCategoryId = ref(route.params.id as string);
+const props = defineProps({
+  productCategoryId: {
+    type: String,
+  },
+});
+const productCategoryId =
+  (route.params.id as string) || props.productCategoryId;
+const emit = defineEmits(['close-dialog']);
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
+});
 
 const router = useRouter();
 // const form = reactive({
@@ -103,7 +122,7 @@ const {
   isFetching: isCreating,
 } = useMutation(CreatePrdouctCategoryDocument, {
   onData() {
-    goPrevious();
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_PRODUCT_CATEGORIES],
 });
@@ -113,7 +132,7 @@ const {
   isFetching: isUpdating,
 } = useMutation(UpdateProductCategoryDocument, {
   onData() {
-    goPrevious();
+    snack.isVisible = true;
   },
   clearCacheTags: [CACHE_PRODUCT_CATEGORIES, CACHE_PRODUCT_CATEGORY],
 });
@@ -121,30 +140,38 @@ const { execute: executeDelete, isFetching: isDeleting } = useMutation(
   DeleteProductCategoryDocument,
   {
     clearCacheTags: [CACHE_PRODUCT_CATEGORIES],
-    onData() {
-      goPrevious();
+    onData(data) {
+      if (data.deleteProductCategory) {
+        snack.message = `${t('status.deleted')}`;
+      } else {
+        snack.color = SnackColor.Error;
+        snack.message = `${t('status.failed')}`;
+      }
+      snack.isVisible = true;
     },
     onError(err) {
-      alert(`Error while deleting product category -> ${err}`);
+      snack.color = SnackColor.Error;
+      snack.message = `${t('status.failed')} ${err.message}`;
+      snack.isVisible = true;
     },
   },
 );
 const onSubmit = handleSubmit((data) => {
-  if (productCategoryId.value) {
-    executeUpdate({ id: productCategoryId.value, data });
+  if (productCategoryId) {
+    executeUpdate({ id: productCategoryId, data });
   } else {
     executeCreate({ data });
   }
 });
 
-const goPrevious = () => {
-  router.go(-1);
-};
+// const goPrevious = () => {
+//   router.go(-1);
+// };
 
-if (productCategoryId.value) {
+if (productCategoryId) {
   useQuery({
     query: GetProductCategoryDocument,
-    variables: { id: productCategoryId.value },
+    variables: { id: productCategoryId },
     onData(data) {
       const category = data.getProductCategory;
       setValues({
