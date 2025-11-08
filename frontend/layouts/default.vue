@@ -7,17 +7,6 @@
 
       <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
 
-      <!-- <NuxtLink
-        v-if="pagesWithCreate.includes(currentRouteName as string)"
-        :to="createBtn.route"
-        class="mr-4"
-      >
-        <v-btn variant="flat">
-          <v-icon left :icon="mdiPlus"></v-icon>
-          {{ createBtn.title }}
-        </v-btn>
-      </NuxtLink> -->
-
       <v-btn
         v-if="
           currentRouteName &&
@@ -292,42 +281,6 @@ const currentRouteName = computed(() => {
   return routeBaseName(route.name ?? '');
 });
 const pageTitle = computed(() => t(route.meta.title as string));
-
-// const pagesWithCreate = shallowRef(['product-groups', 'product-categories']);
-
-// if (clearance >= Role.Field)
-//   pagesWithCreate.value = [
-//     'products',
-//     'colors',
-//     'product-groups',
-//     'product-categories',
-//     'artisans',
-//   ];
-
-// watch(
-//   currentRouteName,
-//   (newName) => {
-//     switch (newName) {
-//       case 'product-groups': {
-//         createBtn.route = localePath('/product-groups/create');
-//         createBtn.title = t('create_btn.product_group');
-//         break;
-//       }
-
-//       case 'product-categories': {
-//         createBtn.route = localePath('/product-categories/create');
-//         createBtn.title = t('create_btn.product_category');
-//         break;
-//       }
-
-//       default:
-//         createBtn.route = '';
-//         createBtn.title = '';
-//         break;
-//     }
-//   },
-//   { immediate: true },
-// );
 
 useHead({
   title: pageTitle,
