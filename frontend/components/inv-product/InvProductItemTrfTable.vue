@@ -67,6 +67,10 @@
           </v-table>
         </template>
 
+        <template #item.progress="{ item }">{{
+          $t(`progress.${item.progress}`)
+        }}</template>
+
         <template v-slot:item.actions="{ item }">
           <v-btn
             v-if="item.progress === Progress.Pending"

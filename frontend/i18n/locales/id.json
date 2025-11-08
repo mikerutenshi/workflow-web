@@ -54,9 +54,12 @@
     "inventory_create": "Buat Gudang Baru",
     "setting_inventories": "Pengaturan Gudang",
     "inventory_transfers": "Transfer Inventaris",
-    "inv_trf_create": "Buat Transfer Inventoris Baru",
+    "inv_trf_create": "Buat Transfer Inventaris Baru",
     "inv_trf_edit": "Ubah Transfer Inventaris",
-    "setting_colors": "Pengaturan Warna"
+    "setting_colors": "Pengaturan Warna",
+    "trf_detail_for": "Rincian Transfer untuk {item}",
+    "send_to": "Kirim Sepatu",
+    "item_detail_for": "Rincian Barang untuk {item}"
   },
   "create_btn": {
     "product": "Sepatu Baru",
@@ -66,7 +69,8 @@
     "artisan": "Perajin Baru",
     "work": "Pekerjaan Baru",
     "inventory": "Gudang Baru",
-    "inv_trf": "Transfer Inventaris Baru"
+    "inv_trf": "Transfer Inventaris Baru",
+    "print": "Cetak"
   },
   "btn": {
     "create": "Buat",
@@ -132,7 +136,11 @@
     "trf_no": "No. Transfer",
     "trf_date": "Tanggal Transfer",
     "from_inv": "Dari Gudang ",
-    "to_inv": "Ke Gudang"
+    "to_inv": "Ke Gudang",
+    "show_trf_detail": "Lihat Rincian Transfer",
+    "send_to": "Kirim Ke",
+    "pending_trfs": "Transfer Tertunda",
+    "show_item_detail": "Lihat Rincian Barang "
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
@@ -164,7 +172,8 @@
     },
     "errors": {
       "invalid_string": {
-        "email": "Format email tidak valid"
+        "email": "Format email tidak valid",
+        "regex": "Input tidak sesuai dengan format regex yang diperlukan"
       },
       "too_small": {
         "string": {
@@ -182,7 +191,6 @@
           "inclusive": "Maksimal {maximum} karakter"
         }
       },
-
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom wajib diisi",
       "custom": "Tanggal di luar rentang yang diterima",
@@ -202,5 +210,14 @@
     "saved": "Disimpan",
     "deleted": "Dihapus",
     "failed": "Gagal"
+  },
+  "progress": {
+    "INITIATED": "Dimulai",
+    "PENDING": "Tertunda",
+    "IN_PROGRESS": "Sedang Dikerjakan",
+    "ON_HOLD": "Ditunda",
+    "COMPLETED": "Selesai",
+    "CANCELED": "Dibatalkan",
+    "FAILED": "Gagal"
   }
 }

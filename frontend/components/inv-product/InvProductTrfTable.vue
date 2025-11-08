@@ -59,6 +59,10 @@
             }}
           </template>
 
+          <template #item.progress="{ item }">{{
+            $t(`progress.${item.progress}`)
+          }}</template>
+
           <template v-slot:item.actions="{ item }">
             <v-menu transition="slide-y-transition" open-on-hover>
               <template v-slot:activator="{ props }">
@@ -75,15 +79,15 @@
                   :prepend-icon="mdiFileDocumentArrowRightOutline"
                   @click="showItemDialog(item as InvTrfDto)"
                 >
-                  <v-list-item-title
-                    >Show Transfer Item Detail</v-list-item-title
-                  >
+                  <v-list-item-title>{{
+                    $t('label.show_item_detail')
+                  }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item
                   :prepend-icon="mdiPencil"
                   @click="showItemFormDialog(item as InvTrfDto)"
                 >
-                  <v-list-item-title>Edit</v-list-item-title>
+                  <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -95,9 +99,10 @@
     <v-dialog v-model="dialogView" max-width="1200px">
       <v-card>
         <v-toolbar>
-          <v-toolbar-title
-            >Transfer Item Details for
-            {{ selectItemObject?.trfNo }}</v-toolbar-title
+          <v-toolbar-title>
+            {{
+              t('page.item_detail_for', { item: selectItemObject?.trfNo })
+            }}</v-toolbar-title
           >
         </v-toolbar>
         <v-container class="d-flex flex-column">

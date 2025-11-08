@@ -127,7 +127,9 @@
                   "
                   :prepend-icon="mdiFileDocumentArrowRightOutline"
                 >
-                  <v-list-item-title>Show Transfer Detail</v-list-item-title>
+                  <v-list-item-title>{{
+                    $t('label.show_trf_detail')
+                  }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item
                   v-if="
@@ -153,7 +155,9 @@
                   "
                   :prepend-icon="mdiTransferRight"
                 >
-                  <v-list-item-title> Send To </v-list-item-title>
+                  <v-list-item-title>{{
+                    $t('label.send_to')
+                  }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -165,9 +169,12 @@
     <v-dialog v-model="viewDialog" max-width="1200px">
       <v-card>
         <v-toolbar>
-          <v-toolbar-title
-            >Transfer Detail for
-            {{ itemSelectionObject?.product.sku }}</v-toolbar-title
+          <v-toolbar-title>
+            {{
+              t('page.trf_detail_for', {
+                item: itemSelectionObject?.product.sku || 'Item',
+              })
+            }}</v-toolbar-title
           >
         </v-toolbar>
         <v-container class="d-flex flex-column">
@@ -182,7 +189,7 @@
     <v-dialog v-model="formDialog" max-width="1200px">
       <v-card>
         <v-toolbar>
-          <v-toolbar-title>Send Item To </v-toolbar-title>
+          <v-toolbar-title>{{ $t('page.send_to') }}</v-toolbar-title>
         </v-toolbar>
         <v-container class="d-flex flex-column">
           <InvProductTrfItemForm
@@ -287,7 +294,7 @@ const headers: ReadOnlyHeaders = [
   },
   { title: t('label.sizes'), key: 'invProductSizes', minWidth: '120' },
   {
-    title: 'Pending Transfers',
+    title: t('label.pending_trfs'),
     key: 'invTrfItems',
   },
   { title: '', key: 'actions', sortable: false, align: 'end' },

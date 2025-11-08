@@ -7,7 +7,7 @@
 
       <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
 
-      <NuxtLink
+      <!-- <NuxtLink
         v-if="pagesWithCreate.includes(currentRouteName as string)"
         :to="createBtn.route"
         class="mr-4"
@@ -16,10 +16,14 @@
           <v-icon left :icon="mdiPlus"></v-icon>
           {{ createBtn.title }}
         </v-btn>
-      </NuxtLink>
+      </NuxtLink> -->
 
       <v-btn
-        v-if="currentRouteName && currentRouteName in createBtnTitles && clearance <= Role.Planner"
+        v-if="
+          currentRouteName &&
+          currentRouteName in createBtnTitles &&
+          clearance <= Role.Planner
+        "
         variant="flat"
         class="mr-4"
         @click="dialogStore.openFormDialog()"
@@ -33,9 +37,11 @@
         variant="flat"
         class="mr-4"
         @click="appBarStore.isPrintClicked = true"
-        :icon="mdiPrinter"
+        :prepend-icon="mdiPrinter"
         :loading="appBarStore.isPrinting"
-      </v-btn>
+      >
+        {{ $t('create_btn.print') }}</v-btn
+      >
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app>
@@ -108,7 +114,7 @@ import {
   mdiPrinter,
   mdiShoeSneaker,
   mdiTransfer,
-  mdiWarehouse
+  mdiWarehouse,
 } from '@mdi/js';
 import { useRoute } from 'vue-router';
 import { Role } from '~/utils/constants';
@@ -123,19 +129,22 @@ const createBtn = reactive({
   title: '',
   route: '',
 });
-const createBtnTitles: Record<string, string> = clearance > Role.Superuser ? {
-  'works': 'create_btn.work',
-  'products': 'create_btn.product',
-  'artisans': 'create_btn.artisan',
-  'setting-colors': 'create_btn.color'
-} : {
-  'works': 'create_btn.work',
-  'products': 'create_btn.product',
-  'artisans': 'create_btn.artisan',
-  'inv-product-transfers': 'create_btn.inv_trf',
-  'setting-inventories': 'create_btn.inventory',
-  'setting-colors': 'create_btn.color'
-}
+const createBtnTitles: Record<string, string> =
+  clearance > Role.Superuser
+    ? {
+        works: 'create_btn.work',
+        products: 'create_btn.product',
+        artisans: 'create_btn.artisan',
+        'setting-colors': 'create_btn.color',
+      }
+    : {
+        works: 'create_btn.work',
+        products: 'create_btn.product',
+        artisans: 'create_btn.artisan',
+        'inv-product-transfers': 'create_btn.inv_trf',
+        'setting-inventories': 'create_btn.inventory',
+        'setting-colors': 'create_btn.color',
+      };
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
@@ -150,7 +159,7 @@ const localePath = useLocalePath();
 const navItems = computed(() => {
   if (clearance <= Role.Finance) {
     return [
-      { title: t('nav.home'), route: localePath('/'), icon: mdiHome},
+      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
       {
         title: t('nav.payroll'),
         route: localePath('/payroll'),
@@ -192,14 +201,14 @@ const navItems = computed(() => {
         icon: mdiCogs,
         children: [
           {
-        title: t('nav.setting_inventories'),
-        route: localePath('/setting/inventories'),
-        icon: mdiWarehouse,
+            title: t('nav.setting_inventories'),
+            route: localePath('/setting/inventories'),
+            icon: mdiWarehouse,
           },
           {
-        title: t('nav.setting_colors'),
-        route: localePath('/setting/colors'),
-        icon: mdiPalette,
+            title: t('nav.setting_colors'),
+            route: localePath('/setting/colors'),
+            icon: mdiPalette,
           },
         ],
       },
@@ -243,14 +252,14 @@ const navItems = computed(() => {
         icon: mdiCogs,
         children: [
           {
-        title: t('nav.setting_inventories'),
-        route: localePath('/setting/inventories'),
-        icon: mdiWarehouse,
+            title: t('nav.setting_inventories'),
+            route: localePath('/setting/inventories'),
+            icon: mdiWarehouse,
           },
           {
-        title: t('nav.setting_colors'),
-        route: localePath('/setting/colors'),
-        icon: mdiPalette,
+            title: t('nav.setting_colors'),
+            route: localePath('/setting/colors'),
+            icon: mdiPalette,
           },
         ],
       },
@@ -284,10 +293,7 @@ const currentRouteName = computed(() => {
 });
 const pageTitle = computed(() => t(route.meta.title as string));
 
-const pagesWithCreate = shallowRef([
-  'product-groups',
-  'product-categories',
-]);
+// const pagesWithCreate = shallowRef(['product-groups', 'product-categories']);
 
 // if (clearance >= Role.Field)
 //   pagesWithCreate.value = [
@@ -298,30 +304,30 @@ const pagesWithCreate = shallowRef([
 //     'artisans',
 //   ];
 
-watch(
-  currentRouteName,
-  (newName) => {
-    switch (newName) {
-      case 'product-groups': {
-        createBtn.route = localePath('/product-groups/create');
-        createBtn.title = t('create_btn.product_group');
-        break;
-      }
+// watch(
+//   currentRouteName,
+//   (newName) => {
+//     switch (newName) {
+//       case 'product-groups': {
+//         createBtn.route = localePath('/product-groups/create');
+//         createBtn.title = t('create_btn.product_group');
+//         break;
+//       }
 
-      case 'product-categories': {
-        createBtn.route = localePath('/product-categories/create');
-        createBtn.title = t('create_btn.product_category');
-        break;
-      }
+//       case 'product-categories': {
+//         createBtn.route = localePath('/product-categories/create');
+//         createBtn.title = t('create_btn.product_category');
+//         break;
+//       }
 
-      default:
-        createBtn.route = '';
-        createBtn.title = '';
-        break;
-    }
-  },
-  { immediate: true }
-);
+//       default:
+//         createBtn.route = '';
+//         createBtn.title = '';
+//         break;
+//     }
+//   },
+//   { immediate: true },
+// );
 
 useHead({
   title: pageTitle,

@@ -56,7 +56,10 @@
     "inventory_transfers": "Inventory Transfers",
     "inv_trf_create": "Create a New Inventory Transfer",
     "inv_trf_edit": "Edit an Inventory Transfer",
-    "setting_colors": "Color Setting"
+    "setting_colors": "Color Setting",
+    "trf_detail_for": "Transfer Detail for {item}",
+    "item_detail_for": "Item Detail for {item}",
+    "send_to": "Send Shoes"
   },
   "create_btn": {
     "product": "New Shoe",
@@ -66,7 +69,8 @@
     "artisan": "New Artisan",
     "work": "New Task",
     "inventory": "New Warehouse",
-    "inv_trf": "New Inventory Transfer"
+    "inv_trf": "New Inventory Transfer",
+    "print": "Print"
   },
   "btn": {
     "create": "Create",
@@ -132,7 +136,11 @@
     "trf_no": "Transfer No.",
     "trf_date": "Transfer Date",
     "from_inv": "From Warehouse",
-    "to_inv": "To Warehouse"
+    "to_inv": "To Warehouse",
+    "show_trf_detail": "Show Transfer Detail",
+    "send_to": "Send To",
+    "pending_trfs": "Pending Transfers",
+    "show_item_detail": "Show Item Detail"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
@@ -158,6 +166,10 @@
     "storefront": "Storefront"
   },
   "zodI18n": {
+    "validations": {
+      "email": "Invalid email format",
+      "min": "Minimum {minimum} characters"
+    },
     "errors": {
       "invalid_string": {
         "email": "Not a valid email address",
@@ -198,5 +210,14 @@
     "saved": "Saved",
     "deleted": "Deleted",
     "failed": "Failed"
+  },
+  "progress": {
+    "INITIATED": "Initiated",
+    "PENDING": "Pending",
+    "IN_PROGRESS": "In Progress",
+    "ON_HOLD": "On Hold",
+    "COMPLETED": "Completed",
+    "CANCELED": "Canceled",
+    "FAILED": "Failed"
   }
 }

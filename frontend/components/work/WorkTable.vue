@@ -102,7 +102,7 @@
           </div>
         </template>
 
-        <template v-slot:item.status="{ item }">
+        <template v-slot:item.progress="{ item }">
           <v-icon
             :icon="
               item.displayProgress === Progress.Initiated
@@ -112,7 +112,7 @@
                   : mdiTimerSand
             "
           ></v-icon>
-          <span>{{ item.displayProgress }}</span>
+          <span>{{ $t(`progress.${item.displayProgress}`) }}</span>
         </template>
 
         <!-- <template v-slot:item.actions="{ item }">
@@ -141,13 +141,17 @@
                   :prepend-icon="mdiPencil"
                   @click="showEditWorkDialog(item.id)"
                 >
-                  <v-list-item-title>Edit Work</v-list-item-title>
+                  <v-list-item-title>{{
+                    $t('page.work_edit')
+                  }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item
                   :prepend-icon="mdiPencil"
                   @click="showEditTaskDialog(item.id)"
                 >
-                  <v-list-item-title>Edit Task</v-list-item-title>
+                  <v-list-item-title>{{
+                    $t('page.task_edit')
+                  }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -349,7 +353,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.order_no'), key: 'orderNo' },
   { title: t('label.sku'), key: 'product.sku' },
   { title: t('label.sizes'), key: 'sizes', minWidth: '120' },
-  { title: t('label.status'), key: 'status' },
+  { title: t('label.status'), key: 'progress' },
   { title: t('label.tasks'), key: 'tasks', minWidth: '300' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];

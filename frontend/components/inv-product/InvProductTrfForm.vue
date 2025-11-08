@@ -24,7 +24,7 @@
         <v-row>
           <v-col>
             <v-text-field
-              label="Transfer No"
+              :label="$t('label.trf_no')"
               :error-messages="trfNo.errorMessage.value"
               v-model="trfNo.value.value"
             />
@@ -34,7 +34,7 @@
         <v-row>
           <v-col class="col-5" cols="5.5">
             <v-autocomplete
-              label="From Inventory"
+              :label="$t('label.from_inv')"
               auto-select-first
               item-value="id"
               item-title="name"
@@ -50,7 +50,7 @@
           </v-col>
           <v-col cols="5.5">
             <v-autocomplete
-              label="To Inventory"
+              :label="$t('label.to_inv')"
               auto-select-first
               item-value="id"
               item-title="name"
@@ -66,10 +66,8 @@
         <v-row>
           <v-col>
             <v-select
-              label="Progress"
+              :label="$t('label.status')"
               :items="progressList"
-              item-value="key"
-              item-title="value"
               v-model="progress.value.value"
               :error-messages="progress.errorMessage.value"
             >
@@ -201,17 +199,12 @@ const trfNo = useField('trfNo');
 const fromInvId = useField('fromInvId');
 const toInvId = useField('toInvId');
 const trfDate = useField<string>('trfDate');
-const progress = useField('progress');
+const progress = useField<Progress>('progress');
 const { fields, push, remove, replace } = useFieldArray('invTrfItemIds');
 
-const progressList = [
-  { key: Progress.Initiated, value: 'Initiated' },
-  { key: Progress.InProgress, value: 'In Progress' },
-  { key: Progress.Completed, value: 'Completed' },
-  { key: Progress.Cancelled, value: 'Cancelled' },
-  { key: Progress.OnHold, value: 'On Hold' },
-  { key: Progress.Pending, value: 'Pending' },
-];
+const progressList = Object.values(Progress).map((value) => {
+  return { value, title: t(`progress.${value}`) };
+});
 
 const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,

@@ -36,7 +36,7 @@ enum Progress {
   IN_PROGRESS
   ON_HOLD
   COMPLETED
-  CANCELLED
+  CANCELED
   FAILED
 }
 
@@ -126,7 +126,7 @@ model Product {
   productColors       ColorToProduct[]
   works               Work[]
   productInvs         InvToProduct[]
-  productsale         ProductToSale[]
+  // productsale         ProductToSale[]
   InvTrfItem          InvTrfItem[]
 
   productGroup        ProductGroup    @relation(fields: [productGroupId], references: [id])
@@ -221,7 +221,7 @@ model Size {
   sizeWorks           SizeToWork[]
   sizeInvProducts     InvProductToSize[]
   InvTrfItemToSize    InvTrfItemToSize[]
-  sizeSaleProducts    SaleProductToSize[]
+  // sizeSaleProducts    SaleProductToSize[]
 
   @@unique([eu, gender])
   @@unique([us, gender])
@@ -248,8 +248,8 @@ model Inventory {
   type              InvType
 
   invProducts       InvToProduct[]
-  invsale           Sale[]
-  salemen           Salesman[]  
+  // invsale           Sale[]
+  // salemen           Salesman[]  
 
   fromTrfs          InvTrf[] @relation( "FromInventory")
   toTrfs            InvTrf[] @relation( "ToInventory")
@@ -334,69 +334,69 @@ model InvTrfItemToSize {
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
-model Sale {
-  id                Int             @id @default(autoincrement())
-  saleNo            String
-  date              DateTime
-  invId             Int
-  saleProducts      ProductToSale[]
+// model Sale {
+//   id                Int             @id @default(autoincrement())
+//   saleNo            String
+//   date              DateTime
+//   invId             Int
+//   saleProducts      ProductToSale[]
 
-  createdBy         Int
-  updatedBy         Int?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+//   createdBy         Int
+//   updatedBy         Int?
+//   createdAt         DateTime        @default(now())
+//   updatedAt         DateTime        @updatedAt
 
-  inventory         Inventory       @relation(fields: [invId], references: [id])
-}
+//   inventory         Inventory       @relation(fields: [invId], references: [id])
+// }
 
-model ProductToSale {
-  id                Int             @id @default(autoincrement())
-  saleId            Int
-  productId         Int
-  saleProductSizes  SaleProductToSize[]
+// model ProductToSale {
+//   id                Int             @id @default(autoincrement())
+//   saleId            Int
+//   productId         Int
+//   saleProductSizes  SaleProductToSize[]
 
-  sale              Sale         @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  product           Product         @relation(fields: [productId], references: [id])
-}
+//   sale              Sale         @relation(fields: [saleId], references: [id], onDelete: Cascade)
+//   product           Product         @relation(fields: [productId], references: [id])
+// }
 
-model SaleProductToSize {
-  @@id([saleProductId, sizeId])
-  saleProductId     Int
-  sizeId            Int
+// model SaleProductToSize {
+//   @@id([saleProductId, sizeId])
+//   saleProductId     Int
+//   sizeId            Int
 
-  quantity          Int
+//   quantity          Int
 
-  saleProduct       ProductToSale   @relation(fields: [saleProductId], references: [id], onDelete: Cascade)
-  size              Size            @relation(fields: [sizeId], references: [id])
-}
+//   saleProduct       ProductToSale   @relation(fields: [saleProductId], references: [id], onDelete: Cascade)
+//   size              Size            @relation(fields: [sizeId], references: [id])
+// }
 
-model Client {
-  id                Int             @id @default(autoincrement())
-  name              String
-  address           String
-  city              String
-  province          String
-  pic               String
-  phone             String
-  email             String          
+// model Client {
+//   id                Int             @id @default(autoincrement())
+//   name              String
+//   address           String
+//   city              String
+//   province          String
+//   pic               String
+//   phone             String
+//   email             String          
 
-  createdBy         Int
-  updatedBy         Int?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+//   createdBy         Int
+//   updatedBy         Int?
+//   createdAt         DateTime        @default(now())
+//   updatedAt         DateTime        @updatedAt
 
-  salesmanId        Int
-  salesman          Salesman        @relation(fields: [salesmanId], references: [id])
-}
+//   salesmanId        Int
+//   salesman          Salesman        @relation(fields: [salesmanId], references: [id])
+// }
 
-model Salesman {
-  id                Int             @id @default(autoincrement())
-  firstName         String
-  lastName          String?
-  phone             String
-  email             String          @unique
-  invId             Int
+// model Salesman {
+//   id                Int             @id @default(autoincrement())
+//   firstName         String
+//   lastName          String?
+//   phone             String
+//   email             String          @unique
+//   invId             Int
 
-  clients           Client[]
-  inventory         Inventory       @relation(fields: [invId], references: [id])
-}
+//   clients           Client[]
+//   inventory         Inventory       @relation(fields: [invId], references: [id])
+// }

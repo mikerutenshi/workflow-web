@@ -13,7 +13,7 @@
         <v-row>
           <v-col>
             <v-autocomplete
-              label="To Inventory"
+              :label="$t('label.to_inv')"
               auto-select-first
               item-value="id"
               item-title="name"

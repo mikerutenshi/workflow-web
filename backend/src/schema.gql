@@ -121,7 +121,7 @@ enum Progress {
   IN_PROGRESS
   ON_HOLD
   COMPLETED
-  CANCELLED
+  CANCELED
   FAILED
 }
 

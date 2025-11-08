@@ -56,7 +56,10 @@
     "inventory_transfers": "Mindahkeun Inventaris",
     "inv_trf_create": "Nyieun Mindahkeun Inventoris Anyar",
     "inv_trf_edit": "Ngarobah Mindahkeun Inventoris",
-    "setting_colors": "Setélan Warna"
+    "setting_colors": "Setélan Warna",
+    "trf_detail_for": "Mindahkeun Rinci pikeun {item}",
+    "send_to": "Ngirim Sapatu",
+    "item_detail_for": "Rinci Barang pikeun {item}"
   },
   "create_btn": {
     "product": "Sapatu Anyar",
@@ -66,7 +69,8 @@
     "artisan": "Pangrajin Anyar",
     "work": "Pagawéan Anyar",
     "inventory": "Gudang Anyar",
-    "inv_trf": "Mindahkeun Inventaris Baru"
+    "inv_trf": "Mindahkeun Inventaris Baru",
+    "print": "Citak"
   },
   "btn": {
     "create": "Jieun",
@@ -132,7 +136,11 @@
     "trf_no": "No. Mindahkeun",
     "trf_date": "Tanggal Mindahkeun",
     "from_inv": "Ti Gudang ",
-    "to_inv": "Ka Gudang"
+    "to_inv": "Ka Gudang",
+    "show_trf_detail": "Nempo Rinci Mindahkeun",
+    "send_to": "Kirim Ka",
+    "pending_trfs": "Pending Mindahkeun",
+    "show_item_detail": "Nempo Rinci Barang"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
@@ -164,7 +172,8 @@
     },
     "errors": {
       "invalid_string": {
-        "email": "Format email teu leres"
+        "email": "Format email teu leres",
+        "regex": "Input henteu cocog sareng format regex anu diperyogikeun"
       },
       "too_small": {
         "string": {
@@ -201,5 +210,14 @@
     "saved": "Disimpen",
     "deleted": "Dipupus",
     "failed": "Teu hasil"
+  },
+  "progress": {
+    "INITIATED": "Dimulai",
+    "PENDING": "Pending",
+    "IN_PROGRESS": "Keur Digarap",
+    "ON_HOLD": "Ditahan",
+    "COMPLETED": "Réngsé",
+    "CANCELED": "Dibatalkeun",
+    "FAILED": "Gagal"
   }
 }
