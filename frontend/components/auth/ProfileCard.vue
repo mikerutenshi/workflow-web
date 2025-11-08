@@ -63,14 +63,14 @@
       </v-card>
     </v-col>
   </v-row>
-
+  <!-- 
   <v-row class="flex-grow-1"></v-row>
 
   <v-row align="end" class="ma-1">
     <v-col>
       <ActionLogOut class="mt-2" />
     </v-col>
-  </v-row>
+  </v-row> -->
 </template>
 
 <script setup lang="ts">
@@ -134,7 +134,7 @@ watch(
       current.value = newLocale;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // bypass login

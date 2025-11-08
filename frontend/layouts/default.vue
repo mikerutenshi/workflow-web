@@ -82,6 +82,11 @@
           </v-list-item>
         </template>
       </v-list>
+      <template #append>
+        <div class="pa-4">
+          <ActionLogOut></ActionLogOut>
+        </div>
+      </template>
     </v-navigation-drawer>
 
     <v-main>
