@@ -7,6 +7,8 @@ import { User } from '@/models/user.model';
 import { Role } from '@/models/role.model';
 import { RoleDto } from './dto/role.dto';
 import { LogInDto } from './dto/logIn.dto';
+import { UserUpdateDto } from './dto/user-update.dto';
+import dayjs from 'dayjs';
 
 // const userWithRoles = Prisma.validator<Prisma.UserDefaultArgs>()({
 //   include: { role: true },
@@ -19,7 +21,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
-  async createRole(data: RoleDto): Promise<Role> {
+  createRole(data: RoleDto): Promise<Role> {
     return this.prisma.role.create({
       data: {
         name: data.name,
@@ -48,8 +50,16 @@ export class AuthService {
     });
   }
 
-  async getUsers(): Promise<User[]> {
-    return await this.prisma.user.findMany({
+  updateUser(id: number, data: UserUpdateDto): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: { ...data, approvedAt: dayjs().toDate() },
+      include: { role: true },
+    });
+  }
+
+  getUsers(): Promise<User[]> {
+    return this.prisma.user.findMany({
       include: { role: true },
     });
   }
@@ -66,10 +76,12 @@ export class AuthService {
         user.password,
       );
 
-      if (isPasswordCorrect) {
+      if (isPasswordCorrect && user.isActive) {
         const accessToken = this.jwtService.sign({ sub: user.id });
 
         return { user, accessToken };
+      } else if (!user.isActive) {
+        throw new Error('User is inactive');
       } else {
         throw new Error('Incorrect password');
       }

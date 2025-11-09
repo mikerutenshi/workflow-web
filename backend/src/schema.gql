@@ -435,6 +435,7 @@ type Query {
 type Mutation {
   createRole(data: RoleDto!): Role!
   createUser(data: UserCreateDto!): User!
+  updateUser(id: ID!, data: UserUpdateDto!): User!
   logIn(data: LogInDto!): User!
   logOut: User!
   createColor(data: ColorCreateDto!): Color!
@@ -487,6 +488,17 @@ input UserCreateDto {
   lastName: String
   createdBy: ID
   roleId: ID!
+}
+
+input UserUpdateDto {
+  email: String
+  password: String
+  firstName: String
+  lastName: String
+  createdBy: ID
+  roleId: ID
+  isActive: Boolean!
+  approvedBy: ID!
 }
 
 input LogInDto {
