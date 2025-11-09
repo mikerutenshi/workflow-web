@@ -2,12 +2,13 @@
   <form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-row>
       <v-col>
-        <v-row v-if="createError || updateError">
+        <v-row v-if="createError || updateError || deleteError">
           <v-col>
             <v-alert type="error">
               {{
                 extractGraphQlError(createError) ||
-                extractGraphQlError(updateError)
+                extractGraphQlError(updateError) ||
+                extractGraphQlError(deleteError)
               }}
             </v-alert>
           </v-col>
@@ -144,23 +145,21 @@ const {
   },
   clearCacheTags: [CACHE_ARTISANS, CACHE_ARTISAN],
 });
-const { execute: executeDelete } = useMutation(DeleteArtisanDocument, {
-  clearCacheTags: [CACHE_ARTISANS],
-  onData(data) {
-    if (data.deleteArtisan) {
-      snack.message = `${t('status.deleted')}`;
-    } else {
-      snack.color = SnackColor.Error;
-      snack.message = `${t('status.failed')}`;
-    }
-    snack.isVisible = true;
+const { execute: executeDelete, error: deleteError } = useMutation(
+  DeleteArtisanDocument,
+  {
+    clearCacheTags: [CACHE_ARTISANS],
+    onData(data) {
+      if (data.deleteArtisan) {
+        snack.message = `${t('status.deleted')}`;
+      } else {
+        snack.color = SnackColor.Error;
+        snack.message = `${t('status.failed')}`;
+      }
+      snack.isVisible = true;
+    },
   },
-  onError(err) {
-    snack.color = SnackColor.Error;
-    snack.message = `${t('status.failed')} ${err.message}`;
-    snack.isVisible = true;
-  },
-});
+);
 
 if (artisanId) {
   useQuery({

@@ -195,11 +195,6 @@ const {
     }
     snack.isVisible = true;
   },
-  onError(err) {
-    snack.color = SnackColor.Error;
-    snack.message = `${t('status.failed')} ${err.message}`;
-    snack.isVisible = true;
-  },
 });
 
 const onSubmit = handleSubmit((data) => {

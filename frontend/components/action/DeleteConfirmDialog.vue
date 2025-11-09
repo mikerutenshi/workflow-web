@@ -1,13 +1,13 @@
 <template>
   <v-dialog v-model="dialog">
     <v-card class="mx-auto">
-      <v-card-title>Delete Confirmation</v-card-title>
+      <v-card-title>{{ $t('page.delete_confirm') }}</v-card-title>
       <v-card-text>{{
-        `Are you sure you want to delete ${itemTitle}?`
+        $t('label.delete_confirm', { item: itemTitle })
       }}</v-card-text>
       <v-card-actions>
-        <v-btn @click="handleConfirm">Yes</v-btn>
-        <v-btn @click="dialog = false">No</v-btn>
+        <v-btn @click="handleConfirm">{{ $t('btn.yes') }}</v-btn>
+        <v-btn @click="dialog = false">{{ $t('btn.no') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -23,6 +23,7 @@ const dialog = defineModel({
 const props = defineProps({
   itemTitle: {
     type: String,
+    default: "''",
   },
 });
 const emit = defineEmits(['confirm']);

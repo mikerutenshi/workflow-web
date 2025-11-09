@@ -27,7 +27,7 @@ const props = defineProps({
   outlined: { type: Boolean, default: false },
   prependIcon: { type: Boolean, default: false },
   text: { type: String, default: '' },
-  itemTitle: { type: String, default: 'this item' },
+  itemTitle: { type: String, default: '' },
 });
 const dialog = ref(false);
 

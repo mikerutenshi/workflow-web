@@ -157,7 +157,7 @@ model LaborCost {
   updatedAt         DateTime        @updatedAt
 
   tasks             Task[]
-  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id])
+  productGroup      ProductGroup    @relation(fields: [productGroupId], references: [id], onDelete: Cascade)
 }
 
 model Artisan {

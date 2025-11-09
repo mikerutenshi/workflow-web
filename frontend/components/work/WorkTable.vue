@@ -318,7 +318,11 @@ const form = reactive({
   endDate: findEnd.toISOString(),
 });
 
-const { execute, data, isFetching } = useQuery({
+const {
+  execute: executeFetch,
+  data,
+  isFetching,
+} = useQuery({
   query: GetWorksDocument,
   tags: [CACHE_WORKS],
   variables: computed(() => ({
@@ -370,7 +374,7 @@ function manageDates(newDates: string[] | string) {
     }),
   );
 
-  execute();
+  executeFetch();
 }
 
 const currentWorkId = ref('');
@@ -394,7 +398,7 @@ function edit(workId: string) {
 function save() {
   dialog.isVisible = false;
   currentWorkId.value = '';
-  execute();
+  executeFetch();
 }
 function showEditWorkDialog(workId: string) {
   currentWorkId.value = workId;

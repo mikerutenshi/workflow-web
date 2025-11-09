@@ -59,7 +59,8 @@
     "setting_colors": "Color Setting",
     "trf_detail_for": "Transfer Detail for {item}",
     "item_detail_for": "Item Detail for {item}",
-    "send_to": "Send Shoes"
+    "send_to": "Send Shoes",
+    "delete_confirm": "Delete Confirmation"
   },
   "create_btn": {
     "product": "New Shoe",
@@ -76,7 +77,9 @@
     "create": "Create",
     "update": "Update",
     "delete": "Delete",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No"
   },
   "label": {
     "id": "ID",
@@ -140,7 +143,8 @@
     "show_trf_detail": "Show Transfer Detail",
     "send_to": "Send To",
     "pending_trfs": "Pending Transfers",
-    "show_item_detail": "Show Item Detail"
+    "show_item_detail": "Show Item Detail",
+    "delete_confirm": "Are you sure you want to delete {item}?"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

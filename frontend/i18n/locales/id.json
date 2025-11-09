@@ -59,7 +59,8 @@
     "setting_colors": "Pengaturan Warna",
     "trf_detail_for": "Rincian Transfer untuk {item}",
     "send_to": "Kirim Sepatu",
-    "item_detail_for": "Rincian Barang untuk {item}"
+    "item_detail_for": "Rincian Barang untuk {item}",
+    "delete_confirm": "Konfirmasi Penghapusan"
   },
   "create_btn": {
     "product": "Sepatu Baru",
@@ -76,7 +77,9 @@
     "create": "Buat",
     "update": "Ubah",
     "delete": "Hapus",
-    "cancel": "Batal"
+    "cancel": "Batal",
+    "yes": "Iya",
+    "no": "Tidak"
   },
   "label": {
     "id": "ID",
@@ -140,7 +143,8 @@
     "show_trf_detail": "Lihat Rincian Transfer",
     "send_to": "Kirim Ke",
     "pending_trfs": "Transfer Tertunda",
-    "show_item_detail": "Lihat Rincian Barang "
+    "show_item_detail": "Lihat Rincian Barang ",
+    "delete_confirm": "Apakah anda yakin akan menghapus {item}?"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

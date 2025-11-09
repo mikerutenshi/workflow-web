@@ -119,8 +119,8 @@
   </v-form>
 
   <ActionShowSnack
-    v-model="snackbar"
-    :message="snackbarMsg"
+    v-model="snack.isVisible"
+    :message="snack.message"
     @close-dialog="emit('close-dialog')"
   ></ActionShowSnack>
 </template>
@@ -211,13 +211,10 @@ const {
 } = useMutation(DeleteWorkDocument, {
   clearCacheTags: [CACHE_WORKS],
   onData(data) {
-    snack.message = t('status.deleted');
-    snack.isVisible = true;
-  },
-  onError(err) {
-    snack.color = SnackColor.Error;
-    snack.message = `${t('status.failed')} ${err.message}`;
-    snack.isVisible = true;
+    if (data.deleteWork) {
+      snack.message = t('status.deleted');
+      snack.isVisible = true;
+    }
   },
 });
 

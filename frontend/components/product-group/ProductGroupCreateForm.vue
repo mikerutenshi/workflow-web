@@ -2,10 +2,12 @@
   <v-form class="h-100 d-flex flex-column" @submit.prevent="onSubmit">
     <v-row>
       <v-col>
-        <v-row v-if="createError || updateError">
+        <v-row v-if="createError || updateError || deleteError">
           <v-col>
             <v-alert type="error">
-              {{ extractGraphQlError(createError || updateError) }}
+              {{
+                extractGraphQlError(createError || updateError || deleteError)
+              }}
             </v-alert>
           </v-col>
         </v-row>
@@ -188,26 +190,22 @@ const {
   query: GetProductCategoriesDocument,
   tags: [CACHE_PRODUCT_CATEGORIES],
 });
-const { execute: executeDelete, isFetching: isDeleting } = useMutation(
-  DeleteProductGroupDocument,
-  {
-    clearCacheTags: [CACHE_PRODUCT_GROUPS],
-    onData(data) {
-      if (data.deleteProductGroup) {
-        snack.message = `${t('status.deleted')}`;
-      } else {
-        snack.color = SnackColor.Error;
-        snack.message = `${t('status.failed')}`;
-      }
-      snack.isVisible = true;
-    },
-    onError(err) {
+const {
+  execute: executeDelete,
+  isFetching: isDeleting,
+  error: deleteError,
+} = useMutation(DeleteProductGroupDocument, {
+  clearCacheTags: [CACHE_PRODUCT_GROUPS],
+  onData(data) {
+    if (data.deleteProductGroup) {
+      snack.message = `${t('status.deleted')}`;
+    } else {
       snack.color = SnackColor.Error;
-      snack.message = `${t('status.failed')} ${err.message}`;
-      snack.isVisible = true;
-    },
+      snack.message = `${t('status.failed')}`;
+    }
+    snack.isVisible = true;
   },
-);
+});
 const onSubmit = handleSubmit((data) => {
   if (productGroupId) {
     executeUpdate({ id: productGroupId, data });
