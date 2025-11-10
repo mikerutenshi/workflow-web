@@ -1,50 +1,47 @@
 -- DropForeignKey
+ALTER TABLE "LaborCost" DROP CONSTRAINT "LaborCost_productGroupId_fkey";
+
+-- DropForeignKey
 ALTER TABLE "InvToProduct" DROP CONSTRAINT "InvToProduct_productId_fkey";
 
 -- DropForeignKey
 ALTER TABLE "InvToProduct" DROP CONSTRAINT "InvToProduct_invId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "InvProductToSize" DROP CONSTRAINT "InvProductToSize_invProductId_fkey";
+ALTER TABLE "InvProductToSize" DROP CONSTRAINT "InvProductToSize_invId_productId_fkey";
 
 -- DropForeignKey
 ALTER TABLE "InvProductToSize" DROP CONSTRAINT "InvProductToSize_sizeId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "InvTransfer" DROP CONSTRAINT "InvTransfer_fromInvId_fkey";
+ALTER TABLE "InvTrfItem" DROP CONSTRAINT "InvTrfItem_invTrfId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "InvTransfer" DROP CONSTRAINT "InvTransfer_toInvId_fkey";
+ALTER TABLE "InvTrfItem" DROP CONSTRAINT "InvTrfItem_productId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "InvTransfer" DROP CONSTRAINT "InvTransfer_invProductId_fkey";
+ALTER TABLE "InvTrfItem" DROP CONSTRAINT "InvTrfItem_fromInvId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "InvTransferToSize" DROP CONSTRAINT "InvTransferToSize_invTransferId_fkey";
+ALTER TABLE "InvTrfItem" DROP CONSTRAINT "InvTrfItem_toInvId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "InvTransferToSize" DROP CONSTRAINT "InvTransferToSize_sizeId_fkey";
+ALTER TABLE "InvTrfItem" DROP CONSTRAINT "InvTrfItem_fromInvId_productId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "SalesTx" DROP CONSTRAINT "SalesTx_invId_fkey";
+ALTER TABLE "InvTrfItem" DROP CONSTRAINT "InvTrfItem_workId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "ProductToSalesTx" DROP CONSTRAINT "ProductToSalesTx_salesTxId_fkey";
+ALTER TABLE "InvTrf" DROP CONSTRAINT "InvTrf_fromInvId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "ProductToSalesTx" DROP CONSTRAINT "ProductToSalesTx_productId_fkey";
+ALTER TABLE "InvTrf" DROP CONSTRAINT "InvTrf_toInvId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "SalesTxProductToSize" DROP CONSTRAINT "SalesTxProductToSize_salesTxProductId_fkey";
+ALTER TABLE "InvTrfItemToSize" DROP CONSTRAINT "InvTrfItemToSize_invTrfItemId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "SalesTxProductToSize" DROP CONSTRAINT "SalesTxProductToSize_sizeId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Client" DROP CONSTRAINT "Client_salesmanId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Salesman" DROP CONSTRAINT "Salesman_invId_fkey";
+ALTER TABLE "InvTrfItemToSize" DROP CONSTRAINT "InvTrfItemToSize_sizeId_fkey";
 
 -- AlterTable
 ALTER TABLE "Work" DROP COLUMN "progress";
@@ -59,29 +56,20 @@ DROP TABLE "InvToProduct";
 DROP TABLE "InvProductToSize";
 
 -- DropTable
-DROP TABLE "InvTransfer";
+DROP TABLE "InvTrfItem";
 
 -- DropTable
-DROP TABLE "InvTransferToSize";
+DROP TABLE "InvTrf";
 
 -- DropTable
-DROP TABLE "SalesTx";
-
--- DropTable
-DROP TABLE "ProductToSalesTx";
-
--- DropTable
-DROP TABLE "SalesTxProductToSize";
-
--- DropTable
-DROP TABLE "Client";
-
--- DropTable
-DROP TABLE "Salesman";
+DROP TABLE "InvTrfItemToSize";
 
 -- DropEnum
 DROP TYPE "Progress";
 
 -- DropEnum
 DROP TYPE "InvType";
+
+-- AddForeignKey
+ALTER TABLE "LaborCost" ADD CONSTRAINT "LaborCost_productGroupId_fkey" FOREIGN KEY ("productGroupId") REFERENCES "ProductGroup"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 

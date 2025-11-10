@@ -1,11 +1,17 @@
-import { Gender, InvType, Job, Progress } from '@/generated/client';
+import {
+  Gender,
+  InvType,
+  Job,
+  PrismaClient,
+  Progress,
+} from '@/generated/client';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule, registerEnumType } from '@nestjs/graphql';
 import { Request } from 'express';
-import { PrismaModule } from 'nestjs-prisma';
+import { CustomPrismaModule } from 'nestjs-prisma';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -25,7 +31,11 @@ const ENV = process.env.NODE_ENV || 'development';
       envFilePath: `.env.${ENV}`,
     }),
     AuthModule,
-    PrismaModule.forRoot({ isGlobal: true }),
+    CustomPrismaModule.forRoot({
+      isGlobal: true,
+      name: 'PrismaService',
+      client: new PrismaClient(),
+    }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [

@@ -2,10 +2,10 @@ FROM node:20.19.0-alpine AS build
 WORKDIR /app/backend
 
 COPY package*.json ./
+COPY prisma ./prisma
 
 RUN npm ci
 COPY . .
-RUN npm run db:generate
 RUN npm run build
 
 FROM node:20.19.0-alpine AS base

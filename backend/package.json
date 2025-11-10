@@ -18,6 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "postinstall": "dotenv -e .env.production -- prisma generate",
     "db:generate": "dotenv -e .env.production -- prisma generate",
     "db:generate:development": "dotenv -e .env.development -- prisma generate",
     "db:migrate": "dotenv -e .env.production -- prisma migrate deploy",

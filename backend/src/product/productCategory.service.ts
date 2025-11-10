@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ProductCategoryCreateDto } from './dto/product-category-create.dto';
 import { ProductCategory } from '@/models/product-category.model ';
-import { PrismaService } from 'nestjs-prisma';
+import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class ProductCategoryService {
