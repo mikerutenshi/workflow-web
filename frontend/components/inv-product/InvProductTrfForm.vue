@@ -123,7 +123,7 @@
                   </v-table>
                 </template>
               </v-data-table>
-              <span :style="{ color: errorColor }">
+              <span :style="{ color: errorColor }" class="ma-4">
                 {{ errors['invTrfItemIds'] }}
               </span>
             </v-card>
@@ -206,9 +206,11 @@ const trfDate = useField<string>('trfDate');
 const progress = useField<Progress>('progress');
 const { fields, push, remove, replace } = useFieldArray('invTrfItemIds');
 
-const progressList = Object.values(Progress).map((value) => {
-  return { value, title: t(`progress.${value}`) };
-});
+const progressList = Object.values(Progress)
+  .map((value) => {
+    return { value, title: t(`progress.${value}`) };
+  })
+  .filter((progress) => progress.value !== Progress.Pending);
 
 const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,
@@ -233,7 +235,7 @@ const {
     snack.message = t('status.saved');
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INV_TRFS],
+  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_PRODUCTS],
 });
 const {
   isFetching: isUpdating,
@@ -270,9 +272,11 @@ const variables = reactive({
 });
 const computeTrfItems = computed(() => {
   if (!props.invTrfId) {
-    return trfItemsData.value?.getInvTrfItems;
+    return trfItemsData.value?.getInvTrfItems.filter(
+      (item) => item.invTrf === null,
+    );
   } else {
-    return transferData.value?.getInvTrf.invTrfItems;
+    return trfItemsData.value?.getInvTrfItems;
   }
 });
 const {
@@ -283,7 +287,7 @@ const {
   variables,
   query: GetInvTrfItemsDocument,
   tags: [CACHE_INV_TRFS],
-  fetchOnMount: false,
+  fetchOnMount: true,
 });
 
 const {
@@ -352,10 +356,10 @@ watch(itemIdSelections, (newValues) => {
 watchEffect(() => {
   if (fromInvId.value.value && toInvId.value.value) {
     console.log('Triggered');
-    if (!props.invTrfId) {
-      variables.fromInvId = fromInvId.value.value as string;
-      variables.toInvId = toInvId.value.value as string;
-    }
+    // if (!props.invTrfId) {
+    variables.fromInvId = fromInvId.value.value as string;
+    variables.toInvId = toInvId.value.value as string;
+    // }
   }
   console.log(`form values: ${JSON.stringify(values)}`);
 });

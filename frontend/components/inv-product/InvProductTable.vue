@@ -99,11 +99,10 @@
           </template>
 
           <template v-slot:item.invTrfItems="{ item }">
-            <v-icon
-              v-if="item.pendingCount > 0"
-              :icon="mdiProgressAlert"
-            ></v-icon>
-            {{ item.pendingCount }}
+            <div v-if="item.pendingCount > 0">
+              {{ item.pendingCount }}
+              <v-icon :icon="mdiProgressAlert"></v-icon>
+            </div>
           </template>
 
           <template v-slot:item.actions="{ item }">
@@ -166,36 +165,33 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="viewDialog" max-width="1200px">
+    <v-dialog v-model="dialog.isVisible" max-width="1200px">
       <v-card>
         <v-toolbar>
-          <v-toolbar-title>
-            {{
-              t('page.trf_detail_for', {
-                item: itemSelectionObject?.product.sku || 'Item',
-              })
-            }}</v-toolbar-title
-          >
+          <v-toolbar-title>{{
+            dialog.content === DialogContent.ItemDetail
+              ? $t('page.trf_detail_for', {
+                  item: itemSelectionObject?.product.sku || 'Item',
+                })
+              : dialog.content === DialogContent.Form
+                ? $t('page.send_to')
+                : ''
+          }}</v-toolbar-title>
         </v-toolbar>
-        <v-container class="d-flex flex-column">
-          <InvProductItemTrfTable
-            :inv-product-dto="itemSelectionObject"
-            @refresh-table="executeFetch"
-          ></InvProductItemTrfTable>
-        </v-container>
-      </v-card>
-    </v-dialog>
 
-    <v-dialog v-model="formDialog" max-width="1200px">
-      <v-card>
-        <v-toolbar>
-          <v-toolbar-title>{{ $t('page.send_to') }}</v-toolbar-title>
-        </v-toolbar>
         <v-container class="d-flex flex-column">
-          <InvProductTrfItemForm
-            :inv-product-dto="itemSelectionObject"
-            @close-dialog="closeItemFormDialog"
-          ></InvProductTrfItemForm>
+          <template v-if="dialog.content === DialogContent.ItemDetail">
+            <InvProductItemTrfTable
+              :inv-product-dto="itemSelectionObject"
+              @refresh-table="executeFetch"
+            ></InvProductItemTrfTable>
+          </template>
+          <template v-else-if="dialog.content === DialogContent.Form">
+            <InvProductTrfItemForm
+              :inv-product-dto="itemSelectionObject"
+              @close-dialog="closeItemFormDialog"
+            ></InvProductTrfItemForm>
+          </template>
         </v-container>
       </v-card>
     </v-dialog>
@@ -222,6 +218,11 @@ import {
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 import { Role } from '~/utils/constants';
 
+enum DialogContent {
+  None = 'NONE',
+  ItemDetail = 'VIEW_DETAIL',
+  Form = 'FORM',
+}
 const authStore = useAuthStore();
 const clearance = authStore.user?.role.clearanceLevel ?? 6;
 const isComingSoon = computed(() => {
@@ -230,10 +231,6 @@ const isComingSoon = computed(() => {
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
-// const menuItems = [
-//   { title: 'Show Transfer Detail', icon: mdiFileDocumentArrowRightOutline },
-//   { title: 'Send To', icon: mdiTransferRight },
-// ];
 
 const {
   data: dataInventories,
@@ -292,6 +289,8 @@ const headers: ReadOnlyHeaders = [
     title: t('label.gender'),
     key: 'product.productGroup.productCategory.gender',
   },
+  { title: t('label.price'), key: 'price' },
+  { title: t('label.discount'), key: 'discount' },
   { title: t('label.sizes'), key: 'invProductSizes', minWidth: '120' },
   {
     title: t('label.pending_trfs'),
@@ -300,31 +299,24 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');
-const viewDialog = ref(false);
-const formDialog = ref(false);
-const activator = ref(undefined);
-
-// const onMenuItemClick = (index: number, item: InvProductDto) => {
-//   switch (index) {
-//     case 0:
-//       showItemDetailDialog(item);
-//       break;
-//     case 1:
-//       showItemFormDialog(item);
-//       break;
-//   }
-// };
+const dialog = reactive({
+  isVisible: false,
+  content: DialogContent.None,
+});
 
 function showItemDetailDialog(item: InvProductDto) {
-  viewDialog.value = true;
+  dialog.isVisible = true;
+  dialog.content = DialogContent.ItemDetail;
   itemSelectionObject.value = item;
 }
 function showItemFormDialog(item: InvProductDto) {
-  formDialog.value = true;
+  dialog.isVisible = true;
+  dialog.content = DialogContent.Form;
   itemSelectionObject.value = item;
 }
 function closeItemFormDialog() {
-  formDialog.value = false;
+  dialog.isVisible = false;
+  dialog.content = DialogContent.None;
   itemSelectionObject.value = null;
   executeFetch();
 }

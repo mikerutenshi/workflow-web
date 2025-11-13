@@ -243,6 +243,7 @@ type InvTrfItemDto {
   fromInv: Inventory
   toInv: Inventory!
   product: Product!
+  invTrf: InvTrf
 }
 
 type InvTrfDto {

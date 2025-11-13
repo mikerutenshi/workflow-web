@@ -149,6 +149,9 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!) {
       }
       quantity
     }
+    invTrf {
+      id
+    }
   }
 }
 

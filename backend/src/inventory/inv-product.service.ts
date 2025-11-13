@@ -67,25 +67,27 @@ export class InvProductService {
 
     return products.map((product) => ({
       ...product,
-      invProductSizes: product.invProductSizes.map((productSize) => {
-        const pendingQty = product.invTrfItems.reduce(
-          (sum, i) =>
-            sum +
-            i.invTrfItemSizes.reduce(
-              (s, i) =>
-                i.size.id === productSize.size.id ? s + i.quantity : s,
-              0,
-            ),
-          0,
-        );
+      invProductSizes: product.invProductSizes
+        .map((productSize) => {
+          const pendingQty = product.invTrfItems.reduce(
+            (sum, i) =>
+              sum +
+              i.invTrfItemSizes.reduce(
+                (s, i) =>
+                  i.size.id === productSize.size.id ? s + i.quantity : s,
+                0,
+              ),
+            0,
+          );
 
-        const finalQty = productSize.quantity - pendingQty;
+          const finalQty = productSize.quantity - pendingQty;
 
-        return {
-          ...productSize,
-          quantity: finalQty,
-        };
-      }),
+          return {
+            ...productSize,
+            quantity: finalQty,
+          };
+        })
+        .filter((size) => size.quantity > 0),
       discount: Prisma.Decimal(product.discount).toString(),
     })) as InvProductDto[];
   }

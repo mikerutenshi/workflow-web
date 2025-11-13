@@ -173,7 +173,7 @@ export class InvTrfService {
 
   getInvTrfItems(fromInvId: number, toInvId: number): Promise<InvTrfItemDto[]> {
     return this.prisma.invTrfItem.findMany({
-      where: { fromInvId, toInvId, progress: Progress.PENDING },
+      where: { fromInvId, toInvId, progress: { not: Progress.COMPLETED } },
       include: {
         product: true,
         fromInv: true,
@@ -182,6 +182,7 @@ export class InvTrfService {
           include: { size: true },
           orderBy: { sizeId: 'asc' },
         },
+        invTrf: true,
       },
     });
   }
@@ -268,6 +269,18 @@ export class InvTrfService {
   }
 
   async deleteInvTrfItem(id: number): Promise<Boolean> {
+    const alreadyInInvTrf = await this.prisma.invTrfItem.findMany({
+      where: {
+        invTrf: {
+          isNot: null,
+        },
+      },
+    });
+
+    if (alreadyInInvTrf.length > 0) {
+      throw new Error('Already in an Inventory Transfer');
+    }
+
     const invTrfItem = await this.prisma.invTrfItem.delete({
       where: { id },
     });
