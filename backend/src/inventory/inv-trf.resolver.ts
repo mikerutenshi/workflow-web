@@ -66,8 +66,8 @@ export class InvTrfResolver {
   }
 
   @Query(() => String)
-  getLastInvTrfNo(): Promise<string | null> {
-    return this.service.getLastInvTrfNo();
+  generateInvTrfNo(): Promise<string> {
+    return this.service.generateInvTrfNo();
   }
 
   // @UseGuards(RoleGuard)

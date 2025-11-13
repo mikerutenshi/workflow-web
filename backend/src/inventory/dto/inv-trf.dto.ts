@@ -2,6 +2,7 @@ import { InvTrf } from '@/models/inv-trf.model';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { InvTrfItemDto } from './inv-trf-item.dto';
 import { Inventory } from '@/models/inventory.model';
+import { Work } from '@/models/work.model';
 
 @ObjectType()
 export class InvTrfDto extends InvTrf {
@@ -11,4 +12,6 @@ export class InvTrfDto extends InvTrf {
   toInv: Inventory;
   @Field(() => [InvTrfItemDto])
   invTrfItems: InvTrfItemDto[];
+  @Field(() => String, { nullable: true })
+  orderNo?: string | null;
 }

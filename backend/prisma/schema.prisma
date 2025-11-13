@@ -188,7 +188,7 @@ model Work {
   updatedAt         DateTime        @updatedAt
 
   product           Product         @relation(fields: [productId], references: [id])
-  invTrfItem        InvTrfItem?
+  invTrf            InvTrf?
 }
 
 model Task {
@@ -291,14 +291,12 @@ model InvTrfItem {
   productId         Int
   invTrfItemSizes   InvTrfItemToSize[]
   progress          Progress        @default(PENDING)
-  workId            Int?            @unique
 
   invTrf            InvTrf?         @relation(fields: [invTrfId], references: [id], onDelete: Cascade)
   product           Product         @relation(fields: [productId], references: [id])
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
   invProduct        InvToProduct?   @relation(fields: [fromInvId, productId], references: [invId, productId])
-  work              Work?           @relation(fields: [workId], references: [id], onDelete: Restrict)
 
   createdBy         Int
   updatedBy         Int?
@@ -308,15 +306,17 @@ model InvTrfItem {
 
 model InvTrf {
   id                Int             @id @default(autoincrement())
-  trfNo             String          
+  trfNo             String          @unique
   fromInvId         Int?
   toInvId           Int
   trfDate           DateTime        @default(now())
   invTrfItems       InvTrfItem[]
   progress          Progress        @default(PENDING)
+  workId            Int?            @unique           
 
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
+  work              Work?           @relation(fields: [workId], references: [id], onDelete: Restrict)
 
   createdBy         Int
   updatedBy         Int?

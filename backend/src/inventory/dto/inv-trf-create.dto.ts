@@ -48,6 +48,12 @@ export class InvTrfCreateDto {
   @Min(1, { each: true })
   invTrfItemIds: number[];
 
+  @Field(() => ID, { nullable: true })
+  @Transform(({ value }) => parseInt(value, 10))
+  @Min(1)
+  @IsOptional()
+  workId?: number;
+
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)

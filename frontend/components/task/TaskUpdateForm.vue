@@ -149,7 +149,12 @@ const {
   isFetching: isUpdating,
   error,
 } = useMutation(UpdateTasksDocument, {
-  clearCacheTags: [CACHE_WORKS, CACHE_TASKS, CACHE_INV_PRODUCTS],
+  clearCacheTags: [
+    CACHE_WORKS,
+    CACHE_TASKS,
+    CACHE_INV_PRODUCTS,
+    CACHE_INV_TRFS,
+  ],
   onData() {
     snackbar.value = true;
     if (route.params.id) navigateTo(localePath('/works'));

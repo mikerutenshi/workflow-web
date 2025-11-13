@@ -110,7 +110,6 @@ type InvTrfItem {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
-  workId: ID
   fromInv: Inventory
   toInv: Inventory!
 }
@@ -224,7 +223,6 @@ type InvTrfItemTrfDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
-  workId: ID
   fromInv: Inventory
   toInv: Inventory!
   invTrf: InvTrf
@@ -242,7 +240,6 @@ type InvTrfItemDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
-  workId: ID
   fromInv: Inventory
   toInv: Inventory!
   product: Product!
@@ -262,6 +259,7 @@ type InvTrfDto {
   fromInv: Inventory
   toInv: Inventory!
   invTrfItems: [InvTrfItemDto!]!
+  orderNo: String
 }
 
 type ProductGroupGetDto {
@@ -429,7 +427,7 @@ type Query {
   getInvTrfItems(fromInvId: ID!, toInvId: ID!): [InvTrfItemDto!]!
   getInvTrfs: [InvTrfDto!]!
   getInvTrf(id: ID!): InvTrfDto!
-  getLastInvTrfNo: String!
+  generateInvTrfNo: String!
 }
 
 type Mutation {
@@ -639,6 +637,7 @@ input InvTrfCreateDto {
   trfDate: Date!
   progress: Progress!
   invTrfItemIds: [ID!]!
+  workId: ID
   createdBy: ID!
 }
 
@@ -649,6 +648,7 @@ input InvTrfUpdateDto {
   trfDate: Date
   progress: Progress
   invTrfItemIds: [ID!]!
+  workId: ID
   updatedBy: ID!
 }
 
@@ -658,7 +658,6 @@ input InvTrfItemCreateDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemSizeCreateDto!]!
   progress: Progress
-  workId: ID
   createdBy: ID!
 }
 

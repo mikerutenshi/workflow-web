@@ -156,6 +156,7 @@ query getInvTrfs {
   getInvTrfs {
     id
     trfNo
+    orderNo
     fromInv {
       name
       type
@@ -248,6 +249,6 @@ mutation deleteInvTrfItem($id: ID!) {
   deleteInvTrfItem(id: $id)
 }
 
-query getLastInvTrfNo {
-  getLastInvTrfNo
+query generateInvTrfNo {
+  generateInvTrfNo
 }

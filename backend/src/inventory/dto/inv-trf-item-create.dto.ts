@@ -38,11 +38,6 @@ export class InvTrfItemCreateDto {
   @IsOptional()
   progress?: Progress;
 
-  @Field(() => ID, { nullable: true })
-  @Transform(({ value }) => parseInt(value, 10))
-  @Min(1)
-  workId?: number;
-
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)

@@ -9,10 +9,16 @@ import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrfItemDto } from './dto/inv-trf-item.dto';
 import { Progress } from '@/generated/client';
 import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
+import { generateId } from '@/utils/functions.util';
+import { Operation } from '@/models/operation.enum';
+import { InvProductService } from './inv-product.service';
 
 @Injectable()
 export class InvTrfService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private invProductService: InvProductService,
+  ) {}
 
   createInvTrfItem(data: InvTrfItemCreateDto): Promise<InvTrfItem> {
     return this.prisma.invTrfItem.create({
@@ -34,7 +40,6 @@ export class InvTrfService {
   }
 
   createInvTrf(data: InvTrfCreateDto): Promise<InvTrf> {
-    console.log(`Create Dto: ${JSON.stringify(data)}`);
     const { invTrfItemIds, ...rest } = data;
     return this.prisma.$transaction(async (tx) => {
       invTrfItemIds.map(async (id) => {
@@ -59,6 +64,11 @@ export class InvTrfService {
   updateInvTrf(id: number, data: InvTrfUpdateDto): Promise<InvTrf> {
     const { invTrfItemIds, ...rest } = data;
     return this.prisma.$transaction(async (tx) => {
+      const initTrfData = await tx.invTrf.findUniqueOrThrow({
+        where: { id },
+        include: { invTrfItems: { include: { invTrfItemSizes: true } } },
+      });
+
       invTrfItemIds.map(async (id) => {
         await tx.invTrfItem.update({
           where: { id },
@@ -66,7 +76,7 @@ export class InvTrfService {
         });
       });
 
-      const result = await tx.invTrf.update({
+      const finalTrfData = await tx.invTrf.update({
         where: { id },
         data: {
           ...rest,
@@ -74,9 +84,66 @@ export class InvTrfService {
             set: invTrfItemIds.map((id) => ({ id })),
           },
         },
+        include: { invTrfItems: { include: { invTrfItemSizes: true } } },
       });
 
-      return result;
+      if (
+        initTrfData.progress !== Progress.COMPLETED &&
+        data.progress === Progress.COMPLETED
+      ) {
+        for (const item of finalTrfData.invTrfItems) {
+          await this.invProductService.upsertInvProduct({
+            invId: item.toInvId,
+            productId: item.productId,
+            invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
+              sizeId: itemSizes.sizeId,
+              quantity: itemSizes.quantity,
+            })),
+            sellingPrice: 0,
+            discount: '0.00',
+          });
+
+          if (item.fromInvId) {
+            await this.invProductService.decrementInvProduct({
+              invId: item.fromInvId,
+              productId: item.productId,
+              invProductSizes: item.invTrfItemSizes.map((s) => ({
+                sizeId: s.sizeId,
+                quantity: s.quantity,
+              })),
+            });
+          }
+        }
+      } else if (
+        initTrfData.progress === Progress.COMPLETED &&
+        data.progress !== Progress.COMPLETED
+      ) {
+        for (const item of finalTrfData.invTrfItems) {
+          await this.invProductService.decrementInvProduct({
+            invId: item.toInvId,
+            productId: item.productId,
+            invProductSizes: item.invTrfItemSizes.map((s) => ({
+              sizeId: s.sizeId,
+              quantity: s.quantity,
+            })),
+          });
+
+          if (item.fromInvId) {
+            await this.invProductService.upsertInvProduct({
+              invId: item.fromInvId,
+              productId: item.productId,
+              invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
+                sizeId: itemSizes.sizeId,
+                quantity: itemSizes.quantity,
+              })),
+              sellingPrice: 0,
+              discount: '0.00',
+            });
+          }
+        }
+      }
+
+      return finalTrfData;
     });
   }
 
@@ -119,8 +186,8 @@ export class InvTrfService {
     });
   }
 
-  getInvTrfs(): Promise<InvTrfDto[]> {
-    return this.prisma.invTrf.findMany({
+  async getInvTrfs(): Promise<InvTrfDto[]> {
+    const data = await this.prisma.invTrf.findMany({
       include: {
         fromInv: true,
         toInv: true,
@@ -132,9 +199,17 @@ export class InvTrfService {
             invTrfItemSizes: { include: { size: true } },
           },
         },
+        work: { select: { orderNo: true } },
       },
       orderBy: { id: 'desc' },
     });
+
+    const mapped = data.map((item) => ({
+      ...item,
+      orderNo: item.work?.orderNo ?? null,
+    }));
+
+    return mapped;
   }
 
   async getInvTrf(id: number): Promise<InvTrfDto> {
@@ -172,12 +247,24 @@ export class InvTrfService {
     return true;
   }
 
-  async getLastInvTrfNo(): Promise<string | null> {
+  async generateInvTrfNo(): Promise<string> {
     const lastTrf = await this.prisma.invTrf.findFirst({
+      where: { workId: null },
       orderBy: { id: 'desc' },
     });
-    const lastTrfNo = lastTrf?.trfNo || null;
-    return Promise.resolve(lastTrfNo);
+    const lastTrfNo = lastTrf?.trfNo;
+
+    return generateId(Operation.Transfer, lastTrfNo);
+  }
+
+  async generateInvTrfPrdNo(): Promise<string> {
+    const lastInvPrd = await this.prisma.invTrf.findFirst({
+      where: { workId: { not: null } },
+      orderBy: { id: 'desc' },
+    });
+    const lastNo = lastInvPrd?.trfNo;
+
+    return generateId(Operation.Produce, lastNo);
   }
 
   async deleteInvTrfItem(id: number): Promise<Boolean> {

@@ -148,7 +148,8 @@
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
-    "fill_artisans": "Isi Nama Perajin"
+    "fill_artisans": "Isi Nama Perajin",
+    "products_to_trf": "Sepatu untuk Ditransfer"
   },
   "jobs": {
     "draw_upper": "Menggurat Upper",
@@ -218,7 +219,7 @@
   "progress": {
     "INITIATED": "Dimulai",
     "PENDING": "Tertunda",
-    "IN_PROGRESS": "Sedang Dikerjakan",
+    "IN_PROGRESS": "Sedang Berjalan",
     "ON_HOLD": "Ditunda",
     "COMPLETED": "Selesai",
     "CANCELED": "Dibatalkan",

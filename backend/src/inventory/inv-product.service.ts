@@ -42,14 +42,14 @@ export class InvProductService {
   async getInvProducts(invId: number): Promise<InvProductDto[]> {
     const products = await this.prisma.invToProduct.findMany({
       include: {
-        invProductSizes: {
-          include: { size: true },
-        },
         product: {
           include: {
             productGroup: { include: { productCategory: true } },
             productColors: { include: { color: true } },
           },
+        },
+        invProductSizes: {
+          include: { size: true },
         },
         invTrfItems: {
           include: {
@@ -67,6 +67,25 @@ export class InvProductService {
 
     return products.map((product) => ({
       ...product,
+      invProductSizes: product.invProductSizes.map((productSize) => {
+        const pendingQty = product.invTrfItems.reduce(
+          (sum, i) =>
+            sum +
+            i.invTrfItemSizes.reduce(
+              (s, i) =>
+                i.size.id === productSize.size.id ? s + i.quantity : s,
+              0,
+            ),
+          0,
+        );
+
+        const finalQty = productSize.quantity - pendingQty;
+
+        return {
+          ...productSize,
+          quantity: finalQty,
+        };
+      }),
       discount: Prisma.Decimal(product.discount).toString(),
     })) as InvProductDto[];
   }
@@ -159,6 +178,77 @@ export class InvProductService {
         ...result,
         discount: Prisma.Decimal(result!.discount).toString(),
       } as InvProduct;
+    });
+  }
+
+  decrementInvProduct(invProduct: {
+    invId: number;
+    productId: number;
+    invProductSizes: {
+      sizeId: number;
+      quantity: number;
+    }[];
+  }): Promise<Boolean> {
+    return this.prisma.$transaction(async (tx) => {
+      for (const size of invProduct.invProductSizes) {
+        const result = await tx.invProductToSize.update({
+          where: {
+            invId_productId_sizeId: {
+              invId: invProduct.invId,
+              productId: invProduct.productId,
+              sizeId: size.sizeId,
+            },
+          },
+          data: {
+            quantity: { decrement: size.quantity },
+          },
+        });
+        if (result.quantity === 0) {
+          await tx.invProductToSize.delete({
+            where: {
+              invId_productId_sizeId: {
+                invId: invProduct.invId,
+                productId: invProduct.productId,
+                sizeId: size.sizeId,
+              },
+            },
+          });
+        }
+      }
+
+      const finalProduct = await tx.invToProduct.findUniqueOrThrow({
+        where: {
+          invId_productId: {
+            invId: invProduct.invId,
+            productId: invProduct.productId,
+          },
+        },
+        include: {
+          invProductSizes: {
+            include: {
+              size: true,
+            },
+          },
+        },
+      });
+
+      const finalSum = finalProduct.invProductSizes.reduce(
+        (sum, size) => sum + size.quantity,
+        0,
+      );
+
+      if (finalSum === 0) {
+        await tx.invToProduct.delete({
+          where: {
+            invId_productId: {
+              invId: invProduct.invId,
+              productId: invProduct.productId,
+            },
+          },
+        });
+      }
+
+      return true;
     });
   }
 

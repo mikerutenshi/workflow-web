@@ -92,21 +92,21 @@ const props = defineProps({
 });
 const availInventories = shallowRef<Inventory[]>([]);
 const invProduct = props.invProductDto;
-const availProductSizes = invProduct?.invProductSizes.map((item) => {
-  const pendingQty = invProduct!.invTrfItems.reduce(
-    (sum, i) =>
-      sum +
-      i.invTrfItemSizes.reduce(
-        (s, i) => (i.size.id === item.size.id ? s + i.quantity : s),
-        0,
-      ),
-    0,
-  );
-  return {
-    ...item,
-    quantity: item.quantity - pendingQty,
-  };
-});
+// const availProductSizes = invProduct?.invProductSizes.map((item) => {
+//   const pendingQty = invProduct!.invTrfItems.reduce(
+//     (sum, i) =>
+//       sum +
+//       i.invTrfItemSizes.reduce(
+//         (s, i) => (i.size.id === item.size.id ? s + i.quantity : s),
+//         0,
+//       ),
+//     0,
+//   );
+//   return {
+//     ...item,
+//     quantity: item.quantity - pendingQty,
+//   };
+// });
 const emit = defineEmits(['close-dialog']);
 const snack = reactive({
   isVisible: false,
@@ -121,7 +121,7 @@ const sizeHeaders = ref([
 const sizeQuantities = reactive<
   Array<{ id: string; title: string; quantity: number }>
 >(
-  availProductSizes!.map((item) => {
+  invProduct!.invProductSizes.map((item) => {
     return {
       id: item.size.id,
       title: item.size.eu,
@@ -185,7 +185,7 @@ watch(
       if (newItem.quantity <= 0) {
         newItem.quantity = 0;
       }
-      const originalItem = availProductSizes!.find(
+      const originalItem = invProduct!.invProductSizes.find(
         (item) => item.size.id === newItem.id,
       );
 

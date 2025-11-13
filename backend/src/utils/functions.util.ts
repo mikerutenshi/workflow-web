@@ -1,13 +1,11 @@
 import { Operation } from '@/models/operation.enum';
 import dayjs from 'dayjs';
 
-export function generateId(op: Operation, lastId: string | null): string {
+export function generateId(op: Operation, lastId: string | undefined): string {
   const today = dayjs();
   const format = 'YYMMDD';
 
-  if (op === Operation.Produce) {
-    return `${op}-${today.format(format)}-${lastId}`;
-  } else if (!lastId) {
+  if (!lastId) {
     return `${op}-${today.format(format)}-0001`;
   } else if (lastId) {
     const split = lastId.split('-');

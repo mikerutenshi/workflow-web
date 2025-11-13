@@ -148,7 +148,8 @@
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
-    "fill_artisans": "Enter Artisan"
+    "fill_artisans": "Enter Artisan",
+    "products_to_trf": "Shoes To Transfer"
   },
   "jobs": {
     "draw_upper": "Draw Upper",

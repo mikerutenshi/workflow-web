@@ -148,7 +148,8 @@
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
-    "fill_artisans": "Eusian Nu Ngagawékeun"
+    "fill_artisans": "Eusian Nu Ngagawékeun",
+    "products_to_trf": "Sapatu Pikeun Mindahkeun"
   },
   "jobs": {
     "draw_upper": "Ngagurat Upper",

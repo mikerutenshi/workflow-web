@@ -78,7 +78,7 @@
         <v-row v-if="fromInvId.value.value && toInvId.value.value">
           <v-col class="d-flex flex-column">
             <v-card>
-              <v-card-title>Shoes to Transfer</v-card-title>
+              <v-card-title>{{ $t('card.products_to_trf') }}</v-card-title>
               <v-data-table
                 :headers="headers"
                 :items="computeTrfItems"
@@ -94,6 +94,10 @@
                 <template #loading>
                   <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
                 </template>
+
+                <template #item.progress="{ item }">{{
+                  $t(`progress.${item.progress}`)
+                }}</template>
 
                 <template v-slot:item.invTrfItemSizes="{ item }">
                   <v-table density="compact">
@@ -160,8 +164,8 @@ import {
   GetInventoriesDocument,
   GetInvTrfItemsDocument,
   GetInvTrfDocument,
-  GetLastInvTrfNoDocument,
   Progress,
+  GenerateInvTrfNoDocument,
 } from '~/api/generated/types';
 import { InvTrfSchema } from '~/validation/schema';
 
@@ -210,11 +214,11 @@ const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,
   tags: [CACHE_INVENTORIES],
 });
-const { isFetching: isFetchingTrfNo, execute: fetchLastInvTrf } = useQuery({
-  query: GetLastInvTrfNoDocument,
+const { isFetching: isFetchingTrfNo, execute: fetchInvTrfNo } = useQuery({
+  query: GenerateInvTrfNoDocument,
   cachePolicy: 'network-only',
   onData(data) {
-    trfNo.setValue(generateId(Operation.Transfer, data.getLastInvTrfNo));
+    trfNo.setValue(data.generateInvTrfNo);
   },
   fetchOnMount: false,
 });
@@ -241,7 +245,12 @@ const {
     snack.message = t('status.saved');
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF],
+  clearCacheTags: [
+    CACHE_INV_TRFS,
+    CACHE_INV_TRF,
+    CACHE_INV_PRODUCTS,
+    CACHE_INV_TRFS_PER_ITEM,
+  ],
 });
 const {
   execute: executeDelete,
@@ -302,7 +311,7 @@ if (props.invTrfId) {
   fetchTransfer();
   setFieldValue('updatedBy', userId);
 } else {
-  fetchLastInvTrf();
+  fetchInvTrfNo();
 }
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];

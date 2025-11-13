@@ -5,8 +5,6 @@ import { TaskUpdateDto } from './dto/task-update.dto';
 import { Progress } from '@/generated/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTrfService } from '@/inventory/inv-trf.service';
-import { generateId } from '@/utils/functions.util';
-import { Operation } from '@/models/operation.enum';
 
 @Injectable()
 export class TaskService {
@@ -40,7 +38,7 @@ export class TaskService {
 
         const initialWork = await tx.work.findUnique({
           where: { id: workId },
-          include: { product: true, workSizes: true },
+          include: { product: true, workSizes: true, invTrf: true },
         });
         const initialProgress = initialWork!.progress;
 
@@ -66,115 +64,127 @@ export class TaskService {
           data: { progress },
         });
 
-        // const factory = await tx.inventory.findFirst({
-        //   where: { type: 'FACTORY' },
-        // });
+        const factory = await tx.inventory.findFirst({
+          where: { type: 'FACTORY' },
+        });
 
-        // if (!factory) throw Error('Factory is not found');
+        if (!factory) throw Error('Factory is not found');
 
-        // const existingInvProduct = await tx.invToProduct.findFirst({
-        //   where: { productId: initialWork!.productId },
-        //   include: { invProductSizes: true },
-        // });
+        const existingInvProduct = await tx.invToProduct.findFirst({
+          where: { productId: initialWork!.productId },
+          include: { invProductSizes: true },
+        });
 
-        // //Create new inv product if grogress == completed
-        // if (initialProgress !== Progress.COMPLETED && allDone) {
-        //   const trfNo = generateId(Operation.Produce, initialWork!.orderNo);
-        //   console.log(`trfNo: ${trfNo}`);
+        //Create new inv product if grogress == completed
+        if (initialProgress !== Progress.COMPLETED && allDone) {
+          const trfNo = await this.invTrfService.generateInvTrfPrdNo();
 
-        //   const invTrfItem = await this.invTrfService.createInvTrfItem({
-        //     fromInvId: null,
-        //     toInvId: factory.id,
-        //     productId: initialWork!.productId,
-        //     invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
-        //       sizeId: workSize.sizeId,
-        //       quantity: workSize.quantity,
-        //     })),
-        //     progress: Progress.COMPLETED,
-        //     workId: initialWork!.id,
-        //     createdBy: userId,
-        //   });
-        //   await this.invTrfService.createInvTrf({
-        //     trfNo,
-        //     fromInvId: null,
-        //     toInvId: factory.id,
-        //     progress: Progress.COMPLETED,
-        //     invTrfItemIds: [invTrfItem.id],
-        //     createdBy: userId,
-        //   });
+          const invTrfItem = await this.invTrfService.createInvTrfItem({
+            fromInvId: null,
+            toInvId: factory.id,
+            productId: initialWork!.productId,
+            invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
+              sizeId: workSize.sizeId,
+              quantity: workSize.quantity,
+            })),
+            progress: Progress.COMPLETED,
+            createdBy: userId,
+          });
+          await this.invTrfService.createInvTrf({
+            trfNo,
+            fromInvId: null,
+            toInvId: factory.id,
+            progress: Progress.COMPLETED,
+            invTrfItemIds: [invTrfItem.id],
+            workId: initialWork!.id,
+            createdBy: userId,
+          });
 
-        //   await this.invProductService.upsertInvProduct({
-        //     invId: factory.id,
-        //     productId: initialWork!.productId,
-        //     invProductSizes: initialWork!.workSizes.map((workSize) => ({
-        //       sizeId: workSize.sizeId,
-        //       quantity: workSize.quantity,
-        //     })),
-        //     sellingPrice: 0,
-        //     discount: '0.00',
-        //   });
-        // } else if (initialProgress === Progress.COMPLETED && !allDone) {
-        //   // Reverse the effect: subtract quantities from inventory
-        //   if (existingInvProduct) {
-        //     const { invProductSizes } = existingInvProduct;
+          await this.invProductService.upsertInvProduct({
+            invId: factory.id,
+            productId: initialWork!.productId,
+            invProductSizes: initialWork!.workSizes.map((workSize) => ({
+              sizeId: workSize.sizeId,
+              quantity: workSize.quantity,
+            })),
+            sellingPrice: 0,
+            discount: '0.00',
+          });
+        } else if (initialProgress === Progress.COMPLETED && !allDone) {
+          //Delete the InvTrf
+          const invTrfId = initialWork!.invTrf?.id;
 
-        //     for (const workSize of initialWork!.workSizes) {
-        //       const existingSize = invProductSizes.find(
-        //         (invSize) => invSize.sizeId === workSize.sizeId,
-        //       );
+          if (invTrfId) this.invTrfService.deleteInvTrf(invTrfId);
 
-        //       if (existingSize) {
-        //         const newQuantity = existingSize.quantity - workSize.quantity;
+          // Reverse the effect: subtract quantities from inventory
+          if (existingInvProduct) {
+            await this.invProductService.decrementInvProduct({
+              invId: existingInvProduct.invId,
+              productId: existingInvProduct.productId,
+              invProductSizes: existingInvProduct.invProductSizes.map(
+                (size) => ({ sizeId: size.sizeId, quantity: size.quantity }),
+              ),
+            });
 
-        //         if (newQuantity > 0) {
-        //           // Update existing size by subtracting quantity
-        //           await tx.invProductToSize.update({
-        //             where: {
-        //               invId_productId_sizeId: {
-        //                 invId: existingInvProduct.invId,
-        //                 productId: existingInvProduct.productId,
-        //                 sizeId: existingSize.sizeId,
-        //               },
-        //             },
-        //             data: {
-        //               quantity: newQuantity,
-        //             },
-        //           });
-        //         } else {
-        //           // Delete size entry if quantity becomes 0 or negative
-        //           await tx.invProductToSize.delete({
-        //             where: {
-        //               invId_productId_sizeId: {
-        //                 invId: existingInvProduct.invId,
-        //                 productId: existingInvProduct.productId,
-        //                 sizeId: existingSize.sizeId,
-        //               },
-        //             },
-        //           });
-        //         }
-        //       }
-        //     }
+            // const { invProductSizes } = existingInvProduct;
 
-        //     // Check if all sizes have been removed and delete the invProduct if empty
-        //     const remainingSizes = await tx.invProductToSize.findMany({
-        //       where: {
-        //         invId: existingInvProduct.invId,
-        //         productId: existingInvProduct.productId,
-        //       },
-        //     });
+            // for (const workSize of initialWork!.workSizes) {
+            //   const existingSize = invProductSizes.find(
+            //     (invSize) => invSize.sizeId === workSize.sizeId,
+            //   );
 
-        //     if (remainingSizes.length === 0) {
-        //       await tx.invToProduct.delete({
-        //         where: {
-        //           invId_productId: {
-        //             invId: existingInvProduct.invId,
-        //             productId: existingInvProduct.productId,
-        //           },
-        //         },
-        //       });
-        //     }
-        //   }
-        // }
+            //   if (existingSize) {
+            //     const newQuantity = existingSize.quantity - workSize.quantity;
+
+            //     if (newQuantity > 0) {
+            //       // Update existing size by subtracting quantity
+            //       await tx.invProductToSize.update({
+            //         where: {
+            //           invId_productId_sizeId: {
+            //             invId: existingInvProduct.invId,
+            //             productId: existingInvProduct.productId,
+            //             sizeId: existingSize.sizeId,
+            //           },
+            //         },
+            //         data: {
+            //           quantity: newQuantity,
+            //         },
+            //       });
+            //     } else {
+            //       // Delete size entry if quantity becomes 0 or negative
+            //       await tx.invProductToSize.delete({
+            //         where: {
+            //           invId_productId_sizeId: {
+            //             invId: existingInvProduct.invId,
+            //             productId: existingInvProduct.productId,
+            //             sizeId: existingSize.sizeId,
+            //           },
+            //         },
+            //       });
+            //     }
+            //   }
+            // }
+
+            // // Check if all sizes have been removed and delete the invProduct if empty
+            // const remainingSizes = await tx.invProductToSize.findMany({
+            //   where: {
+            //     invId: existingInvProduct.invId,
+            //     productId: existingInvProduct.productId,
+            //   },
+            // });
+
+            // if (remainingSizes.length === 0) {
+            //   await tx.invToProduct.delete({
+            //     where: {
+            //       invId_productId: {
+            //         invId: existingInvProduct.invId,
+            //         productId: existingInvProduct.productId,
+            //       },
+            //     },
+            //   });
+            // }
+          }
+        }
       }
 
       return updatedTasks;
