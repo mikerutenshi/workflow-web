@@ -119,10 +119,9 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { useQuery } from 'villus';
-import { useDate } from 'vuetify';
+import { useDate, useTheme } from 'vuetify';
 import { GetPayrollDocument } from '~/api/generated/types';
 import weekday from 'dayjs/plugin/weekday';
-import { mdiPrinter } from '@mdi/js';
 
 const adapter = useDate();
 const now = dayjs();
@@ -239,6 +238,11 @@ watch(
     }
   },
 );
+
+const { current } = useTheme();
+const primary = current.value.colors.primary;
+console.log(`primary ${primary}`);
+
 function exportPdf() {
   appBarSTore.isPrinting = true;
   const img = new Image();
@@ -249,33 +253,42 @@ function exportPdf() {
     doc.setLineHeightFactor(1.6);
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 14;
+    const pageMargin = 14;
+    const margin = 8;
+    const titleFontSize = 20;
+    const subtitleFontSize = 15;
+    const contentFontSize = 12;
     const artisans = data.value?.getPayroll.artisans;
+    const pageFont = 'times';
 
     if (artisans) {
       artisans.forEach((artisan, index) => {
         if (index > 0) {
           doc.addPage();
         }
-        const imgWidth = 20;
+        const imgWidth = 12;
 
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(16);
+        doc.setFont(pageFont, 'normal');
+        doc.setFontSize(subtitleFontSize);
         const comp = 'PT Ansulindo Kharisma Lestari';
         const textWidth = doc.getTextWidth(comp);
 
-        const imgX = (pageWidth - imgWidth - textWidth - 5) / 2;
-        doc.addImage(img, 'PNG', imgX, margin, imgWidth, imgWidth);
+        const imgX = (pageWidth - (imgWidth + textWidth + margin / 2)) / 2;
+        doc.addImage(img, 'PNG', imgX, pageMargin, imgWidth, imgWidth);
 
-        const compX = imgX + 25;
-        const compY = 20;
+        const compX = imgX + imgWidth + margin / 2;
+        const compY = pageMargin + margin * 0.6;
         doc.text(comp, compX, compY);
-        doc.setFontSize(12);
-        doc.text('Jl. Kopo Jaya I No. 3\nBandung, 40224', compX, compY + 8);
+        doc.setFontSize(contentFontSize);
+        doc.text(
+          'Jl. Kopo Jaya I No. 3\nBandung, 40224',
+          compX,
+          compY + margin,
+        );
 
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(24);
-        const titleY = 56;
+        doc.setFont(pageFont, 'bold');
+        doc.setFontSize(titleFontSize);
+        const titleY = 48;
         doc.text(t('label.payslip'), pageWidth / 2, titleY, {
           align: 'center',
         });
@@ -291,15 +304,15 @@ function exportPdf() {
               String(task.work.orderNo),
               String(task.work.product.sku),
               String(t(renderJob(task.type))),
-              String(adapter.format(task.doneAt, 'fullDateWithWeekday')),
+              String(adapter.format(task.doneAt, 'normalDateWithWeekday')),
               String(t('label.pairs', task.quantityPerTask)),
               String(formatRupiah(task.costPerTask)),
               String(formatRupiah(task.payablePerTask)),
             ];
           }) ?? [];
 
-        const dateY = titleY + 12;
-        doc.setFont('helvetica', 'normal');
+        const dateY = titleY + margin;
+        doc.setFont(pageFont, 'normal');
         doc.setFontSize(12);
         doc.text(
           `${t('label.start_date')}: ${adapter.format(
@@ -313,42 +326,34 @@ function exportPdf() {
           dateY,
           { align: 'center' },
         );
-        const nameY = dateY + 16;
+        const nameY = dateY + margin * 2;
+        const labelNamePosition = `${t('label.name')}:\n${t('label.jobs')}:`;
+        doc.text(labelNamePosition, pageMargin, nameY);
+        doc.setFont(pageFont, 'bold');
         doc.text(
-          `${t('label.name')}: ${name}\n${t('label.jobs')}: ${artisan.jobs
-            .map((job) => t(renderJob(job)))
-            .join(', ')}`,
-          margin,
+          `${name}\n${artisan.jobs.map((job) => t(renderJob(job))).join(', ')}`,
+          doc.getTextWidth(labelNamePosition),
           nameY,
         );
 
         const totalY = nameY;
 
-        doc.setFont('helvetica', 'bold');
-        doc.text(quantity, pageWidth - margin, totalY, { align: 'right' });
-        const qtyWidth = doc.getTextWidth(quantity);
-        doc.setFont('helvetica', 'normal');
-        doc.text(
-          `${t('label.total_quantity')}:`,
-          pageWidth - margin - qtyWidth - 5,
-          totalY,
-          { align: 'right' },
-        );
+        const qtyPayable = `${quantity}\n${payable}`;
+        const labelQtyPayable = `${t('label.total_quantity')}:\n${t('label.total_payable')}:`;
+        doc.setFont(pageFont, 'bold');
+        doc.text(qtyPayable, pageWidth - pageMargin, totalY, {
+          align: 'right',
+        });
+        doc.setFont(pageFont, 'normal');
+        const amtWidth = doc.getTextWidth(qtyPayable);
+        doc.text(labelQtyPayable, pageWidth - amtWidth, totalY, {
+          align: 'right',
+        });
 
-        doc.setFont('helvetica', 'bold');
-        doc.text(payable, pageWidth - 13, totalY + 7, { align: 'right' });
-        const payWidth = doc.getTextWidth(payable);
-        doc.setFont('helvetica', 'normal');
-        doc.text(
-          `${t('label.total_payable')}:`,
-          pageWidth - margin - payWidth - 5,
-          totalY + 7,
-          { align: 'right' },
-        );
-
-        const tableY = nameY + 16;
+        const tableY = nameY + margin * 2;
         let lastTableY = 0;
         autoTable(doc, {
+          theme: 'grid',
           startY: tableY,
           head: [
             [
@@ -362,18 +367,23 @@ function exportPdf() {
             ],
           ],
           body: tBody,
-          styles: { fontSize: 8 },
+          styles: { font: 'helvetica', fontSize: 9 },
+          headStyles: { fillColor: [84, 123, 138] },
           didDrawPage: (d) => {
             lastTableY = Math.round(d.cursor?.y || 120);
           },
         });
 
-        doc.setFont('helvetica', 'normal');
-        doc.text(`${t('label.checked_by')}:`, margin, lastTableY + 16);
+        doc.setFont(pageFont, 'normal');
+        doc.text(
+          `${t('label.checked_by')}:`,
+          pageMargin,
+          lastTableY + margin * 2,
+        );
         doc.text(
           `${t('label.artisan_sign')}:`,
-          pageWidth - margin,
-          lastTableY + 16,
+          pageWidth - pageMargin,
+          lastTableY + margin * 2,
           {
             align: 'right',
           },
@@ -382,14 +392,14 @@ function exportPdf() {
     }
 
     const pageCount = doc.internal.pages.length - 1;
-    doc.setFont('helvetica', 'normal');
+    doc.setFont(pageFont, 'normal');
     doc.setFontSize(10);
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.text(
         `Page ${i} of ${pageCount}`,
-        pageWidth - margin / 2,
-        pageHeight - margin / 2,
+        pageWidth - pageMargin / 2,
+        pageHeight - pageMargin / 2,
         {
           align: 'right',
         },

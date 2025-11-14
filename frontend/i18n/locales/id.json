@@ -62,7 +62,7 @@
     "item_detail_for": "Rincian Barang untuk {item}",
     "delete_confirm": "Konfirmasi Penghapusan"
   },
-  "create_btn": {
+  "btn": {
     "product": "Sepatu Baru",
     "color": "Warna Baru",
     "product_group": "Kelompok Sepatu Baru",
@@ -71,9 +71,7 @@
     "work": "Pekerjaan Baru",
     "inventory": "Gudang Baru",
     "inv_trf": "Transfer Inventaris Baru",
-    "print": "Cetak"
-  },
-  "btn": {
+    "print": "Cetak",
     "create": "Buat",
     "update": "Ubah",
     "delete": "Hapus",
@@ -152,12 +150,12 @@
     "products_to_trf": "Sepatu untuk Ditransfer"
   },
   "jobs": {
-    "draw_upper": "Menggurat Upper",
-    "draw_lining": "Menggurat Lining",
-    "stitch_upper": "Menjahit Upper",
-    "stitch_outsole": "Menjahit Outsole",
-    "stitch_insole": "Menjahit Insole",
-    "last": "Melasting"
+    "draw_upper": "Gurat Upper",
+    "draw_lining": "Gurat Lining",
+    "stitch_upper": "Jahit Upper",
+    "stitch_outsole": "Jahit Outsole",
+    "stitch_insole": "Jahit Insole",
+    "last": "Lasting"
   },
   "genders": {
     "men": "Laki-laki",

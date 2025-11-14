@@ -48,7 +48,7 @@
               :prepend-icon="mdiPlus"
               color="primary"
               @click="dialogForm = true"
-              >{{ $t('create_btn.product_category') }}</v-btn
+              >{{ $t('btn.product_category') }}</v-btn
             >
           </v-col>
         </v-row>

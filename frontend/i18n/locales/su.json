@@ -62,7 +62,7 @@
     "item_detail_for": "Rinci Barang pikeun {item}",
     "delete_confirm": "Konfirmasi Mupus"
   },
-  "create_btn": {
+  "btn": {
     "product": "Sapatu Anyar",
     "color": "Warna Anyar",
     "product_group": "Kelompok Sapatu Anyar",
@@ -71,9 +71,7 @@
     "work": "Pagawéan Anyar",
     "inventory": "Gudang Anyar",
     "inv_trf": "Mindahkeun Inventaris Baru",
-    "print": "Citak"
-  },
-  "btn": {
+    "print": "Citak",
     "create": "Jieun",
     "update": "Robah",
     "delete": "Hapus",
@@ -152,12 +150,12 @@
     "products_to_trf": "Sapatu Pikeun Mindahkeun"
   },
   "jobs": {
-    "draw_upper": "Ngagurat Upper",
-    "draw_lining": "Ngagurat Lining",
-    "stitch_upper": "Ngetutui Upper",
-    "stitch_outsole": "Ngetutui Outsole",
-    "stitch_insole": "Ngetutui Insole",
-    "last": "Melasting"
+    "draw_upper": "Gurat Upper",
+    "draw_lining": "Gurat Lining",
+    "stitch_upper": "Jahit Upper",
+    "stitch_outsole": "Jahit Outsole",
+    "stitch_insole": "Jahit Insole",
+    "last": "Lasting"
   },
   "genders": {
     "men": "Lalaki",

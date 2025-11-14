@@ -29,7 +29,7 @@
         :prepend-icon="mdiPrinter"
         :loading="appBarStore.isPrinting"
       >
-        {{ $t('create_btn.print') }}</v-btn
+        {{ $t('btn.print') }}</v-btn
       >
     </v-app-bar>
 
@@ -126,18 +126,18 @@ const createBtn = reactive({
 const createBtnTitles: Record<string, string> =
   clearance > Role.Superuser
     ? {
-        works: 'create_btn.work',
-        products: 'create_btn.product',
-        artisans: 'create_btn.artisan',
-        'setting-colors': 'create_btn.color',
+        works: 'btn.work',
+        products: 'btn.product',
+        artisans: 'btn.artisan',
+        'setting-colors': 'btn.color',
       }
     : {
-        works: 'create_btn.work',
-        products: 'create_btn.product',
-        artisans: 'create_btn.artisan',
-        'inv-product-transfers': 'create_btn.inv_trf',
-        'setting-inventories': 'create_btn.inventory',
-        'setting-colors': 'create_btn.color',
+        works: 'btn.work',
+        products: 'btn.product',
+        artisans: 'btn.artisan',
+        'inv-product-transfers': 'btn.inv_trf',
+        'setting-inventories': 'btn.inventory',
+        'setting-colors': 'btn.color',
       };
 
 const toggleDrawer = () => {

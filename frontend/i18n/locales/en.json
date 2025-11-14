@@ -62,7 +62,7 @@
     "send_to": "Send Shoes",
     "delete_confirm": "Delete Confirmation"
   },
-  "create_btn": {
+  "btn": {
     "product": "New Shoe",
     "color": "New Color",
     "product_group": "New Shoe Group",
@@ -71,9 +71,7 @@
     "work": "New Task",
     "inventory": "New Warehouse",
     "inv_trf": "New Inventory Transfer",
-    "print": "Print"
-  },
-  "btn": {
+    "print": "Print",
     "create": "Create",
     "update": "Update",
     "delete": "Delete",

@@ -89,6 +89,9 @@
                 >
                   <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
                 </v-list-item>
+                <v-list-item :prepend-icon="mdiPrinter" @click="exportPdf">
+                  <v-list-item-title>{{ t('btn.print') }}</v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-menu>
           </template>
@@ -133,12 +136,14 @@ import {
   mdiFileDocumentArrowRightOutline,
   mdiMagnify,
   mdiPencil,
+  mdiPrinter,
 } from '@mdi/js';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import { GetInvTrfsDocument, type InvTrfDto } from '~/api/generated/types';
 import InvProductTrfItemTable from './InvProductTrfItemTable.vue';
+import jsPDF from 'jspdf';
 
 const authStore = useAuthStore();
 const clearance = authStore.user?.role.clearanceLevel ?? 6;
@@ -188,6 +193,10 @@ function showItemDialog(item: InvTrfDto) {
 function showItemFormDialog(item: InvTrfDto) {
   selectItemObject.value = item;
   dialogForm.value = true;
+}
+function exportPdf() {
+  const doc = new jsPDF();
+  console.log(JSON.stringify(doc.getFontList()));
 }
 
 watch(isCreateDialogOpen, (isOpen) => {

@@ -68,14 +68,14 @@
           <v-col cols="12" md="4" class="d-flex justify-end align-center">
             <!-- <NuxtLink :to="$localePath('/product-groups/create')">
               <v-btn :prepend-icon="mdiPlus" color="primary">{{
-                $t('create_btn.product_group')
+                $t('btn.product_group')
               }}</v-btn>
             </NuxtLink> -->
             <v-btn
               :prepend-icon="mdiPlus"
               color="primary"
               @click="dialogForm = true"
-              >{{ $t('create_btn.product_group') }}</v-btn
+              >{{ $t('btn.product_group') }}</v-btn
             >
           </v-col>
         </v-row>
@@ -146,7 +146,7 @@
           <!-- <v-col cols="12" md="4" class="d-flex justify-end align-center">
             <NuxtLink :to="$localePath('/colors/create')">
               <v-btn :prepend-icon="mdiPlus" color="primary">
-                {{ $t('create_btn.color') }}
+                {{ $t('btn.color') }}
               </v-btn>
             </NuxtLink>
           </v-col> -->
