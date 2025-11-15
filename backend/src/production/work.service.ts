@@ -36,7 +36,6 @@ export class WorkService {
             },
           },
         },
-        relationLoadStrategy: 'join',
       });
 
       if (laborCosts.length > 0) {

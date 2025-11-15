@@ -51,13 +51,14 @@
             <v-text-field
               :label="$t('jobs.draw_upper')"
               prefix="Rp"
-              :model-value="mask.masked(drawUpper.value.value ?? '')"
+              :model-value="mask.masked(drawUpper.value.value as number)"
               @update:model-value="
                 (val) => {
                   drawUpper.setValue(parseRupiah(val));
                 }
               "
               type="number"
+              clearable
               :error-messages="drawUpper.errorMessage.value"
             />
           </v-col>
@@ -67,13 +68,14 @@
             <v-text-field
               :label="$t('jobs.draw_lining')"
               prefix="Rp"
-              :model-value="mask.masked(drawLining.value.value ?? '')"
+              :model-value="mask.masked(drawLining.value.value as number)"
               @update:model-value="
                 (val) => {
                   drawLining.setValue(parseRupiah(val));
                 }
               "
               type="number"
+              clearable
               :error-messages="drawLining.errorMessage.value"
             />
           </v-col>
@@ -83,13 +85,14 @@
             <v-text-field
               :label="$t('jobs.stitch_upper')"
               prefix="Rp"
-              :model-value="mask.masked(stitchUpper.value.value ?? '')"
+              :model-value="mask.masked(stitchUpper.value.value as number)"
               @update:model-value="
                 (val) => {
                   stitchUpper.setValue(parseRupiah(val));
                 }
               "
               type="number"
+              clearable
               :error-messages="stitchUpper.errorMessage.value"
             />
           </v-col>
@@ -99,13 +102,14 @@
             <v-text-field
               :label="$t('jobs.stitch_outsole')"
               prefix="Rp"
-              :model-value="mask.masked(stitchOutsole.value.value ?? '')"
+              :model-value="mask.masked(stitchOutsole.value.value as number)"
               @update:model-value="
                 (val) => {
                   stitchOutsole.setValue(parseRupiah(val));
                 }
               "
               type="number"
+              clearable
               :error-messages="stitchOutsole.errorMessage.value"
             />
           </v-col>
@@ -115,13 +119,14 @@
             <v-text-field
               :label="$t('jobs.stitch_insole')"
               prefix="Rp"
-              :model-value="mask.masked(stitchInsole.value.value ?? '')"
+              :model-value="mask.masked(stitchInsole.value.value as number)"
               @update:model-value="
                 (val) => {
                   stitchInsole.setValue(parseRupiah(val));
                 }
               "
               type="number"
+              clearable
               :error-messages="stitchInsole.errorMessage.value"
             />
           </v-col>
@@ -131,13 +136,14 @@
             <v-text-field
               :label="$t('jobs.last')"
               prefix="Rp"
-              :model-value="mask.masked(last.value.value ?? '')"
+              :model-value="mask.masked(last.value.value as number)"
               @update:model-value="
                 (val) => {
                   last.setValue(parseRupiah(val));
                 }
               "
               type="number"
+              clearable
               :error-messages="last.errorMessage.value"
             />
           </v-col>
@@ -213,12 +219,12 @@ const { handleSubmit, setValues, values } = useForm({
     updatedBy: userId,
   },
 });
-const drawUpper = useField<number | null>('drawUpper');
-const drawLining = useField<number | null>('drawLining');
-const stitchUpper = useField<number | null>('stitchUpper');
-const stitchOutsole = useField<number | null>('stitchOutsole');
-const stitchInsole = useField<number | null>('stitchInsole');
-const last = useField<number | null>('last');
+const drawUpper = useField('drawUpper');
+const drawLining = useField('drawLining');
+const stitchUpper = useField('stitchUpper');
+const stitchOutsole = useField('stitchOutsole');
+const stitchInsole = useField('stitchInsole');
+const last = useField('last');
 
 useQuery({
   query: GetLaborCostDocument,
@@ -297,7 +303,6 @@ const options: MaskInputOptions = {
   reversed: true,
   onMaska: (detail: MaskaDetail) => {},
 };
-
 const mask = new Mask(options);
 
 watchEffect(() => {

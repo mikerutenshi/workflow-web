@@ -13,7 +13,7 @@ export class InvProduct {
   invProductSizes: InvProductToSize[];
 
   @Field(() => Int)
-  sellingPrice: number;
+  price: number;
 
   @Field()
   discount: string;

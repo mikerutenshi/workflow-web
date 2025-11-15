@@ -26,35 +26,35 @@ export class LaborCostUpdateDto {
   @IsOptional()
   @IsInt()
   @Min(100)
-  drawUpper: number | null;
+  drawUpper?: number | null;
 
   @Field(() => Number, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(100)
-  drawLining: number | null;
+  drawLining?: number | null;
 
   @Field(() => Number, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(100)
-  stitchUpper: number | null;
+  stitchUpper?: number | null;
 
   @Field(() => Number, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(100)
-  stitchOutsole: number | null;
+  stitchOutsole?: number | null;
 
   @Field(() => Number, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(100)
-  stitchInsole: number | null;
+  stitchInsole?: number | null;
 
   @Field(() => Number, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(100)
-  last: number | null;
+  last?: number | null;
 }

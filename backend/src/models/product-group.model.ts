@@ -9,4 +9,6 @@ export class ProductGroup extends BaseModel {
   name: string | null;
   @Field(() => ID)
   productCategoryId: number;
+  @Field(() => Number, { nullable: true })
+  msrp?: number | null;
 }

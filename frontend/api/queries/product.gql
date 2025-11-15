@@ -73,7 +73,7 @@ mutation createProduct($data: ProductCreateDto!) {
   }
 }
 
-mutation updateProduct($id: ID!, $data: ProductCreateDto!) {
+mutation updateProduct($id: ID!, $data: ProductUpdateDto!) {
   updateProduct(id: $id, data: $data) {
     id
   }
@@ -167,6 +167,7 @@ query getProduct($id: ID!) {
     sku
     productGroup {
       id
+      msrp
     }
     productColors {
       order

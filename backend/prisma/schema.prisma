@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["relationJoins"]
   output = "../src/generated/client"
 }
 
@@ -101,6 +100,7 @@ model ProductGroup {
   skuNumeric        String          @unique
   productCategoryId Int
   name              String?
+  msrp              Int?             
 
   createdAt         DateTime        @default(now())
   createdBy         Int
@@ -263,7 +263,7 @@ model InvToProduct {
   productId         Int             
 
   invProductSizes   InvProductToSize[]
-  sellingPrice      Int             @default(0)
+  price             Int             @default(0)
   discount          Decimal         @db.Decimal(3,2) @default(0.00)
 
   product           Product         @relation(fields: [productId], references: [id])

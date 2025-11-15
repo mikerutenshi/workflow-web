@@ -25,7 +25,7 @@ export class InvProductCreateDto {
   @Field(() => Int)
   @IsInt()
   @Min(0)
-  sellingPrice: number;
+  price: number;
 
   @Field()
   @IsDecimal({ decimal_digits: '2' })

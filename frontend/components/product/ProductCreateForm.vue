@@ -151,6 +151,24 @@
             </NuxtLink>
           </v-col> -->
         </v-row>
+
+        <v-row>
+          <v-col>
+            <v-text-field
+              :label="$t('label.msrp')"
+              prefix="Rp"
+              :model-value="mask.masked(msrp.value.value as number)"
+              @update:model-value="
+                (val) => {
+                  msrp.setValue(parseRupiah(val));
+                }
+              "
+              type="number"
+              clearable
+              :error-messages="msrp.errorMessage.value"
+            />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -215,6 +233,7 @@ import { useRoute } from 'vue-router';
 import { CACHE_COLORS } from '~/utils/cache-tags';
 import { mdiPencil, mdiPlus } from '@mdi/js';
 import { ProductSchema } from '~/validation/schema';
+import { Mask, type MaskaDetail, type MaskInputOptions } from 'maska';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -244,8 +263,22 @@ const { handleSubmit, values, setValues, setFieldValue } = useForm({
 const productGroupId = useField('productGroupId');
 const colorIds = useField('colorIds');
 const sku = useField('sku');
+const msrp = useField('msrp');
 
-const localePath = useLocalePath();
+const options: MaskInputOptions = {
+  mask: '9.99#',
+  tokens: {
+    9: { pattern: /[0-9]/, repeated: true },
+  },
+  reversed: true,
+  onMaska: (detail: MaskaDetail) => {
+    if (detail.unmasked == null) {
+      return 0;
+    }
+  },
+};
+const mask = new Mask(options);
+
 const {
   isFetching: isCreating,
   execute: executeCreate,
@@ -333,6 +366,7 @@ if (productId) {
       setValues({
         sku: product.sku,
         productGroupId: product.productGroup.id,
+        msrp: product.productGroup.msrp,
         createdBy: product.createdBy,
         updatedBy: userId,
       });
@@ -377,7 +411,7 @@ watch(dialogForm, (newState) => {
     handleDialogClose();
   }
 });
-// watchEffect(() => {
-//   console.log(JSON.stringify(values));
-// });
+watchEffect(() => {
+  console.log(JSON.stringify(values));
+});
 </script>

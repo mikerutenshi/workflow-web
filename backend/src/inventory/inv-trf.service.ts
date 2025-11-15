@@ -99,7 +99,7 @@ export class InvTrfService {
               sizeId: itemSizes.sizeId,
               quantity: itemSizes.quantity,
             })),
-            sellingPrice: 0,
+            price: 0,
             discount: '0.00',
           });
 
@@ -136,7 +136,7 @@ export class InvTrfService {
                 sizeId: itemSizes.sizeId,
                 quantity: itemSizes.quantity,
               })),
-              sellingPrice: 0,
+              price: 0,
               discount: '0.00',
             });
           }

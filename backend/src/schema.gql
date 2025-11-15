@@ -87,7 +87,7 @@ type InvProduct {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
-  sellingPrice: Int!
+  price: Int!
   discount: String!
 }
 
@@ -149,6 +149,7 @@ type ProductGroup {
   skuNumeric: String!
   name: String
   productCategoryId: ID!
+  msrp: Float
 }
 
 type ProductGroupWithCategory {
@@ -160,6 +161,7 @@ type ProductGroupWithCategory {
   skuNumeric: String!
   name: String
   productCategoryId: ID!
+  msrp: Float
   productCategory: ProductCategory!
 }
 
@@ -192,7 +194,7 @@ type InvProductDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
-  sellingPrice: Int!
+  price: Int!
   discount: String!
   product: ProductGetDto!
   invTrfItems: [InvTrfItem!]!
@@ -272,6 +274,7 @@ type ProductGroupGetDto {
   skuNumeric: String!
   name: String
   productCategoryId: ID!
+  msrp: Float
   productCategory: ProductCategory!
 }
 
@@ -295,6 +298,7 @@ type LaborCostGetDto {
   skuNumeric: String!
   name: String
   productCategoryId: ID!
+  msrp: Float
   productCategory: ProductCategory!
   laborCosts: [LaborCost]
 }
@@ -441,7 +445,7 @@ type Mutation {
   updateColor(id: ID!, data: ColorCreateDto!): Color!
   deleteColor(id: ID!): Boolean!
   createProduct(data: ProductCreateDto!): Product!
-  updateProduct(id: ID!, data: ProductCreateDto!): Product!
+  updateProduct(id: ID!, data: ProductUpdateDto!): Product!
   deleteProduct(id: ID!): Boolean!
   createProductCategory(data: ProductCategoryCreateDto!): ProductCategory!
   updateProductCategory(id: ID!, data: ProductCategoryCreateDto!): ProductCategory!
@@ -514,8 +518,17 @@ input ProductCreateDto {
   sku: String!
   productGroupId: ID!
   createdBy: ID!
-  updatedBy: ID
   colorIds: [ID!]!
+  msrp: Float
+}
+
+input ProductUpdateDto {
+  sku: String
+  productGroupId: ID
+  createdBy: ID
+  colorIds: [ID!]
+  msrp: Float
+  updatedBy: ID
 }
 
 input ProductCategoryCreateDto {
@@ -616,7 +629,7 @@ input InvProductCreateDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSizeCreateDto!]!
-  sellingPrice: Int!
+  price: Int!
   discount: String!
 }
 
@@ -627,7 +640,7 @@ input InvProductToSizeCreateDto {
 
 input InvProductUpdateDto {
   invProductSizes: [InvProductToSizeCreateDto!]
-  sellingPrice: Int
+  price: Int
   discount: String
 }
 

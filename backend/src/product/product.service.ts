@@ -3,6 +3,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { ProductCreateDto } from './dto/product-create.dto';
 import { Product } from '@/models/product.model';
 import { ProductGetDto } from './dto/product-get.dto';
+import { ProductUpdateDto } from './dto/product-update.dto';
 
 @Injectable()
 export class ProductService {
@@ -10,18 +11,58 @@ export class ProductService {
 
   createProduct(data: ProductCreateDto): Promise<Product> {
     let order = 1;
-    return this.prisma.product.create({
-      data: {
-        sku: data.sku,
-        productGroupId: data.productGroupId,
-        createdBy: data.createdBy,
-        productColors: {
-          create: data.colorIds.map((colorId) => ({
-            color: { connect: { id: colorId } },
-            order: order++,
-          })),
+    return this.prisma.$transaction(async (tx) => {
+      const product = await tx.product.create({
+        data: {
+          sku: data.sku,
+          productGroupId: data.productGroupId,
+          createdBy: data.createdBy,
+          productColors: {
+            create: data.colorIds.map((colorId) => ({
+              color: { connect: { id: colorId } },
+              order: order++,
+            })),
+          },
         },
-      },
+      });
+
+      await tx.productGroup.update({
+        where: { id: data.productGroupId },
+        data: {
+          msrp: data.msrp,
+        },
+      });
+
+      return product;
+    });
+  }
+
+  updateProduct(id: number, data: ProductUpdateDto): Promise<Product> {
+    let order = 1;
+    return this.prisma.$transaction(async (tx) => {
+      const product = await tx.product.update({
+        where: { id },
+        data: {
+          sku: data.sku,
+          productGroupId: data.productGroupId,
+          productColors: {
+            deleteMany: { productId: id },
+            create: data.colorIds?.map((colorId) => ({
+              color: { connect: { id: colorId } },
+              order: order++,
+            })),
+          },
+        },
+      });
+
+      await tx.productGroup.update({
+        where: { id: data.productGroupId },
+        data: {
+          msrp: data.msrp,
+        },
+      });
+
+      return product;
     });
   }
 
@@ -81,24 +122,5 @@ export class ProductService {
       },
     });
     return true;
-  }
-
-  updateProduct(id: number, data: ProductCreateDto): Promise<Product> {
-    let order = 1;
-    return this.prisma.product.update({
-      where: { id },
-      data: {
-        sku: data.sku,
-        productGroupId: data.productGroupId,
-        createdBy: data.createdBy,
-        productColors: {
-          deleteMany: { productId: id },
-          create: data.colorIds.map((colorId) => ({
-            color: { connect: { id: colorId } },
-            order: order++,
-          })),
-        },
-      },
-    });
   }
 }

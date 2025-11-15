@@ -34,12 +34,12 @@ export const LaborCostSchema = z.object({
   productGroupId: positiveNumberString,
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString,
-  drawUpper: z.number().min(100).nullable().optional(),
-  drawLining: z.number().min(100).nullable().optional(),
-  stitchUpper: z.number().min(100).nullable().optional(),
-  stitchOutsole: z.number().min(100).nullable().optional(),
-  stitchInsole: z.number().min(100).nullable().optional(),
-  last: z.number().min(100).nullable().optional(),
+  drawUpper: z.number().min(100).optional().nullable(),
+  drawLining: z.number().min(100).optional().nullable(),
+  stitchUpper: z.number().min(100).optional().nullable(),
+  stitchOutsole: z.number().min(100).optional().nullable(),
+  stitchInsole: z.number().min(100).optional().nullable(),
+  last: z.number().min(100).optional().nullable(),
 });
 
 export const ProductSchema = z.object({
@@ -48,6 +48,7 @@ export const ProductSchema = z.object({
     .string()
     .regex(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/),
   colorIds: positiveNumberString.array(),
+  msrp: z.number().min(99900).max(2999900).optional().nullable(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });

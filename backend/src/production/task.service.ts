@@ -107,7 +107,7 @@ export class TaskService {
               sizeId: workSize.sizeId,
               quantity: workSize.quantity,
             })),
-            sellingPrice: 0,
+            price: 0,
             discount: '0.00',
           });
         } else if (initialProgress === Progress.COMPLETED && !allDone) {

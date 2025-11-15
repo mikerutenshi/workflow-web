@@ -29,6 +29,7 @@ export function formatRupiah(amount: number | null | undefined): string {
   }).format(amount);
 }
 export function parseRupiah(rupiah: string): number | null {
+  if (rupiah === null) return null;
   // Hapus semua karakter kecuali digit dan koma
   const cleaned = rupiah.replace(/[^0-9,]/g, '').replace(',', '.'); // Ganti koma dengan titik untuk desimal
   const parsed = parseFloat(cleaned);

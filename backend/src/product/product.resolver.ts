@@ -8,6 +8,7 @@ import { ProductService } from './product.service';
 import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
+import { ProductUpdateDto } from './dto/product-update.dto';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -24,7 +25,7 @@ export class ProductResolver {
   @Mutation(() => Product)
   updateProduct(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Args('data') data: ProductCreateDto,
+    @Args('data') data: ProductUpdateDto,
   ): Promise<Product> {
     return this.productService.updateProduct(id, data);
   }
