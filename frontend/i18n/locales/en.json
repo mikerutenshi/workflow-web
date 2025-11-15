@@ -142,7 +142,10 @@
     "send_to": "Send To",
     "pending_trfs": "Pending Transfers",
     "show_item_detail": "Show Item Detail",
-    "delete_confirm": "Are you sure you want to delete {item}?"
+    "delete_confirm": "Are you sure you want to delete {item}?",
+    "price": "Price",
+    "discount": "Discount",
+    "msrp": "MSRP"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

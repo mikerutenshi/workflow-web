@@ -92,7 +92,7 @@
                 {{ $t(renderJob(item.type)) }}
               </template>
               <template #item.doneAt="{ item }">
-                {{ adapter.format(item.doneAt, 'fullDateWithWeekday') }}
+                {{ adapter.format(item.doneAt, 'normalDateWithWeekday') }}
               </template>
               <template #item.payablePerTask="{ item }">
                 {{ formatRupiah(item.payablePerTask) }}
@@ -250,7 +250,7 @@ function exportPdf() {
 
   img.onload = function () {
     const doc = new jsPDF();
-    doc.setLineHeightFactor(1.6);
+    doc.setLineHeightFactor(1.5);
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const pageMargin = 14;
@@ -258,15 +258,15 @@ function exportPdf() {
     const titleFontSize = 20;
     const subtitleFontSize = 15;
     const contentFontSize = 12;
-    const artisans = data.value?.getPayroll.artisans;
     const pageFont = 'times';
+    const artisans = data.value?.getPayroll.artisans;
 
     if (artisans) {
       artisans.forEach((artisan, index) => {
         if (index > 0) {
           doc.addPage();
         }
-        const imgWidth = 12;
+        const imgWidth = 13;
 
         doc.setFont(pageFont, 'normal');
         doc.setFontSize(subtitleFontSize);

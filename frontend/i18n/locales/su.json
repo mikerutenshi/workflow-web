@@ -142,7 +142,10 @@
     "send_to": "Kirim Ka",
     "pending_trfs": "Pending Mindahkeun",
     "show_item_detail": "Nempo Rinci Barang",
-    "delete_confirm": "Naha anjeun yakin rék mupus {item}?"
+    "delete_confirm": "Naha anjeun yakin rék mupus {item}?",
+    "price": "Harga",
+    "discount": "Diskon",
+    "msrp": "MSRP"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

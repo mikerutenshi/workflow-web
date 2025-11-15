@@ -3,10 +3,13 @@
     <ComingSoon></ComingSoon>
   </template>
   <template v-else>
-    <v-row v-if="invTrfsError" class="flex-grow-0">
+    <v-row
+      v-if="invTrfsError || fromInvError || toInvError"
+      class="flex-grow-0"
+    >
       <v-col>
         <v-alert type="error">
-          {{ extractGraphQlError(invTrfsError) }}
+          {{ extractGraphQlError(invTrfsError || fromInvError || toInvError) }}
         </v-alert>
       </v-col>
     </v-row>
@@ -89,7 +92,10 @@
                 >
                   <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
                 </v-list-item>
-                <v-list-item :prepend-icon="mdiPrinter" @click="exportPdf">
+                <v-list-item
+                  :prepend-icon="mdiPrinter"
+                  @click="printItem(item as InvTrfDto)"
+                >
                   <v-list-item-title>{{ t('btn.print') }}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -141,7 +147,11 @@ import {
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetInvTrfsDocument, type InvTrfDto } from '~/api/generated/types';
+import {
+  GetInventoryDocument,
+  GetInvTrfsDocument,
+  type InvTrfDto,
+} from '~/api/generated/types';
 import InvProductTrfItemTable from './InvProductTrfItemTable.vue';
 import jsPDF from 'jspdf';
 
@@ -170,6 +180,31 @@ const {
   query: GetInvTrfsDocument,
   tags: [CACHE_INV_TRFS],
 });
+const fromInvVar = ref({ id: '' });
+const {
+  execute: fetchFromInv,
+  data: fromInvData,
+  isFetching: isFetchingFromInv,
+  error: fromInvError,
+} = useQuery({
+  query: GetInventoryDocument,
+  variables: fromInvVar,
+  fetchOnMount: false,
+  tags: [CACHE_FROM_INV],
+});
+const toInvVar = ref({ id: '' });
+const {
+  execute: fetchInventory,
+  data: toInvData,
+  isFetching: isFetcingToInv,
+  error: toInvError,
+} = useQuery({
+  query: GetInventoryDocument,
+  variables: toInvVar,
+  fetchOnMount: false,
+  tags: [CACHE_TO_INV],
+});
+const isPrinting = ref(false);
 
 const { t } = useI18n();
 const adapter = useDate();
@@ -194,9 +229,75 @@ function showItemFormDialog(item: InvTrfDto) {
   selectItemObject.value = item;
   dialogForm.value = true;
 }
+function printItem(item: InvTrfDto) {
+  selectItemObject.value = item;
+  fromInvVar.value.id = item.fromInv!.id;
+  toInvVar.value.id = item.toInv!.id;
+  isPrinting.value = true;
+}
 function exportPdf() {
   const doc = new jsPDF();
-  console.log(JSON.stringify(doc.getFontList()));
+  doc.setLineHeightFactor(1.5);
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const pageMargin = 14;
+  const margin = 8;
+  const titleFontSize = 20;
+  const subtitleFontSize = 15;
+  const contentFontSize = 12;
+  const pageFont = 'times';
+
+  const titleX = pageWidth * 0.5;
+  const titleY = pageMargin;
+  const title = 'Inventory Transfer Slip';
+  doc.setFont(pageFont, 'bold');
+  doc.setFontSize(titleFontSize);
+  doc.text(title, titleX, titleY, {
+    align: 'center',
+  });
+
+  const originInv = fromInvData.value?.getInventory;
+  const originX = pageMargin;
+  const originY = titleY + margin;
+  const origin = `Dari:\n${originInv?.name}\n${originInv?.address}\n${originInv?.city}, ${originInv?.province}`;
+  doc.setFont(pageFont, 'normal');
+  doc.setFontSize(contentFontSize);
+  doc.text(origin, originX, originY);
+
+  const destInv = toInvData.value?.getInventory;
+  const destX = pageWidth - pageMargin;
+  const destY = titleY + margin;
+  const destination = `Kepada:\n${destInv?.name}\n${destInv?.address}\n${destInv?.city}, ${destInv?.province}`;
+  doc.setFont(pageFont, 'normal');
+  doc.setFontSize(contentFontSize);
+  doc.text(destination, destX, destY, { align: 'right' });
+
+  const trfNoLabel = 'No. Transfer: ';
+  const trfNoLabelX = pageMargin;
+  const trfNoLabelY = destY + margin * 4;
+  doc.setFont(pageFont, 'normal');
+  doc.setFontSize(contentFontSize);
+  doc.text(trfNoLabel, trfNoLabelX, trfNoLabelY);
+  const trfNo = selectItemObject.value?.trfNo ?? '';
+  const trfNoX = pageMargin + doc.getTextWidth(trfNoLabel) + margin;
+  const trfNoY = destY + margin * 4;
+  doc.setFont(pageFont, 'bold');
+  doc.text(trfNo, trfNoX, trfNoY);
+
+  const trfDateLabel = 'Tanggal Kirim: ';
+  const trfDateLabelX = pageMargin;
+  const trfDateLabelY = trfNoLabelY + margin;
+  doc.setFont(pageFont, 'normal');
+  doc.text(trfDateLabel, trfDateLabelX, trfDateLabelY);
+  let trfDate = selectItemObject.value?.trfDate ?? '';
+  trfDate = adapter.format(trfDate, 'fullDate');
+  const trfDateX = pageMargin + doc.getTextWidth(trfNoLabel) + margin;
+  const trfDateY = trfNoY + margin;
+  doc.setFont(pageFont, 'bold');
+  doc.setFontSize(contentFontSize);
+  doc.text(trfDate, trfDateX, trfDateY);
+
+  doc.save(`${trfNo}.pdf`);
 }
 
 watch(isCreateDialogOpen, (isOpen) => {
@@ -219,6 +320,10 @@ watch(dialogView, (isOpen) => {
   }
 });
 watchEffect(() => {
+  if (fromInvData.value && toInvData.value && isPrinting.value) {
+    exportPdf();
+    isPrinting.value = false;
+  }
   console.log(`selectItemObject: ${JSON.stringify(selectItemObject.value)}`);
 });
 </script>

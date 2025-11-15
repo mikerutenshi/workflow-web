@@ -38,7 +38,7 @@
         </template>
 
         <template v-slot:item.date="{ item }">
-          {{ adapter.format(item.date, 'fullDateWithWeekday') }}
+          {{ adapter.format(item.date, 'normalDateWithWeekday') }}
         </template>
         <template v-slot:item.sizes="{ item }">
           <!-- <v-chip-group direction="vertical">
@@ -87,7 +87,7 @@
                     {{ $t(renderJob(task.type)) }}
                   </p>
                   <span v-if="task.doneAt" class="mt-2">
-                    {{ adapter.format(task.doneAt, 'fullDate') }}
+                    {{ adapter.format(task.doneAt, 'normalDateWithWeekday') }}
                   </span>
                   <span v-if="task.artisan?.firstName">
                     {{

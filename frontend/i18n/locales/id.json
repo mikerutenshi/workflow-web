@@ -142,7 +142,10 @@
     "send_to": "Kirim Ke",
     "pending_trfs": "Transfer Tertunda",
     "show_item_detail": "Lihat Rincian Barang ",
-    "delete_confirm": "Apakah anda yakin akan menghapus {item}?"
+    "delete_confirm": "Apakah anda yakin akan menghapus {item}?",
+    "price": "Harga",
+    "discount": "Diskon",
+    "msrp": "MSRP"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
