@@ -263,8 +263,8 @@ model InvToProduct {
   productId         Int             
 
   invProductSizes   InvProductToSize[]
-  price             Int             @default(0)
-  discount          Decimal         @db.Decimal(3,2) @default(0.00)
+  price             Int?             
+  discount          Decimal?        @db.Decimal(3,2)
 
   product           Product         @relation(fields: [productId], references: [id])
   inventory         Inventory       @relation(fields: [invId], references: [id])

@@ -19,8 +19,8 @@ export function renderInvType(type: InvType): string {
 }
 
 export function formatRupiah(amount: number | null | undefined): string {
-  if (amount === undefined) return '-';
-  if (amount === null) return '-';
+  if (amount === undefined || amount === null) return '';
+
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',

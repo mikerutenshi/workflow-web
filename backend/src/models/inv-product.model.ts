@@ -12,9 +12,9 @@ export class InvProduct {
   @Field(() => [InvProductToSize])
   invProductSizes: InvProductToSize[];
 
-  @Field(() => Int)
-  price: number;
+  @Field(() => Int, { nullable: true })
+  price?: number | null;
 
-  @Field()
-  discount: string;
+  @Field(() => String, { nullable: true })
+  discount?: string | null;
 }

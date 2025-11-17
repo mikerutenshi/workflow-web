@@ -87,8 +87,8 @@ type InvProduct {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
-  price: Int!
-  discount: String!
+  price: Int
+  discount: String
 }
 
 type InvTrfItemToSize {
@@ -194,8 +194,8 @@ type InvProductDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
-  price: Int!
-  discount: String!
+  price: Int
+  discount: String
   product: ProductGetDto!
   invTrfItems: [InvTrfItem!]!
 }

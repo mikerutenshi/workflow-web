@@ -30,7 +30,7 @@ export class InvProductService {
 
       return {
         ...createdProduct,
-        discount: Prisma.Decimal(createdProduct.discount).toString(),
+        discount: createdProduct.discount?.toString(),
       } as InvProduct;
     } catch (error: any) {
       if (error.code === 'P2002') {
@@ -88,7 +88,7 @@ export class InvProductService {
           };
         })
         .filter((size) => size.quantity > 0),
-      discount: Prisma.Decimal(product.discount).toString(),
+      discount: product.discount?.toString(),
     })) as InvProductDto[];
   }
 
@@ -98,7 +98,7 @@ export class InvProductService {
     data: InvProductUpdateDto,
   ): Promise<InvProduct> {
     const { invProductSizes, discount, ...rest } = data;
-    const updatedProduct = await this.prisma.invToProduct.update({
+    const invProduct = await this.prisma.invToProduct.update({
       where: { invId_productId: { invId, productId } },
       data: {
         ...rest,
@@ -118,8 +118,8 @@ export class InvProductService {
     });
 
     return {
-      ...updatedProduct,
-      discount: Prisma.Decimal(updatedProduct.discount).toString(),
+      ...invProduct,
+      discount: invProduct.discount?.toString(),
     } as InvProduct;
   }
 
@@ -178,7 +178,7 @@ export class InvProductService {
       console.log(`Result: ${JSON.stringify(result)}`);
       return {
         ...result,
-        discount: Prisma.Decimal(result!.discount).toString(),
+        discount: result?.discount?.toString(),
       } as InvProduct;
     });
   }

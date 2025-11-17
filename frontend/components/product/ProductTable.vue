@@ -69,6 +69,10 @@
           {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
         </template>
 
+        <template v-slot:item.productGroup.msrp="{ item }">
+          {{ formatRupiah(item.productGroup.msrp) }}
+        </template>
+
         <template v-slot:item.actions="{ item }">
           <!-- <v-menu variant="outlined">
             <template v-slot:activator="{ props }">
@@ -161,6 +165,7 @@ const headers: ReadOnlyHeaders = [
   },
   { title: t('label.gender'), key: 'productGroup.productCategory.gender' },
   { title: t('label.colors'), key: 'productColors', minWidth: '140' },
+  { title: t('label.msrp'), key: 'productGroup.msrp' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');
