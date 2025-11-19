@@ -52,6 +52,7 @@
               :label="$t('jobs.draw_upper')"
               v-maska:drawUpperUnmasked.unmasked="options"
               v-model="priceModel.drawUpper"
+              inputmode="number"
               clearable
               :error-messages="drawUpper.errorMessage.value"
             />
@@ -63,6 +64,7 @@
               :label="$t('jobs.draw_lining')"
               v-maska:drawLiningUnmasked.unmasked="options"
               v-model="priceModel.drawLining"
+              inputmode="number"
               clearable
               :error-messages="drawLining.errorMessage.value"
             />
@@ -74,6 +76,7 @@
               :label="$t('jobs.stitch_upper')"
               v-maska:stitchUpperUnmasked.unmasked="options"
               v-model="priceModel.stitchUpper"
+              inputmode="number"
               clearable
               :error-messages="stitchUpper.errorMessage.value"
             />
@@ -85,6 +88,7 @@
               :label="$t('jobs.stitch_outsole')"
               v-maska:stitchOutsoleUnmasked.unmasked="options"
               v-model="priceModel.stitchOutsole"
+              inputmode="number"
               clearable
               :error-messages="stitchOutsole.errorMessage.value"
             />
@@ -96,6 +100,7 @@
               :label="$t('jobs.stitch_insole')"
               v-maska:stitchInsoleUnmasked.unmasked="options"
               v-model="priceModel.stitchInsole"
+              inputmode="number"
               clearable
               :error-messages="stitchInsole.errorMessage.value"
             />
@@ -107,6 +112,7 @@
               :label="$t('jobs.last')"
               v-maska:lastUnmasked.unmasked="options"
               v-model="priceModel.last"
+              inputmode="number"
               clearable
               :error-messages="last.errorMessage.value"
             />

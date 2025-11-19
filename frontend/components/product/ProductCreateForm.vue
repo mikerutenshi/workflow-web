@@ -156,14 +156,9 @@
           <v-col>
             <v-text-field
               :label="$t('label.msrp')"
-              prefix="Rp"
-              :model-value="mask.masked(msrp.value.value as number)"
-              @update:model-value="
-                (val) => {
-                  msrp.setValue(parseRupiah(val));
-                }
-              "
-              type="number"
+              v-maska:msrpUnmasked.unmasked="priceMask"
+              v-model="msrpMasked"
+              inputmode="number"
               clearable
               :error-messages="msrp.errorMessage.value"
             />
@@ -264,20 +259,9 @@ const productGroupId = useField('productGroupId');
 const colorIds = useField('colorIds');
 const sku = useField('sku');
 const msrp = useField('msrp');
-
-const options: MaskInputOptions = {
-  mask: '9.99#',
-  tokens: {
-    9: { pattern: /[0-9]/, repeated: true },
-  },
-  reversed: true,
-  onMaska: (detail: MaskaDetail) => {
-    if (detail.unmasked == null) {
-      return 0;
-    }
-  },
-};
-const mask = new Mask(options);
+const msrpUnmasked = ref('');
+const msrpMasked = ref('');
+defineExpose({ msrpUnmasked });
 
 const {
   isFetching: isCreating,
@@ -366,10 +350,10 @@ if (productId) {
       setValues({
         sku: product.sku,
         productGroupId: product.productGroup.id,
-        msrp: product.productGroup.msrp,
         createdBy: product.createdBy,
         updatedBy: userId,
       });
+      msrpMasked.value = product.productGroup.msrp?.toString() ?? '';
       const ids = product.productColors.map((productColor) => {
         return productColor.color.id;
       });
@@ -411,7 +395,10 @@ watch(dialogForm, (newState) => {
     handleDialogClose();
   }
 });
-watchEffect(() => {
-  console.log(JSON.stringify(values));
+watch(msrpUnmasked, (newValue) => {
+  msrp.setValue(+newValue);
 });
+// watchEffect(() => {
+//   console.log(JSON.stringify(values));
+// });
 </script>

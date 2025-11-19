@@ -86,17 +86,21 @@
                 {{ 'Price Calculation Formula' }}
               </v-card-title>
               <v-card-subtitle>
-                {{ 'Base price x Multiplier + Offset = Price' }}
+                {{ '(Base price  + Offset) x Multiplier = Price' }}
               </v-card-subtitle>
               <v-card-text>
                 <v-text-field
                   label="Offset"
-                  v-model="offset.value.value"
+                  v-maska:offsetUnmasked.unmasked="priceOffsetMask"
+                  v-model="priceFormulaModel.offset"
+                  inputmode="number"
                   :error-messages="offset.errorMessage.value"
                 />
                 <v-text-field
                   label="Multiplier"
-                  v-model="multiplier.value.value"
+                  v-maska:multiplierUnmasked.unmasked="multiplierMask"
+                  v-model="priceFormulaModel.multiplier"
+                  inputmode="numeric"
                   :error-messages="multiplier.errorMessage.value"
                 />
               </v-card-text>
@@ -168,6 +172,13 @@ const snack = reactive({
   message: t('status.saved'),
   color: SnackColor.Success,
 });
+const priceFormulaModel = reactive({
+  offset: '',
+  multiplier: '',
+});
+const offsetUnmasked = ref('');
+const multiplierUnmasked = ref('');
+defineExpose({ offsetUnmasked, multiplierUnmasked });
 
 if (invId) {
   useQuery({
@@ -235,4 +246,14 @@ const onSubmit = handleSubmit((data) => {
 const deleteInventory = (id: string) => {
   executeDelete({ id });
 };
+
+watch(offsetUnmasked, (newValue) => {
+  offset.setValue(Number(newValue));
+});
+watch(multiplierUnmasked, (newValue) => {
+  multiplier.setValue(newValue);
+});
+watchEffect(() => {
+  console.log(JSON.stringify(values));
+});
 </script>

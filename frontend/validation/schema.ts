@@ -136,11 +136,15 @@ export const InventorySchema = z.object({
   province: z.enum([...Provinces.map((c) => c.title)] as [string, ...string[]]),
   type: z.nativeEnum(InvType),
   priceFormula: z.object({
-    multiplier: z.string().regex(/^\d+(\.\d{1,2})?$/, {
-      // Allows optional decimals, "1" or "1.00"
-      // message: 'Must be a number with up to 2 decimal places',
-    }),
-    offset: z.number(),
+    offset: z.number().optional().nullable(),
+    multiplier: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        // Allows optional decimals, "1" or "1.00"
+        // message: 'Must be a number with up to 2 decimal places',
+      })
+      .optional()
+      .nullable(),
   }),
 });
 

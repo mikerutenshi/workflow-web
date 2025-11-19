@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import type { MaskInputOptions } from 'maska';
 import type { CombinedError } from 'villus';
 import { Gender, InvType, type Job } from '~/api/generated/types';
 
@@ -78,6 +78,36 @@ export function extractGraphQlError(error?: CombinedError | null): string {
   );
 }
 
+export const priceMask: MaskInputOptions = {
+  number: { locale: 'us' },
+  postProcess: (val) => (val ? `Rp ${val}` : ''),
+  reversed: true,
+};
+
+export const priceOffsetMask: MaskInputOptions = {
+  number: { locale: 'us' },
+  postProcess: (val: string) => {
+    var result = val;
+
+    if (val && val !== '-') {
+      const numericVal = val.replace(/[^\d.-]/g, '');
+      console.log(`numericval: ${numericVal}`);
+      const num = parseInt(numericVal);
+      const sign = num > 0 ? '+' : '-';
+      const valUnsigned = val.replace('-', '');
+
+      result = `${sign} Rp ${valUnsigned}`;
+    }
+
+    return result;
+  },
+  reversed: true,
+};
+
+export const multiplierMask: MaskInputOptions = {
+  number: { locale: 'us', fraction: 2 },
+  postProcess: (val) => (val ? `x ${val}` : ''),
+};
 // export function generateId(op: Operation, lastId: string | undefined): string {
 //   const today = dayjs();
 //   const format = 'YYMMDD';
