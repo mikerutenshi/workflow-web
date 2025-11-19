@@ -181,6 +181,7 @@ model Work {
   workSizes         SizeToWork[]
   tasks             Task[]
   progress          Progress        @default(INITIATED)       
+  note              String?          
 
   createdBy         Int
   updatedBy         Int?
@@ -248,6 +249,7 @@ model Inventory {
   type              InvType
 
   invProducts       InvToProduct[]
+  priceFormula      PriceFormula?
   // invsale           Sale[]
   // salemen           Salesman[]  
 
@@ -330,8 +332,17 @@ model InvTrfItemToSize {
   sizeId            Int
   quantity          Int
 
-  invTrfItem        InvTrfItem     @relation(fields: [invTrfItemId], references: [id], onDelete: Cascade)
+  invTrfItem        InvTrfItem      @relation(fields: [invTrfItemId], references: [id], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
+}
+
+model PriceFormula {
+  id                Int             @id @default(autoincrement())
+  multiplier        Decimal?        @db.Decimal(3,2)
+  offset            Int?
+  invId             Int             @unique
+
+  inventory         Inventory       @relation(fields: [invId], references: [id], onDelete: Cascade)
 }
 
 // model Sale {

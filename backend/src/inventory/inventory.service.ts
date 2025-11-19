@@ -10,7 +10,19 @@ export class InventoryService {
 
   createInventory(data: InventoryCreateDto): Promise<Inventory> {
     return this.prisma.inventory.create({
-      data,
+      data: {
+        name: data.name,
+        address: data.address,
+        city: data.city,
+        province: data.province,
+        type: data.type,
+        priceFormula: {
+          create: {
+            multiplier: data.priceFormula.multiplier,
+            offset: data.priceFormula.offset,
+          },
+        },
+      },
     });
   }
 
@@ -27,7 +39,19 @@ export class InventoryService {
   updateInventory(id: number, data: InventoryUpdateDto): Promise<Inventory> {
     return this.prisma.inventory.update({
       where: { id },
-      data,
+      data: {
+        name: data.name,
+        address: data.address,
+        city: data.city,
+        province: data.province,
+        type: data.type,
+        priceFormula: {
+          update: {
+            multiplier: data.priceFormula?.multiplier,
+            offset: data.priceFormula?.offset,
+          },
+        },
+      },
     });
   }
   async deleteInventory(id: number): Promise<Boolean> {

@@ -18,23 +18,25 @@ export function renderInvType(type: InvType): string {
   return type in INV_TYPE ? INV_TYPE[type] : 'N/A';
 }
 
-export function formatRupiah(amount: number | null | undefined): string {
-  if (amount === undefined || amount === null) return '';
+export function formatRupiah(
+  amount: number | null | undefined,
+): string | undefined {
+  if (amount === undefined || amount === null) return undefined;
 
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
+  let result = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+
+  return `Rp ${result}`;
 }
-export function parseRupiah(rupiah: string): number | null {
-  if (rupiah === null) return null;
-  // Hapus semua karakter kecuali digit dan koma
-  const cleaned = rupiah.replace(/[^0-9,]/g, '').replace(',', '.'); // Ganti koma dengan titik untuk desimal
-  const parsed = parseFloat(cleaned);
-  return !Number.isNaN(parsed) ? parsed : null;
-}
+// export function parseRupiah(rupiah: string): number | null {
+//   if (rupiah === null) return null;
+//   // Hapus semua karakter kecuali digit dan koma
+//   const cleaned = rupiah.replace(/[^0-9,]/g, '');
+//   const parsed = parseFloat(cleaned);
+//   return !Number.isNaN(parsed) ? parsed : null;
+// }
 
 export function renderGender(gender: Gender): string {
   const title = GENDERS[gender];

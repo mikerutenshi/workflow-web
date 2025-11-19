@@ -44,6 +44,7 @@ fragment WorkWithTasks on WorkWithTasks {
     sku
   }
   progress
+  note
   createdBy
   updatedBy
   createdAt
@@ -64,6 +65,7 @@ fragment Work on WorkWithTasks {
   product {
     sku
   }
+  note
   createdBy
   updatedBy
 }

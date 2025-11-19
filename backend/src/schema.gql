@@ -321,6 +321,7 @@ type Work {
   productId: ID!
   workSizes: [SizeToWork!]!
   progress: Progress!
+  note: String
 }
 
 type TaskWithArtisan {
@@ -347,6 +348,7 @@ type WorkWithTasks {
   productId: ID!
   workSizes: [SizeToWork!]!
   progress: Progress!
+  note: String
   tasks: [TaskWithArtisan!]!
   product: Product!
 }
@@ -362,6 +364,7 @@ type WorkWithProduct {
   productId: ID!
   workSizes: [SizeToWork!]!
   progress: Progress!
+  note: String
   product: Product!
 }
 
@@ -577,6 +580,7 @@ input WorkCreateDto {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWorkCreateDto!]!
+  note: String
   createdBy: ID!
 }
 
@@ -590,6 +594,7 @@ input WorkUpdateDto {
   orderNo: String!
   productId: ID!
   workSizes: [SizeToWorkCreateDto!]!
+  note: String
   createdBy: ID!
   updatedBy: ID!
 }
@@ -615,6 +620,12 @@ input InventoryCreateDto {
   city: String!
   province: String!
   type: InvType!
+  priceFormula: PriceFormulaCreateDto!
+}
+
+input PriceFormulaCreateDto {
+  multiplier: String
+  offset: Float
 }
 
 input InventoryUpdateDto {
@@ -623,6 +634,7 @@ input InventoryUpdateDto {
   city: String
   province: String
   type: InvType
+  priceFormula: PriceFormulaCreateDto
 }
 
 input InvProductCreateDto {

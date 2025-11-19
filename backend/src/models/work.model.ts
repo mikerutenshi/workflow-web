@@ -15,4 +15,6 @@ export class Work extends BaseModel {
   workSizes: SizeToWork[];
   @Field(() => Progress)
   progress: Progress;
+  @Field(() => String, { nullable: true })
+  note?: string | null;
 }

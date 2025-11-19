@@ -81,6 +81,7 @@ export const WorkSchema = z.object({
       quantity: z.number().min(1),
     }),
   ),
+  note: z.string().max(255).trim(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });
@@ -134,6 +135,13 @@ export const InventorySchema = z.object({
   city: z.enum([...Cities.map((c) => c.title)] as [string, ...string[]]),
   province: z.enum([...Provinces.map((c) => c.title)] as [string, ...string[]]),
   type: z.nativeEnum(InvType),
+  priceFormula: z.object({
+    multiplier: z.string().regex(/^\d+(\.\d{1,2})?$/, {
+      // Allows optional decimals, "1" or "1.00"
+      // message: 'Must be a number with up to 2 decimal places',
+    }),
+    offset: z.number(),
+  }),
 });
 
 export const InvTrfSchema = z.object({

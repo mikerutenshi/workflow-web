@@ -102,6 +102,19 @@
             </v-card>
           </v-col>
         </v-row>
+
+        <v-row>
+          <v-col>
+            <v-textarea
+              v-model="note.value.value"
+              label="Note"
+              counter
+              clearable
+              :rules="rules"
+            >
+            </v-textarea>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -182,6 +195,9 @@ const snack = reactive({
   message: t('status.saved'),
   color: SnackColor.Success,
 });
+
+const rules = [(v: string) => v.length <= 25 || 'Max 255 characters'];
+
 const {
   execute: executeCreate,
   isFetching: isCreating,
@@ -234,6 +250,7 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
 const date = useField<string>('date');
 const orderNo = useField('orderNo');
 const productId = useField('productId');
+const note = useField('note');
 const { fields, push, remove, replace } = useFieldArray('workSizes');
 
 const isShowSizeQuantities = ref(false);
@@ -291,6 +308,7 @@ if (workId.value) {
           });
         }
       });
+      note.setValue(work.note);
     },
   });
 }

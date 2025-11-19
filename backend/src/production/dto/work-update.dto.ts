@@ -1,6 +1,15 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, Min, ValidateNested } from 'class-validator';
+import {
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { SizeToWorkCreateDto } from './size-to-work-create.dto';
 
 @InputType()
@@ -22,6 +31,12 @@ export class WorkUpdateDto {
   @Type(() => SizeToWorkCreateDto)
   @ValidateNested({ each: true })
   workSizes: SizeToWorkCreateDto[];
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @MaxLength(255)
+  @IsOptional()
+  note?: string | null;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

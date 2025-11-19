@@ -50,14 +50,8 @@
           <v-col>
             <v-text-field
               :label="$t('jobs.draw_upper')"
-              prefix="Rp"
-              :model-value="mask.masked(drawUpper.value.value as number)"
-              @update:model-value="
-                (val) => {
-                  drawUpper.setValue(parseRupiah(val));
-                }
-              "
-              type="number"
+              v-maska:drawUpperUnmasked.unmasked="options"
+              v-model="priceModel.drawUpper"
               clearable
               :error-messages="drawUpper.errorMessage.value"
             />
@@ -67,14 +61,8 @@
           <v-col>
             <v-text-field
               :label="$t('jobs.draw_lining')"
-              prefix="Rp"
-              :model-value="mask.masked(drawLining.value.value as number)"
-              @update:model-value="
-                (val) => {
-                  drawLining.setValue(parseRupiah(val));
-                }
-              "
-              type="number"
+              v-maska:drawLiningUnmasked.unmasked="options"
+              v-model="priceModel.drawLining"
               clearable
               :error-messages="drawLining.errorMessage.value"
             />
@@ -84,14 +72,8 @@
           <v-col>
             <v-text-field
               :label="$t('jobs.stitch_upper')"
-              prefix="Rp"
-              :model-value="mask.masked(stitchUpper.value.value as number)"
-              @update:model-value="
-                (val) => {
-                  stitchUpper.setValue(parseRupiah(val));
-                }
-              "
-              type="number"
+              v-maska:stitchUpperUnmasked.unmasked="options"
+              v-model="priceModel.stitchUpper"
               clearable
               :error-messages="stitchUpper.errorMessage.value"
             />
@@ -101,14 +83,8 @@
           <v-col>
             <v-text-field
               :label="$t('jobs.stitch_outsole')"
-              prefix="Rp"
-              :model-value="mask.masked(stitchOutsole.value.value as number)"
-              @update:model-value="
-                (val) => {
-                  stitchOutsole.setValue(parseRupiah(val));
-                }
-              "
-              type="number"
+              v-maska:stitchOutsoleUnmasked.unmasked="options"
+              v-model="priceModel.stitchOutsole"
               clearable
               :error-messages="stitchOutsole.errorMessage.value"
             />
@@ -118,14 +94,8 @@
           <v-col>
             <v-text-field
               :label="$t('jobs.stitch_insole')"
-              prefix="Rp"
-              :model-value="mask.masked(stitchInsole.value.value as number)"
-              @update:model-value="
-                (val) => {
-                  stitchInsole.setValue(parseRupiah(val));
-                }
-              "
-              type="number"
+              v-maska:stitchInsoleUnmasked.unmasked="options"
+              v-model="priceModel.stitchInsole"
               clearable
               :error-messages="stitchInsole.errorMessage.value"
             />
@@ -135,14 +105,8 @@
           <v-col>
             <v-text-field
               :label="$t('jobs.last')"
-              prefix="Rp"
-              :model-value="mask.masked(last.value.value as number)"
-              @update:model-value="
-                (val) => {
-                  last.setValue(parseRupiah(val));
-                }
-              "
-              type="number"
+              v-maska:lastUnmasked.unmasked="options"
+              v-model="priceModel.last"
               clearable
               :error-messages="last.errorMessage.value"
             />
@@ -219,6 +183,29 @@ const { handleSubmit, setValues, values } = useForm({
     updatedBy: userId,
   },
 });
+
+const priceModel = reactive({
+  drawUpper: '',
+  drawLining: '',
+  stitchUpper: '',
+  stitchOutsole: '',
+  stitchInsole: '',
+  last: '',
+});
+const drawUpperUnmasked = ref('');
+const drawLiningUnmasked = ref('');
+const stitchUpperUnmasked = ref('');
+const stitchOutsoleUnmasked = ref('');
+const stitchInsoleUnmasked = ref('');
+const lastUnmasked = ref('');
+defineExpose({
+  drawUpperUnmasked,
+  drawLiningUnmasked,
+  stitchUpperUnmasked,
+  stitchOutsoleUnmasked,
+  stitchInsoleUnmasked,
+  lastUnmasked,
+});
 const drawUpper = useField('drawUpper');
 const drawLining = useField('drawLining');
 const stitchUpper = useField('stitchUpper');
@@ -243,22 +230,22 @@ useQuery({
       laborCosts.forEach((laborCost) => {
         switch (laborCost?.type) {
           case Job.DrawUpper:
-            drawUpper.setValue(laborCost.cost);
+            priceModel.drawUpper = laborCost.cost.toString();
             break;
           case Job.DrawLining:
-            drawLining.setValue(laborCost.cost);
+            priceModel.drawLining = laborCost.cost.toString();
             break;
           case Job.StitchUpper:
-            stitchUpper.setValue(laborCost.cost);
+            priceModel.stitchUpper = laborCost.cost.toString();
             break;
           case Job.StitchOutsole:
-            stitchOutsole.setValue(laborCost.cost);
+            priceModel.stitchOutsole = laborCost.cost.toString();
             break;
           case Job.StitchInsole:
-            stitchInsole.setValue(laborCost.cost);
+            priceModel.stitchInsole = laborCost.cost.toString();
             break;
           case Job.Last:
-            last.setValue(laborCost.cost);
+            priceModel.last = laborCost.cost.toString();
             break;
           default:
             break;
@@ -295,19 +282,45 @@ const {
   },
 });
 
-const options: MaskInputOptions = {
-  mask: '9.99#',
-  tokens: {
-    9: { pattern: /[0-9]/, repeated: true },
-  },
-  reversed: true,
-  onMaska: (detail: MaskaDetail) => {},
-};
-const mask = new Mask(options);
+// const optionsBackup: MaskInputOptions = {
+//   mask: '9,99#',
+//   tokens: {
+//     9: { pattern: /[0-9]/, repeated: true },
+//   },
+//   reversed: true,
+//   postProcess: (val) => (val ? `IDR${val}` : ''),
+//   onMaska: (detail: MaskaDetail) => {},
+// };
+// const mask = new Mask(optionsBackup);
 
-watchEffect(() => {
-  console.log(`Labor Form : ${JSON.stringify(values)}`);
+const options: MaskInputOptions = {
+  number: { locale: 'us' },
+  postProcess: (val) => (val ? `Rp ${val}` : ''),
+  reversed: true,
+};
+
+watch(drawUpperUnmasked, (newValue) => {
+  drawUpper.setValue(+newValue);
 });
+watch(drawLiningUnmasked, (newValue) => {
+  drawLining.setValue(+newValue);
+});
+watch(stitchUpperUnmasked, (newValue) => {
+  stitchUpper.setValue(+newValue);
+});
+watch(stitchOutsoleUnmasked, (newValue) => {
+  stitchOutsole.setValue(+newValue);
+});
+watch(stitchInsoleUnmasked, (newValue) => {
+  stitchInsole.setValue(+newValue);
+});
+watch(lastUnmasked, (newValue) => {
+  last.setValue(+newValue);
+});
+
+// watchEffect(() => {
+//   console.log(`Labor Cost Values : ${JSON.stringify(values)}`);
+// });
 
 function findCost(type: Job, array: any[]): number {
   return array.find((find) => find?.type === type);

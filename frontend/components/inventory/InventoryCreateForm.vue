@@ -78,6 +78,31 @@
             ></v-select>
           </v-col>
         </v-row>
+
+        <v-row>
+          <v-col>
+            <v-card>
+              <v-card-title>
+                {{ 'Price Calculation Formula' }}
+              </v-card-title>
+              <v-card-subtitle>
+                {{ 'Base price x Multiplier + Offset = Price' }}
+              </v-card-subtitle>
+              <v-card-text>
+                <v-text-field
+                  label="Offset"
+                  v-model="offset.value.value"
+                  :error-messages="offset.errorMessage.value"
+                />
+                <v-text-field
+                  label="Multiplier"
+                  v-model="multiplier.value.value"
+                  :error-messages="multiplier.errorMessage.value"
+                />
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -130,6 +155,8 @@ const address = useField('address');
 const city = useField('city');
 const province = useField('province');
 const type = useField('type');
+const multiplier = useField('priceFormula.multiplier');
+const offset = useField('priceFormula.offset');
 
 const submitBtnTitle = computed(() =>
   invId ? t('btn.update') : t('btn.create'),
