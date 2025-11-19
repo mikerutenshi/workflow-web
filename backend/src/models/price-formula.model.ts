@@ -5,9 +5,9 @@ export class PriceFormula {
   @Field(() => ID)
   id: number;
 
-  @Field()
-  multiplier: string;
+  @Field(() => String, { nullable: true })
+  multiplier: string | null;
 
-  @Field()
-  offset: number;
+  @Field(() => Number, { nullable: true })
+  offset: number | null;
 }

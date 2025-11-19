@@ -21,7 +21,16 @@ query getInventories {
 
 query getInventory($id: ID!) {
   getInventory(id: $id) {
-    ...Inventory
+    id
+    name
+    address
+    city
+    province
+    type
+    priceFormula {
+      offset
+      multiplier
+    }
   }
 }
 

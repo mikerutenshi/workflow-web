@@ -4,6 +4,7 @@ import { ParseIntPipe } from '@nestjs/common';
 import { Inventory } from '@/models/inventory.model';
 import { InventoryCreateDto } from './dto/inventory-create.dto';
 import { InventoryUpdateDto } from './dto/inventory-update.dto';
+import { InventoryDto } from './dto/inventory.dto';
 
 @Resolver(() => Inventory)
 export class InventoryResolver {
@@ -29,7 +30,7 @@ export class InventoryResolver {
     return this.service.updateInventory(id, data);
   }
 
-  @Query(() => Inventory, { nullable: true })
+  @Query(() => InventoryDto)
   getInventory(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
   ): Promise<Inventory | null> {

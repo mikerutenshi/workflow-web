@@ -185,14 +185,22 @@ if (invId) {
     query: GetInventoryDocument,
     variables: { id: invId || '' },
     onData(data) {
-      if (data && data.getInventory) {
+      const getInventory = data.getInventory;
+      if (getInventory) {
         setValues({
-          name: data.getInventory.name,
-          address: data.getInventory.address,
-          city: data.getInventory.city,
-          province: data.getInventory.province,
-          type: data.getInventory.type,
+          name: getInventory.name,
+          address: getInventory.address,
+          city: getInventory.city,
+          province: getInventory.province,
+          type: getInventory.type,
         });
+
+        if (getInventory.priceFormula) {
+          priceFormulaModel.offset =
+            getInventory.priceFormula.offset?.toString() ?? '';
+          priceFormulaModel.multiplier =
+            getInventory.priceFormula.multiplier ?? '';
+        }
       }
     },
   });

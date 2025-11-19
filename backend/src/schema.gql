@@ -60,6 +60,22 @@ enum InvType {
   STOREFRONT
 }
 
+type PriceFormula {
+  id: ID!
+  multiplier: String
+  offset: Float
+}
+
+type InventoryDto {
+  id: ID!
+  name: String!
+  address: String!
+  city: String!
+  province: String!
+  type: InvType!
+  priceFormula: PriceFormula
+}
+
 type Size {
   id: ID!
   eu: String!
@@ -428,7 +444,7 @@ type Query {
   getSizes: [Size!]!
   getTasks(workId: ID!): [TaskWithArtisan!]!
   getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
-  getInventory(id: ID!): Inventory
+  getInventory(id: ID!): InventoryDto!
   getInventories: [Inventory!]!
   getInvProducts(invId: ID!): [InvProductDto!]!
   getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
