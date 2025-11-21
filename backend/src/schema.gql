@@ -657,8 +657,8 @@ input InvProductCreateDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSizeCreateDto!]!
-  price: Int!
-  discount: String!
+  price: Int
+  discount: String
 }
 
 input InvProductToSizeCreateDto {

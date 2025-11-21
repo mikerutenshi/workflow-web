@@ -11,12 +11,11 @@ export class InvProductService {
   constructor(private prisma: PrismaService) {}
 
   async createInvProduct(data: InvProductCreateDto): Promise<InvProduct> {
-    const { invProductSizes, discount, ...rest } = data;
+    const { invProductSizes, ...rest } = data;
     try {
       const createdProduct = await this.prisma.invToProduct.create({
         data: {
           ...rest,
-          discount: Prisma.Decimal(discount),
           invProductSizes: {
             create: invProductSizes,
           },
@@ -97,12 +96,11 @@ export class InvProductService {
     productId: number,
     data: InvProductUpdateDto,
   ): Promise<InvProduct> {
-    const { invProductSizes, discount, ...rest } = data;
+    const { invProductSizes, ...rest } = data;
     const invProduct = await this.prisma.invToProduct.update({
       where: { invId_productId: { invId, productId } },
       data: {
         ...rest,
-        ...(discount !== undefined && { discount: Prisma.Decimal(discount) }),
         ...(invProductSizes && {
           invProductSizes: {
             deleteMany: {}, // Remove existing sizes
@@ -124,21 +122,15 @@ export class InvProductService {
   }
 
   upsertInvProduct(data: InvProductCreateDto): Promise<InvProduct> {
-    const { invProductSizes, discount, ...rest } = data;
+    const { invProductSizes, ...rest } = data;
 
     return this.prisma.$transaction(async (tx) => {
       const upsertProduct = await tx.invToProduct.upsert({
         where: {
           invId_productId: { invId: data.invId, productId: data.productId },
         },
-        update: {
-          ...rest,
-          ...(discount !== undefined && { discount: Prisma.Decimal(discount) }),
-        },
-        create: {
-          ...rest,
-          discount: Prisma.Decimal(discount),
-        },
+        update: rest,
+        create: rest,
       });
 
       if (invProductSizes && invProductSizes.length > 0) {

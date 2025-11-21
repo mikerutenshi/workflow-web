@@ -38,7 +38,11 @@ export class TaskService {
 
         const initialWork = await tx.work.findUnique({
           where: { id: workId },
-          include: { product: true, workSizes: true, invTrf: true },
+          include: {
+            product: { include: { productGroup: true } },
+            workSizes: true,
+            invTrf: true,
+          },
         });
         const initialProgress = initialWork!.progress;
 
@@ -107,8 +111,7 @@ export class TaskService {
               sizeId: workSize.sizeId,
               quantity: workSize.quantity,
             })),
-            price: 0,
-            discount: '0.00',
+            price: initialWork?.product.productGroup.msrp,
           });
         } else if (initialProgress === Progress.COMPLETED && !allDone) {
           //Delete the InvTrf

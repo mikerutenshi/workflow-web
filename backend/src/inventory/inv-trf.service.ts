@@ -100,7 +100,6 @@ export class InvTrfService {
               quantity: itemSizes.quantity,
             })),
             price: 0,
-            discount: '0.00',
           });
 
           if (item.fromInvId) {
@@ -137,7 +136,6 @@ export class InvTrfService {
                 quantity: itemSizes.quantity,
               })),
               price: 0,
-              discount: '0.00',
             });
           }
         }

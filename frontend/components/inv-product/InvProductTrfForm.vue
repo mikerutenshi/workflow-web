@@ -263,7 +263,7 @@ const {
     snack.message = t('status.deleted');
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF],
+  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
 });
 
 const variables = reactive({

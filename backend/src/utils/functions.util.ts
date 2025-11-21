@@ -1,3 +1,4 @@
+import { Decimal } from '@/generated/client/runtime/library';
 import { Operation } from '@/models/operation.enum';
 import dayjs from 'dayjs';
 
@@ -27,4 +28,15 @@ export function generateId(op: Operation, lastId: string | undefined): string {
   } else {
     throw Error('Incomplete ID generator parameter');
   }
+}
+
+export function calculatePrice(
+  base: number,
+  offset?: number,
+  multiplier?: number,
+) {
+  const finalOffset = offset ?? 0;
+  const finalMultiplier = multiplier ? multiplier : 1;
+  const result = (base + finalOffset) * finalMultiplier;
+  return result;
 }

@@ -74,6 +74,10 @@
             }}
           </template>
 
+          <template v-slot:item.price="{ item }">
+            {{ formatRupiah(item.price) }}
+          </template>
+
           <template v-slot:item.invProductSizes="{ item }">
             <v-table density="compact">
               <tbody>
