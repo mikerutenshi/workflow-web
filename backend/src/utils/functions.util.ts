@@ -31,12 +31,13 @@ export function generateId(op: Operation, lastId: string | undefined): string {
 }
 
 export function calculatePrice(
-  base: number,
-  offset?: number,
-  multiplier?: number,
-) {
+  base: number | null,
+  offset?: number | null,
+  multiplier?: Decimal | null,
+): number | undefined {
+  if (!base) return undefined;
   const finalOffset = offset ?? 0;
-  const finalMultiplier = multiplier ? multiplier : 1;
+  const finalMultiplier = Number(multiplier ? multiplier : 1);
   const result = (base + finalOffset) * finalMultiplier;
   return result;
 }

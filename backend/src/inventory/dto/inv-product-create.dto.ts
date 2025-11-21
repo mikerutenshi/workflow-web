@@ -28,12 +28,6 @@ export class InvProductCreateDto {
   @ValidateNested({ each: true })
   invProductSizes: InvProductToSizeCreateDto[];
 
-  @Field(() => Int, { nullable: true })
-  @IsInt()
-  @Min(0)
-  @IsOptional()
-  price?: number | null;
-
   @Field(() => String, { nullable: true })
   @IsDecimal({ decimal_digits: '2' })
   @IsOptional()

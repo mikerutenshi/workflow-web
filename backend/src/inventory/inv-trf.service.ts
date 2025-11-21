@@ -99,7 +99,6 @@ export class InvTrfService {
               sizeId: itemSizes.sizeId,
               quantity: itemSizes.quantity,
             })),
-            price: 0,
           });
 
           if (item.fromInvId) {
@@ -135,7 +134,6 @@ export class InvTrfService {
                 sizeId: itemSizes.sizeId,
                 quantity: itemSizes.quantity,
               })),
-              price: 0,
             });
           }
         }

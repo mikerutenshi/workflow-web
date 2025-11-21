@@ -111,7 +111,6 @@ export class TaskService {
               sizeId: workSize.sizeId,
               quantity: workSize.quantity,
             })),
-            price: initialWork?.product.productGroup.msrp,
           });
         } else if (initialProgress === Progress.COMPLETED && !allDone) {
           //Delete the InvTrf

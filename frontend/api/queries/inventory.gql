@@ -86,8 +86,8 @@ query getInvProducts($invId: ID!) {
         quantity
       }
     }
-    price
     discount
+    price
   }
 }
 

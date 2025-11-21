@@ -5,6 +5,7 @@ import { InvProduct } from '@/models/inv-product.model';
 import { Prisma, Progress } from '@/generated/client';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductDto } from './dto/inv-product.dto';
+import { calculatePrice } from '@/utils/functions.util';
 
 @Injectable()
 export class InvProductService {
@@ -58,13 +59,18 @@ export class InvProductService {
             progress: { not: Progress.COMPLETED },
           },
         },
+        inventory: {
+          select: {
+            priceFormula: { select: { offset: true, multiplier: true } },
+          },
+        },
       },
       where: {
         invId,
       },
     });
 
-    return products.map((product) => ({
+    return products.map(({ inventory, ...product }) => ({
       ...product,
       invProductSizes: product.invProductSizes
         .map((productSize) => {
@@ -88,6 +94,11 @@ export class InvProductService {
         })
         .filter((size) => size.quantity > 0),
       discount: product.discount?.toString(),
+      price: calculatePrice(
+        product.product.productGroup.msrp,
+        inventory.priceFormula?.offset,
+        inventory.priceFormula?.multiplier,
+      ),
     })) as InvProductDto[];
   }
 

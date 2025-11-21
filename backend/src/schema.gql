@@ -103,7 +103,6 @@ type InvProduct {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
-  price: Int
   discount: String
 }
 
@@ -210,10 +209,10 @@ type InvProductDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
-  price: Int
   discount: String
   product: ProductGetDto!
   invTrfItems: [InvTrfItem!]!
+  price: Int
 }
 
 type InvTrf {
@@ -657,7 +656,6 @@ input InvProductCreateDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSizeCreateDto!]!
-  price: Int
   discount: String
 }
 
@@ -668,7 +666,6 @@ input InvProductToSizeCreateDto {
 
 input InvProductUpdateDto {
   invProductSizes: [InvProductToSizeCreateDto!]
-  price: Int
   discount: String
 }
 
