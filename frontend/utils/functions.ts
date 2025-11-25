@@ -108,32 +108,8 @@ export const multiplierMask: MaskInputOptions = {
   number: { locale: 'us', fraction: 2 },
   postProcess: (val) => (val ? `x ${val}` : ''),
 };
-// export function generateId(op: Operation, lastId: string | undefined): string {
-//   const today = dayjs();
-//   const format = 'YYMMDD';
 
-//   if (op === Operation.Produce) {
-//     return `${op}-${today.format(format)}-${lastId}`;
-//   } else if (!lastId) {
-//     return `${op}-${today.format(format)}-0001`;
-//   } else if (lastId) {
-//     const split = lastId.split('-');
-//     const lastOp = split[0];
-//     const lastDate = split[1];
-//     const lastSequence = split[2];
-
-//     if (lastOp === op) {
-//       const lastDateObject = dayjs(lastDate, 'YYMMDD');
-
-//       if (lastDateObject.isBefore(today, 'month')) {
-//         return `${op}-${today.format(format)}-0001`;
-//       } else {
-//         return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
-//       }
-//     } else {
-//       throw Error('Operations do not match');
-//     }
-//   } else {
-//     throw Error('Incomplete ID generator parameter');
-//   }
-// }
+export const percentageMask: MaskInputOptions = {
+  number: { locale: 'us', fraction: 2 },
+  postProcess: (val) => (val ? `${val} %` : ''),
+};

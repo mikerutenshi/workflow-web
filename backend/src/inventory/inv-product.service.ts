@@ -30,7 +30,7 @@ export class InvProductService {
 
       return {
         ...createdProduct,
-        discount: createdProduct.discount?.toString(),
+        discount: createdProduct.discount?.toFixed(2),
       } as InvProduct;
     } catch (error: any) {
       if (error.code === 'P2002') {
@@ -93,7 +93,7 @@ export class InvProductService {
           };
         })
         .filter((size) => size.quantity > 0),
-      discount: product.discount?.toString(),
+      discount: product.discount?.toFixed(2),
       price: calculatePrice(
         product.product.productGroup.msrp,
         inventory.priceFormula?.offset,
@@ -128,7 +128,7 @@ export class InvProductService {
 
     return {
       ...invProduct,
-      discount: invProduct.discount?.toString(),
+      discount: invProduct.discount?.toFixed(2),
     } as InvProduct;
   }
 
@@ -181,7 +181,7 @@ export class InvProductService {
       console.log(`Result: ${JSON.stringify(result)}`);
       return {
         ...result,
-        discount: result?.discount?.toString(),
+        discount: result?.discount?.toFixed(2),
       } as InvProduct;
     });
   }

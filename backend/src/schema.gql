@@ -64,6 +64,7 @@ type PriceFormula {
   id: ID!
   multiplier: String
   offset: Float
+  discounts: [String!]!
 }
 
 type InventoryDto {
@@ -444,7 +445,7 @@ type Query {
   getTasks(workId: ID!): [TaskWithArtisan!]!
   getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
   getInventory(id: ID!): InventoryDto!
-  getInventories: [Inventory!]!
+  getInventories: [InventoryDto!]!
   getInvProducts(invId: ID!): [InvProductDto!]!
   getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
   getInvTrfItems(fromInvId: ID!, toInvId: ID!): [InvTrfItemDto!]!
@@ -641,6 +642,7 @@ input InventoryCreateDto {
 input PriceFormulaCreateDto {
   multiplier: String
   offset: Float
+  discounts: [String!]!
 }
 
 input InventoryUpdateDto {

@@ -10,4 +10,7 @@ export class PriceFormula {
 
   @Field(() => Number, { nullable: true })
   offset: number | null;
+
+  @Field(() => [String])
+  discounts: string[];
 }

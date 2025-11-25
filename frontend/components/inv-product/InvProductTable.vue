@@ -139,16 +139,7 @@
                     item.invProductSizes.reduce(
                       (sum, item) => sum + item.quantity,
                       0,
-                    ) >
-                    item.invTrfItems.reduce(
-                      (sum, item) =>
-                        sum +
-                        item.invTrfItemSizes.reduce(
-                          (s, i) => s + i.quantity,
-                          0,
-                        ),
-                      0,
-                    )
+                    ) > 0
                   "
                   @click="
                     () => {

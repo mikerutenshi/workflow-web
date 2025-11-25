@@ -140,11 +140,15 @@ export const InventorySchema = z.object({
     multiplier: z
       .string()
       .regex(/^\d+(\.\d{1,2})?$/, {
-        // Allows optional decimals, "1" or "1.00"
-        // message: 'Must be a number with up to 2 decimal places',
+        message: 'Must be a number with up to 2 decimal places',
       })
       .optional()
       .nullable(),
+    discounts: z.array(
+      z.string().regex(/^\d+(\.\d{1,4})?$/, {
+        message: 'Must be a number with up to 4 decimal places',
+      }),
+    ),
   }),
 });
 

@@ -33,12 +33,12 @@ export class InventoryResolver {
   @Query(() => InventoryDto)
   getInventory(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Inventory | null> {
+  ): Promise<InventoryDto | null> {
     return this.service.getInventory(id);
   }
 
-  @Query(() => [Inventory])
-  getInventories(): Promise<Inventory[]> {
+  @Query(() => [InventoryDto])
+  getInventories(): Promise<InventoryDto[]> {
     return this.service.getInventories();
   }
 }

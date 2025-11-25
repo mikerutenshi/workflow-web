@@ -28,6 +28,18 @@
 
         <v-row>
           <v-col>
+            <v-text-field
+              :label="$t('label.price')"
+              v-maska:msrpUnmasked.unmasked="priceMask"
+              v-model="msrpMasked"
+              readonly
+              :error-messages="msrp.errorMessage.value"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col>
             <v-card>
               <v-card-title></v-card-title>
               <v-card-subtitle>{{

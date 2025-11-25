@@ -1,5 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsDecimal, IsInt, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  IsDecimal,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 @InputType()
 export class PriceFormulaCreateDto {
@@ -12,4 +19,9 @@ export class PriceFormulaCreateDto {
   @IsInt()
   @IsOptional()
   offset?: number | null;
+
+  @Field(() => [String])
+  @IsArray()
+  @IsDecimal({ decimal_digits: '2' }, { each: true })
+  discounts: string[];
 }

@@ -1,4 +1,4 @@
-import { Decimal } from '@/generated/client/runtime/library';
+import { Prisma } from '@/generated/client';
 import { Operation } from '@/models/operation.enum';
 import dayjs from 'dayjs';
 
@@ -33,11 +33,11 @@ export function generateId(op: Operation, lastId: string | undefined): string {
 export function calculatePrice(
   base: number | null,
   offset?: number | null,
-  multiplier?: Decimal | null,
+  multiplier?: Prisma.Decimal | null,
 ): number | undefined {
   if (!base) return undefined;
   const finalOffset = offset ?? 0;
-  const finalMultiplier = Number(multiplier ? multiplier : 1);
-  const result = (base + finalOffset) * finalMultiplier;
+  const finalMultiplier = multiplier ? multiplier : new Prisma.Decimal(1);
+  const result = finalMultiplier.times(base + finalOffset).toNumber();
   return result;
 }

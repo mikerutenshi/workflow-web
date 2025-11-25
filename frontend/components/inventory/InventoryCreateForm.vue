@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
+  <v-form @submit.prevent="onSubmit">
     <v-row>
       <v-col>
         <v-row v-if="updateError || createError || deleteError">
@@ -12,83 +12,63 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              :label="$t('label.name')"
-              :error-messages="name.errorMessage.value"
-              v-model="name.value.value"
-            />
-          </v-col>
-        </v-row>
+        <v-text-field
+          :label="$t('label.name')"
+          :error-messages="name.errorMessage.value"
+          v-model="name.value.value"
+        />
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              :label="$t('label.address')"
-              :error-messages="address.errorMessage.value"
-              v-model="address.value.value"
-            />
-          </v-col>
-        </v-row>
+        <v-text-field
+          :label="$t('label.address')"
+          :error-messages="address.errorMessage.value"
+          v-model="address.value.value"
+        />
 
-        <v-row>
-          <v-col>
-            <v-autocomplete
-              :label="$t('label.select_city')"
-              auto-select-first
-              item-value="title"
-              item-title="title"
-              :items="Cities"
-              v-model="city.value.value"
-              :error-messages="city.errorMessage.value"
-              :allow-new="true"
-            >
-            </v-autocomplete>
-          </v-col>
-        </v-row>
+        <v-autocomplete
+          :label="$t('label.select_city')"
+          auto-select-first
+          item-value="title"
+          item-title="title"
+          :items="Cities"
+          v-model="city.value.value"
+          :error-messages="city.errorMessage.value"
+          :allow-new="true"
+        >
+        </v-autocomplete>
 
-        <v-row>
-          <v-col>
-            <v-autocomplete
-              :label="$t('label.select_province')"
-              auto-select-first
-              item-value="title"
-              item-title="title"
-              :items="Provinces"
-              v-model="province.value.value"
-              :error-messages="province.errorMessage.value"
-              :allow-new="true"
-            >
-            </v-autocomplete>
-          </v-col>
-        </v-row>
+        <v-autocomplete
+          :label="$t('label.select_province')"
+          auto-select-first
+          item-value="title"
+          item-title="title"
+          :items="Provinces"
+          v-model="province.value.value"
+          :error-messages="province.errorMessage.value"
+          :allow-new="true"
+        >
+        </v-autocomplete>
 
-        <v-row>
-          <v-col>
-            <v-select
-              v-model="type.value.value"
-              :items="invTypes"
-              :return-object="false"
-              :label="$t('label.select_inv_type')"
-              chips
-              item-title="title"
-              item-value="id"
-              :error-messages="type.errorMessage.value"
-            ></v-select>
-          </v-col>
-        </v-row>
+        <v-select
+          v-model="type.value.value"
+          :items="invTypes"
+          :return-object="false"
+          :label="$t('label.select_inv_type')"
+          chips
+          item-title="title"
+          item-value="id"
+          :error-messages="type.errorMessage.value"
+        ></v-select>
 
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-card-title>
-                {{ 'Price Calculation Formula' }}
-              </v-card-title>
-              <v-card-subtitle>
-                {{ '(Base price  + Offset) x Multiplier = Price' }}
-              </v-card-subtitle>
-              <v-card-text>
+        <v-card>
+          <v-card-title>
+            {{ 'Store Wide Price Formula' }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ '(Base price  + Offset) x Multiplier = Price' }}
+          </v-card-subtitle>
+          <v-card-text>
+            <v-row>
+              <v-col>
                 <v-text-field
                   label="Offset"
                   v-maska:offsetUnmasked.unmasked="priceOffsetMask"
@@ -103,18 +83,55 @@
                   inputmode="numeric"
                   :error-messages="multiplier.errorMessage.value"
                 />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col cols="9">
+                <v-text-field
+                  v-for="(_, index) in priceFormulaModel.discounts"
+                  :label="`Discount ${index + 1}`"
+                  v-maska="percentageMask"
+                  :key="index"
+                  clearable
+                  :model-value="priceFormulaModel.discounts[index]"
+                  @update:model-value="
+                    (value) =>
+                      (priceFormulaModel.discounts[index] =
+                        discMask.unmasked(value))
+                  "
+                  @click:clear="
+                    if (discounts.fields.value.length > 1)
+                      priceFormulaModel.discounts.pop();
+                  "
+                  inputmode="numeric"
+                />
+              </v-col>
+              <v-col cols="3">
+                <v-btn
+                  :icon="mdiPlus"
+                  color="primary"
+                  @click="priceFormulaModel.discounts.push('')"
+                ></v-btn>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
 
-    <v-row align="end" class="ma-1 mt-4">
-      <ActionConfirm :loading="isCreating || isUpdating">{{
-        submitBtnTitle
-      }}</ActionConfirm>
-      <ActionDelete v-if="invId" @click="deleteInventory(invId)"></ActionDelete>
+    <v-row>
+      <v-col cols="6">
+        <ActionConfirm :loading="isCreating || isUpdating">{{
+          submitBtnTitle
+        }}</ActionConfirm>
+      </v-col>
+      <v-col cols="6" class="d-flex align-end">
+        <ActionDelete
+          v-if="invId"
+          @click="deleteInventory(invId)"
+        ></ActionDelete>
+      </v-col>
     </v-row>
   </v-form>
 
@@ -127,15 +144,16 @@
 </template>
 
 <script setup lang="ts">
-import { Cities } from '#imports';
-import { Provinces } from '#imports';
+import { Cities, percentageMask, Provinces } from '#imports';
+import { mdiPlus } from '@mdi/js';
+import { Mask } from 'maska';
 import { useMutation, useQuery } from 'villus';
 import {
   CreateInventoryDocument,
   DeleteInventoryDocument,
   GetInventoryDocument,
-  UpdateInventoryDocument,
   InvType,
+  UpdateInventoryDocument,
 } from '~/api/generated/types';
 import { InventorySchema } from '~/validation/schema';
 
@@ -161,6 +179,7 @@ const province = useField('province');
 const type = useField('type');
 const multiplier = useField('priceFormula.multiplier');
 const offset = useField('priceFormula.offset');
+const discounts = useFieldArray('priceFormula.discounts');
 
 const submitBtnTitle = computed(() =>
   invId ? t('btn.update') : t('btn.create'),
@@ -175,10 +194,13 @@ const snack = reactive({
 const priceFormulaModel = reactive({
   offset: '',
   multiplier: '',
+  discounts: [''],
 });
 const offsetUnmasked = ref('');
 const multiplierUnmasked = ref('');
 defineExpose({ offsetUnmasked, multiplierUnmasked });
+
+const discMask = new Mask(percentageMask);
 
 if (invId) {
   useQuery({
@@ -200,9 +222,16 @@ if (invId) {
             getInventory.priceFormula.offset?.toString() ?? '';
           priceFormulaModel.multiplier =
             getInventory.priceFormula.multiplier ?? '';
+          if (getInventory.priceFormula.discounts.length > 0) {
+            priceFormulaModel.discounts =
+              getInventory.priceFormula.discounts.map((item) =>
+                convertDecimalToPercent(item),
+              );
+          }
         }
       }
     },
+    tags: [CACHE_INVENTORY],
   });
 }
 
@@ -224,7 +253,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INVENTORIES],
+  clearCacheTags: [CACHE_INVENTORIES, CACHE_INVENTORY],
 });
 const {
   execute: executeDelete,
@@ -261,7 +290,25 @@ watch(offsetUnmasked, (newValue) => {
 watch(multiplierUnmasked, (newValue) => {
   multiplier.setValue(newValue);
 });
+watch(
+  () => priceFormulaModel.discounts,
+  (newDiscounts) => {
+    const decimals = newDiscounts
+      .filter((item) => item !== '')
+      .map((item) => convertPercentToDecimal(item));
+    setFieldValue('priceFormula.discounts', decimals);
+  },
+  { deep: true },
+);
 watchEffect(() => {
-  console.log(JSON.stringify(values));
+  console.log(`Values: ${JSON.stringify(values)}`);
+  console.log(`Model: ${JSON.stringify(priceFormulaModel)}`);
 });
+
+function convertPercentToDecimal(numerator: string): string {
+  return (parseFloat(numerator) / 100).toFixed(4);
+}
+function convertDecimalToPercent(decimal: string): string {
+  return (parseFloat(decimal) * 100).toFixed(4);
+}
 </script>

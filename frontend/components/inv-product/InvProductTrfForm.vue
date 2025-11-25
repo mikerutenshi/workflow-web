@@ -235,7 +235,7 @@ const {
     snack.message = t('status.saved');
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_PRODUCTS],
+  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_PRODUCTS, CACHE_INV_TRFS_PER_ITEM],
 });
 const {
   isFetching: isUpdating,

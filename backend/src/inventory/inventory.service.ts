@@ -21,14 +21,31 @@ export class InventoryService {
           create: {
             multiplier: data.priceFormula.multiplier,
             offset: data.priceFormula.offset,
+            discounts: data.priceFormula.discounts,
           },
         },
       },
     });
   }
 
-  getInventories(): Promise<Inventory[]> {
-    return this.prisma.inventory.findMany();
+  async getInventories(): Promise<InventoryDto[]> {
+    const inventories = await this.prisma.inventory.findMany({
+      orderBy: { id: 'asc' },
+      include: { priceFormula: true },
+    });
+
+    return inventories.map((result) => ({
+      ...result,
+      priceFormula: result.priceFormula
+        ? {
+            ...result.priceFormula,
+            multiplier: result.priceFormula.multiplier?.toFixed(2) ?? null,
+            discounts: result.priceFormula.discounts.map((disc) =>
+              disc.toFixed(4),
+            ),
+          }
+        : null,
+    }));
   }
 
   async getInventory(id: number): Promise<InventoryDto> {
@@ -48,7 +65,10 @@ export class InventoryService {
       priceFormula: result.priceFormula
         ? {
             ...result.priceFormula,
-            multiplier: result.priceFormula.multiplier?.toString() ?? null,
+            multiplier: result.priceFormula.multiplier?.toFixed(2) ?? null,
+            discounts: result.priceFormula.discounts.map((disc) =>
+              disc.toFixed(4),
+            ),
           }
         : null,
     };
@@ -68,10 +88,12 @@ export class InventoryService {
             update: {
               multiplier: data.priceFormula?.multiplier,
               offset: data.priceFormula?.offset,
+              discounts: data.priceFormula?.discounts,
             },
             create: {
               multiplier: data.priceFormula?.multiplier,
               offset: data.priceFormula?.offset,
+              discounts: data.priceFormula?.discounts,
             },
           },
         },
