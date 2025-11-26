@@ -58,7 +58,7 @@
     "inv_trf_edit": "Ngarobah Mindahkeun Inventoris",
     "setting_colors": "Setélan Warna",
     "trf_detail_for": "Mindahkeun Rinci pikeun {item}",
-    "send_to": "Ngirim Sapatu",
+    "send_to": "Ngirim {product}",
     "item_detail_for": "Rinci Barang pikeun {item}",
     "delete_confirm": "Konfirmasi Mupus"
   },
@@ -139,7 +139,7 @@
     "from_inv": "Ti Gudang ",
     "to_inv": "Ka Gudang",
     "show_trf_detail": "Nempo Rinci Mindahkeun",
-    "send_to": "Kirim Ka",
+    "send_to": "Kirim Sapatu",
     "pending_trfs": "Pending Mindahkeun",
     "show_item_detail": "Nempo Rinci Barang",
     "delete_confirm": "Naha anjeun yakin rék mupus {item}?",

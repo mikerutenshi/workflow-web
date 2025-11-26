@@ -11,8 +11,6 @@ export class Work extends BaseModel {
   orderNo: string;
   @Field(() => ID)
   productId: number;
-  @Field(() => [SizeToWork])
-  workSizes: SizeToWork[];
   @Field(() => Progress)
   progress: Progress;
   @Field(() => String, { nullable: true })

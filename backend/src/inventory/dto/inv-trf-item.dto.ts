@@ -1,12 +1,12 @@
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
-import { Product } from '@/models/product.model';
+import { ProductDto } from '@/product/dto/product-get.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class InvTrfItemDto extends InvTrfItem {
-  @Field(() => Product)
-  product: Product;
+  @Field(() => ProductDto)
+  product: ProductDto;
 
   @Field(() => InvTrf, { nullable: true })
   invTrf?: InvTrf | null;

@@ -304,11 +304,4 @@ watchEffect(() => {
   console.log(`Values: ${JSON.stringify(values)}`);
   console.log(`Model: ${JSON.stringify(priceFormulaModel)}`);
 });
-
-function convertPercentToDecimal(numerator: string): string {
-  return (parseFloat(numerator) / 100).toFixed(4);
-}
-function convertDecimalToPercent(decimal: string): string {
-  return (parseFloat(decimal) * 100).toFixed(4);
-}
 </script>

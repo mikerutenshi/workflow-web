@@ -113,3 +113,11 @@ export const percentageMask: MaskInputOptions = {
   number: { locale: 'us', fraction: 2 },
   postProcess: (val) => (val ? `${val} %` : ''),
 };
+
+export function convertPercentToDecimal(numerator: string): string {
+  return (parseFloat(numerator) / 100).toFixed(4);
+}
+
+export function convertDecimalToPercent(decimal: string): string {
+  return (parseFloat(decimal) * 100).toFixed(4);
+}

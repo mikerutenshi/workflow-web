@@ -58,7 +58,7 @@
     "inv_trf_edit": "Ubah Transfer Inventaris",
     "setting_colors": "Pengaturan Warna",
     "trf_detail_for": "Rincian Transfer untuk {item}",
-    "send_to": "Kirim Sepatu",
+    "send_to": "Kirim {product}",
     "item_detail_for": "Rincian Barang untuk {item}",
     "delete_confirm": "Konfirmasi Penghapusan"
   },
@@ -139,7 +139,7 @@
     "from_inv": "Dari Gudang ",
     "to_inv": "Ke Gudang",
     "show_trf_detail": "Lihat Rincian Transfer",
-    "send_to": "Kirim Ke",
+    "send_to": "Kirim Sepatu",
     "pending_trfs": "Transfer Tertunda",
     "show_item_detail": "Lihat Rincian Barang ",
     "delete_confirm": "Apakah anda yakin akan menghapus {item}?",

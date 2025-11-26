@@ -194,7 +194,7 @@ type ColorToProductWithColor {
   color: Color!
 }
 
-type ProductGetDto {
+type ProductDto {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -211,7 +211,7 @@ type InvProductDto {
   productId: ID!
   invProductSizes: [InvProductToSize!]!
   discount: String
-  product: ProductGetDto!
+  product: ProductDto!
   invTrfItems: [InvTrfItem!]!
   price: Int
 }
@@ -260,8 +260,21 @@ type InvTrfItemDto {
   progress: Progress!
   fromInv: Inventory
   toInv: Inventory!
-  product: Product!
+  product: ProductDto!
   invTrf: InvTrf
+}
+
+type Work {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  date: Date!
+  orderNo: String!
+  productId: ID!
+  progress: Progress!
+  note: String
 }
 
 type InvTrfDto {
@@ -278,7 +291,7 @@ type InvTrfDto {
   fromInv: Inventory
   toInv: Inventory!
   invTrfItems: [InvTrfItemDto!]!
-  orderNo: String
+  work: Work
 }
 
 type ProductGroupGetDto {
@@ -326,20 +339,6 @@ type SizeToWork {
   size: Size!
 }
 
-type Work {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  date: Date!
-  orderNo: String!
-  productId: ID!
-  workSizes: [SizeToWork!]!
-  progress: Progress!
-  note: String
-}
-
 type TaskWithArtisan {
   id: ID!
   createdBy: ID!
@@ -362,9 +361,9 @@ type WorkWithTasks {
   date: Date!
   orderNo: String!
   productId: ID!
-  workSizes: [SizeToWork!]!
   progress: Progress!
   note: String
+  workSizes: [SizeToWork!]!
   tasks: [TaskWithArtisan!]!
   product: Product!
 }
@@ -378,9 +377,9 @@ type WorkWithProduct {
   date: Date!
   orderNo: String!
   productId: ID!
-  workSizes: [SizeToWork!]!
   progress: Progress!
   note: String
+  workSizes: [SizeToWork!]!
   product: Product!
 }
 
@@ -428,8 +427,8 @@ type Query {
   me: User!
   getColors: [Color!]!
   getColor(id: ID!): Color!
-  getProducts: [ProductGetDto!]!
-  getProduct(id: ID!): ProductGetDto!
+  getProducts: [ProductDto!]!
+  getProduct(id: ID!): ProductDto!
   getProductCategories: [ProductCategory!]!
   getProductCategory(id: ID!): ProductCategory!
   getProductGroups: [ProductGroupGetDto!]!

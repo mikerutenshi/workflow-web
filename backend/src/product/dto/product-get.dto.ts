@@ -4,7 +4,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { ColorToProductWithColor } from '../../models/color-to-product-with-color.model';
 
 @ObjectType()
-export class ProductGetDto extends Product {
+export class ProductDto extends Product {
   @Field(() => ProductGroupWithCategory)
   productGroup: ProductGroupWithCategory;
 

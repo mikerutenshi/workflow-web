@@ -59,7 +59,7 @@
     "setting_colors": "Color Setting",
     "trf_detail_for": "Transfer Detail for {item}",
     "item_detail_for": "Item Detail for {item}",
-    "send_to": "Send Shoes",
+    "send_to": "Send {product}",
     "delete_confirm": "Delete Confirmation"
   },
   "btn": {
@@ -139,7 +139,7 @@
     "from_inv": "From Warehouse",
     "to_inv": "To Warehouse",
     "show_trf_detail": "Show Transfer Detail",
-    "send_to": "Send To",
+    "send_to": "Send Shoes",
     "pending_trfs": "Pending Transfers",
     "show_item_detail": "Show Item Detail",
     "delete_confirm": "Are you sure you want to delete {item}?",

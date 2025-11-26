@@ -10,70 +10,68 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col>
-            <v-autocomplete
-              :label="$t('label.to_inv')"
-              auto-select-first
-              item-value="id"
-              item-title="name"
-              :items="availInventories"
-              :loading="isFetchingInventories"
-              v-model="toInvId.value.value"
-              :error-messages="toInvId.errorMessage.value"
+        <v-autocomplete
+          :label="$t('label.to_inv')"
+          auto-select-first
+          item-value="id"
+          item-title="name"
+          :items="availInventories"
+          :loading="isFetchingInventories"
+          v-model="toInvId.value.value"
+          :error-messages="toInvId.errorMessage.value"
+        >
+        </v-autocomplete>
+
+        <v-text-field
+          :label="$t('label.price')"
+          v-maska="priceMask"
+          v-model="displayModel.price"
+          readonly
+        />
+
+        <v-text-field
+          label="Discount"
+          v-maska="percentageMask"
+          clearable
+          :model-value="displayModel.discount"
+          @update:model-value="
+            (value) => (displayModel.discount = discMask.unmasked(value))
+          "
+          inputmode="numeric"
+        />
+
+        <v-card>
+          <v-card-title></v-card-title>
+          <v-card-subtitle>{{ $t('card.fill_quantities') }}</v-card-subtitle>
+          <v-card-text>
+            <v-data-table
+              :headers="tableHeaders"
+              :items="displayModel.sizeAndQties"
+              editable
+              hide-default-footer
             >
-            </v-autocomplete>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-text-field
-              :label="$t('label.price')"
-              v-maska:msrpUnmasked.unmasked="priceMask"
-              v-model="msrpMasked"
-              readonly
-              :error-messages="msrp.errorMessage.value"
-            />
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-card-title></v-card-title>
-              <v-card-subtitle>{{
-                $t('card.fill_quantities')
-              }}</v-card-subtitle>
-              <v-card-text>
-                <v-data-table
-                  :headers="sizeHeaders"
-                  :items="sizeQuantities"
-                  editable
-                  hide-default-footer
-                >
-                  <template #item.quantity="{ item, index }">
-                    <v-text-field
-                      v-model.number="item.quantity"
-                      :label="$t('label.quantity')"
-                      type="number"
-                      :error-messages="
-                        (errors as any)[`invTrfItemSizes[${index}].quantity`]
-                      "
-                    />
-                  </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+              <template #item.quantity="{ item, index }">
+                <v-text-field
+                  v-model.number="item.quantity"
+                  :label="$t('label.quantity')"
+                  type="number"
+                  :error-messages="
+                    (errors as any)[`invTrfItemSizes[${index}].quantity`]
+                  "
+                />
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
 
-    <v-row align="end" class="ma-1 mt-4">
-      <ActionConfirm :loading="isCreating">{{
-        $t('btn.create')
-      }}</ActionConfirm>
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+      </v-col>
     </v-row>
   </v-form>
 
@@ -86,11 +84,13 @@
 </template>
 
 <script setup lang="ts">
+import { Mask } from 'maska';
 import { useMutation, useQuery } from 'villus';
 import {
   CreateInvTrfItemDocument,
   GetInventoriesDocument,
   type Inventory,
+  type InventoryDto,
   type InvProductDto,
 } from '~/api/generated/types';
 import { InvTrfItemSchema } from '~/validation/schema';
@@ -102,7 +102,7 @@ const props = defineProps({
     required: true,
   },
 });
-const availInventories = shallowRef<Inventory[]>([]);
+const availInventories = shallowRef<InventoryDto[]>([]);
 const invProduct = props.invProductDto;
 // const availProductSizes = invProduct?.invProductSizes.map((item) => {
 //   const pendingQty = invProduct!.invTrfItems.reduce(
@@ -126,7 +126,7 @@ const snack = reactive({
   color: SnackColor.Success,
 });
 
-const sizeHeaders = ref([
+const tableHeaders = ref([
   { title: t('label.size'), key: 'title', sortable: false },
   { title: t('label.quantity'), key: 'quantity', sortable: false },
 ]);
@@ -141,6 +141,17 @@ const sizeQuantities = reactive<
     };
   }),
 );
+const displayModel = reactive({
+  price: invProduct?.price,
+  discount: '',
+  sizeAndQties: invProduct!.invProductSizes.map((item) => ({
+    id: item.size.id,
+    title: item.size.eu,
+    quantity: item.quantity,
+  })),
+});
+const discMask = new Mask(percentageMask);
+const priceModel = ref(invProduct?.price);
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
@@ -191,7 +202,7 @@ const onSubmit = handleSubmit((data) => {
 });
 
 watch(
-  sizeQuantities,
+  () => displayModel.sizeAndQties,
   (newValues) => {
     newValues.forEach((newItem) => {
       if (newItem.quantity <= 0) {
@@ -218,11 +229,11 @@ watch(
         }),
     );
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 );
 
-// watchEffect(() => {
-//   console.log(`size quantities: ${JSON.stringify(sizeQuantities)}`);
-//   console.log(`form values: ${JSON.stringify(values)}`);
-// });
+watchEffect(() => {
+  console.log(`Display Model: ${JSON.stringify(displayModel)}`);
+  console.log(`Form Values: ${JSON.stringify(values)}`);
+});
 </script>

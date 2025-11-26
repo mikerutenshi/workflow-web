@@ -169,7 +169,9 @@
                   item: itemSelectionObject?.product.sku || 'Item',
                 })
               : dialog.content === DialogContent.Form
-                ? $t('page.send_to')
+                ? $t('page.send_to', {
+                    product: itemSelectionObject?.product.sku,
+                  })
                 : ''
           }}</v-toolbar-title>
         </v-toolbar>

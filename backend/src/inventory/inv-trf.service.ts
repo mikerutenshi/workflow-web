@@ -171,7 +171,16 @@ export class InvTrfService {
     return this.prisma.invTrfItem.findMany({
       where: { fromInvId, toInvId, progress: { not: Progress.COMPLETED } },
       include: {
-        product: true,
+        product: {
+          include: {
+            productGroup: {
+              include: {
+                productCategory: true,
+              },
+            },
+            productColors: { include: { color: true } },
+          },
+        },
         fromInv: true,
         toInv: true,
         invTrfItemSizes: {
@@ -192,21 +201,25 @@ export class InvTrfService {
           include: {
             fromInv: true,
             toInv: true,
-            product: true,
+            product: {
+              include: {
+                productGroup: {
+                  include: {
+                    productCategory: true,
+                  },
+                },
+                productColors: { include: { color: true } },
+              },
+            },
             invTrfItemSizes: { include: { size: true } },
           },
         },
-        work: { select: { orderNo: true } },
+        work: true,
       },
       orderBy: { id: 'desc' },
     });
 
-    const mapped = data.map((item) => ({
-      ...item,
-      orderNo: item.work?.orderNo ?? null,
-    }));
-
-    return mapped;
+    return data;
   }
 
   async getInvTrf(id: number): Promise<InvTrfDto> {
@@ -219,7 +232,16 @@ export class InvTrfService {
           include: {
             fromInv: true,
             toInv: true,
-            product: true,
+            product: {
+              include: {
+                productGroup: {
+                  include: {
+                    productCategory: true,
+                  },
+                },
+                productColors: { include: { color: true } },
+              },
+            },
             invTrfItemSizes: { include: { size: true } },
           },
         },

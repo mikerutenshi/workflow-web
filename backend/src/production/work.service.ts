@@ -21,9 +21,6 @@ export class WorkService {
             })),
           },
         },
-        include: {
-          workSizes: { include: { size: true } },
-        },
       });
 
       const laborCosts = await tx.laborCost.findMany({
@@ -66,13 +63,6 @@ export class WorkService {
             size: { connect: { id: size.id } },
             quantity: size.quantity,
           })),
-        },
-      },
-      include: {
-        workSizes: {
-          include: {
-            size: true,
-          },
         },
       },
     });

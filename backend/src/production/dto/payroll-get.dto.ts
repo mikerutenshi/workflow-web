@@ -1,8 +1,8 @@
 import { Artisan } from '@/models/artisan.model';
 import { Product } from '@/models/product.model';
 import { Task } from '@/models/task.model';
-import { Work } from '@/models/work.model';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { WorkDto } from './work.dto';
 
 // @ObjectType()
 // class ProductGroupWithLaborCosts extends ProductGroup {
@@ -19,7 +19,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 // }
 
 @ObjectType()
-class WorkWithProduct extends Work {
+class WorkWithProduct extends WorkDto {
   @Field(() => Product)
   product: Product;
 }

@@ -12,6 +12,6 @@ export class InvTrfDto extends InvTrf {
   toInv: Inventory;
   @Field(() => [InvTrfItemDto])
   invTrfItems: InvTrfItemDto[];
-  @Field(() => String, { nullable: true })
-  orderNo?: string | null;
+  @Field(() => Work, { nullable: true })
+  work?: Work | null;
 }

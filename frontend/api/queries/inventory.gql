@@ -6,6 +6,7 @@ fragment InventoryFragment on InventoryDto {
   province
   type
   priceFormula {
+    id
     offset
     multiplier
     discounts
@@ -146,6 +147,11 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!) {
     product {
       id
       sku
+      productGroup {
+        id
+        skuNumeric
+        msrp
+      }
     }
     progress
     invTrfItemSizes {
@@ -164,7 +170,10 @@ query getInvTrfs {
   getInvTrfs {
     id
     trfNo
-    orderNo
+    work {
+      id
+      orderNo
+    }
     fromInv {
       id
       name
@@ -181,6 +190,9 @@ query getInvTrfs {
       product {
         id
         sku
+        productGroup {
+          msrp
+        }
       }
       invTrfItemSizes {
         invTrfItemId

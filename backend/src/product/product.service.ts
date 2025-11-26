@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { ProductCreateDto } from './dto/product-create.dto';
 import { Product } from '@/models/product.model';
-import { ProductGetDto } from './dto/product-get.dto';
+import { ProductDto } from './dto/product-get.dto';
 import { ProductUpdateDto } from './dto/product-update.dto';
 
 @Injectable()
@@ -66,7 +66,7 @@ export class ProductService {
     });
   }
 
-  async getProducts(): Promise<ProductGetDto[]> {
+  async getProducts(): Promise<ProductDto[]> {
     return await this.prisma.product.findMany({
       include: {
         productGroup: {
@@ -87,7 +87,7 @@ export class ProductService {
     });
   }
 
-  async getProduct(id: number): Promise<ProductGetDto> {
+  async getProduct(id: number): Promise<ProductDto> {
     const result = await this.prisma.product.findUnique({
       where: {
         id: id,

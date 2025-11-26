@@ -213,7 +213,7 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
   { title: t('label.trf_date'), key: 'trfDate' },
   { title: t('label.trf_no'), key: 'trfNo' },
-  { title: t('label.order_no'), key: 'orderNo' },
+  { title: t('label.order_no'), key: 'work.orderNo' },
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
   { title: t('label.status'), key: 'progress' },

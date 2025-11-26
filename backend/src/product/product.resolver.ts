@@ -3,7 +3,7 @@ import { Product } from '@/models/product.model';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductCreateDto } from './dto/product-create.dto';
-import { ProductGetDto } from './dto/product-get.dto';
+import { ProductDto } from './dto/product-get.dto';
 import { ProductService } from './product.service';
 import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
@@ -31,15 +31,15 @@ export class ProductResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query(() => [ProductGetDto])
-  getProducts(): Promise<ProductGetDto[]> {
+  @Query(() => [ProductDto])
+  getProducts(): Promise<ProductDto[]> {
     return this.productService.getProducts();
   }
 
-  @Query(() => ProductGetDto)
+  @Query(() => ProductDto)
   getProduct(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<ProductGetDto> {
+  ): Promise<ProductDto> {
     return this.productService.getProduct(id);
   }
 

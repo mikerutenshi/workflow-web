@@ -100,7 +100,7 @@ const headers: ReadOnlyHeaders = [
   // { title: t('label.trf_no'), key: 'invTrf.trfNo' },
   // { title: t('label.from_inv'), key: 'invTrf.fromInv.name' },
   // { title: t('label.to_inv'), key: 'invTrf.toInv.name' },
-  // { title: t('label.status'), key: 'invTrf.progress' },
+  { title: t('label.price'), key: 'product.productGroup.msrp' },
   { title: t('label.sizes'), key: 'invTrfItemSizes', minWidth: '120' },
 ];
 const search = ref('');
