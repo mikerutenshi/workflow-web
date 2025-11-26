@@ -38,6 +38,7 @@
             (value) => (displayModel.discount = discMask.unmasked(value))
           "
           inputmode="numeric"
+          :error-messages="errors.discount"
         />
 
         <v-card>
@@ -230,6 +231,12 @@ watch(
     );
   },
   { immediate: true, deep: true },
+);
+watch(
+  () => displayModel.discount,
+  (newDisc) => {
+    setFieldValue('discount', convertPercentToDecimal(newDisc));
+  },
 );
 
 watchEffect(() => {

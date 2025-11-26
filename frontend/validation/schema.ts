@@ -169,6 +169,12 @@ export const InvTrfItemSchema = z.object({
   toInvId: positiveNumberString,
   createdBy: positiveNumberString,
   productId: positiveNumberString,
+  discount: z
+    .string()
+    .regex(/^\d+(\.\d{1,4})?$/, {
+      message: 'Must be a number with up to 4 decimal places',
+    })
+    .optional(),
   invTrfItemSizes: z.array(
     z.object({
       sizeId: positiveNumberString,

@@ -292,6 +292,7 @@ model InvTrfItem {
   productId         Int
   invTrfItemSizes   InvTrfItemToSize[]
   progress          Progress        @default(PENDING)
+  discount          Decimal?        @db.Decimal(5,4)
 
   invTrf            InvTrf?         @relation(fields: [invTrfId], references: [id], onDelete: Cascade)
   product           Product         @relation(fields: [productId], references: [id])

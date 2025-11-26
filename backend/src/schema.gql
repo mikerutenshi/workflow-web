@@ -126,6 +126,7 @@ type InvTrfItem {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
+  discount: String
   fromInv: Inventory
   toInv: Inventory!
 }
@@ -241,6 +242,7 @@ type InvTrfItemTrfDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
+  discount: String
   fromInv: Inventory
   toInv: Inventory!
   invTrf: InvTrf
@@ -258,6 +260,7 @@ type InvTrfItemDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemToSize!]!
   progress: Progress!
+  discount: String
   fromInv: Inventory
   toInv: Inventory!
   product: ProductDto!
@@ -291,6 +294,22 @@ type InvTrfDto {
   fromInv: Inventory
   toInv: Inventory!
   invTrfItems: [InvTrfItemDto!]!
+  work: Work
+}
+
+type InvTrfSimpleDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  trfNo: String!
+  fromInvId: ID
+  toInvId: ID!
+  trfDate: Date!
+  progress: Progress!
+  fromInv: Inventory
+  toInv: Inventory!
   work: Work
 }
 
@@ -448,7 +467,7 @@ type Query {
   getInvProducts(invId: ID!): [InvProductDto!]!
   getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
   getInvTrfItems(fromInvId: ID!, toInvId: ID!): [InvTrfItemDto!]!
-  getInvTrfs: [InvTrfDto!]!
+  getInvTrfs: [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
 }
@@ -698,6 +717,7 @@ input InvTrfItemCreateDto {
   productId: ID!
   invTrfItemSizes: [InvTrfItemSizeCreateDto!]!
   progress: Progress
+  discount: String
   createdBy: ID!
 }
 

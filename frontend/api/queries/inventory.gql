@@ -153,6 +153,7 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!) {
         msrp
       }
     }
+    discount
     progress
     invTrfItemSizes {
       size {
@@ -186,22 +187,6 @@ query getInvTrfs {
     }
     trfDate
     progress
-    invTrfItems {
-      product {
-        id
-        sku
-        productGroup {
-          msrp
-        }
-      }
-      invTrfItemSizes {
-        invTrfItemId
-        size {
-          ...Size
-        }
-        quantity
-      }
-    }
   }
 }
 
@@ -224,7 +209,13 @@ query getInvTrf($id: ID!) {
     invTrfItems {
       id
       product {
+        id
         sku
+        productGroup {
+          id
+          skuNumeric
+          msrp
+        }
       }
       fromInv {
         name

@@ -80,7 +80,7 @@
             <v-card>
               <v-card-title>{{ $t('card.products_to_trf') }}</v-card-title>
               <v-data-table
-                :headers="headers"
+                :headers="tableHeaders"
                 :items="computeTrfItems"
                 :search="search"
                 :loading="isFetchingTrfItems"
@@ -97,6 +97,16 @@
 
                 <template #item.progress="{ item }">{{
                   $t(`progress.${item.progress}`)
+                }}</template>
+
+                <template #item.discount="{ item }">{{
+                  item.discount
+                    ? formatDiscount(convertDecimalToPercent(item.discount))
+                    : null
+                }}</template>
+
+                <template #item.product.productGroup.msrp="{ item }">{{
+                  formatRupiah(item.product.productGroup.msrp)
                 }}</template>
 
                 <template v-slot:item.invTrfItemSizes="{ item }">
@@ -319,10 +329,12 @@ if (props.invTrfId) {
 }
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
-const headers: ReadOnlyHeaders = [
+const tableHeaders: ReadOnlyHeaders = [
   { title: t('label.sku'), key: 'product.sku' },
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
+  { title: t('label.msrp'), key: 'product.productGroup.msrp' },
+  { title: t('label.discount'), key: 'discount' },
   { title: t('label.status'), key: 'progress' },
   { title: t('label.sizes'), key: 'invTrfItemSizes', minWidth: '120' },
 ];

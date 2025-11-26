@@ -1,18 +1,16 @@
-import { InvTrf } from '@/models/inv-trf.model';
-import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
-import { InvTrfService } from './inv-trf.service';
-import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
-import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
-import { ParseIntPipe, UseGuards } from '@nestjs/common';
-import { InvTrfDto } from './dto/inv-trf.dto';
-import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
-import { InvTrfItem } from '@/models/inv-trf-item.model';
-import { RoleGuard } from '@/guards/role.guard';
-import { Roles } from '@/guards/roles.decorator';
-import { Role } from '@/models/role.enum';
 import { AuthGuard } from '@/guards/auth.guard';
+import { InvTrfItem } from '@/models/inv-trf-item.model';
+import { InvTrf } from '@/models/inv-trf.model';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
+import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
+import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
 import { InvTrfItemDto } from './dto/inv-trf-item.dto';
+import { InvTrfSimpleDto } from './dto/inv-trf-simple.dto';
 import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
+import { InvTrfDto } from './dto/inv-trf.dto';
+import { InvTrfService } from './inv-trf.service';
 
 @Resolver(() => InvTrf)
 export class InvTrfResolver {
@@ -53,8 +51,8 @@ export class InvTrfResolver {
     return this.service.getInvTrfItems(fromInvId, toInvId);
   }
 
-  @Query(() => [InvTrfDto])
-  getInvTrfs(): Promise<InvTrfDto[]> {
+  @Query(() => [InvTrfSimpleDto])
+  getInvTrfs(): Promise<InvTrfSimpleDto[]> {
     return this.service.getInvTrfs();
   }
 

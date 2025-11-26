@@ -22,6 +22,6 @@ export class PriceFormulaCreateDto {
 
   @Field(() => [String])
   @IsArray()
-  @IsDecimal({ decimal_digits: '2' }, { each: true })
+  @IsDecimal({ decimal_digits: '4' }, { each: true })
   discounts: string[];
 }

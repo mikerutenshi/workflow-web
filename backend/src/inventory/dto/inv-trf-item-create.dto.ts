@@ -1,6 +1,7 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
 import {
+  IsDecimal,
   IsEnum,
   IsInt,
   IsOptional,
@@ -37,6 +38,11 @@ export class InvTrfItemCreateDto {
   @IsEnum(Progress)
   @IsOptional()
   progress?: Progress;
+
+  @Field(() => String, { nullable: true })
+  @IsDecimal({ decimal_digits: '4' })
+  @IsOptional()
+  discount?: string;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

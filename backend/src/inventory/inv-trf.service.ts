@@ -12,6 +12,7 @@ import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 import { generateId } from '@/utils/functions.util';
 import { Operation } from '@/models/operation.enum';
 import { InvProductService } from './inv-product.service';
+import { InvTrfSimpleDto } from './dto/inv-trf-simple.dto';
 
 @Injectable()
 export class InvTrfService {
@@ -20,8 +21,8 @@ export class InvTrfService {
     private invProductService: InvProductService,
   ) {}
 
-  createInvTrfItem(data: InvTrfItemCreateDto): Promise<InvTrfItem> {
-    return this.prisma.invTrfItem.create({
+  async createInvTrfItem(data: InvTrfItemCreateDto): Promise<InvTrfItem> {
+    const { discount, ...rest } = await this.prisma.invTrfItem.create({
       data: {
         ...data,
         invTrfItemSizes: {
@@ -37,6 +38,8 @@ export class InvTrfService {
         invTrfItemSizes: { include: { size: true } },
       },
     });
+
+    return { ...rest, discount: discount?.toFixed(4) || null };
   }
 
   createInvTrf(data: InvTrfCreateDto): Promise<InvTrf> {
@@ -143,11 +146,11 @@ export class InvTrfService {
     });
   }
 
-  getInvTrfItemTrfs(
+  async getInvTrfItemTrfs(
     invId: number,
     productId: number,
   ): Promise<InvTrfItemTrfDto[]> {
-    return this.prisma.invTrfItem.findMany({
+    const result = await this.prisma.invTrfItem.findMany({
       include: {
         invTrf: { include: { fromInv: true, toInv: true } },
         invTrfItemSizes: {
@@ -165,10 +168,18 @@ export class InvTrfService {
         id: 'desc',
       },
     });
+
+    return result.map((item) => ({
+      ...item,
+      discount: item.discount?.toFixed(4) || null,
+    }));
   }
 
-  getInvTrfItems(fromInvId: number, toInvId: number): Promise<InvTrfItemDto[]> {
-    return this.prisma.invTrfItem.findMany({
+  async getInvTrfItems(
+    fromInvId: number,
+    toInvId: number,
+  ): Promise<InvTrfItemDto[]> {
+    const result = await this.prisma.invTrfItem.findMany({
       where: { fromInvId, toInvId, progress: { not: Progress.COMPLETED } },
       include: {
         product: {
@@ -190,30 +201,18 @@ export class InvTrfService {
         invTrf: true,
       },
     });
+
+    return result.map((item) => ({
+      ...item,
+      discount: item.discount?.toFixed(4) || null,
+    }));
   }
 
-  async getInvTrfs(): Promise<InvTrfDto[]> {
+  async getInvTrfs(): Promise<InvTrfSimpleDto[]> {
     const data = await this.prisma.invTrf.findMany({
       include: {
         fromInv: true,
         toInv: true,
-        invTrfItems: {
-          include: {
-            fromInv: true,
-            toInv: true,
-            product: {
-              include: {
-                productGroup: {
-                  include: {
-                    productCategory: true,
-                  },
-                },
-                productColors: { include: { color: true } },
-              },
-            },
-            invTrfItemSizes: { include: { size: true } },
-          },
-        },
         work: true,
       },
       orderBy: { id: 'desc' },
@@ -251,7 +250,14 @@ export class InvTrfService {
     if (!result) {
       throw new Error(`Inventory Transfer with ID ${id} not found.`);
     }
-    return result;
+
+    return {
+      ...result,
+      invTrfItems: result.invTrfItems.map((item) => ({
+        ...item,
+        discount: item.discount?.toFixed(4) || null,
+      })),
+    };
   }
 
   async deleteInvTrf(id: number): Promise<Boolean> {
@@ -289,6 +295,7 @@ export class InvTrfService {
   async deleteInvTrfItem(id: number): Promise<Boolean> {
     const alreadyInInvTrf = await this.prisma.invTrfItem.findMany({
       where: {
+        id,
         invTrf: {
           isNot: null,
         },

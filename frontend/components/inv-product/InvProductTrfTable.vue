@@ -48,7 +48,7 @@
             {{ adapter.format(item.trfDate, 'fullDateTime12h') }}
           </template>
 
-          <template v-slot:item.invTrfItems="{ item }">
+          <!-- <template v-slot:item.invTrfItems="{ item }">
             {{
               item.invTrfItems.reduce(
                 (sum, itemSize) =>
@@ -60,7 +60,7 @@
                 0,
               )
             }}
-          </template>
+          </template> -->
 
           <template #item.progress="{ item }">{{
             $t(`progress.${item.progress}`)
@@ -78,14 +78,14 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item
+                <!-- <v-list-item
                   :prepend-icon="mdiFileDocumentArrowRightOutline"
                   @click="showItemDialog(item as InvTrfDto)"
                 >
                   <v-list-item-title>{{
                     $t('label.show_item_detail')
                   }}</v-list-item-title>
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item
                   :prepend-icon="mdiPencil"
                   @click="showItemFormDialog(item as InvTrfDto)"
@@ -105,7 +105,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="dialogView" max-width="1200px">
+    <!-- <v-dialog v-model="dialogView" max-width="1200px">
       <v-card>
         <v-toolbar>
           <v-toolbar-title>
@@ -120,7 +120,7 @@
           ></InvProductTrfItemTable>
         </v-container>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
 
     <ActionEditItemDialog
       :dialogTitle="
@@ -217,7 +217,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
   { title: t('label.status'), key: 'progress' },
-  { title: t('label.quantity'), key: 'invTrfItems' },
+  // { title: t('label.quantity'), key: 'invTrfItems' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
