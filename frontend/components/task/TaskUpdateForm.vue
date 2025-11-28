@@ -12,7 +12,7 @@
 
         <WorkHeader :workId="props.workId"></WorkHeader>
 
-        <v-card class="mt-4">
+        <v-card class="my-4">
           <v-card-title>{{ $t('card.fill_artisans') }}</v-card-title>
           <v-card-subtitle></v-card-subtitle>
           <v-card-text>

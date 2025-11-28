@@ -60,7 +60,10 @@
         >
         </v-select>
 
-        <v-card v-if="fromInvId.value.value && toInvId.value.value">
+        <v-card
+          v-if="fromInvId.value.value && toInvId.value.value"
+          class="mb-4"
+        >
           <v-card-title>{{ $t('card.products_to_trf') }}</v-card-title>
           <v-data-table
             :headers="tableHeaders"

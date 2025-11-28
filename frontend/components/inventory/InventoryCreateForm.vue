@@ -59,7 +59,7 @@
           :error-messages="type.errorMessage.value"
         ></v-select>
 
-        <v-card>
+        <v-card class="mb-4">
           <v-card-title>
             {{ 'Store Wide Price Formula' }}
           </v-card-title>

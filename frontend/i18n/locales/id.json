@@ -145,7 +145,8 @@
     "delete_confirm": "Apakah anda yakin akan menghapus {item}?",
     "price": "Harga",
     "discount": "Diskon",
-    "msrp": "Harga Toko"
+    "msrp": "Harga Toko",
+    "note": "Catatan"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

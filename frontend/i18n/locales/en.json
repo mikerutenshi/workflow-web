@@ -145,7 +145,8 @@
     "delete_confirm": "Are you sure you want to delete {item}?",
     "price": "Price",
     "discount": "Discount",
-    "msrp": "MSRP"
+    "msrp": "MSRP",
+    "note": "Note"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

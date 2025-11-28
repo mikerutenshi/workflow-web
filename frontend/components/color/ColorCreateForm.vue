@@ -18,30 +18,26 @@
           :label="$t('label.name')"
         />
 
-        <v-row class="flex-grow-1">
-          <v-col class="flex-grow-1">
-            <v-card>
-              <v-card-title>
-                {{ $t('label.pick_color') }}
-              </v-card-title>
+        <v-card class="mb-4">
+          <v-card-title>
+            {{ $t('label.pick_color') }}
+          </v-card-title>
 
-              <v-card-text>
-                <v-color-picker
-                  swatches-max-height="300px"
-                  v-model="hexCode.value.value"
-                  v-model:mode="mode"
-                  show-swatches
-                ></v-color-picker>
-              </v-card-text>
-              <span
-                :style="{ color: $vuetify.theme.themes.light.colors.error }"
-                class="ma-4 text-caption"
-              >
-                {{ hexCode.errorMessage.value }}
-              </span>
-            </v-card>
-          </v-col>
-        </v-row>
+          <v-card-text>
+            <v-color-picker
+              swatches-max-height="300px"
+              v-model="hexCode.value.value"
+              v-model:mode="mode"
+              show-swatches
+            ></v-color-picker>
+          </v-card-text>
+          <span
+            :style="{ color: $vuetify.theme.themes.light.colors.error }"
+            class="ma-4 text-caption"
+          >
+            {{ hexCode.errorMessage.value }}
+          </span>
+        </v-card>
       </v-col>
     </v-row>
 

@@ -1,15 +1,15 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
+    <v-row v-if="createError">
+      <v-col>
+        <v-alert type="error">
+          {{ extractGraphQlError(createError) }}
+        </v-alert>
+      </v-col>
+    </v-row>
+
     <v-row>
       <v-col>
-        <v-row v-if="createError">
-          <v-col>
-            <v-alert type="error">
-              {{ extractGraphQlError(createError) }}
-            </v-alert>
-          </v-col>
-        </v-row>
-
         <v-autocomplete
           :label="$t('label.to_inv')"
           auto-select-first
@@ -41,7 +41,7 @@
           :error-messages="errors.discount"
         />
 
-        <v-card>
+        <v-card class="mb-4">
           <v-card-title></v-card-title>
           <v-card-subtitle>{{ $t('card.fill_quantities') }}</v-card-subtitle>
           <v-card-text>

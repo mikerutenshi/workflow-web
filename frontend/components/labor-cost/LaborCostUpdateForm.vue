@@ -10,7 +10,7 @@
 
     <v-row>
       <v-col>
-        <v-card>
+        <v-card class="mb-4">
           <v-card-text>
             <v-text-field
               v-model="header.skuNumeric"
@@ -31,7 +31,6 @@
         </v-card>
 
         <v-text-field
-          class="mt-4"
           :label="$t('jobs.draw_upper')"
           v-maska:drawUpperUnmasked.unmasked="options"
           v-model="priceModel.drawUpper"
@@ -82,10 +81,12 @@
       </v-col>
     </v-row>
 
-    <v-row align="end" class="ma-1">
-      <ActionConfirm :loading="isUpdating">{{
-        $t('btn.update')
-      }}</ActionConfirm>
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+      </v-col>
     </v-row>
   </form>
 

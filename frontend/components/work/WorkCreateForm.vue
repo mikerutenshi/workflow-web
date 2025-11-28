@@ -57,7 +57,7 @@
           </template> -->
         </v-select>
 
-        <v-card v-if="isShowSizeQuantities">
+        <v-card v-if="isShowSizeQuantities" class="mb-4">
           <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
           <v-card-subtitle></v-card-subtitle>
           <v-card-text>
@@ -83,7 +83,7 @@
 
         <v-textarea
           v-model="note.value.value"
-          label="Note"
+          :label="$t('label.note')"
           counter
           clearable
           :rules="rules"

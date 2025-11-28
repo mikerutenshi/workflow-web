@@ -160,7 +160,35 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="dialog.isVisible" max-width="1200px">
+    <ActionEditItemDialog
+      :dialogTitle="
+        dialog.content === DialogContent.ItemDetail
+          ? $t('page.trf_detail_for', {
+              item: itemSelectionObject?.product.sku || 'Item',
+            })
+          : dialog.content === DialogContent.Form
+            ? $t('page.send_to', {
+                product: itemSelectionObject?.product.sku,
+              })
+            : ''
+      "
+      v-model="dialog.isVisible"
+    >
+      <template v-if="dialog.content === DialogContent.ItemDetail">
+        <InvProductItemTrfTable
+          :inv-product-dto="itemSelectionObject"
+          @refresh-table="executeFetch"
+        ></InvProductItemTrfTable>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.Form">
+        <InvProductTrfItemForm
+          :inv-product-dto="itemSelectionObject"
+          @close-dialog="closeItemFormDialog"
+        ></InvProductTrfItemForm>
+      </template>
+    </ActionEditItemDialog>
+
+    <!-- <v-dialog v-model="dialog.isVisible" max-width="1200px">
       <v-card>
         <v-toolbar>
           <v-toolbar-title>{{
@@ -191,7 +219,7 @@
           </template>
         </v-container>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
   </template>
 </template>
 

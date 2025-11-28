@@ -347,7 +347,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.sizes'), key: 'sizes', minWidth: '120' },
   { title: t('label.status'), key: 'progress' },
   { title: t('label.tasks'), key: 'tasks', minWidth: '300' },
-  { title: 'Note', key: 'note' },
+  { title: t('label.note'), key: 'note' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 

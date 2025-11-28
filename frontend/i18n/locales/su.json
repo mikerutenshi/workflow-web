@@ -145,7 +145,8 @@
     "delete_confirm": "Naha anjeun yakin rék mupus {item}?",
     "price": "Harga",
     "discount": "Diskon",
-    "msrp": "Harga Toko"
+    "msrp": "Harga Toko",
+    "note": "Catetan"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
