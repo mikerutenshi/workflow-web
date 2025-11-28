@@ -11,7 +11,7 @@
         <v-toolbar-title>{{ dialogTitle }}</v-toolbar-title>
       </v-toolbar>
 
-      <v-container><slot></slot></v-container>
+      <v-container class="h-100 d-flex flex-column"><slot></slot></v-container>
     </v-card>
   </v-dialog>
 </template>

@@ -106,7 +106,7 @@
   </v-row>
 
   <ActionEditItemDialog
-    :dialogTitle="
+    :dialog-title="
       dialog.content === DialogContent.Create
         ? $t('page.product_create')
         : dialog.content === DialogContent.Edit

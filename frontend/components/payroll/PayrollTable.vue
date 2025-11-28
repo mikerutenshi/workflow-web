@@ -17,98 +17,84 @@
     </v-col>
   </v-row>
 
-  <v-row class="flex-grow-0">
-    <v-col>
-      <v-card>
-        <v-row no-gutters class="d-flex">
-          <v-col
-            class="d-flex flex-column align-center justify-end pa-2"
-            cols="6"
-          >
-            <div
-              class="d-flex flex-column align-start justify-space-between flex-grow-1"
-            >
-              <p>{{ $t('label.total_quantity') }}</p>
-              <h2>
-                {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
-              </h2>
-            </div>
-          </v-col>
-          <v-divider vertical></v-divider>
-          <v-col
-            class="d-flex flex-column align-center justify-end pa-2"
-            cols="6"
-          >
-            <div
-              class="d-flex flex-column align-start justify-space-between flex-grow-1"
-            >
-              <p>{{ $t('label.total_payable') }}</p>
-              <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
-            </div>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-col>
-  </v-row>
-
-  <v-row>
-    <v-col>
-      <v-skeleton-loader type="card@3" v-if="isFetching"></v-skeleton-loader>
-      <v-expansion-panels multiple v-else>
-        <v-expansion-panel
-          v-for="artisan in data?.getPayroll.artisans"
-          :key="artisan.id"
-          class="my-4"
+  <v-card>
+    <v-row no-gutters class="d-flex">
+      <v-col class="d-flex flex-column align-center justify-end pa-2" cols="6">
+        <div
+          class="d-flex flex-column align-start justify-space-between flex-grow-1"
         >
-          <v-expansion-panel-title class="d-flex flex-column align-start">
-            <v-card-title>
-              {{ `${artisan.firstName} ${artisan.lastName ?? ''}` }}
-            </v-card-title>
+          <p>{{ $t('label.total_quantity') }}</p>
+          <h2>
+            {{ $t('label.pairs', data?.getPayroll.totalQuantity ?? 0) }}
+          </h2>
+        </div>
+      </v-col>
+      <v-divider vertical></v-divider>
+      <v-col class="d-flex flex-column align-center justify-end pa-2" cols="6">
+        <div
+          class="d-flex flex-column align-start justify-space-between flex-grow-1"
+        >
+          <p>{{ $t('label.total_payable') }}</p>
+          <h2>{{ formatRupiah(data?.getPayroll.totalPayable) }}</h2>
+        </div>
+      </v-col>
+    </v-row>
+  </v-card>
 
-            <v-card-subtitle class="w-100">
-              <div class="d-flex align-end justify-space-between mb-2 mr-8">
-                <span>{{ $t('label.quantity') }}</span>
-                <h3 class="ml-auto">
-                  {{ $t('label.pairs', artisan.quantityPerArtisan) }}
-                </h3>
-              </div>
-              <div class="d-flex align-end justify-space-between mr-8">
-                <span>{{ $t('label.payable') }}</span>
-                <h3 class="ml-auto">
-                  {{ formatRupiah(artisan.payablePerArtisan) }}
-                </h3>
-              </div>
-            </v-card-subtitle>
-          </v-expansion-panel-title>
+  <v-skeleton-loader type="card@3" v-if="isFetching"></v-skeleton-loader>
+  <v-expansion-panels multiple v-else>
+    <v-expansion-panel
+      v-for="artisan in data?.getPayroll.artisans"
+      :key="artisan.id"
+      class="my-4"
+    >
+      <v-expansion-panel-title class="d-flex flex-column align-start">
+        <v-card-title>
+          {{ `${artisan.firstName} ${artisan.lastName ?? ''}` }}
+        </v-card-title>
 
-          <v-expansion-panel-text>
-            <v-data-table
-              :items="artisan.tasks"
-              :headers="headers"
-              hide-default-footer
-              items-per-page="-1"
-            >
-              <template #item.type="{ item }">
-                {{ $t(renderJob(item.type)) }}
-              </template>
-              <template #item.doneAt="{ item }">
-                {{ adapter.format(item.doneAt, 'normalDateWithWeekday') }}
-              </template>
-              <template #item.payablePerTask="{ item }">
-                {{ formatRupiah(item.payablePerTask) }}
-              </template>
-              <template #item.costPerTask="{ item }">
-                {{ formatRupiah(item.costPerTask) }}
-              </template>
-              <template #item.quantityPerTask="{ item }">
-                {{ $t('label.pairs', item.quantityPerTask) }}
-              </template>
-            </v-data-table>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-col>
-  </v-row>
+        <v-card-subtitle class="w-100">
+          <div class="d-flex align-end justify-space-between mb-2 mr-8">
+            <span>{{ $t('label.quantity') }}</span>
+            <h3 class="ml-auto">
+              {{ $t('label.pairs', artisan.quantityPerArtisan) }}
+            </h3>
+          </div>
+          <div class="d-flex align-end justify-space-between mr-8">
+            <span>{{ $t('label.payable') }}</span>
+            <h3 class="ml-auto">
+              {{ formatRupiah(artisan.payablePerArtisan) }}
+            </h3>
+          </div>
+        </v-card-subtitle>
+      </v-expansion-panel-title>
+
+      <v-expansion-panel-text>
+        <v-data-table
+          :items="artisan.tasks"
+          :headers="headers"
+          hide-default-footer
+          items-per-page="-1"
+        >
+          <template #item.type="{ item }">
+            {{ $t(renderJob(item.type)) }}
+          </template>
+          <template #item.doneAt="{ item }">
+            {{ adapter.format(item.doneAt, 'normalDateWithWeekday') }}
+          </template>
+          <template #item.payablePerTask="{ item }">
+            {{ formatRupiah(item.payablePerTask) }}
+          </template>
+          <template #item.costPerTask="{ item }">
+            {{ formatRupiah(item.costPerTask) }}
+          </template>
+          <template #item.quantityPerTask="{ item }">
+            {{ $t('label.pairs', item.quantityPerTask) }}
+          </template>
+        </v-data-table>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 
 <style lang="sass">

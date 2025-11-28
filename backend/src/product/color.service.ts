@@ -17,7 +17,7 @@ export class ColorService {
   }
 
   getColors(): Promise<Color[]> {
-    return this.prisma.color.findMany();
+    return this.prisma.color.findMany({ orderBy: { name: 'asc' } });
   }
 
   async getColor(id: number): Promise<Color> {

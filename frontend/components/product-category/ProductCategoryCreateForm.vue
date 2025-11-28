@@ -1,74 +1,62 @@
 <template>
   <v-form class="h-100 d-flex flex-column" @submit.prevent="onSubmit">
-    <v-row>
+    <v-row v-if="createError || updateError || deleteError">
       <v-col>
-        <v-row v-if="createError || updateError || deleteError">
-          <v-col>
-            <v-alert type="error">
-              {{
-                extractGraphQlError(createError || updateError || deleteError)
-              }}
-            </v-alert>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="name.value.value"
-              :label="$t('label.name')"
-              :error-messages="name.errorMessage.value"
-            />
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-select
-              v-model="gender.value.value"
-              :label="$t('label.gender')"
-              item-value="id"
-              item-title="name"
-              :items="genders"
-              :error-messages="gender.errorMessage.value"
-            >
-              <template v-slot:item="{ props, item }">
-                <v-list-item
-                  v-bind="props"
-                  :title="
-                    item.title !== ''
-                      ? $t(renderGender(item.title as Gender))
-                      : ''
-                  "
-                ></v-list-item>
-              </template>
-              <template v-slot:selection="{ item }">
-                <span>{{
-                  item.title !== ''
-                    ? $t(renderGender(item.title as Gender))
-                    : ''
-                }}</span>
-              </template>
-            </v-select>
-          </v-col>
-        </v-row>
+        <v-alert type="error">
+          {{ extractGraphQlError(createError || updateError || deleteError) }}
+        </v-alert>
       </v-col>
     </v-row>
 
-    <v-row class="flex-grow-1"></v-row>
+    <v-row>
+      <v-col>
+        <v-text-field
+          v-model="name.value.value"
+          :label="$t('label.name')"
+          :error-messages="name.errorMessage.value"
+        />
 
-    <v-row align="end" class="ma-1">
-      <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
-        $t('btn.update')
-      }}</ActionConfirm>
-      <ActionConfirm v-else :loading="isCreating">{{
-        $t('btn.create')
-      }}</ActionConfirm>
-      <ActionDelete
-        v-if="productCategoryId"
-        :loading="isDeleting"
-        @click="executeDelete({ id: productCategoryId })"
-      ></ActionDelete>
+        <v-select
+          v-model="gender.value.value"
+          :label="$t('label.gender')"
+          item-value="id"
+          item-title="name"
+          :items="genders"
+          :error-messages="gender.errorMessage.value"
+        >
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :title="
+                item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
+              "
+            ></v-list-item>
+          </template>
+          <template v-slot:selection="{ item }">
+            <span>{{
+              item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
+            }}</span>
+          </template>
+        </v-select>
+      </v-col>
+    </v-row>
+
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+      </v-col>
+      <v-col>
+        <ActionDelete
+          v-if="productCategoryId"
+          :loading="isDeleting"
+          @click="executeDelete({ id: productCategoryId })"
+        ></ActionDelete>
+      </v-col>
     </v-row>
   </v-form>
 

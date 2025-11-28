@@ -12,122 +12,99 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col>
-            <ActionPickDate
-              v-model="date.value.value"
-              :error-messages="date.errorMessage.value"
-            ></ActionPickDate>
-          </v-col>
-        </v-row>
+        <ActionPickDate
+          v-model="date.value.value"
+          :error-messages="date.errorMessage.value"
+        ></ActionPickDate>
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              :label="$t('label.order_no')"
-              v-model="orderNo.value.value"
-              :error-messages="orderNo.errorMessage.value"
-              type="number"
-            ></v-text-field>
-          </v-col>
-        </v-row>
+        <v-text-field
+          :label="$t('label.order_no')"
+          v-model="orderNo.value.value"
+          :error-messages="orderNo.errorMessage.value"
+          type="number"
+        ></v-text-field>
 
-        <v-row>
-          <v-col>
-            <v-autocomplete
-              :label="$t('label.product')"
-              auto-select-first
-              item-value="id"
-              item-title="sku"
-              :items="productsData?.getProducts"
-              :loading="isFetchingProducts"
-              v-model="productId.value.value"
-              :error-messages="productId.errorMessage.value"
-            >
-            </v-autocomplete>
-          </v-col>
-        </v-row>
+        <v-autocomplete
+          :label="$t('label.product')"
+          auto-select-first
+          item-value="id"
+          item-title="sku"
+          :items="productsData?.getProducts"
+          :loading="isFetchingProducts"
+          v-model="productId.value.value"
+          :error-messages="productId.errorMessage.value"
+        >
+        </v-autocomplete>
 
-        <v-row>
-          <v-col>
-            <v-select
-              :label="$t('label.select_sizes')"
-              multiple
-              chips
-              :items="computeSizeList"
-              :loading="isFetchingSizes"
-              item-title="eu"
-              item-value="id"
-              v-model="workSizes"
-              return-object
-              :error-messages="errors[`workSizes`]"
-              :disabled="isSizesDisabled"
-            >
-              <!-- <template #item="{ props, item }">
+        <v-select
+          :label="$t('label.select_sizes')"
+          multiple
+          chips
+          :items="computeSizeList"
+          :loading="isFetchingSizes"
+          item-title="eu"
+          item-value="id"
+          v-model="workSizes"
+          return-object
+          :error-messages="errors[`workSizes`]"
+          :disabled="isSizesDisabled"
+        >
+          <!-- <template #item="{ props, item }">
             <v-list-item
               v-bind="props"
               :title="`${item.raw.eu} | ${item.raw.us} | ${item.raw.uk}`"
             ></v-list-item>
           </template> -->
-            </v-select>
-          </v-col>
-        </v-row>
+        </v-select>
 
-        <v-row v-if="isShowSizeQuantities">
-          <v-col>
-            <v-card>
-              <v-card-title></v-card-title>
-              <v-card-subtitle>{{
-                $t('card.fill_quantities')
-              }}</v-card-subtitle>
-              <v-card-text>
-                <v-data-table
-                  :headers="sizeHeaders"
-                  :items="sizeQuantities"
-                  editable
-                  hide-default-footer
-                >
-                  <template #item.quantity="{ item, index }">
-                    <v-text-field
-                      v-model.number="item.quantity"
-                      :label="$t('label.quantity')"
-                      type="number"
-                      :error-messages="
-                        (errors as any)[`workSizes[${index}].quantity`]
-                      "
-                    />
-                  </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-textarea
-              v-model="note.value.value"
-              label="Note"
-              counter
-              clearable
-              :rules="rules"
+        <v-card v-if="isShowSizeQuantities">
+          <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
+          <v-card-subtitle></v-card-subtitle>
+          <v-card-text>
+            <v-data-table
+              :headers="sizeHeaders"
+              :items="sizeQuantities"
+              editable
+              hide-default-footer
             >
-            </v-textarea>
-          </v-col>
-        </v-row>
+              <template #item.quantity="{ item, index }">
+                <v-text-field
+                  v-model.number="item.quantity"
+                  :label="$t('label.quantity')"
+                  type="number"
+                  :error-messages="
+                    (errors as any)[`workSizes[${index}].quantity`]
+                  "
+                />
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+
+        <v-textarea
+          v-model="note.value.value"
+          label="Note"
+          counter
+          clearable
+          :rules="rules"
+        >
+        </v-textarea>
       </v-col>
     </v-row>
 
-    <v-row align="end" class="ma-1 mt-4">
-      <!-- <ActionCancel v-if="!workId"></ActionCancel> -->
-      <ActionConfirm :loading="isCreating || isUpdating">{{
-        submitBtnTitle
-      }}</ActionConfirm>
-      <ActionDelete
-        v-if="workId"
-        :loading="isDeleting"
-        @click="executeDelete({ id: workId })"
-      ></ActionDelete>
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm :loading="isCreating || isUpdating">{{
+          submitBtnTitle
+        }}</ActionConfirm>
+      </v-col>
+      <v-col class="d-flex align-end">
+        <ActionDelete
+          v-if="workId"
+          :loading="isDeleting"
+          @click="executeDelete({ id: workId })"
+        ></ActionDelete>
+      </v-col>
     </v-row>
   </v-form>
 

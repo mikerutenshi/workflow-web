@@ -120,7 +120,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row align="end">
       <v-col cols="6">
         <ActionConfirm :loading="isCreating || isUpdating">{{
           submitBtnTitle

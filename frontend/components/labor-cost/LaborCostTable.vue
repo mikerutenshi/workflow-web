@@ -128,36 +128,22 @@
     </v-col>
   </v-row>
 
-  <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
-    <v-card>
-      <v-toolbar>
-        <v-btn :icon="mdiClose" @click="dialog = false"></v-btn>
-        <v-toolbar-title>{{ $t('page.labor_cost_update') }}</v-toolbar-title>
-      </v-toolbar>
-
-      <v-container class="h-100 d-flex flex-column">
-        <LaborCostUpdateForm
-          :product-group-id="productGroupId"
-          @close-dialog="
-            dialog = false;
-            execute();
-          "
-        ></LaborCostUpdateForm>
-      </v-container>
-    </v-card>
-  </v-dialog>
+  <ActionEditItemDialog
+    :dialog-title="$t('page.labor_cost_update')"
+    v-model="dialog"
+  >
+    <LaborCostUpdateForm
+      :product-group-id="productGroupId"
+      @close-dialog="
+        dialog = false;
+        execute();
+      "
+    ></LaborCostUpdateForm>
+  </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
-import {
-  mdiClose,
-  mdiFileDocumentEdit,
-  mdiFileDocumentEditOutline,
-  mdiLeadPencil,
-  mdiMagnify,
-  mdiPencil,
-  mdiPencilBox,
-} from '@mdi/js';
+import { mdiMagnify, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetLaborCostsDocument } from '~/api/generated/types';

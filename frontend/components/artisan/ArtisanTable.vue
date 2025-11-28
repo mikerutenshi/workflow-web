@@ -31,7 +31,28 @@
     </template>
   </v-data-table>
 
-  <v-dialog
+  <ActionEditItemDialog
+    :dialog-title="
+      dialog.content === DialogContent.Create
+        ? $t('page.artisan_create')
+        : dialog.content === DialogContent.Edit
+          ? $t('page.artisan_edit')
+          : 'Title'
+    "
+    v-model="dialog.isVisible"
+  >
+    <template v-if="dialog.content === DialogContent.Create">
+      <ArtisanCreateForm @close-dialog="handleDialogClose"></ArtisanCreateForm>
+    </template>
+    <template v-else-if="dialog.content === DialogContent.Edit">
+      <ArtisanCreateForm
+        :artisan-id="selectionId"
+        @close-dialog="handleDialogClose"
+      ></ArtisanCreateForm>
+    </template>
+  </ActionEditItemDialog>
+
+  <!-- <v-dialog
     v-model="dialog.isVisible"
     fullscreen
     transition="dialog-bottom-transition"
@@ -62,11 +83,11 @@
         </template>
       </v-container>
     </v-card>
-  </v-dialog>
+  </v-dialog> -->
 </template>
 
 <script setup lang="ts">
-import { mdiClose, mdiFileDocumentEditOutline, mdiPencil } from '@mdi/js';
+import { mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import { GetArtisansDocument } from '~/api/generated/types';

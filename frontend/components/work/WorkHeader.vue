@@ -1,58 +1,36 @@
 <template>
-  <v-form class="h-100 d-flex flex-column">
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col>
-            <ActionPickDate v-model="form.date" readonly></ActionPickDate>
-          </v-col>
-        </v-row>
+  <ActionPickDate v-model="form.date" readonly></ActionPickDate>
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              :label="$t('label.order_no')"
-              v-model="form.orderNo"
-              readonly
-            ></v-text-field>
-          </v-col>
-        </v-row>
+  <v-text-field
+    :label="$t('label.order_no')"
+    v-model="form.orderNo"
+    readonly
+  ></v-text-field>
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              :label="$t('label.product')"
-              v-model="form.sku"
-              readonly
-            ></v-text-field>
-          </v-col>
-        </v-row>
+  <v-text-field
+    :label="$t('label.product')"
+    v-model="form.sku"
+    readonly
+  ></v-text-field>
 
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-card-title></v-card-title>
-              <v-card-subtitle>{{ $t('label.sizes') }}</v-card-subtitle>
-              <v-card-text>
-                <v-chip-group class="my-2">
-                  <v-chip
-                    v-for="size in form.sizes"
-                    :key="size.eu"
-                    class="ma-1"
-                    color="primary"
-                    disabled
-                    rounded="lg"
-                  >
-                    {{ `${size.eu} | ${size.quantity}` }}
-                  </v-chip>
-                </v-chip-group>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-form>
+  <v-card>
+    <v-card-title></v-card-title>
+    <v-card-subtitle>{{ $t('label.sizes') }}</v-card-subtitle>
+    <v-card-text>
+      <v-chip-group class="my-2">
+        <v-chip
+          v-for="size in form.sizes"
+          :key="size.eu"
+          class="ma-1"
+          color="primary"
+          disabled
+          rounded="lg"
+        >
+          {{ `${size.eu} | ${size.quantity}` }}
+        </v-chip>
+      </v-chip-group>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped lang="sass">

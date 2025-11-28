@@ -18,30 +18,28 @@
     </v-col>
   </v-row>
 
-  <v-row>
-    <v-col class="d-flex flex-column">
-      <v-data-table
-        :headers="headers"
-        :items="computedWorks"
-        :loading="isFetching"
-        item-value="id"
-        class="flex-grow-1"
-        hover
-        fixed-header
-        :height="`calc(100vh - 262px)`"
-        :search="search"
-        :page="pageNo"
-        :items-per-page="itemsPerPage"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-        </template>
+  <v-data-table
+    :headers="headers"
+    :items="computedWorks"
+    :loading="isFetching"
+    item-value="id"
+    class="flex-grow-1"
+    hover
+    fixed-header
+    :height="`calc(100vh - 262px)`"
+    :search="search"
+    :page="pageNo"
+    :items-per-page="itemsPerPage"
+  >
+    <template #loading>
+      <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+    </template>
 
-        <template v-slot:item.date="{ item }">
-          {{ adapter.format(item.date, 'normalDateWithWeekday') }}
-        </template>
-        <template v-slot:item.sizes="{ item }">
-          <!-- <v-chip-group direction="vertical">
+    <template v-slot:item.date="{ item }">
+      {{ adapter.format(item.date, 'normalDateWithWeekday') }}
+    </template>
+    <template v-slot:item.sizes="{ item }">
+      <!-- <v-chip-group direction="vertical">
             <v-chip
               v-for="size in item.sizes"
               variant="outlined"
@@ -51,71 +49,66 @@
               {{ `${size.size.eu} | ${size.quantity}` }}
             </v-chip>
           </v-chip-group> -->
-          <v-table density="compact">
-            <tbody>
-              <tr v-for="size in item.workSizes" :key="size.size.id">
-                <td>{{ size.size.eu }}</td>
-                <td>{{ size.quantity }}</td>
-              </tr>
-              <tr>
-                <td><i>Total</i></td>
-                <td>
-                  <i>
-                    {{
-                      item.workSizes.reduce(
-                        (sum, size) => sum + size.quantity,
-                        0,
-                      )
-                    }}</i
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
-        </template>
-
-        <template v-slot:item.tasks="{ item }">
-          <div class="mb-4">
-            <v-timeline align="start" side="end" direction="horizontal">
-              <v-timeline-item
-                v-for="task in item.tasks"
-                size="very-small"
-                :dot-color="task.doneAt ? 'surface-variant' : 'grey'"
+      <v-table density="compact">
+        <tbody>
+          <tr v-for="size in item.workSizes" :key="size.size.id">
+            <td>{{ size.size.eu }}</td>
+            <td>{{ size.quantity }}</td>
+          </tr>
+          <tr>
+            <td><i>Total</i></td>
+            <td>
+              <i>
+                {{
+                  item.workSizes.reduce((sum, size) => sum + size.quantity, 0)
+                }}</i
               >
-                <div class="d-flex flex-column">
-                  <p>
-                    {{ $t(renderJob(task.type)) }}
-                  </p>
-                  <span v-if="task.doneAt" class="mt-2">
-                    {{ adapter.format(task.doneAt, 'normalDateWithWeekday') }}
-                  </span>
-                  <span v-if="task.artisan?.firstName">
-                    {{
-                      task.artisan.firstName +
-                      ' ' +
-                      (task.artisan.lastName ?? '')
-                    }}
-                  </span>
-                </div>
-              </v-timeline-item>
-            </v-timeline>
-          </div>
-        </template>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </template>
 
-        <template v-slot:item.progress="{ item }">
-          <v-icon
-            :icon="
-              item.displayProgress === Progress.Initiated
-                ? mdiTimerSandEmpty
-                : item.displayProgress === Progress.Completed
-                  ? mdiTimerSandComplete
-                  : mdiTimerSand
-            "
-          ></v-icon>
-          <span>{{ $t(`progress.${item.displayProgress}`) }}</span>
-        </template>
+    <template v-slot:item.tasks="{ item }">
+      <div class="mb-4">
+        <v-timeline align="start" side="end" direction="horizontal">
+          <v-timeline-item
+            v-for="task in item.tasks"
+            size="very-small"
+            :dot-color="task.doneAt ? 'surface-variant' : 'grey'"
+          >
+            <div class="d-flex flex-column">
+              <p>
+                {{ $t(renderJob(task.type)) }}
+              </p>
+              <span v-if="task.doneAt" class="mt-2">
+                {{ adapter.format(task.doneAt, 'normalDateWithWeekday') }}
+              </span>
+              <span v-if="task.artisan?.firstName">
+                {{
+                  task.artisan.firstName + ' ' + (task.artisan.lastName ?? '')
+                }}
+              </span>
+            </div>
+          </v-timeline-item>
+        </v-timeline>
+      </div>
+    </template>
 
-        <!-- <template v-slot:item.actions="{ item }">
+    <template v-slot:item.progress="{ item }">
+      <v-icon
+        :icon="
+          item.displayProgress === Progress.Initiated
+            ? mdiTimerSandEmpty
+            : item.displayProgress === Progress.Completed
+              ? mdiTimerSandComplete
+              : mdiTimerSand
+        "
+      ></v-icon>
+      <span>{{ $t(`progress.${item.displayProgress}`) }}</span>
+    </template>
+
+    <!-- <template v-slot:item.actions="{ item }">
           <v-btn
             color="primary"
             :icon="mdiPencil"
@@ -124,52 +117,74 @@
           ></v-btn>
         </template> -->
 
-        <template v-slot:item.actions="{ item }">
-          <template v-if="clearanceLevel <= Role.Planner">
-            <v-menu transition="slide-y-transition" open-on-hover>
-              <template v-slot:activator="{ props }">
-                <v-btn
-                  :icon="mdiDotsVertical"
-                  color="primary"
-                  v-bind="props"
-                  variant="text"
-                >
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  :prepend-icon="mdiPencil"
-                  @click="showEditWorkDialog(item.id)"
-                >
-                  <v-list-item-title>{{
-                    $t('page.work_edit')
-                  }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item
-                  :prepend-icon="mdiPencil"
-                  @click="showEditTaskDialog(item.id)"
-                >
-                  <v-list-item-title>{{
-                    $t('page.task_edit')
-                  }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
-          <template v-else>
+    <template v-slot:item.actions="{ item }">
+      <template v-if="clearanceLevel <= Role.Planner">
+        <v-menu transition="slide-y-transition" open-on-hover>
+          <template v-slot:activator="{ props }">
             <v-btn
+              :icon="mdiDotsVertical"
               color="primary"
-              :icon="mdiPencil"
+              v-bind="props"
               variant="text"
-              @click="showEditTaskDialog(item.id)"
-            ></v-btn>
+            >
+            </v-btn>
           </template>
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
+          <v-list>
+            <v-list-item
+              :prepend-icon="mdiPencil"
+              @click="showEditWorkDialog(item.id)"
+            >
+              <v-list-item-title>{{ $t('page.work_edit') }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              :prepend-icon="mdiPencil"
+              @click="showEditTaskDialog(item.id)"
+            >
+              <v-list-item-title>{{ $t('page.task_edit') }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+      <template v-else>
+        <v-btn
+          color="primary"
+          :icon="mdiPencil"
+          variant="text"
+          @click="showEditTaskDialog(item.id)"
+        ></v-btn>
+      </template>
+    </template>
+  </v-data-table>
 
-  <v-dialog
+  <ActionEditItemDialog
+    v-model="dialog.isVisible"
+    :dialog-title="
+      dialog.content === DialogContent.CreateWork
+        ? $t('page.work_create')
+        : dialog.content === DialogContent.EditWork
+          ? $t('page.work_edit')
+          : dialog.content === DialogContent.EditTask
+            ? $t('page.task_edit')
+            : ''
+    "
+  >
+    <template v-if="dialog.content === DialogContent.CreateWork">
+      <WorkCreateForm @close-dialog="save"></WorkCreateForm>
+    </template>
+    <template v-if="dialog.content === DialogContent.EditWork">
+      <WorkCreateForm
+        :work-id="currentWorkId"
+        @close-dialog="save"
+      ></WorkCreateForm>
+    </template>
+    <template v-if="dialog.content === DialogContent.EditTask">
+      <TaskUpdateForm
+        :work-id="currentWorkId"
+        @close-dialog="save"
+      ></TaskUpdateForm>
+    </template>
+  </ActionEditItemDialog>
+  <!-- <v-dialog
     v-model="dialog.isVisible"
     fullscreen
     transition="dialog-bottom-transition"
@@ -204,36 +219,9 @@
             @close-dialog="save"
           ></TaskUpdateForm>
         </template>
-        <!-- <template v-if="currentWorkId">
-          <template v-if="clearanceLevel <= Role.Planner">
-            <WorkCreateForm
-              :workId="currentWorkId"
-              @close-dialog="save"
-            ></WorkCreateForm>
-          </template>
-          <WorkHeader
-            v-if="clearanceLevel >= Role.Field"
-            class="my-4"
-            :workId="currentWorkId"
-          ></WorkHeader>
-          <v-divider
-            class="my-4"
-            v-if="clearanceLevel <= Role.Finance"
-          ></v-divider>
-          <TaskUpdateForm
-            v-if="
-              clearanceLevel >= Role.Field || clearanceLevel <= Role.Finance
-            "
-            :workId="currentWorkId"
-            @close-dialog="save"
-          ></TaskUpdateForm>
-        </template>
-        <template v-else>
-          <WorkCreateForm @close-dialog="save"></WorkCreateForm>
-        </template> -->
       </v-container>
     </v-card>
-  </v-dialog>
+  </v-dialog> -->
 </template>
 
 <style scoped lang="sass">

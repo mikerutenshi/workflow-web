@@ -10,97 +10,84 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col>
-            <WorkHeader class="my-4" :workId="props.workId"></WorkHeader>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-divider class="my-4"></v-divider>
-          </v-col>
-        </v-row>
+        <WorkHeader :workId="props.workId"></WorkHeader>
 
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-card-title></v-card-title>
-              <v-card-subtitle>{{ $t('card.fill_artisans') }}</v-card-subtitle>
-              <v-card-text>
-                <v-data-table
-                  :headers="taskHeaders"
-                  :items="displayForm"
-                  hide-default-footer
-                  editable
+        <v-card class="mt-4">
+          <v-card-title>{{ $t('card.fill_artisans') }}</v-card-title>
+          <v-card-subtitle></v-card-subtitle>
+          <v-card-text>
+            <v-data-table
+              :headers="taskHeaders"
+              :items="displayForm"
+              hide-default-footer
+              editable
+            >
+              <template v-slot:item.type="{ item }">
+                {{ $t(renderJob(item.type)) }}
+              </template>
+
+              <template #item.doneAt="{ item, index }">
+                <ActionPickDate
+                  :label="$t('label.done_at')"
+                  v-model="item.doneAt"
+                  variant="outlined"
+                  :error-messages="(errors as any)[`tasks[${index}].doneAt`]"
+                ></ActionPickDate>
+              </template>
+
+              <template #item.artisan="{ item, index }">
+                <v-select
+                  :label="$t('label.artisan')"
+                  item-value="id"
+                  item-title="fullName"
+                  :items="
+                    artisansData?.getArtisans
+                      .filter((artisan) => {
+                        return artisan.jobs.includes(item.type);
+                      })
+                      .map((artisan) => ({
+                        ...artisan,
+                        fullName: `${artisan.firstName} ${
+                          artisan.lastName ?? ''
+                        }`,
+                      }))
+                  "
+                  :loading="isFetchingArtisans"
+                  v-model="item.artisan"
+                  clearable
+                  return-object
+                  :error-messages="(errors as any)[`tasks[${index}].artisanId`]"
                 >
-                  <template v-slot:item.type="{ item }">
-                    {{ $t(renderJob(item.type)) }}
-                  </template>
-
-                  <template #item.doneAt="{ item, index }">
-                    <ActionPickDate
-                      :label="$t('label.done_at')"
-                      v-model="item.doneAt"
-                      variant="outlined"
-                      :error-messages="
-                        (errors as any)[`tasks[${index}].doneAt`]
-                      "
-                    ></ActionPickDate>
-                  </template>
-
-                  <template #item.artisan="{ item, index }">
-                    <v-select
-                      :label="$t('label.artisan')"
-                      item-value="id"
-                      item-title="fullName"
-                      :items="
-                        artisansData?.getArtisans
-                          .filter((artisan) => {
-                            return artisan.jobs.includes(item.type);
-                          })
-                          .map((artisan) => ({
-                            ...artisan,
-                            fullName: `${artisan.firstName} ${
-                              artisan.lastName ?? ''
-                            }`,
-                          }))
-                      "
-                      :loading="isFetchingArtisans"
-                      v-model="item.artisan"
-                      clearable
-                      return-object
-                      :error-messages="
-                        (errors as any)[`tasks[${index}].artisanId`]
-                      "
+                  <template #item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :title="`${item.raw.firstName} ${
+                        item.raw.lastName ?? ''
+                      }`"
                     >
-                      <template #item="{ props, item }">
-                        <v-list-item
-                          v-bind="props"
-                          :title="`${item.raw.firstName} ${
-                            item.raw.lastName ?? ''
-                          }`"
-                        >
-                          <template #subtitle>
-                            {{
-                              item.raw.jobs
-                                .map((job) => $t(renderJob(job)))
-                                .join(', ')
-                            }}
-                          </template>
-                        </v-list-item>
+                      <template #subtitle>
+                        {{
+                          item.raw.jobs
+                            .map((job) => $t(renderJob(job)))
+                            .join(', ')
+                        }}
                       </template>
-                    </v-select>
+                    </v-list-item>
                   </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+                </v-select>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
 
-    <v-row align="end" class="ma-1 mt-4">
-      <ActionConfirm :loading="isUpdating">{{ submitBtnTitle }}</ActionConfirm>
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm :loading="isUpdating">{{
+          submitBtnTitle
+        }}</ActionConfirm>
+      </v-col>
     </v-row>
   </v-form>
 

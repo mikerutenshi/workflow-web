@@ -1,69 +1,59 @@
 <template>
   <form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
+    <v-row v-if="createError || updateError || deleteError">
+      <v-col>
+        <v-alert type="error">
+          {{
+            extractGraphQlError(createError) ||
+            extractGraphQlError(updateError) ||
+            extractGraphQlError(deleteError)
+          }}
+        </v-alert>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col>
-        <v-row v-if="createError || updateError || deleteError">
-          <v-col>
-            <v-alert type="error">
-              {{
-                extractGraphQlError(createError) ||
-                extractGraphQlError(updateError) ||
-                extractGraphQlError(deleteError)
-              }}
-            </v-alert>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="firstName.value.value"
-              :label="$t('label.first_name')"
-              :error-messages="firstName.errorMessage.value"
-            />
-          </v-col>
-        </v-row>
+        <v-text-field
+          v-model="firstName.value.value"
+          :label="$t('label.first_name')"
+          :error-messages="firstName.errorMessage.value"
+        />
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="lastName.value.value"
-              :label="$t('label.last_name')"
-              :error-messages="lastName.errorMessage.value"
-            />
-          </v-col>
-        </v-row>
+        <v-text-field
+          v-model="lastName.value.value"
+          :label="$t('label.last_name')"
+          :error-messages="lastName.errorMessage.value"
+        />
 
-        <v-row>
-          <v-col>
-            <v-select
-              v-model="jobs.value.value"
-              :items="jobOptions"
-              :return-object="false"
-              :label="$t('label.select_jobs')"
-              multiple
-              chips
-              item-title="title"
-              item-value="id"
-              :error-messages="jobs.errorMessage.value"
-            ></v-select>
-          </v-col>
-        </v-row>
+        <v-select
+          v-model="jobs.value.value"
+          :items="jobOptions"
+          :return-object="false"
+          :label="$t('label.select_jobs')"
+          multiple
+          chips
+          item-title="title"
+          item-value="id"
+          :error-messages="jobs.errorMessage.value"
+        ></v-select>
       </v-col>
     </v-row>
 
-    <v-row class="flex-grow-1"></v-row>
-
-    <v-row align="end" class="ma-1">
-      <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
-        $t('btn.update')
-      }}</ActionConfirm>
-      <ActionConfirm v-else :loading="isCreating">{{
-        $t('btn.create')
-      }}</ActionConfirm>
-      <ActionDelete
-        v-if="artisanId"
-        @click="executeDelete({ id: artisanId })"
-      ></ActionDelete>
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+      </v-col>
+      <v-col class="d-flex align-end">
+        <ActionDelete
+          v-if="artisanId"
+          @click="executeDelete({ id: artisanId })"
+        ></ActionDelete>
+      </v-col>
     </v-row>
   </form>
 
@@ -77,6 +67,7 @@
 
 <script setup lang="ts">
 import { useMutation, useQuery } from 'villus';
+import { useRoute } from 'vue-router';
 import {
   CreateArtisanDocument,
   DeleteArtisanDocument,
@@ -84,7 +75,6 @@ import {
   Job,
   UpdateArtisanDocument,
 } from '~/api/generated/types';
-import { useRoute } from 'vue-router';
 import { ArtisanSchema } from '~/validation/schema';
 
 const { t } = useI18n();

@@ -12,28 +12,18 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="name.value.value"
-              :error-messages="name.errorMessage.value"
-              :label="$t('label.name')"
-            />
-          </v-col>
-        </v-row>
+        <v-text-field
+          v-model="name.value.value"
+          :error-messages="name.errorMessage.value"
+          :label="$t('label.name')"
+        />
 
         <v-row class="flex-grow-1">
           <v-col class="flex-grow-1">
-            <v-card elevation="0">
+            <v-card>
               <v-card-title>
                 {{ $t('label.pick_color') }}
               </v-card-title>
-              <v-card-subtitle
-                v-if="hexCode.errorMessage.value"
-                class="text-error"
-              >
-                {{ hexCode.errorMessage.value }}
-              </v-card-subtitle>
 
               <v-card-text>
                 <v-color-picker
@@ -43,24 +33,34 @@
                   show-swatches
                 ></v-color-picker>
               </v-card-text>
+              <span
+                :style="{ color: $vuetify.theme.themes.light.colors.error }"
+                class="ma-4 text-caption"
+              >
+                {{ hexCode.errorMessage.value }}
+              </span>
             </v-card>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
 
-    <v-row align="end" class="ma-1">
-      <ActionConfirm v-if="colorId" :loading="isUpdating">{{
-        $t('btn.update')
-      }}</ActionConfirm>
-      <ActionConfirm v-else :loading="isCreating">{{
-        $t('btn.create')
-      }}</ActionConfirm>
-      <ActionDelete
-        v-if="colorId"
-        :loading="isDeleting"
-        @click="executeDelete({ id: colorId })"
-      ></ActionDelete>
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm v-if="colorId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+      </v-col>
+      <v-col class="d-flex align-end">
+        <ActionDelete
+          v-if="colorId"
+          :loading="isDeleting"
+          @click="executeDelete({ id: colorId })"
+        ></ActionDelete>
+      </v-col>
     </v-row>
   </v-form>
 

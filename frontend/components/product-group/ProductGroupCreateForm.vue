@@ -1,17 +1,14 @@
 <template>
   <v-form class="h-100 d-flex flex-column" @submit.prevent="onSubmit">
+    <v-row v-if="createError || updateError || deleteError">
+      <v-col>
+        <v-alert type="error">
+          {{ extractGraphQlError(createError || updateError || deleteError) }}
+        </v-alert>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col>
-        <v-row v-if="createError || updateError || deleteError">
-          <v-col>
-            <v-alert type="error">
-              {{
-                extractGraphQlError(createError || updateError || deleteError)
-              }}
-            </v-alert>
-          </v-col>
-        </v-row>
-
         <v-row>
           <v-col>
             <v-select
@@ -43,7 +40,12 @@
             </v-select>
           </v-col>
 
-          <v-col cols="12" md="4" class="d-flex align-center justify-end">
+          <v-col
+            cols="12"
+            lg="3"
+            xl="2"
+            class="d-flex align-center justify-end"
+          >
             <v-btn
               :prepend-icon="mdiPlus"
               color="primary"
@@ -53,42 +55,36 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="skuNumeric.value.value"
-              :error-messages="skuNumeric.errorMessage.value"
-              :label="$t('label.sku_numeric')"
-            />
-          </v-col>
-        </v-row>
+        <v-text-field
+          v-model="skuNumeric.value.value"
+          :error-messages="skuNumeric.errorMessage.value"
+          :label="$t('label.sku_numeric')"
+        />
 
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="name.value.value"
-              :error-messages="name.errorMessage.value"
-              :label="$t('label.product_name')"
-            />
-          </v-col>
-        </v-row>
+        <v-text-field
+          v-model="name.value.value"
+          :error-messages="name.errorMessage.value"
+          :label="$t('label.product_name')"
+        />
       </v-col>
     </v-row>
 
-    <v-row class="flex-grow-1"></v-row>
-
-    <v-row align="end" class="ma-1">
-      <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
-        $t('btn.update')
-      }}</ActionConfirm>
-      <ActionConfirm v-else :loading="isCreating">{{
-        $t('btn.create')
-      }}</ActionConfirm>
-      <ActionDelete
-        :loading="isDeleting"
-        v-if="productGroupId"
-        @click="executeDelete({ id: productGroupId })"
-      ></ActionDelete>
+    <v-row align="end">
+      <v-col>
+        <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
+          $t('btn.update')
+        }}</ActionConfirm>
+        <ActionConfirm v-else :loading="isCreating">{{
+          $t('btn.create')
+        }}</ActionConfirm>
+      </v-col>
+      <v-col class="d-flex align-end">
+        <ActionDelete
+          :loading="isDeleting"
+          v-if="productGroupId"
+          @click="executeDelete({ id: productGroupId })"
+        ></ActionDelete>
+      </v-col>
     </v-row>
   </v-form>
 
