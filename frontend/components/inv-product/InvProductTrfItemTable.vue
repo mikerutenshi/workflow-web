@@ -19,51 +19,49 @@
     </v-col>
   </v-row> -->
 
-  <v-row>
-    <v-col class="d-flex flex-column">
-      <v-data-table
-        :headers="headers"
-        :items="props.invTrfDto?.invTrfItems"
-        :search="search"
-        item-value="invTrfId"
-        hover
-        :page="pageNo"
-        :items-per-page="itemsPerPage"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-        </template>
-        <!-- 
+  <v-card-text>
+    <v-data-table
+      :headers="headers"
+      :items="props.invTrfDto?.invTrfItems"
+      :search="search"
+      item-value="invTrfId"
+      hover
+      :page="pageNo"
+      :items-per-page="itemsPerPage"
+    >
+      <template #loading>
+        <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+      </template>
+      <!-- 
         <template v-slot:item.invTrf.trfDate="{ item }">
           {{ adapter.format(item.invTrf.trfDate, 'fullDateTime12h') }}
         </template> -->
 
-        <template v-slot:item.invTrfItemSizes="{ item }">
-          <v-table density="compact">
-            <tbody>
-              <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
-                <td>{{ i.size.eu }}</td>
-                <td>{{ i.quantity }}</td>
-              </tr>
-              <tr>
-                <td><i>Total</i></td>
-                <td>
-                  <i>
-                    {{
-                      item.invTrfItemSizes.reduce(
-                        (sum, size) => sum + size.quantity,
-                        0,
-                      )
-                    }}
-                  </i>
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
+      <template v-slot:item.invTrfItemSizes="{ item }">
+        <v-table density="compact">
+          <tbody>
+            <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
+              <td>{{ i.size.eu }}</td>
+              <td>{{ i.quantity }}</td>
+            </tr>
+            <tr>
+              <td><i>Total</i></td>
+              <td>
+                <i>
+                  {{
+                    item.invTrfItemSizes.reduce(
+                      (sum, size) => sum + size.quantity,
+                      0,
+                    )
+                  }}
+                </i>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+      </template>
+    </v-data-table>
+  </v-card-text>
 </template>
 
 <script setup lang="ts">

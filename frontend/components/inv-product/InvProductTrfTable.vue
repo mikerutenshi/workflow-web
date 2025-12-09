@@ -88,13 +88,13 @@
                 </v-list-item> -->
                 <v-list-item
                   :prepend-icon="mdiPencil"
-                  @click="showItemFormDialog(item as InvTrfDto)"
+                  @click="showDialog(DialogContent.Edit, item.id)"
                 >
                   <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item
                   :prepend-icon="mdiPrinter"
-                  @click="printItem(item as InvTrfDto)"
+                  @click="showDialog(DialogContent.View, item.id)"
                 >
                   <v-list-item-title>{{ t('btn.print') }}</v-list-item-title>
                 </v-list-item>
@@ -123,14 +123,13 @@
     </v-dialog> -->
 
     <ActionEditItemDialog
-      :dialogTitle="
-        selectItemObject ? $t('page.inv_trf_edit') : $t('page.inv_trf_create')
-      "
-      v-model="dialogForm"
+      :dialogTitle="dialogModel.title"
+      v-model="dialogModel.isVisible"
     >
       <InvProductTrfForm
-        @close-dialog="dialogForm = false"
-        :inv-trf-id="selectItemObject?.id || null"
+        @close-dialog="dialogModel.isVisible = false"
+        :inv-trf-id="dialogModel.id"
+        :is-readonly="dialogModel.isReadonly"
       ></InvProductTrfForm>
     </ActionEditItemDialog>
   </template>
@@ -163,8 +162,21 @@ const isComingSoon = computed(() => {
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
 const search = ref('');
-const dialogView = ref(false);
-const dialogForm = ref(false);
+// const dialogView = ref(false);
+// const dialogForm = ref(false);
+enum DialogContent {
+  View = 'VIEW',
+  None = 'NONE',
+  Edit = 'EDIT',
+  Create = 'CREATE',
+}
+const dialogModel = reactive({
+  id: null as string | null,
+  title: '',
+  content: DialogContent.None,
+  isVisible: false,
+  isReadonly: false,
+});
 
 const dialogStore = useDialogStore();
 const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
@@ -221,13 +233,29 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
-function showItemDialog(item: InvTrfDto) {
-  selectItemObject.value = item;
-  dialogView.value = true;
-}
-function showItemFormDialog(item: InvTrfDto) {
-  selectItemObject.value = item;
-  dialogForm.value = true;
+function showDialog(content: DialogContent, id?: string) {
+  dialogModel.id = id ?? null;
+
+  switch (content) {
+    case DialogContent.Create:
+      dialogModel.content = DialogContent.Create;
+      dialogModel.title = t('page.inv_trf_create');
+      dialogModel.isReadonly = false;
+      dialogModel.isVisible = true;
+      break;
+    case DialogContent.Edit:
+      dialogModel.content = DialogContent.Edit;
+      dialogModel.title = t('page.inv_trf_edit');
+      dialogModel.isReadonly = false;
+      dialogModel.isVisible = true;
+      break;
+    case DialogContent.View:
+      dialogModel.content = DialogContent.View;
+      dialogModel.title = t('page.inv_trf_view');
+      dialogModel.isReadonly = true;
+      dialogModel.isVisible = true;
+      break;
+  }
 }
 function printItem(item: InvTrfDto) {
   selectItemObject.value = item;
@@ -300,25 +328,21 @@ function exportPdf() {
   doc.save(`${trfNo}.pdf`);
 }
 
-watch(isCreateDialogOpen, (isOpen) => {
-  if (isOpen) {
-    dialogForm.value = true;
+watch(isCreateDialogOpen, (open) => {
+  if (open) {
+    showDialog(DialogContent.Create);
   }
 });
-watch(dialogForm, (isOpen) => {
-  if (!isOpen) {
-    executeFetch();
-    dialogStore.closeFormDialog();
-    selectItemObject.value = null;
-  }
-});
-watch(dialogView, (isOpen) => {
-  if (!isOpen) {
-    setTimeout(() => {
-      selectItemObject.value = null;
-    }, 200);
-  }
-});
+watch(
+  () => [dialogModel.isVisible, dialogModel.content],
+  ([visible, content]) => {
+    if (!visible && content === DialogContent.Create) {
+      executeFetch();
+      dialogStore.closeFormDialog();
+    }
+  },
+);
+
 watchEffect(() => {
   if (fromInvData.value && toInvData.value && isPrinting.value) {
     exportPdf();

@@ -4,29 +4,27 @@
     :loading="loading"
     :disabled="loading || disabled"
     :outlined="outlined"
-    :prepend-icon="mdiCheckBold"
+    :prepend-icon="mdiPrinter"
     @click="handleClick"
-    type="submit"
   >
-    <slot>{{ text }}</slot>
+    {{ $t('btn.print') }}
   </v-btn>
 </template>
 
-<script setup>
-import { mdiCheckBold } from '@mdi/js';
+<script setup lang="ts">
+import { mdiPrinter } from '@mdi/js';
+import type { InvTrfDto } from '~/api/generated/types';
 
 const props = defineProps({
   color: { type: String, default: 'primary' },
   loading: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   outlined: { type: Boolean, default: false },
-  prependIcon: { type: Boolean, default: false },
-  text: { type: String, default: 'OK' },
+  invTrfDto: {
+    type: Object as PropType<InvTrfDto | null>,
+    required: true,
+  },
 });
 
-const emit = defineEmits(['click']);
-
-function handleClick(event) {
-  emit('click', event);
-}
+function handleClick() {}
 </script>

@@ -1,63 +1,56 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
-    <v-row>
-      <v-col>
-        <v-row v-if="createError || updateError || deleteError">
-          <v-col>
-            <v-alert type="error">
-              {{
-                extractGraphQlError(createError || updateError || deleteError)
-              }}
-            </v-alert>
-          </v-col>
-        </v-row>
+    <v-card-text>
+      <v-row v-if="createError || updateError || deleteError">
+        <v-col>
+          <v-alert type="error">
+            {{ extractGraphQlError(createError || updateError || deleteError) }}
+          </v-alert>
+        </v-col>
+      </v-row>
 
-        <v-text-field
-          v-model="name.value.value"
-          :error-messages="name.errorMessage.value"
-          :label="$t('label.name')"
-        />
+      <v-text-field
+        v-model="name.value.value"
+        :error-messages="name.errorMessage.value"
+        :label="$t('label.name')"
+      />
 
-        <v-card class="mb-4">
-          <v-card-title>
-            {{ $t('label.pick_color') }}
-          </v-card-title>
+      <v-card class="mb-4" variant="outlined">
+        <v-card-title>
+          {{ $t('label.pick_color') }}
+        </v-card-title>
 
-          <v-card-text>
-            <v-color-picker
-              swatches-max-height="300px"
-              v-model="hexCode.value.value"
-              v-model:mode="mode"
-              show-swatches
-            ></v-color-picker>
-          </v-card-text>
-          <span
-            :style="{ color: $vuetify.theme.themes.light.colors.error }"
-            class="ma-4 text-caption"
-          >
-            {{ hexCode.errorMessage.value }}
-          </span>
-        </v-card>
-      </v-col>
-    </v-row>
+        <v-card-text>
+          <v-color-picker
+            swatches-max-height="300px"
+            v-model="hexCode.value.value"
+            v-model:mode="mode"
+            show-swatches
+          ></v-color-picker>
+        </v-card-text>
+        <span
+          :style="{ color: $vuetify.theme.themes.light.colors.error }"
+          class="ma-4 text-caption"
+        >
+          {{ hexCode.errorMessage.value }}
+        </span>
+      </v-card>
+    </v-card-text>
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm v-if="colorId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-      </v-col>
-      <v-col class="d-flex align-end">
-        <ActionDelete
-          v-if="colorId"
-          :loading="isDeleting"
-          @click="executeDelete({ id: colorId })"
-        ></ActionDelete>
-      </v-col>
-    </v-row>
+    <v-card-actions>
+      <v-spacer> </v-spacer>
+      <ActionDelete
+        v-if="colorId"
+        :loading="isDeleting"
+        @click="executeDelete({ id: colorId })"
+      ></ActionDelete>
+      <ActionConfirm v-if="colorId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack

@@ -8,56 +8,51 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col>
-        <v-text-field
-          v-model="name.value.value"
-          :label="$t('label.name')"
-          :error-messages="name.errorMessage.value"
-        />
+    <v-card-text>
+      <v-text-field
+        v-model="name.value.value"
+        :label="$t('label.name')"
+        :error-messages="name.errorMessage.value"
+      />
 
-        <v-select
-          v-model="gender.value.value"
-          :label="$t('label.gender')"
-          item-value="id"
-          item-title="name"
-          :items="genders"
-          :error-messages="gender.errorMessage.value"
-        >
-          <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :title="
-                item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
-              "
-            ></v-list-item>
-          </template>
-          <template v-slot:selection="{ item }">
-            <span>{{
+      <v-select
+        v-model="gender.value.value"
+        :label="$t('label.gender')"
+        item-value="id"
+        item-title="name"
+        :items="genders"
+        :error-messages="gender.errorMessage.value"
+      >
+        <template v-slot:item="{ props, item }">
+          <v-list-item
+            v-bind="props"
+            :title="
               item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
-            }}</span>
-          </template>
-        </v-select>
-      </v-col>
-    </v-row>
+            "
+          ></v-list-item>
+        </template>
+        <template v-slot:selection="{ item }">
+          <span>{{
+            item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
+          }}</span>
+        </template>
+      </v-select>
+    </v-card-text>
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-      </v-col>
-      <v-col>
-        <ActionDelete
-          v-if="productCategoryId"
-          :loading="isDeleting"
-          @click="executeDelete({ id: productCategoryId })"
-        ></ActionDelete>
-      </v-col>
-    </v-row>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionDelete
+        v-if="productCategoryId"
+        :loading="isDeleting"
+        @click="executeDelete({ id: productCategoryId })"
+      ></ActionDelete>
+      <ActionConfirm v-if="productCategoryId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack

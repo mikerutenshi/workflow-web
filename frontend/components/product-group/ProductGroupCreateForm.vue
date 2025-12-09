@@ -1,91 +1,81 @@
 <template>
   <v-form class="h-100 d-flex flex-column" @submit.prevent="onSubmit">
-    <v-row v-if="createError || updateError || deleteError">
-      <v-col>
-        <v-alert type="error">
-          {{ extractGraphQlError(createError || updateError || deleteError) }}
-        </v-alert>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col>
-            <v-select
-              v-model="productCategoryId.value.value"
-              :error-messages="productCategoryId.errorMessage.value"
-              :label="$t('label.product_category')"
-              item-value="id"
-              item-title="name"
-              :items="data?.getProductCategories"
-              :loading="isFetchingQuery"
-            >
-              <template v-slot:item="{ props, item }">
-                <v-list-item
-                  v-bind="props"
-                  :title="item.raw.name"
-                  :subtitle="$t(renderGender(item.raw.gender))"
-                >
-                  <template #append>
-                    <v-btn
-                      color="primary"
-                      :icon="mdiPencil"
-                      size="small"
-                      variant="text"
-                      @click="showDialogWithId(item.value)"
-                    ></v-btn>
-                  </template>
-                </v-list-item>
-              </template>
-            </v-select>
-          </v-col>
-
-          <v-col
-            cols="12"
-            lg="3"
-            xl="2"
-            class="d-flex align-center justify-end"
+    <v-card-text>
+      <v-row v-if="createError || updateError || deleteError">
+        <v-col>
+          <v-alert type="error">
+            {{ extractGraphQlError(createError || updateError || deleteError) }}
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-select
+            v-model="productCategoryId.value.value"
+            :error-messages="productCategoryId.errorMessage.value"
+            :label="$t('label.product_category')"
+            item-value="id"
+            item-title="name"
+            :items="data?.getProductCategories"
+            :loading="isFetchingQuery"
           >
-            <v-btn
-              :prepend-icon="mdiPlus"
-              color="primary"
-              @click="dialogForm = true"
-              >{{ $t('btn.product_category') }}</v-btn
-            >
-          </v-col>
-        </v-row>
+            <template v-slot:item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+                :title="item.raw.name"
+                :subtitle="$t(renderGender(item.raw.gender))"
+              >
+                <template #append>
+                  <v-btn
+                    color="primary"
+                    :icon="mdiPencil"
+                    size="small"
+                    variant="text"
+                    @click="showDialogWithId(item.value)"
+                  ></v-btn>
+                </template>
+              </v-list-item>
+            </template>
+          </v-select>
+        </v-col>
 
-        <v-text-field
-          v-model="skuNumeric.value.value"
-          :error-messages="skuNumeric.errorMessage.value"
-          :label="$t('label.sku_numeric')"
-        />
+        <v-col cols="12" lg="3" xl="2" class="d-flex align-center justify-end">
+          <v-btn
+            :prepend-icon="mdiPlus"
+            color="primary"
+            @click="dialogForm = true"
+            >{{ $t('btn.product_category') }}</v-btn
+          >
+        </v-col>
+      </v-row>
 
-        <v-text-field
-          v-model="name.value.value"
-          :error-messages="name.errorMessage.value"
-          :label="$t('label.product_name')"
-        />
-      </v-col>
-    </v-row>
+      <v-text-field
+        v-model="skuNumeric.value.value"
+        :error-messages="skuNumeric.errorMessage.value"
+        :label="$t('label.sku_numeric')"
+      />
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-      </v-col>
-      <v-col class="d-flex align-end">
-        <ActionDelete
-          :loading="isDeleting"
-          v-if="productGroupId"
-          @click="executeDelete({ id: productGroupId })"
-        ></ActionDelete>
-      </v-col>
-    </v-row>
+      <v-text-field
+        v-model="name.value.value"
+        :error-messages="name.errorMessage.value"
+        :label="$t('label.product_name')"
+      />
+    </v-card-text>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionDelete
+        :loading="isDeleting"
+        v-if="productGroupId"
+        @click="executeDelete({ id: productGroupId })"
+      ></ActionDelete>
+      <ActionConfirm v-if="productGroupId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack

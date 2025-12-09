@@ -1,146 +1,153 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
-    <v-row v-if="createError || updateError || deleteError">
-      <v-col>
-        <v-alert type="error">
-          {{ extractGraphQlError(createError || updateError || deleteError) }}
-        </v-alert>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <ActionPickDate
-          v-model="trfDate.value.value"
-          :error-messages="trfDate.errorMessage.value"
-        ></ActionPickDate>
+    <v-card-text>
+      <v-row v-if="createError || updateError || deleteError">
+        <v-col>
+          <v-alert type="error">
+            {{ extractGraphQlError(createError || updateError || deleteError) }}
+          </v-alert>
+        </v-col>
+      </v-row>
+      <ActionPickDate
+        v-model="trfDate.value.value"
+        :error-messages="trfDate.errorMessage.value"
+        :readonly="props.isReadonly"
+      ></ActionPickDate>
 
-        <v-text-field
-          :label="$t('label.trf_no')"
-          :error-messages="trfNo.errorMessage.value"
-          v-model="trfNo.value.value"
-        />
+      <v-text-field
+        :label="$t('label.trf_no')"
+        :error-messages="trfNo.errorMessage.value"
+        v-model="trfNo.value.value"
+        :readonly="props.isReadonly"
+      />
 
-        <v-row>
-          <v-col cols="12" lg="5">
-            <v-autocomplete
-              :label="$t('label.from_inv')"
-              auto-select-first
-              item-value="id"
-              item-title="name"
-              :items="inventories?.getInventories"
-              :loading="isFetchingInventories"
-              v-model="fromInvId.value.value"
-              :error-messages="fromInvId.errorMessage.value"
-            >
-            </v-autocomplete>
-          </v-col>
-          <v-col class="d-flex align-center justify-center" cols="12" lg="2">
-            <v-icon :icon="mdiTransferRight"></v-icon>
-          </v-col>
-          <v-col cols="12" lg="5">
-            <v-autocomplete
-              :label="$t('label.to_inv')"
-              auto-select-first
-              item-value="id"
-              item-title="name"
-              :items="inventories?.getInventories"
-              :loading="isFetchingInventories"
-              v-model="toInvId.value.value"
-              :error-messages="toInvId.errorMessage.value"
-            >
-            </v-autocomplete>
-          </v-col>
-        </v-row>
-
-        <v-select
-          :label="$t('label.status')"
-          :items="progressList"
-          v-model="progress.value.value"
-          :error-messages="progress.errorMessage.value"
-        >
-        </v-select>
-
-        <v-card
-          v-if="fromInvId.value.value && toInvId.value.value"
-          class="mb-4"
-        >
-          <v-card-title>{{ $t('card.products_to_trf') }}</v-card-title>
-          <v-data-table
-            :headers="tableHeaders"
-            :items="computeTrfItems"
-            :search="search"
-            :loading="isFetchingTrfItems"
+      <v-row>
+        <v-col cols="12" lg="5">
+          <v-autocomplete
+            :label="$t('label.from_inv')"
+            auto-select-first
             item-value="id"
-            v-model="itemIdSelections"
-            hover
-            :page="pageNo"
-            :items-per-page="itemsPerPage"
-            show-select
+            item-title="name"
+            :items="inventories?.getInventories"
+            :loading="isFetchingInventories"
+            v-model="fromInvId.value.value"
+            :error-messages="fromInvId.errorMessage.value"
+            :readonly="props.isReadonly"
           >
-            <template #loading>
-              <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-            </template>
+          </v-autocomplete>
+        </v-col>
+        <v-col class="d-flex align-center justify-center" cols="12" lg="2">
+          <v-icon :icon="mdiTransferRight"></v-icon>
+        </v-col>
+        <v-col cols="12" lg="5">
+          <v-autocomplete
+            :label="$t('label.to_inv')"
+            auto-select-first
+            item-value="id"
+            item-title="name"
+            :items="inventories?.getInventories"
+            :loading="isFetchingInventories"
+            v-model="toInvId.value.value"
+            :error-messages="toInvId.errorMessage.value"
+            :readonly="props.isReadonly"
+          >
+          </v-autocomplete>
+        </v-col>
+      </v-row>
 
-            <template #item.progress="{ item }">{{
-              $t(`progress.${item.progress}`)
-            }}</template>
+      <v-select
+        :label="$t('label.status')"
+        :items="progressList"
+        v-model="progress.value.value"
+        :error-messages="progress.errorMessage.value"
+        :readonly="props.isReadonly"
+      >
+      </v-select>
 
-            <template #item.discount="{ item }">{{
-              item.discount
-                ? formatDiscount(convertDecimalToPercent(item.discount))
-                : null
-            }}</template>
+      <v-card
+        v-if="fromInvId.value.value && toInvId.value.value"
+        variant="outlined"
+      >
+        <v-card-title>{{ $t('card.products_to_trf') }}</v-card-title>
+        <v-data-table
+          :headers="tableHeaders"
+          :items="computeTrfItems"
+          :search="search"
+          :loading="isFetchingTrfItems"
+          item-value="id"
+          v-model="itemIdSelections"
+          hover
+          :page="pageNo"
+          :items-per-page="itemsPerPage"
+          :show-select="!props.isReadonly"
+        >
+          <template #loading>
+            <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+          </template>
 
-            <template #item.product.productGroup.msrp="{ item }">{{
-              formatRupiah(item.product.productGroup.msrp)
-            }}</template>
+          <template #item.progress="{ item }">{{
+            $t(`progress.${item.progress}`)
+          }}</template>
 
-            <template v-slot:item.invTrfItemSizes="{ item }">
-              <v-table density="compact">
-                <tbody>
-                  <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
-                    <td>{{ i.size.eu }}</td>
-                    <td>{{ i.quantity }}</td>
-                  </tr>
-                  <tr>
-                    <td><i>Total</i></td>
-                    <td>
-                      <i>
-                        {{
-                          item.invTrfItemSizes.reduce(
-                            (sum, size) => sum + size.quantity,
-                            0,
-                          )
-                        }}
-                      </i>
-                    </td>
-                  </tr>
-                </tbody>
-              </v-table>
-            </template>
-          </v-data-table>
-          <span :style="{ color: errorColor }" class="ma-4 text-caption">
-            {{ errors['invTrfItemIds'] }}
-          </span>
-        </v-card>
-      </v-col>
-    </v-row>
+          <template #item.discount="{ item }">{{
+            item.discount
+              ? formatDiscount(convertDecimalToPercent(item.discount))
+              : null
+          }}</template>
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm :loading="isCreating">{{
-          submitBtnTitle
-        }}</ActionConfirm>
-      </v-col>
-      <v-col class="d-flex align-end">
+          <template #item.product.productGroup.msrp="{ item }">{{
+            formatRupiah(item.product.productGroup.msrp)
+          }}</template>
+
+          <template v-slot:item.invTrfItemSizes="{ item }">
+            <v-table density="compact">
+              <tbody>
+                <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
+                  <td>{{ i.size.eu }}</td>
+                  <td>{{ i.quantity }}</td>
+                </tr>
+                <tr>
+                  <td><i>Total</i></td>
+                  <td>
+                    <i>
+                      {{
+                        item.invTrfItemSizes.reduce(
+                          (sum, size) => sum + size.quantity,
+                          0,
+                        )
+                      }}
+                    </i>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </template>
+        </v-data-table>
+        <span :style="{ color: errorColor }" class="ma-4 text-caption">
+          {{ errors['invTrfItemIds'] }}
+        </span>
+      </v-card>
+    </v-card-text>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <template v-if="props.isReadonly">
+        <ActionPrintInvTrf
+          :inv-trf-dto="invTrfData?.getInvTrf"
+        ></ActionPrintInvTrf>
+      </template>
+      <template v-else>
         <ActionDelete
           v-if="props.invTrfId"
           @click="deleteInvTrf(props.invTrfId)"
-          :item-title="transferData?.getInvTrf.trfNo"
+          :item-title="invTrfData?.getInvTrf.trfNo"
           :loading="isDeleting"
         ></ActionDelete>
-      </v-col>
-    </v-row>
+        <ActionConfirm :loading="props.invTrfId ? isUpdating : isCreating">{{
+          submitBtnTitle
+        }}</ActionConfirm>
+      </template>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack
@@ -175,6 +182,10 @@ const props = defineProps({
   invTrfId: {
     type: [String, null] as PropType<string | null>,
     required: true,
+  },
+  isReadonly: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -292,9 +303,9 @@ const {
 
 const {
   execute: fetchTransfer,
-  data: transferData,
-  isFetching: isFetchingInvTrfs,
-  error: invTrfsError,
+  data: invTrfData,
+  isFetching: isFetchingInvTrf,
+  error: invTrfError,
 } = useQuery({
   variables: { id: props.invTrfId! },
   query: GetInvTrfDocument,

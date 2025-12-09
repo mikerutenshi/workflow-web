@@ -7,11 +7,12 @@
   >
     <v-card>
       <v-toolbar>
-        <v-btn :icon="mdiClose" @click="closeDialog"></v-btn>
         <v-toolbar-title>{{ dialogTitle }}</v-toolbar-title>
+        <v-btn :icon="mdiClose" @click="closeDialog"></v-btn>
       </v-toolbar>
 
-      <v-container class="h-100 d-flex flex-column"><slot></slot></v-container>
+      <slot></slot>
+      <!-- <v-container class="h-100 d-flex flex-column"><slot></slot></v-container> -->
     </v-card>
   </v-dialog>
 </template>

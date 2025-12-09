@@ -1,142 +1,132 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
-    <v-row v-if="errorCreate || errorUpdate || errorDelete" type="error">
-      <v-col>
-        <v-alert>
-          {{
-            extractGraphQlError(errorCreate) ||
-            extractGraphQlError(errorUpdate) ||
-            extractGraphQlError(errorDelete)
-          }}
-        </v-alert>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col>
-            <v-autocomplete
-              v-model="productGroupId.value.value"
-              :label="$t('label.product_group')"
-              auto-select-first
-              item-value="id"
-              item-title="skuNumeric"
-              :items="productGroupsData?.getProductGroups"
-              :loading="isFetchingProductGroups"
-              :error-messages="productGroupId.errorMessage.value"
-            >
-              <template v-slot:item="{ props, item }">
-                <v-list-item
-                  v-bind="props"
-                  :title="
-                    item.raw.name
-                      ? `${item.raw.skuNumeric} / ${item.raw.name}`
-                      : item.raw.skuNumeric
-                  "
-                  :subtitle="`
+    <v-card-text>
+      <v-row v-if="errorCreate || errorUpdate || errorDelete" type="error">
+        <v-col>
+          <v-alert>
+            {{
+              extractGraphQlError(errorCreate) ||
+              extractGraphQlError(errorUpdate) ||
+              extractGraphQlError(errorDelete)
+            }}
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-autocomplete
+            v-model="productGroupId.value.value"
+            :label="$t('label.product_group')"
+            auto-select-first
+            item-value="id"
+            item-title="skuNumeric"
+            :items="productGroupsData?.getProductGroups"
+            :loading="isFetchingProductGroups"
+            :error-messages="productGroupId.errorMessage.value"
+          >
+            <template v-slot:item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+                :title="
+                  item.raw.name
+                    ? `${item.raw.skuNumeric} / ${item.raw.name}`
+                    : item.raw.skuNumeric
+                "
+                :subtitle="`
                     ${item.raw.productCategory.name} | 
                   ${$t(renderGender(item.raw.productCategory.gender))}
                     `"
-                >
-                  <template #append>
-                    <v-btn
-                      color="primary"
-                      :icon="mdiPencil"
-                      size="small"
-                      variant="text"
-                      @click="showDialogWithId(item.value)"
-                    ></v-btn>
-                  </template>
-                </v-list-item>
-              </template>
-            </v-autocomplete>
-          </v-col>
-          <v-col
-            cols="12"
-            lg="3"
-            xl="2"
-            class="d-flex justify-end align-center"
+              >
+                <template #append>
+                  <v-btn
+                    color="primary"
+                    :icon="mdiPencil"
+                    size="small"
+                    variant="text"
+                    @click="showDialogWithId(item.value)"
+                  ></v-btn>
+                </template>
+              </v-list-item>
+            </template>
+          </v-autocomplete>
+        </v-col>
+        <v-col cols="12" lg="3" xl="2" class="d-flex justify-end align-center">
+          <v-btn
+            :prepend-icon="mdiPlus"
+            color="primary"
+            @click="dialogForm = true"
+            >{{ $t('btn.product_group') }}</v-btn
           >
-            <v-btn
-              :prepend-icon="mdiPlus"
-              color="primary"
-              @click="dialogForm = true"
-              >{{ $t('btn.product_group') }}</v-btn
-            >
-          </v-col>
-        </v-row>
+        </v-col>
+      </v-row>
 
-        <v-text-field
-          v-model="sku.value.value"
-          :label="$t('label.sku')"
-          :error-messages="
-            sku.errorMessage.value?.includes('regex')
-              ? $t('error.sku_format_detail')
-              : sku.errorMessage.value
-          "
-        />
+      <v-text-field
+        v-model="sku.value.value"
+        :label="$t('label.sku')"
+        :error-messages="
+          sku.errorMessage.value?.includes('regex')
+            ? $t('error.sku_format_detail')
+            : sku.errorMessage.value
+        "
+      />
 
-        <v-select
-          v-model="selectedColors"
-          :label="$t('label.select_colors')"
-          multiple
-          chips
-          :items="sortedColors"
-          :loading="isFetchingColors"
-          :error-messages="colorIds.errorMessage.value"
-        >
-          <template #item="{ item, props }">
-            <v-list-item v-bind="props" :title="item.value.name">
-              <template #prepend>
-                <div
-                  class="color-box"
-                  :style="{ backgroundColor: item.value.hexCode }"
-                />
-              </template>
-            </v-list-item>
-          </template>
+      <v-select
+        v-model="selectedColors"
+        :label="$t('label.select_colors')"
+        multiple
+        chips
+        :items="sortedColors"
+        :loading="isFetchingColors"
+        :error-messages="colorIds.errorMessage.value"
+      >
+        <template #item="{ item, props }">
+          <v-list-item v-bind="props" :title="item.value.name">
+            <template #prepend>
+              <div
+                class="color-box"
+                :style="{ backgroundColor: item.value.hexCode }"
+              />
+            </template>
+          </v-list-item>
+        </template>
 
-          <template #chip="{ item, index }">
-            <v-chip @click="remove(index)">
-              <template #prepend>
-                <div
-                  :style="{ backgroundColor: item.value.hexCode }"
-                  class="color-box"
-                ></div>
-              </template>
-              <span>{{ item.value.name }}</span>
-            </v-chip>
-          </template>
-        </v-select>
+        <template #chip="{ item, index }">
+          <v-chip @click="remove(index)">
+            <template #prepend>
+              <div
+                :style="{ backgroundColor: item.value.hexCode }"
+                class="color-box"
+              ></div>
+            </template>
+            <span>{{ item.value.name }}</span>
+          </v-chip>
+        </template>
+      </v-select>
 
-        <v-text-field
-          :label="$t('label.msrp')"
-          v-maska:msrpUnmasked.unmasked="priceMask"
-          v-model="msrpMasked"
-          inputmode="number"
-          clearable
-          :error-messages="msrp.errorMessage.value"
-        />
-      </v-col>
-    </v-row>
+      <v-text-field
+        :label="$t('label.msrp')"
+        v-maska:msrpUnmasked.unmasked="priceMask"
+        v-model="msrpMasked"
+        inputmode="number"
+        clearable
+        :error-messages="msrp.errorMessage.value"
+      />
+    </v-card-text>
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm v-if="productId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-      </v-col>
-      <v-col class="d-flex align-end">
-        <ActionDelete
-          v-if="productId"
-          :loading="isDeleting"
-          @click="executeDelete({ id: productId })"
-        ></ActionDelete>
-      </v-col>
-    </v-row>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionDelete
+        v-if="productId"
+        :loading="isDeleting"
+        @click="executeDelete({ id: productId })"
+      ></ActionDelete>
+      <ActionConfirm v-if="productId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack

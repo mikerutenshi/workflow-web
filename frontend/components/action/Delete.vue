@@ -6,7 +6,6 @@
     :outlined="outlined"
     :prepend-icon="mdiTrashCan"
     @click="dialog = true"
-    class="ml-auto"
   >
     <slot>{{ $t('btn.delete') }}</slot>
   </v-btn>
@@ -21,7 +20,7 @@
 import { mdiTrashCan } from '@mdi/js';
 
 const props = defineProps({
-  color: { type: String, default: 'warning' },
+  color: { type: String, default: 'secondary' },
   loading: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   outlined: { type: Boolean, default: false },

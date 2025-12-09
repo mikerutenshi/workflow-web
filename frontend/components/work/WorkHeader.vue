@@ -13,7 +13,7 @@
     readonly
   ></v-text-field>
 
-  <v-card>
+  <v-card variant="outlined" class="mb-4">
     <v-card-title></v-card-title>
     <v-card-subtitle>{{ $t('label.sizes') }}</v-card-subtitle>
     <v-card-text>

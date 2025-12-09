@@ -1,79 +1,76 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
-    <v-row v-if="createError">
-      <v-col>
-        <v-alert type="error">
-          {{ extractGraphQlError(createError) }}
-        </v-alert>
-      </v-col>
-    </v-row>
+    <v-card-text>
+      <v-row v-if="createError">
+        <v-col>
+          <v-alert type="error">
+            {{ extractGraphQlError(createError) }}
+          </v-alert>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col>
-        <v-autocomplete
-          :label="$t('label.to_inv')"
-          auto-select-first
-          item-value="id"
-          item-title="name"
-          :items="availInventories"
-          :loading="isFetchingInventories"
-          v-model="toInvId.value.value"
-          :error-messages="toInvId.errorMessage.value"
-        >
-        </v-autocomplete>
+      <v-autocomplete
+        :label="$t('label.to_inv')"
+        auto-select-first
+        item-value="id"
+        item-title="name"
+        :items="availInventories"
+        :loading="isFetchingInventories"
+        v-model="toInvId.value.value"
+        :error-messages="toInvId.errorMessage.value"
+      >
+      </v-autocomplete>
 
-        <v-text-field
-          :label="$t('label.price')"
-          v-maska="priceMask"
-          v-model="displayModel.price"
-          readonly
-        />
+      <v-text-field
+        :label="$t('label.price')"
+        v-maska="priceMask"
+        v-model="displayModel.price"
+        readonly
+      />
 
-        <v-text-field
-          label="Discount"
-          v-maska="percentageMask"
-          clearable
-          :model-value="displayModel.discount"
-          @update:model-value="
-            (value) => (displayModel.discount = discMask.unmasked(value))
-          "
-          inputmode="numeric"
-          :error-messages="errors.discount"
-        />
+      <v-text-field
+        label="Discount"
+        v-maska="percentageMask"
+        clearable
+        :model-value="displayModel.discount"
+        @update:model-value="
+          (value) => (displayModel.discount = discMask.unmasked(value))
+        "
+        inputmode="numeric"
+        :error-messages="errors.discount"
+      />
 
-        <v-card class="mb-4">
-          <v-card-title></v-card-title>
-          <v-card-subtitle>{{ $t('card.fill_quantities') }}</v-card-subtitle>
-          <v-card-text>
-            <v-data-table
-              :headers="tableHeaders"
-              :items="displayModel.sizeAndQties"
-              editable
-              hide-default-footer
-            >
-              <template #item.quantity="{ item, index }">
-                <v-text-field
-                  v-model.number="item.quantity"
-                  :label="$t('label.quantity')"
-                  type="number"
-                  :error-messages="
-                    (errors as any)[`invTrfItemSizes[${index}].quantity`]
-                  "
-                />
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+      <v-card class="mb-4" variant="outlined">
+        <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
+        <v-card-subtitle></v-card-subtitle>
+        <v-card-text>
+          <v-data-table
+            :headers="tableHeaders"
+            :items="displayModel.sizeAndQties"
+            editable
+            hide-default-footer
+          >
+            <template #item.quantity="{ item, index }">
+              <v-text-field
+                v-model.number="item.quantity"
+                :label="$t('label.quantity')"
+                type="number"
+                :error-messages="
+                  (errors as any)[`invTrfItemSizes[${index}].quantity`]
+                "
+              />
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
+    </v-card-text>
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-      </v-col>
-    </v-row>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionConfirm :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack

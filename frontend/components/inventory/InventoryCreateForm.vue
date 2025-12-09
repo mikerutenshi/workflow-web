@@ -1,138 +1,128 @@
 <template>
   <v-form @submit.prevent="onSubmit">
-    <v-row>
-      <v-col>
-        <v-row v-if="updateError || createError || deleteError">
-          <v-col>
-            <v-alert type="error">
-              {{
-                extractGraphQlError(updateError || createError || deleteError)
-              }}
-            </v-alert>
-          </v-col>
-        </v-row>
+    <v-card-text>
+      <v-row v-if="updateError || createError || deleteError">
+        <v-col>
+          <v-alert type="error">
+            {{ extractGraphQlError(updateError || createError || deleteError) }}
+          </v-alert>
+        </v-col>
+      </v-row>
 
-        <v-text-field
-          :label="$t('label.name')"
-          :error-messages="name.errorMessage.value"
-          v-model="name.value.value"
-        />
+      <v-text-field
+        :label="$t('label.name')"
+        :error-messages="name.errorMessage.value"
+        v-model="name.value.value"
+      />
 
-        <v-text-field
-          :label="$t('label.address')"
-          :error-messages="address.errorMessage.value"
-          v-model="address.value.value"
-        />
+      <v-text-field
+        :label="$t('label.address')"
+        :error-messages="address.errorMessage.value"
+        v-model="address.value.value"
+      />
 
-        <v-autocomplete
-          :label="$t('label.select_city')"
-          auto-select-first
-          item-value="title"
-          item-title="title"
-          :items="Cities"
-          v-model="city.value.value"
-          :error-messages="city.errorMessage.value"
-          :allow-new="true"
-        >
-        </v-autocomplete>
+      <v-autocomplete
+        :label="$t('label.select_city')"
+        auto-select-first
+        item-value="title"
+        item-title="title"
+        :items="Cities"
+        v-model="city.value.value"
+        :error-messages="city.errorMessage.value"
+        :allow-new="true"
+      >
+      </v-autocomplete>
 
-        <v-autocomplete
-          :label="$t('label.select_province')"
-          auto-select-first
-          item-value="title"
-          item-title="title"
-          :items="Provinces"
-          v-model="province.value.value"
-          :error-messages="province.errorMessage.value"
-          :allow-new="true"
-        >
-        </v-autocomplete>
+      <v-autocomplete
+        :label="$t('label.select_province')"
+        auto-select-first
+        item-value="title"
+        item-title="title"
+        :items="Provinces"
+        v-model="province.value.value"
+        :error-messages="province.errorMessage.value"
+        :allow-new="true"
+      >
+      </v-autocomplete>
 
-        <v-select
-          v-model="type.value.value"
-          :items="invTypes"
-          :return-object="false"
-          :label="$t('label.select_inv_type')"
-          chips
-          item-title="title"
-          item-value="id"
-          :error-messages="type.errorMessage.value"
-        ></v-select>
+      <v-select
+        v-model="type.value.value"
+        :items="invTypes"
+        :return-object="false"
+        :label="$t('label.select_inv_type')"
+        chips
+        item-title="title"
+        item-value="id"
+        :error-messages="type.errorMessage.value"
+      ></v-select>
 
-        <v-card class="mb-4">
-          <v-card-title>
-            {{ 'Store Wide Price Formula' }}
-          </v-card-title>
-          <v-card-subtitle>
-            {{ '(Base price  + Offset) x Multiplier = Price' }}
-          </v-card-subtitle>
-          <v-card-text>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  label="Offset"
-                  v-maska:offsetUnmasked.unmasked="priceOffsetMask"
-                  v-model="priceFormulaModel.offset"
-                  inputmode="number"
-                  :error-messages="offset.errorMessage.value"
-                />
-                <v-text-field
-                  label="Multiplier"
-                  v-maska:multiplierUnmasked.unmasked="multiplierMask"
-                  v-model="priceFormulaModel.multiplier"
-                  inputmode="numeric"
-                  :error-messages="multiplier.errorMessage.value"
-                />
-              </v-col>
-            </v-row>
+      <v-card class="mb-4" variant="outlined">
+        <v-card-title>
+          {{ 'Store Wide Price Formula' }}
+        </v-card-title>
+        <v-card-subtitle>
+          {{ '(Base price  + Offset) x Multiplier = Price' }}
+        </v-card-subtitle>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-text-field
+                label="Offset"
+                v-maska:offsetUnmasked.unmasked="priceOffsetMask"
+                v-model="priceFormulaModel.offset"
+                inputmode="number"
+                :error-messages="offset.errorMessage.value"
+              />
+              <v-text-field
+                label="Multiplier"
+                v-maska:multiplierUnmasked.unmasked="multiplierMask"
+                v-model="priceFormulaModel.multiplier"
+                inputmode="numeric"
+                :error-messages="multiplier.errorMessage.value"
+              />
+            </v-col>
+          </v-row>
 
-            <v-row>
-              <v-col cols="9">
-                <v-text-field
-                  v-for="(_, index) in priceFormulaModel.discounts"
-                  :label="`Discount ${index + 1}`"
-                  v-maska="percentageMask"
-                  :key="index"
-                  clearable
-                  :model-value="priceFormulaModel.discounts[index]"
-                  @update:model-value="
-                    (value) =>
-                      (priceFormulaModel.discounts[index] =
-                        discMask.unmasked(value))
-                  "
-                  @click:clear="
-                    if (discounts.fields.value.length > 1)
-                      priceFormulaModel.discounts.pop();
-                  "
-                  inputmode="numeric"
-                />
-              </v-col>
-              <v-col cols="3">
-                <v-btn
-                  :icon="mdiPlus"
-                  color="primary"
-                  @click="priceFormulaModel.discounts.push('')"
-                ></v-btn>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+          <v-row>
+            <v-col cols="9">
+              <v-text-field
+                v-for="(_, index) in priceFormulaModel.discounts"
+                :label="`Discount ${index + 1}`"
+                v-maska="percentageMask"
+                :key="index"
+                clearable
+                :model-value="priceFormulaModel.discounts[index]"
+                @update:model-value="
+                  (value) =>
+                    (priceFormulaModel.discounts[index] =
+                      discMask.unmasked(value))
+                "
+                @click:clear="
+                  if (discounts.fields.value.length > 1)
+                    priceFormulaModel.discounts.pop();
+                "
+                inputmode="numeric"
+              />
+            </v-col>
+            <v-col cols="3">
+              <v-btn
+                :icon="mdiPlus"
+                color="primary"
+                @click="priceFormulaModel.discounts.push('')"
+              ></v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-card-text>
 
-    <v-row align="end">
-      <v-col cols="6">
-        <ActionConfirm :loading="isCreating || isUpdating">{{
-          submitBtnTitle
-        }}</ActionConfirm>
-      </v-col>
-      <v-col cols="6" class="d-flex align-end">
-        <ActionDelete
-          v-if="invId"
-          @click="deleteInventory(invId)"
-        ></ActionDelete>
-      </v-col>
-    </v-row>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionDelete v-if="invId" @click="deleteInventory(invId)"></ActionDelete>
+      <ActionConfirm :loading="isCreating || isUpdating">{{
+        submitBtnTitle
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack

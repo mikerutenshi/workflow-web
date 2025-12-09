@@ -19,71 +19,69 @@
     </v-col>
   </v-row> -->
 
-  <v-row>
-    <v-col class="d-flex flex-column">
-      <v-data-table
-        :headers="headers"
-        :items="invTrfsData?.getInvTrfItemTrfs"
-        :search="search"
-        :loading="isFetchingInvTrfs"
-        item-value="id"
-        hover
-        :page="pageNo"
-        :items-per-page="itemsPerPage"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-        </template>
+  <v-card-text>
+    <v-data-table
+      :headers="headers"
+      :items="invTrfsData?.getInvTrfItemTrfs"
+      :search="search"
+      :loading="isFetchingInvTrfs"
+      item-value="id"
+      hover
+      :page="pageNo"
+      :items-per-page="itemsPerPage"
+    >
+      <template #loading>
+        <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+      </template>
 
-        <template v-slot:item.invTrf.trfDate="{ item }">
-          {{
-            item.invTrf
-              ? adapter.format(item.invTrf.trfDate, 'fullDateTime12h')
-              : ''
-          }}
-        </template>
+      <template v-slot:item.invTrf.trfDate="{ item }">
+        {{
+          item.invTrf
+            ? adapter.format(item.invTrf.trfDate, 'fullDateTime12h')
+            : ''
+        }}
+      </template>
 
-        <template v-slot:item.invTrfItemSizes="{ item }">
-          <v-table density="compact">
-            <tbody>
-              <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
-                <td>{{ i.size.eu }}</td>
-                <td>{{ i.quantity }}</td>
-              </tr>
-              <tr>
-                <td><i>Total</i></td>
-                <td>
-                  <i>
-                    {{
-                      item.invTrfItemSizes.reduce(
-                        (sum, size) => sum + size.quantity,
-                        0,
-                      )
-                    }}
-                  </i>
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
-        </template>
+      <template v-slot:item.invTrfItemSizes="{ item }">
+        <v-table density="compact">
+          <tbody>
+            <tr v-for="i in item.invTrfItemSizes" :key="i.size.id">
+              <td>{{ i.size.eu }}</td>
+              <td>{{ i.quantity }}</td>
+            </tr>
+            <tr>
+              <td><i>Total</i></td>
+              <td>
+                <i>
+                  {{
+                    item.invTrfItemSizes.reduce(
+                      (sum, size) => sum + size.quantity,
+                      0,
+                    )
+                  }}
+                </i>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+      </template>
 
-        <template #item.progress="{ item }">{{
-          $t(`progress.${item.progress}`)
-        }}</template>
+      <template #item.progress="{ item }">{{
+        $t(`progress.${item.progress}`)
+      }}</template>
 
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            v-if="item.progress === Progress.Pending"
-            color="primary"
-            :icon="mdiDeleteOutline"
-            variant="text"
-            :loading="isDeleting"
-            @click="executeDelete({ id: item.id })"
-          ></v-btn>
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
+      <template v-slot:item.actions="{ item }">
+        <v-btn
+          v-if="item.progress === Progress.Pending"
+          color="primary"
+          :icon="mdiDeleteOutline"
+          variant="text"
+          :loading="isDeleting"
+          @click="executeDelete({ id: item.id })"
+        ></v-btn>
+      </template>
+    </v-data-table>
+  </v-card-text>
 
   <ActionShowSnack
     v-model="snack.isVisible"

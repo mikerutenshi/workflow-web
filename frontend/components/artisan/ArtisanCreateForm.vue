@@ -1,60 +1,55 @@
 <template>
   <form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
-    <v-row v-if="createError || updateError || deleteError">
-      <v-col>
-        <v-alert type="error">
-          {{
-            extractGraphQlError(createError) ||
-            extractGraphQlError(updateError) ||
-            extractGraphQlError(deleteError)
-          }}
-        </v-alert>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field
-          v-model="firstName.value.value"
-          :label="$t('label.first_name')"
-          :error-messages="firstName.errorMessage.value"
-        />
+    <v-card-text>
+      <v-row v-if="createError || updateError || deleteError">
+        <v-col>
+          <v-alert type="error">
+            {{
+              extractGraphQlError(createError) ||
+              extractGraphQlError(updateError) ||
+              extractGraphQlError(deleteError)
+            }}
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-text-field
+        v-model="firstName.value.value"
+        :label="$t('label.first_name')"
+        :error-messages="firstName.errorMessage.value"
+      />
 
-        <v-text-field
-          v-model="lastName.value.value"
-          :label="$t('label.last_name')"
-          :error-messages="lastName.errorMessage.value"
-        />
+      <v-text-field
+        v-model="lastName.value.value"
+        :label="$t('label.last_name')"
+        :error-messages="lastName.errorMessage.value"
+      />
 
-        <v-select
-          v-model="jobs.value.value"
-          :items="jobOptions"
-          :return-object="false"
-          :label="$t('label.select_jobs')"
-          multiple
-          chips
-          item-title="title"
-          item-value="id"
-          :error-messages="jobs.errorMessage.value"
-        ></v-select>
-      </v-col>
-    </v-row>
+      <v-select
+        v-model="jobs.value.value"
+        :items="jobOptions"
+        :return-object="false"
+        :label="$t('label.select_jobs')"
+        multiple
+        chips
+        item-title="title"
+        item-value="id"
+        :error-messages="jobs.errorMessage.value"
+      ></v-select>
+    </v-card-text>
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
-          $t('btn.update')
-        }}</ActionConfirm>
-        <ActionConfirm v-else :loading="isCreating">{{
-          $t('btn.create')
-        }}</ActionConfirm>
-      </v-col>
-      <v-col class="d-flex align-end">
-        <ActionDelete
-          v-if="artisanId"
-          @click="executeDelete({ id: artisanId })"
-        ></ActionDelete>
-      </v-col>
-    </v-row>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionDelete
+        v-if="artisanId"
+        @click="executeDelete({ id: artisanId })"
+      ></ActionDelete>
+      <ActionConfirm v-if="artisanId" :loading="isUpdating">{{
+        $t('btn.update')
+      }}</ActionConfirm>
+      <ActionConfirm v-else :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+    </v-card-actions>
   </form>
 
   <ActionShowSnack

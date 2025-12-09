@@ -17,9 +17,9 @@
     </v-col>
   </v-row>
 
-  <v-card>
+  <v-card rounded variant="flat">
     <v-row no-gutters class="d-flex">
-      <v-col class="d-flex flex-column align-center justify-end pa-2" cols="6">
+      <v-col class="d-flex flex-column align-center justify-end pa-4">
         <div
           class="d-flex flex-column align-start justify-space-between flex-grow-1"
         >
@@ -29,8 +29,8 @@
           </h2>
         </div>
       </v-col>
-      <v-divider vertical></v-divider>
-      <v-col class="d-flex flex-column align-center justify-end pa-2" cols="6">
+      <v-divider vertical thickness="3" class="mx-4"></v-divider>
+      <v-col class="d-flex flex-column align-center justify-end pa-4">
         <div
           class="d-flex flex-column align-start justify-space-between flex-grow-1"
         >

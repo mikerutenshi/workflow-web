@@ -1,111 +1,104 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
-    <v-row>
-      <v-col>
-        <v-row v-if="updateError || createError || deleteError">
-          <v-col>
-            <v-alert type="error">
-              {{
-                extractGraphQlError(updateError || createError || deleteError)
-              }}
-            </v-alert>
-          </v-col>
-        </v-row>
+    <v-card-text>
+      <v-row v-if="updateError || createError || deleteError">
+        <v-col>
+          <v-alert type="error">
+            {{ extractGraphQlError(updateError || createError || deleteError) }}
+          </v-alert>
+        </v-col>
+      </v-row>
 
-        <ActionPickDate
-          v-model="date.value.value"
-          :error-messages="date.errorMessage.value"
-        ></ActionPickDate>
+      <ActionPickDate
+        v-model="date.value.value"
+        :error-messages="date.errorMessage.value"
+      ></ActionPickDate>
 
-        <v-text-field
-          :label="$t('label.order_no')"
-          v-model="orderNo.value.value"
-          :error-messages="orderNo.errorMessage.value"
-          type="number"
-        ></v-text-field>
+      <v-text-field
+        :label="$t('label.order_no')"
+        v-model="orderNo.value.value"
+        :error-messages="orderNo.errorMessage.value"
+        type="number"
+      ></v-text-field>
 
-        <v-autocomplete
-          :label="$t('label.product')"
-          auto-select-first
-          item-value="id"
-          item-title="sku"
-          :items="productsData?.getProducts"
-          :loading="isFetchingProducts"
-          v-model="productId.value.value"
-          :error-messages="productId.errorMessage.value"
-        >
-        </v-autocomplete>
+      <v-autocomplete
+        :label="$t('label.product')"
+        auto-select-first
+        item-value="id"
+        item-title="sku"
+        :items="productsData?.getProducts"
+        :loading="isFetchingProducts"
+        v-model="productId.value.value"
+        :error-messages="productId.errorMessage.value"
+      >
+      </v-autocomplete>
 
-        <v-select
-          :label="$t('label.select_sizes')"
-          multiple
-          chips
-          :items="computeSizeList"
-          :loading="isFetchingSizes"
-          item-title="eu"
-          item-value="id"
-          v-model="workSizes"
-          return-object
-          :error-messages="errors[`workSizes`]"
-          :disabled="isSizesDisabled"
-        >
-          <!-- <template #item="{ props, item }">
+      <v-select
+        :label="$t('label.select_sizes')"
+        multiple
+        chips
+        :items="computeSizeList"
+        :loading="isFetchingSizes"
+        item-title="eu"
+        item-value="id"
+        v-model="workSizes"
+        return-object
+        :error-messages="errors[`workSizes`]"
+        :disabled="isSizesDisabled"
+      >
+        <!-- <template #item="{ props, item }">
             <v-list-item
               v-bind="props"
               :title="`${item.raw.eu} | ${item.raw.us} | ${item.raw.uk}`"
             ></v-list-item>
           </template> -->
-        </v-select>
+      </v-select>
 
-        <v-card v-if="isShowSizeQuantities" class="mb-4">
-          <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
-          <v-card-subtitle></v-card-subtitle>
-          <v-card-text>
-            <v-data-table
-              :headers="sizeHeaders"
-              :items="sizeQuantities"
-              editable
-              hide-default-footer
-            >
-              <template #item.quantity="{ item, index }">
-                <v-text-field
-                  v-model.number="item.quantity"
-                  :label="$t('label.quantity')"
-                  type="number"
-                  :error-messages="
-                    (errors as any)[`workSizes[${index}].quantity`]
-                  "
-                />
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
+      <v-card v-if="isShowSizeQuantities" class="mb-4" variant="outlined">
+        <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
+        <v-card-subtitle></v-card-subtitle>
+        <v-card-text>
+          <v-data-table
+            :headers="sizeHeaders"
+            :items="sizeQuantities"
+            editable
+            hide-default-footer
+          >
+            <template #item.quantity="{ item, index }">
+              <v-text-field
+                v-model.number="item.quantity"
+                :label="$t('label.quantity')"
+                type="number"
+                :error-messages="
+                  (errors as any)[`workSizes[${index}].quantity`]
+                "
+              />
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
 
-        <v-textarea
-          v-model="note.value.value"
-          :label="$t('label.note')"
-          counter
-          clearable
-          :rules="rules"
-        >
-        </v-textarea>
-      </v-col>
-    </v-row>
+      <v-textarea
+        v-model="note.value.value"
+        :label="$t('label.note')"
+        counter
+        clearable
+        :rules="rules"
+      >
+      </v-textarea>
+    </v-card-text>
 
-    <v-row align="end">
-      <v-col>
-        <ActionConfirm :loading="isCreating || isUpdating">{{
-          submitBtnTitle
-        }}</ActionConfirm>
-      </v-col>
-      <v-col class="d-flex align-end">
-        <ActionDelete
-          v-if="workId"
-          :loading="isDeleting"
-          @click="executeDelete({ id: workId })"
-        ></ActionDelete>
-      </v-col>
-    </v-row>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionDelete
+        v-if="workId"
+        :loading="isDeleting"
+        @click="executeDelete({ id: workId })"
+      ></ActionDelete>
+      <ActionConfirm :loading="isCreating || isUpdating">{{
+        submitBtnTitle
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionShowSnack
