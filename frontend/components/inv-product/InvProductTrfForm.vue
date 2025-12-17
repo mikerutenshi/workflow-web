@@ -133,7 +133,9 @@
       <v-spacer></v-spacer>
       <template v-if="props.isReadonly">
         <ActionPrintInvTrf
-          :inv-trf-dto="invTrfData?.getInvTrf"
+          v-if="computeInvTrf"
+          :inv-trf-model="computeInvTrf"
+          :disabled="!computeInvTrf"
         ></ActionPrintInvTrf>
       </template>
       <template v-else>
@@ -321,6 +323,7 @@ const {
     itemIdSelections.value = invTrf.invTrfItems.map((item) => item.id);
   },
 });
+const computeInvTrf = computed(() => invTrfData.value?.getInvTrf);
 
 if (props.invTrfId) {
   fetchTransfer();
