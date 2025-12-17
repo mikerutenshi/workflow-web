@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import { mdiPrinter } from '@mdi/js';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { useDate } from 'vuetify';
 import type { InvTrfModel } from '~/models/inv-trf.model';
 
@@ -97,6 +98,67 @@ function createPdf(invTrfModel: InvTrfModel) {
   doc.setFont(pageFont, 'bold');
   doc.setFontSize(contentFontSize);
   doc.text(trfDate, trfDateX, trfDateY);
+
+  const tBody = props.invTrfModel.invTrfItems.map((item) => [
+    item.product.sku || '',
+    formatRupiah(item.product.productGroup.msrp) || '',
+    formatDiscount(convertDecimalToPercent(item.discount)) || '',
+    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '38')
+      ?.quantity ?? '') as string | number,
+    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '39')
+      ?.quantity ?? '') as string | number,
+    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '40')
+      ?.quantity ?? '') as string | number,
+    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '41')
+      ?.quantity ?? '') as string | number,
+    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '42')
+      ?.quantity ?? '') as string | number,
+    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '43')
+      ?.quantity ?? '') as string | number,
+    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '44')
+      ?.quantity ?? '') as string | number,
+  ]);
+
+  let lastTableY = 0;
+  autoTable(doc, {
+    theme: 'grid',
+    startY: trfDateY + margin,
+    head: [
+      [
+        {
+          content: 'Nama Barang',
+          colSpan: 1,
+          rowSpan: 2,
+          styles: { halign: 'center', valign: 'middle' },
+        },
+        {
+          content: 'Harga',
+          colSpan: 1,
+          rowSpan: 2,
+          styles: { halign: 'center', valign: 'middle' },
+        },
+        {
+          content: 'Diskon',
+          colSpan: 1,
+          rowSpan: 2,
+          styles: { halign: 'center', valign: 'middle' },
+        },
+        {
+          content: 'Ukuran',
+          colSpan: 7,
+          rowSpan: 1,
+          styles: { halign: 'center' },
+        },
+      ],
+      ['38', '39', '40', '41', '42', '43', '44'],
+    ],
+    body: tBody,
+    styles: { font: 'helvetica', fontSize: 9 },
+    headStyles: { fillColor: [84, 123, 138] },
+    didDrawPage: (d) => {
+      lastTableY = Math.round(d.cursor?.y || 120);
+    },
+  });
 
   doc.save(`${trfNo}.pdf`);
 }

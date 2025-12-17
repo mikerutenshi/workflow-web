@@ -233,6 +233,7 @@ query getInvTrf($id: ID!) {
         name
         type
       }
+      discount
       progress
       invTrfItemSizes {
         invTrfItemId
