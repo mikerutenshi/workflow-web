@@ -36,7 +36,7 @@ export interface InvTrfItem {
   id: string;
   product: Product;
   progress: Progress;
-  discount: string;
+  discount?: string | null;
   invTrfItemSizes: InvTrfItemSize[];
 }
 

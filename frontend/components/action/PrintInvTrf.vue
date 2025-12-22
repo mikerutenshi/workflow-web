@@ -99,25 +99,56 @@ function createPdf(invTrfModel: InvTrfModel) {
   doc.setFontSize(contentFontSize);
   doc.text(trfDate, trfDateX, trfDateY);
 
-  const tBody = props.invTrfModel.invTrfItems.map((item) => [
-    item.product.sku || '',
-    formatRupiah(item.product.productGroup.msrp) || '',
-    formatDiscount(convertDecimalToPercent(item.discount)) || '',
-    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '38')
-      ?.quantity ?? '') as string | number,
-    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '39')
-      ?.quantity ?? '') as string | number,
-    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '40')
-      ?.quantity ?? '') as string | number,
-    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '41')
-      ?.quantity ?? '') as string | number,
-    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '42')
-      ?.quantity ?? '') as string | number,
-    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '43')
-      ?.quantity ?? '') as string | number,
-    (item.invTrfItemSizes.find((subitem) => subitem.size.eu === '44')
-      ?.quantity ?? '') as string | number,
-  ]);
+  var totalPrice = 0;
+  var totalQty = 0;
+  const tBody = props.invTrfModel.invTrfItems.map((item) => {
+    let sum = item.invTrfItemSizes.reduce(
+      (sum, size) => sum + size.quantity,
+      0,
+    );
+    totalQty = totalQty + sum;
+    let price = item.product.productGroup.msrp;
+    let disc = item.discount ? parseFloat(item.discount) : 0;
+    let subTotal = price ? price * (1 - disc) * sum : 0;
+    totalPrice = totalPrice + subTotal;
+    return [
+      item.product.sku || '',
+      formatRupiah(price) || '',
+      item.discount
+        ? formatDiscount(convertDecimalToPercent(item.discount))
+        : '',
+      String(
+        item.invTrfItemSizes.find((subitem) => subitem.size.eu === '38')
+          ?.quantity || '',
+      ),
+      String(
+        item.invTrfItemSizes.find((subitem) => subitem.size.eu === '39')
+          ?.quantity || '',
+      ),
+      String(
+        item.invTrfItemSizes.find((subitem) => subitem.size.eu === '40')
+          ?.quantity || '',
+      ),
+      String(
+        item.invTrfItemSizes.find((subitem) => subitem.size.eu === '41')
+          ?.quantity || '',
+      ),
+      String(
+        item.invTrfItemSizes.find((subitem) => subitem.size.eu === '42')
+          ?.quantity || '',
+      ),
+      String(
+        item.invTrfItemSizes.find((subitem) => subitem.size.eu === '43')
+          ?.quantity || '',
+      ),
+      String(
+        item.invTrfItemSizes.find((subitem) => subitem.size.eu === '44')
+          ?.quantity || '',
+      ),
+      String(sum),
+      price ? String(formatRupiah(subTotal)) : '',
+    ];
+  });
 
   let lastTableY = 0;
   autoTable(doc, {
@@ -149,16 +180,51 @@ function createPdf(invTrfModel: InvTrfModel) {
           rowSpan: 1,
           styles: { halign: 'center' },
         },
+        {
+          content: 'Jumlah',
+          colSpan: 1,
+          rowSpan: 2,
+          styles: { halign: 'center', valign: 'middle' },
+        },
+        {
+          content: 'Subtotal',
+          colSpan: 1,
+          rowSpan: 2,
+          styles: { halign: 'center', valign: 'middle' },
+        },
       ],
       ['38', '39', '40', '41', '42', '43', '44'],
     ],
     body: tBody,
+    foot: [
+      [
+        {
+          content: 'Total',
+          colSpan: 10,
+          styles: { halign: 'center' },
+        },
+        String(totalQty),
+        String(formatRupiah(totalPrice)),
+      ],
+    ],
     styles: { font: 'helvetica', fontSize: 9 },
     headStyles: { fillColor: [84, 123, 138] },
+    footStyles: { fillColor: [84, 123, 138] },
     didDrawPage: (d) => {
       lastTableY = Math.round(d.cursor?.y || 120);
     },
   });
+
+  doc.setFont(pageFont, 'normal');
+  doc.text(`${t('label.sender_sign')}:`, pageMargin, lastTableY + margin * 1.5);
+  doc.text(
+    `${t('label.receiver_sign')}:`,
+    pageWidth - pageMargin,
+    lastTableY + margin * 1.5,
+    {
+      align: 'right',
+    },
+  );
 
   doc.save(`${trfNo}.pdf`);
 }

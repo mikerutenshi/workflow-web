@@ -362,7 +362,7 @@ function exportPdf() {
 
         doc.setFont(pageFont, 'normal');
         doc.text(
-          `${t('label.checked_by')}:`,
+          `${t('label.checker_sign')}:`,
           pageMargin,
           lastTableY + margin * 2,
         );
