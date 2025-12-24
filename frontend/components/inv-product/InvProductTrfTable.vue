@@ -191,7 +191,7 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
-function showDialog(content: DialogContent, id?: string) {
+function showDialog(content: DialogContent, id?: string | undefined) {
   dialogModel.id = id ?? null;
 
   switch (content) {

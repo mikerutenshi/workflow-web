@@ -106,6 +106,7 @@ import {
   mdiPalette,
   mdiPlus,
   mdiPrinter,
+  mdiPrinterPos,
   mdiShoeSneaker,
   mdiTransfer,
   mdiWarehouse,
@@ -136,6 +137,7 @@ const createBtnTitles: Record<string, string> =
         products: 'btn.product',
         artisans: 'btn.artisan',
         'inv-product-transfers': 'btn.inv_trf',
+        sales: 'btn.sale',
         'setting-inventories': 'btn.inventory',
         'setting-colors': 'btn.color',
       };
@@ -173,6 +175,11 @@ const navItems = computed(() => {
         title: t('nav.inventory_transfers'),
         route: localePath('/inv-product-transfers'),
         icon: mdiTransfer,
+      },
+      {
+        title: t('nav.sales'),
+        route: localePath('/sales'),
+        icon: mdiPrinterPos,
       },
       {
         title: t('nav.products'),

@@ -34,6 +34,7 @@ export enum Role {
   Finance = 2,
   Planner = 4,
   Field = 6,
+  Sale = 8,
 }
 
 export enum SnackColor {

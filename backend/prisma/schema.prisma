@@ -346,41 +346,40 @@ model PriceFormula {
   inventory         Inventory       @relation(fields: [invId], references: [id], onDelete: Cascade)
 }
 
-// model Sale {
-//   id                Int             @id @default(autoincrement())
-//   saleNo            String
-//   date              DateTime
-//   invId             Int
-//   saleProducts      ProductToSale[]
+model Sale {
+  id                Int             @id @default(autoincrement())
+  saleNo            String
+  date              DateTime
+  invId             Int
+  saleProducts      InvProductToSale[]
 
-//   createdBy         Int
-//   updatedBy         Int?
-//   createdAt         DateTime        @default(now())
-//   updatedAt         DateTime        @updatedAt
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
 
-//   inventory         Inventory       @relation(fields: [invId], references: [id])
-// }
+model InvProductToSale {
+  id                Int             @id @default(autoincrement())
+  saleId            Int
+  productId         Int
+  invId             Int
+  saleProductSizes  SaleProductToSize[]
 
-// model ProductToSale {
-//   id                Int             @id @default(autoincrement())
-//   saleId            Int
-//   productId         Int
-//   saleProductSizes  SaleProductToSize[]
+  sale              Sale            @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  invProduct        InvToProduct    @relation(fields: [productId, invId], references: [productId, invId])
+}
 
-//   sale              Sale         @relation(fields: [saleId], references: [id], onDelete: Cascade)
-//   product           Product         @relation(fields: [productId], references: [id])
-// }
+model SaleProductToSize {
+  @@id([saleProductId, sizeId])
+  saleProductId     Int
+  sizeId            Int
 
-// model SaleProductToSize {
-//   @@id([saleProductId, sizeId])
-//   saleProductId     Int
-//   sizeId            Int
+  quantity          Int
 
-//   quantity          Int
-
-//   saleProduct       ProductToSale   @relation(fields: [saleProductId], references: [id], onDelete: Cascade)
-//   size              Size            @relation(fields: [sizeId], references: [id])
-// }
+  saleProduct       InvProductToSale  @relation(fields: [saleProductId], references: [id], onDelete: Cascade)
+  size              Size              @relation(fields: [sizeId], references: [id])
+}
 
 // model Client {
 //   id                Int             @id @default(autoincrement())
