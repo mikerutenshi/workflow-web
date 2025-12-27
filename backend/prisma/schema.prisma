@@ -222,7 +222,7 @@ model Size {
   sizeWorks           SizeToWork[]
   sizeInvProducts     InvProductToSize[]
   InvTrfItemToSize    InvTrfItemToSize[]
-  // sizeSaleProducts    SaleProductToSize[]
+  sizeSaleProducts    SaleProductToSize[]
 
   @@unique([eu, gender])
   @@unique([us, gender])
@@ -270,6 +270,7 @@ model InvToProduct {
   product           Product         @relation(fields: [productId], references: [id])
   inventory         Inventory       @relation(fields: [invId], references: [id])
   invTrfItems       InvTrfItem[]
+  invProductSales   InvProductToSale[]
 }
 
 model InvProductToSize {
@@ -350,7 +351,6 @@ model Sale {
   id                Int             @id @default(autoincrement())
   saleNo            String
   date              DateTime
-  invId             Int
   saleProducts      InvProductToSale[]
 
   createdBy         Int

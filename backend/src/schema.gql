@@ -438,6 +438,32 @@ type PayrollGetDto {
   artisans: [ArtisanWithTasks!]!
 }
 
+type SaleProductToSize {
+  saleProductId: ID!
+  sizeId: ID!
+  quantity: Float!
+  size: Size!
+}
+
+type InvProductToSale {
+  id: ID!
+  saleId: ID!
+  productId: ID!
+  invId: ID!
+  saleProductSizes: [SaleProductToSize!]!
+}
+
+type Sale {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  saleNo: String!
+  date: Date!
+  saleProducts: [InvProductToSale!]!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -470,6 +496,7 @@ type Query {
   getInvTrfs: [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
+  getSales: [Sale!]!
 }
 
 type Mutation {
@@ -513,6 +540,7 @@ type Mutation {
   createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!
   deleteInvTrfItem(id: ID!): Boolean!
   deleteInvTrf(id: ID!): Boolean!
+  createSale(data: SaleCreateDto!): Sale!
 }
 
 input RoleDto {
@@ -722,6 +750,25 @@ input InvTrfItemCreateDto {
 }
 
 input InvTrfItemSizeCreateDto {
+  sizeId: ID!
+  quantity: Float!
+}
+
+input SaleCreateDto {
+  saleNo: String!
+  date: Date!
+  createdBy: ID!
+  saleProducts: [InvProductToSaleCreateDto!]!
+}
+
+input InvProductToSaleCreateDto {
+  productId: ID!
+  invId: ID!
+  saleProductSizes: [SaleProductToSizeCreateDto!]!
+}
+
+input SaleProductToSizeCreateDto {
+  saleProductId: ID!
   sizeId: ID!
   quantity: Float!
 }

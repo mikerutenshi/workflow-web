@@ -1,0 +1,24 @@
+fragment SaleFragment on Sale {
+  id
+  saleNo
+  saleProducts {
+    id
+    saleProductSizes {
+      quantity
+      size {
+        ...Size
+      }
+    }
+  }
+}
+mutation createSale($data: SaleCreateDto!) {
+  createSale(data: $data) {
+    id
+  }
+}
+
+query getSales {
+  getSales {
+    ...SaleFragment
+  }
+}

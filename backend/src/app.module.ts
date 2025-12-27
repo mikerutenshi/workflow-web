@@ -23,6 +23,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { ProductModule } from './product/product.module';
 import { ProductionModule } from './production/production.module';
 import { DateScalar } from './scalars/date.scalar';
+import { SaleModule } from './sale/sale.module';
 
 const ENV = process.env.NODE_ENV || 'development';
 @Module({
@@ -44,6 +45,7 @@ const ENV = process.env.NODE_ENV || 'development';
         ArtisanModule,
         ProductionModule,
         InventoryModule,
+        SaleModule,
         ConfigModule,
       ],
       inject: [AuthService, ConfigService],
