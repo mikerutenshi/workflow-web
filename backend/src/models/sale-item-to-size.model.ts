@@ -2,9 +2,9 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Size } from './size.model';
 
 @ObjectType()
-export class SaleProductToSize {
+export class SaleItemToSize {
   @Field(() => ID)
-  saleProductId: number;
+  saleItemId: number;
   @Field(() => ID)
   sizeId: number;
   @Field()

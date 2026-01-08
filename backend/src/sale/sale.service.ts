@@ -11,7 +11,7 @@ export class SaleService {
     return await this.prisma.sale.create({
       data: {
         ...data,
-        saleProducts: {
+        saleItems: {
           create: data.saleProducts.map((item) => ({
             invProduct: {
               connect: {
@@ -22,7 +22,7 @@ export class SaleService {
               },
             },
             saleProductSizes: {
-              create: item.saleProductSizes.map((size) => ({
+              create: item.saleItemSizes.map((size) => ({
                 size: {
                   connect: { id: size.sizeId },
                 },
@@ -33,9 +33,9 @@ export class SaleService {
         },
       },
       include: {
-        saleProducts: {
+        saleItems: {
           include: {
-            saleProductSizes: { include: { size: true } },
+            saleItemSizes: { include: { size: true } },
           },
         },
       },
@@ -45,9 +45,9 @@ export class SaleService {
   async getSales(): Promise<Sale[]> {
     return await this.prisma.sale.findMany({
       include: {
-        saleProducts: {
+        saleItems: {
           include: {
-            saleProductSizes: { include: { size: true } },
+            saleItemSizes: { include: { size: true } },
           },
         },
       },

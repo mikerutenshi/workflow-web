@@ -154,11 +154,13 @@
     "price": "Price",
     "discount": "Discount",
     "msrp": "MSRP",
-    "note": "Note"
+    "note": "Note",
+    "sale_no": "Sale No."
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
     "fill_artisans": "Enter Artisan",
+    "choose_products": "Choose Shoes",
     "products_to_trf": "Shoes To Transfer"
   },
   "jobs": {

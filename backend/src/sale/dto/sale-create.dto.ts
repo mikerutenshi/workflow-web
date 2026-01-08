@@ -1,7 +1,7 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
 import { IsDate, Matches, Min, ValidateNested } from 'class-validator';
-import { InvProductToSaleCreateDto } from './inv-product-to-sale-create.dto';
+import { SaleItemCreateDto } from './sale-item-create.dto';
 
 @InputType()
 export class SaleCreateDto {
@@ -20,8 +20,8 @@ export class SaleCreateDto {
   @Min(1)
   createdBy: number;
 
-  @Field(() => [InvProductToSaleCreateDto])
-  @Type(() => InvProductToSaleCreateDto)
+  @Field(() => [SaleItemCreateDto])
+  @Type(() => SaleItemCreateDto)
   @ValidateNested({ each: true })
-  saleProducts: InvProductToSaleCreateDto[];
+  saleProducts: SaleItemCreateDto[];
 }

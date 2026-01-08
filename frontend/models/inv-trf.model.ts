@@ -1,4 +1,5 @@
 import type { Progress } from '~/api/generated/types';
+import type { Size } from './size.model';
 
 export interface Inventory {
   id: string;
@@ -19,11 +20,6 @@ export interface Product {
   id: string;
   sku: string;
   productGroup: ProductGroup;
-}
-
-export interface Size {
-  id: string;
-  eu: string;
 }
 
 export interface InvTrfItemSize {

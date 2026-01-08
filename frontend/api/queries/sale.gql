@@ -1,9 +1,10 @@
 fragment SaleFragment on Sale {
   id
+  date
   saleNo
-  saleProducts {
+  saleItems {
     id
-    saleProductSizes {
+    saleItemSizes {
       quantity
       size {
         ...Size

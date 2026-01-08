@@ -3,12 +3,7 @@ import { Min, IsInt } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 @InputType()
-export class SaleProductToSizeCreateDto {
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @Min(1)
-  saleProductId: number;
-
+export class SaleItemToSizeCreateDto {
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()

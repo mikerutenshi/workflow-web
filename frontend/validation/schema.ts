@@ -154,8 +154,7 @@ export const InventorySchema = z.object({
 
 export const InvTrfSchema = z.object({
   trfDate: z.string().datetime(),
-  // trfNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
-  trfNo: z.string(),
+  trfNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
   fromInvId: positiveNumberString,
   toInvId: positiveNumberString,
   progress: z.nativeEnum(Progress),
@@ -181,4 +180,24 @@ export const InvTrfItemSchema = z.object({
       quantity: z.number().min(0),
     }),
   ),
+});
+
+export const SaleItemSchema = z.object({
+  productId: positiveNumberString,
+  saleItemSizes: z.array(
+    z.object({
+      sizeId: positiveNumberString,
+      sizeTitle: z.string(),
+      quantity: z.number(),
+    }),
+  ),
+  totalQty: z.number().min(1),
+});
+
+export const SaleSchema = z.object({
+  saleNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
+  date: z.string().datetime(),
+  saleItems: z.array(SaleItemSchema).nonempty(),
+  createdBy: positiveNumberString,
+  updatedBy: positiveNumberString.optional().nullable(),
 });

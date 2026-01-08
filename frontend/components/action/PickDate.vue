@@ -91,13 +91,13 @@ watch(
 
       internalTextModel.value = `${adapter.format(
         start,
-        'fullDateWithWeekday'
+        'fullDateWithWeekday',
       )} - ${adapter.format(end, 'fullDateWithWeekday')}`;
     } else if (typeof newValue === 'string') {
       internalTextModel.value =
         newValue !== '' ? adapter.format(newValue, 'fullDateWithWeekday') : '';
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

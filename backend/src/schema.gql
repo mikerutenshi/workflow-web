@@ -438,19 +438,19 @@ type PayrollGetDto {
   artisans: [ArtisanWithTasks!]!
 }
 
-type SaleProductToSize {
-  saleProductId: ID!
+type SaleItemToSize {
+  saleItemId: ID!
   sizeId: ID!
   quantity: Float!
   size: Size!
 }
 
-type InvProductToSale {
+type SaleItem {
   id: ID!
   saleId: ID!
-  productId: ID!
   invId: ID!
-  saleProductSizes: [SaleProductToSize!]!
+  productId: ID!
+  saleItemSizes: [SaleItemToSize!]!
 }
 
 type Sale {
@@ -461,7 +461,7 @@ type Sale {
   updatedAt: Date!
   saleNo: String!
   date: Date!
-  saleProducts: [InvProductToSale!]!
+  saleItems: [SaleItem!]!
 }
 
 """Date custom scalar type"""
@@ -758,17 +758,16 @@ input SaleCreateDto {
   saleNo: String!
   date: Date!
   createdBy: ID!
-  saleProducts: [InvProductToSaleCreateDto!]!
+  saleProducts: [SaleItemCreateDto!]!
 }
 
-input InvProductToSaleCreateDto {
+input SaleItemCreateDto {
   productId: ID!
   invId: ID!
-  saleProductSizes: [SaleProductToSizeCreateDto!]!
+  saleItemSizes: [SaleItemToSizeCreateDto!]!
 }
 
-input SaleProductToSizeCreateDto {
-  saleProductId: ID!
+input SaleItemToSizeCreateDto {
   sizeId: ID!
   quantity: Float!
 }

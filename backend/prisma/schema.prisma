@@ -221,8 +221,8 @@ model Size {
 
   sizeWorks           SizeToWork[]
   sizeInvProducts     InvProductToSize[]
-  InvTrfItemToSize    InvTrfItemToSize[]
-  sizeSaleProducts    SaleProductToSize[]
+  InvTrfItemSize      InvTrfItemToSize[]
+  sizeSaleItems       SaleItemToSize[]
 
   @@unique([eu, gender])
   @@unique([us, gender])
@@ -270,7 +270,7 @@ model InvToProduct {
   product           Product         @relation(fields: [productId], references: [id])
   inventory         Inventory       @relation(fields: [invId], references: [id])
   invTrfItems       InvTrfItem[]
-  invProductSales   InvProductToSale[]
+  invProductSales   SaleItem[]
 }
 
 model InvProductToSize {
@@ -351,7 +351,7 @@ model Sale {
   id                Int             @id @default(autoincrement())
   saleNo            String
   date              DateTime
-  saleProducts      InvProductToSale[]
+  saleItems         SaleItem[]
 
   createdBy         Int
   updatedBy         Int?
@@ -359,26 +359,26 @@ model Sale {
   updatedAt         DateTime        @updatedAt
 }
 
-model InvProductToSale {
+model SaleItem {
   id                Int             @id @default(autoincrement())
   saleId            Int
-  productId         Int
   invId             Int
-  saleProductSizes  SaleProductToSize[]
+  productId         Int
+  saleItemSizes     SaleItemToSize[]
 
   sale              Sale            @relation(fields: [saleId], references: [id], onDelete: Cascade)
   invProduct        InvToProduct    @relation(fields: [productId, invId], references: [productId, invId])
 }
 
-model SaleProductToSize {
-  @@id([saleProductId, sizeId])
-  saleProductId     Int
+model SaleItemToSize {
+  @@id([saleItemId, sizeId])
+  saleItemId        Int 
   sizeId            Int
 
   quantity          Int
 
-  saleProduct       InvProductToSale  @relation(fields: [saleProductId], references: [id], onDelete: Cascade)
-  size              Size              @relation(fields: [sizeId], references: [id])
+  saleItem          SaleItem        @relation(fields: [saleItemId], references: [id], onDelete: Cascade)
+  size              Size            @relation(fields: [sizeId], references: [id])
 }
 
 // model Client {

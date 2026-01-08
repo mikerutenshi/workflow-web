@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-import { InvProductToSale } from './inv-product-to-sale.model';
+import { SaleItem } from './sale-item.model';
 
 @ObjectType()
 export class Sale extends BaseModel {
@@ -8,6 +8,6 @@ export class Sale extends BaseModel {
   saleNo: string;
   @Field(() => Date)
   date?: Date;
-  @Field(() => [InvProductToSale])
-  saleProducts: InvProductToSale[];
+  @Field(() => [SaleItem])
+  saleItems: SaleItem[];
 }

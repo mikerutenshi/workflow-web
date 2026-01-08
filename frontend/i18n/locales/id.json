@@ -154,11 +154,13 @@
     "price": "Harga",
     "discount": "Diskon",
     "msrp": "Harga Toko",
-    "note": "Catatan"
+    "note": "Catatan",
+    "sale_no": "No. Penjualan"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
     "fill_artisans": "Isi Nama Perajin",
+    "choose_products": "Pilih Sepatu",
     "products_to_trf": "Sepatu untuk Ditransfer"
   },
   "jobs": {

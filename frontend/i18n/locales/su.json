@@ -155,11 +155,13 @@
     "price": "Harga",
     "discount": "Diskon",
     "msrp": "Harga Toko",
-    "note": "Catetan"
+    "note": "Catetan",
+    "sale_no": "No. Jualan"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
     "fill_artisans": "Eusian Nu Ngagawékeun",
+    "choose_products": "Milih Sapatu",
     "products_to_trf": "Sapatu Pikeun Mindahkeun"
   },
   "jobs": {
