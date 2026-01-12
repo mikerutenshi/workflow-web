@@ -497,6 +497,7 @@ type Query {
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
   getSales: [Sale!]!
+  generateSaleNo: String!
 }
 
 type Mutation {
@@ -758,7 +759,7 @@ input SaleCreateDto {
   saleNo: String!
   date: Date!
   createdBy: ID!
-  saleProducts: [SaleItemCreateDto!]!
+  saleItems: [SaleItemCreateDto!]!
 }
 
 input SaleItemCreateDto {

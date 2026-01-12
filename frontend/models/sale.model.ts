@@ -10,4 +10,5 @@ export interface Sale {
 export interface SaleItem {
   productId: string;
   saleItemSizes: ItemSize[];
+  totalQty: number;
 }

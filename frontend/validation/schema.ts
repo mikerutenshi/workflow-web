@@ -187,7 +187,7 @@ export const SaleItemSchema = z.object({
   saleItemSizes: z.array(
     z.object({
       sizeId: positiveNumberString,
-      sizeTitle: z.string(),
+      eu: z.string(),
       quantity: z.number(),
     }),
   ),

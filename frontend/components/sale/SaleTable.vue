@@ -52,7 +52,10 @@
   </v-row>
 
   <ActionEditItemDialog :dialogTitle="dialog.title" v-model="dialog.isVisible">
-    <SaleCreateForm :inventory-id="inventoryId"></SaleCreateForm>
+    <SaleCreateForm
+      :inventory-id="inventoryId"
+      @close-dialog="dialog.isVisible = false"
+    ></SaleCreateForm>
   </ActionEditItemDialog>
 </template>
 

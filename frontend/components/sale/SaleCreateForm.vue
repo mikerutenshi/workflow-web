@@ -1,10 +1,10 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
-      <v-row v-if="createError">
+      <v-row v-if="createError || errors">
         <v-col>
           <v-alert type="error">
-            {{ extractGraphQlError(createError) }}
+            {{ extractGraphQlError(createError) || errors }}
           </v-alert>
         </v-col>
       </v-row>
@@ -109,6 +109,13 @@
         </v-card-text>
       </v-card>
     </v-card-text>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <ActionConfirm :loading="isCreating">{{
+        $t('btn.create')
+      }}</ActionConfirm>
+    </v-card-actions>
   </v-form>
 
   <ActionEditItemDialog :dialogTitle="dialog.title" v-model="dialog.isVisible">
@@ -117,6 +124,13 @@
       @close-dialog="closeDialog"
     ></SaleItemCreateForm>
   </ActionEditItemDialog>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @close-dialog="emit('close-dialog')"
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -126,6 +140,7 @@ import { useMutation, useQuery } from 'villus';
 import { useTheme } from 'vuetify';
 import {
   CreateSaleDocument,
+  GenerateSaleNoDocument,
   GetInvProductsDocument,
   Progress,
   type GetInvProductsQuery,
@@ -146,6 +161,7 @@ const props = defineProps({
     default: false,
   },
 });
+const emit = defineEmits(['close-dialog']);
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
@@ -162,6 +178,7 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
 });
 const saleNo = useField('saleNo');
 const date = useField<string>('date');
+const saleItems = useFieldArray('saleItems');
 
 const saleStore = useSaleStore();
 
@@ -270,6 +287,15 @@ const {
   },
 });
 
+const { isFetching: isFetchingSaleNo, execute: fetchSaleNo } = useQuery({
+  query: GenerateSaleNoDocument,
+  cachePolicy: 'network-only',
+  onData(data) {
+    saleNo.setValue(data.generateSaleNo);
+  },
+  // fetchOnMount: false,
+});
+
 const {
   isFetching: isCreating,
   execute: executeCreate,
@@ -281,7 +307,18 @@ const {
   clearCacheTags: [CACHE_SALES],
 });
 
-function onSubmit() {}
+const onSubmit = handleSubmit((data) => {
+  executeCreate({
+    data: {
+      ...data,
+      saleItems: data.saleItems.map((item) => ({
+        productId: item.productId,
+        invId: props.inventoryId,
+        saleItemSizes: item.saleItemSizes,
+      })),
+    },
+  });
+});
 
 watch(
   () => date.value.value,
@@ -291,8 +328,19 @@ watch(
     }
   },
 );
+
+watch(
+  () => saleStore.sale?.saleItems,
+  (newItems) => {
+    if (newItems) {
+      saleItems.replace(newItems);
+    }
+  },
+  { immediate: true },
+);
+
 watchEffect(() => {
-  console.log(`Form -> ${JSON.stringify(values)}`);
+  console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
   console.log(
     `Data InvProducts -> ${JSON.stringify(displayInvProducts.value)}`,
   );

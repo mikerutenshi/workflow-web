@@ -1,6 +1,13 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
+      <v-row v-if="errors">
+        <v-col>
+          <v-alert type="error">
+            {{ errors }}
+          </v-alert>
+        </v-col>
+      </v-row>
       <v-autocomplete
         :label="$t('label.product')"
         auto-select-first
@@ -64,7 +71,7 @@ import { SaleItemSchema } from '~/validation/schema';
 
 interface SizeItem {
   sizeId: string;
-  sizeTitle: string;
+  eu: string;
   availQty: number;
   sellQty: number;
 }
@@ -94,7 +101,7 @@ const props = defineProps({
 const emit = defineEmits(['close-dialog']);
 const table = reactive({
   headers: [
-    { title: t('label.size'), key: 'sizeTitle', sortable: false },
+    { title: t('label.size'), key: 'eu', sortable: false },
     { title: t('label.quantity'), key: 'availQty', sortable: false },
     { title: 'Selling Qty', key: 'sellQty', sortable: false },
   ],
@@ -127,7 +134,7 @@ watch(
       ?.invProductSizes.map((sizeItem) =>
         table.items.push({
           sizeId: sizeItem.size.id,
-          sizeTitle: sizeItem.size.eu,
+          eu: sizeItem.size.eu,
           availQty: sizeItem.quantity,
           sellQty: 0,
         }),
@@ -148,7 +155,7 @@ watch(
     replace(
       newItems.map((item) => ({
         sizeId: item.sizeId,
-        sizeTitle: item.sizeTitle,
+        eu: item.eu,
         quantity: item.sellQty,
       })),
     );
@@ -171,20 +178,21 @@ const onSubmit = handleSubmit((data) => {
     data.saleItemSizes.forEach((item) => {
       if (item.quantity > 0)
         saleItemSizes.push({
-          size: { id: item.sizeId, eu: item.sizeTitle },
+          size: { id: item.sizeId, eu: item.eu },
           quantity: item.quantity,
         });
     });
     saleStore.sale.saleItems.push({
       productId: productId.value.value as string,
       saleItemSizes,
+      totalQty: data.totalQty,
     });
   }
   emit('close-dialog');
 });
 
 watchEffect(() => {
-  console.log(`Table => ${JSON.stringify(table.items)}`);
-  console.log(`Values => ${JSON.stringify(values)}`);
+  // console.log(`Table => ${JSON.stringify(table.items)}`);
+  // console.log(`Values => ${JSON.stringify(values)}`);
 });
 </script>

@@ -275,7 +275,7 @@ export class InvTrfService {
   async generateInvTrfNo(): Promise<string> {
     const lastTrf = await this.prisma.invTrf.findFirst({
       where: { workId: null },
-      orderBy: { id: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
     const lastTrfNo = lastTrf?.trfNo;
 
@@ -285,7 +285,7 @@ export class InvTrfService {
   async generateInvTrfPrdNo(): Promise<string> {
     const lastInvPrd = await this.prisma.invTrf.findFirst({
       where: { workId: { not: null } },
-      orderBy: { id: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
     const lastNo = lastInvPrd?.trfNo;
 

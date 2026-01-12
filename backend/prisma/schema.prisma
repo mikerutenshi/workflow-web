@@ -325,6 +325,8 @@ model InvTrf {
   updatedBy         Int?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+
+  @@index([createdAt(sort: Desc)])
 }
 
 model InvTrfItemToSize {
@@ -357,6 +359,8 @@ model Sale {
   updatedBy         Int?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+
+  @@index([createdAt(sort: Desc)])
 }
 
 model SaleItem {

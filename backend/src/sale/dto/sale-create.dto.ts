@@ -23,5 +23,5 @@ export class SaleCreateDto {
   @Field(() => [SaleItemCreateDto])
   @Type(() => SaleItemCreateDto)
   @ValidateNested({ each: true })
-  saleProducts: SaleItemCreateDto[];
+  saleItems: SaleItemCreateDto[];
 }

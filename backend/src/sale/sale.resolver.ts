@@ -16,4 +16,9 @@ export class SaleResolver {
   getSales(): Promise<Sale[]> {
     return this.service.getSales();
   }
+
+  @Query(() => String)
+  generateSaleNo(): Promise<String> {
+    return this.service.generateSaleNo();
+  }
 }

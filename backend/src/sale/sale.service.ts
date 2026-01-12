@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { SaleCreateDto } from './dto/sale-create.dto';
 import { Sale } from '@/models/sale.model';
+import { Operation } from '@/models/operation.enum';
+import { generateId } from '@/utils/functions.util';
 
 @Injectable()
 export class SaleService {
@@ -12,7 +14,7 @@ export class SaleService {
       data: {
         ...data,
         saleItems: {
-          create: data.saleProducts.map((item) => ({
+          create: data.saleItems.map((item) => ({
             invProduct: {
               connect: {
                 invId_productId: {
@@ -52,5 +54,14 @@ export class SaleService {
         },
       },
     });
+  }
+
+  async generateSaleNo(): Promise<string> {
+    const lastSale = await this.prisma.sale.findFirst({
+      orderBy: { createdAt: 'desc' },
+    });
+    const lastSaleNo = lastSale?.saleNo;
+
+    return generateId(Operation.Sale, lastSaleNo);
   }
 }

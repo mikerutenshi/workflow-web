@@ -23,3 +23,7 @@ query getSales {
     ...SaleFragment
   }
 }
+
+query generateSaleNo {
+  generateSaleNo
+}
