@@ -133,9 +133,8 @@
       <v-spacer></v-spacer>
       <template v-if="props.isReadonly">
         <ActionPrintInvTrf
-          v-if="computeInvTrf"
-          :inv-trf-model="computeInvTrf"
-          :disabled="!computeInvTrf"
+          :inv-trf-id="props.invTrfId"
+          :disabled="!props.invTrfId"
         ></ActionPrintInvTrf>
       </template>
       <template v-else>
@@ -299,8 +298,7 @@ const {
 } = useQuery({
   variables,
   query: GetInvTrfItemsDocument,
-  tags: [CACHE_INV_TRFS],
-  fetchOnMount: true,
+  tags: [CACHE_INV_TRF_ITEMS],
 });
 
 const {
@@ -323,7 +321,6 @@ const {
     itemIdSelections.value = invTrf.invTrfItems.map((item) => item.id);
   },
 });
-const computeInvTrf = computed(() => invTrfData.value?.getInvTrf);
 
 if (props.invTrfId) {
   fetchTransfer();

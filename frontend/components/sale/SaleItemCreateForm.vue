@@ -178,7 +178,8 @@ const onSubmit = handleSubmit((data) => {
     data.saleItemSizes.forEach((item) => {
       if (item.quantity > 0)
         saleItemSizes.push({
-          size: { id: item.sizeId, eu: item.eu },
+          sizeId: item.sizeId,
+          eu: item.eu,
           quantity: item.quantity,
         });
     });

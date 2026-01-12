@@ -1,9 +1,5 @@
-export interface Size {
-  id: string;
-  eu: string;
-}
-
 export interface ItemSize {
-  size: Size;
+  sizeId: string;
+  eu: string;
   quantity: number;
 }

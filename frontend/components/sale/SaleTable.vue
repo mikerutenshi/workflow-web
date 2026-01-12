@@ -94,7 +94,7 @@ const table = reactive({
   headers: [
     { title: t('label.date'), key: 'date' },
 
-    { title: t('label.sale_no'), key: 'sale_no' },
+    { title: t('label.sale_no'), key: 'saleNo' },
   ],
 });
 
@@ -161,4 +161,8 @@ function showDialog(content: DialogContent, payloadId?: string | undefined) {
     //   break;
   }
 }
+
+watchEffect(() => {
+  console.log(`Sales Data => ${JSON.stringify(salesData.value?.getSales)}`);
+});
 </script>

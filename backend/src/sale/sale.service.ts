@@ -23,7 +23,7 @@ export class SaleService {
                 },
               },
             },
-            saleProductSizes: {
+            saleItemSizes: {
               create: item.saleItemSizes.map((size) => ({
                 size: {
                   connect: { id: size.sizeId },

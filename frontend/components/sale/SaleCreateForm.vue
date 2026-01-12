@@ -75,9 +75,9 @@
                 <tbody>
                   <tr
                     v-for="itemSize in item.saleItemSizes"
-                    :key="itemSize.size.id"
+                    :key="itemSize.sizeId"
                   >
-                    <td>{{ itemSize.size.eu }}</td>
+                    <td>{{ itemSize.eu }}</td>
                     <td>{{ itemSize.quantity }}</td>
                   </tr>
                 </tbody>
@@ -314,7 +314,10 @@ const onSubmit = handleSubmit((data) => {
       saleItems: data.saleItems.map((item) => ({
         productId: item.productId,
         invId: props.inventoryId,
-        saleItemSizes: item.saleItemSizes,
+        saleItemSizes: item.saleItemSizes.map((itemSize) => ({
+          sizeId: itemSize.sizeId,
+          quantity: itemSize.quantity,
+        })),
       })),
     },
   });

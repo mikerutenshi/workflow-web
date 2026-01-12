@@ -15,16 +15,21 @@
 import { mdiPrinter } from '@mdi/js';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
-import type { InvTrfModel } from '~/models/inv-trf.model';
+import {
+  GetInvTrfDocument,
+  type GetInvTrfQuery,
+  type InvTrf,
+} from '~/api/generated/types';
 
 const props = defineProps({
   color: { type: String, default: 'primary' },
   loading: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   outlined: { type: Boolean, default: false },
-  invTrfModel: {
-    type: Object as PropType<InvTrfModel>,
+  invTrfId: {
+    type: [String, null] as PropType<string | null>,
     required: true,
   },
 });
@@ -32,12 +37,24 @@ const props = defineProps({
 const { t } = useI18n();
 const adapter = useDate();
 
+const {
+  execute: fetchTransfer,
+  data: dataInvTrf,
+  isFetching: isFetchingInvTrf,
+  error: errorInvTrf,
+} = useQuery({
+  variables: { id: props.invTrfId! },
+  query: GetInvTrfDocument,
+  tags: [CACHE_INV_TRF],
+});
+
 function handleClick() {
   // console.log('InvTrfModel: ' + JSON.stringify(invTrfModel));
-  createPdf(props.invTrfModel);
+  if (dataInvTrf.value) createPdf(dataInvTrf.value?.getInvTrf);
 }
 
-function createPdf(invTrfModel: InvTrfModel) {
+type InvTrfType = GetInvTrfQuery['getInvTrf'];
+function createPdf(invTrfModel: InvTrfType) {
   const doc = new jsPDF();
   doc.setLineHeightFactor(1.5);
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -101,7 +118,7 @@ function createPdf(invTrfModel: InvTrfModel) {
 
   var totalPrice = 0;
   var totalQty = 0;
-  const tBody = props.invTrfModel.invTrfItems.map((item) => {
+  const tBody = dataInvTrf.value?.getInvTrf.invTrfItems.map((item) => {
     let sum = item.invTrfItemSizes.reduce(
       (sum, size) => sum + size.quantity,
       0,
