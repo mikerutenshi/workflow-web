@@ -11,6 +11,7 @@ import { InvTrfSimpleDto } from './dto/inv-trf-simple.dto';
 import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvTrfService } from './inv-trf.service';
+import { Progress } from '@/generated/client';
 
 @Resolver(() => InvTrf)
 export class InvTrfResolver {
@@ -47,8 +48,10 @@ export class InvTrfResolver {
   getInvTrfItems(
     @Args('fromInvId', { type: () => ID }, ParseIntPipe) fromInvId: number,
     @Args('toInvId', { type: () => ID }, ParseIntPipe) toInvId: number,
+    @Args('progress', { type: () => Progress, nullable: true })
+    progress?: Progress,
   ): Promise<InvTrfItemDto[]> {
-    return this.service.getInvTrfItems(fromInvId, toInvId);
+    return this.service.getInvTrfItems(fromInvId, toInvId, progress);
   }
 
   @Query(() => [InvTrfSimpleDto])

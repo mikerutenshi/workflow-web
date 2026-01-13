@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
-import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
-import { InvTrf } from '@/models/inv-trf.model';
-import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
-import { InvTrfDto } from './dto/inv-trf.dto';
-import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
-import { InvTrfItem } from '@/models/inv-trf-item.model';
-import { InvTrfItemDto } from './dto/inv-trf-item.dto';
 import { Progress } from '@/generated/client';
-import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
-import { generateId } from '@/utils/functions.util';
+import { InvTrfItem } from '@/models/inv-trf-item.model';
+import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';
-import { InvProductService } from './inv-product.service';
+import { PrismaService } from '@/prisma/prisma.service';
+import { generateId } from '@/utils/functions.util';
+import { Injectable } from '@nestjs/common';
+import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
+import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
+import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
+import { InvTrfItemDto } from './dto/inv-trf-item.dto';
 import { InvTrfSimpleDto } from './dto/inv-trf-simple.dto';
+import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
+import { InvTrfDto } from './dto/inv-trf.dto';
+import { InvProductService } from './inv-product.service';
 
 @Injectable()
 export class InvTrfService {
@@ -178,9 +178,10 @@ export class InvTrfService {
   async getInvTrfItems(
     fromInvId: number,
     toInvId: number,
+    progress?: Progress,
   ): Promise<InvTrfItemDto[]> {
     const result = await this.prisma.invTrfItem.findMany({
-      where: { fromInvId, toInvId, progress: { not: Progress.COMPLETED } },
+      where: { fromInvId, toInvId, progress: progress as Progress },
       include: {
         product: {
           include: {

@@ -281,7 +281,13 @@ const {
 const variables = reactive({
   fromInvId: '',
   toInvId: '',
+  progress: undefined as Progress | undefined,
 });
+
+if (!props.isReadonly) {
+  variables.progress = Progress.Pending;
+}
+
 const computeTrfItems = computed(() => {
   if (!props.invTrfId) {
     return trfItemsData.value?.getInvTrfItems.filter(

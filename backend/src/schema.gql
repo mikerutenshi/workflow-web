@@ -492,7 +492,7 @@ type Query {
   getInventories: [InventoryDto!]!
   getInvProducts(invId: ID!): [InvProductDto!]!
   getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
-  getInvTrfItems(fromInvId: ID!, toInvId: ID!): [InvTrfItemDto!]!
+  getInvTrfItems(fromInvId: ID!, toInvId: ID!, progress: Progress): [InvTrfItemDto!]!
   getInvTrfs: [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
