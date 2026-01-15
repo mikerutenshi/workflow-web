@@ -47,6 +47,36 @@
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-menu transition="slide-y-transition" open-on-hover>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :icon="mdiDotsVertical"
+                color="primary"
+                v-bind="props"
+                variant="text"
+              >
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                :prepend-icon="mdiPencil"
+                @click="showDialog(DialogContent.Edit, item.id)"
+              >
+                <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item
+                :prepend-icon="mdiTrashCan"
+                @click="deleteItem(item.id)"
+                class="text-error"
+              >
+                <v-list-item-title>{{ t('btn.delete') }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
       </v-data-table>
     </v-col>
   </v-row>
@@ -54,16 +84,35 @@
   <ActionEditItemDialog :dialogTitle="dialog.title" v-model="dialog.isVisible">
     <SaleCreateForm
       :inventory-id="inventoryId"
+      :sale-id="dialog.saleId"
       @close-dialog="dialog.isVisible = false"
     ></SaleCreateForm>
   </ActionEditItemDialog>
+
+  <ActionConfirmDeleteDialog
+    v-model="dialogConfirmDelete"
+    @confirm="if (dialog.saleId) executeDelete({ id: dialog.saleId });"
+  ></ActionConfirmDeleteDialog>
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify, mdiWarehouse } from '@mdi/js';
-import { useQuery } from 'villus';
+import {
+  mdiDelete,
+  mdiDotsVertical,
+  mdiMagnify,
+  mdiPencil,
+  mdiTrashCan,
+  mdiWarehouse,
+} from '@mdi/js';
+import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import {
+  DeleteSaleDocument,
   GetInventoriesDocument,
   GetSalesDocument,
 } from '~/api/generated/types';
@@ -80,12 +129,14 @@ enum DialogContent {
   Create = 'CREATE',
 }
 const dialog = reactive({
-  payloadId: null as string | null,
+  inventoryId: null as string | null,
+  saleId: null as string | null,
   title: '',
   content: DialogContent.None,
   isVisible: false,
   isReadonly: false,
 });
+const dialogConfirmDelete = ref(false);
 const inventoryId = ref('');
 const table = reactive({
   search: '',
@@ -93,9 +144,14 @@ const table = reactive({
   itemsPerPage: 25,
   headers: [
     { title: t('label.date'), key: 'date' },
-
     { title: t('label.sale_no'), key: 'saleNo' },
+    { title: '', key: 'actions', sortable: false, align: 'end' },
   ],
+});
+const snack = reactive({
+  isVisible: false,
+  message: t('status.deleted'),
+  color: SnackColor.Success,
 });
 
 const {
@@ -122,6 +178,18 @@ const {
   tags: [CACHE_SALES],
 });
 
+const {
+  execute: executeDelete,
+  error: errorDelete,
+  isFetching: isDeleting,
+} = useMutation(DeleteSaleDocument, {
+  onData(data) {
+    snack.message = t('status.deleted');
+    snack.isVisible = true;
+  },
+  clearCacheTags: [CACHE_SALES],
+});
+
 watch(isFormDialogOpen, (isOpen) => {
   if (isOpen) {
     showDialog(DialogContent.Create);
@@ -136,9 +204,15 @@ watch(
     }
   },
 );
+const saleStore = useSaleStore();
+watch(inventoryId, (newValue, oldValue) => {
+  if (newValue != oldValue) {
+    saleStore.sale = null;
+  }
+});
 
-function showDialog(content: DialogContent, payloadId?: string | undefined) {
-  dialog.payloadId = payloadId ?? null;
+function showDialog(content: DialogContent, saleId?: string) {
+  dialog.saleId = saleId ?? null;
 
   switch (content) {
     case DialogContent.Create:
@@ -160,6 +234,11 @@ function showDialog(content: DialogContent, payloadId?: string | undefined) {
     //   dialog.isVisible = true;
     //   break;
   }
+}
+
+function deleteItem(saleId: string) {
+  dialog.saleId = saleId;
+  dialogConfirmDelete.value = true;
 }
 
 watchEffect(() => {

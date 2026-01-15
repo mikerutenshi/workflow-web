@@ -1,10 +1,10 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
-      <v-row v-if="createError || errors">
+      <v-row v-if="createError">
         <v-col>
           <v-alert type="error">
-            {{ extractGraphQlError(createError) || errors }}
+            {{ extractGraphQlError(createError) }}
           </v-alert>
         </v-col>
       </v-row>
@@ -104,6 +104,11 @@
                   }}
                 </td>
               </tr>
+              <tr v-if="errors['saleItems']" class="text-error">
+                {{
+                  errors['saleItems']
+                }}
+              </tr>
             </template>
           </v-data-table>
         </v-card-text>
@@ -142,6 +147,7 @@ import {
   CreateSaleDocument,
   GenerateSaleNoDocument,
   GetInvProductsDocument,
+  GetSaleDocument,
   Progress,
   type GetInvProductsQuery,
   type InvProductDto,
@@ -154,6 +160,10 @@ import { SaleSchema } from '~/validation/schema';
 const props = defineProps({
   inventoryId: {
     type: String,
+    required: true,
+  },
+  saleId: {
+    type: [String, null] as PropType<string | null>,
     required: true,
   },
   isReadonly: {
@@ -176,8 +186,9 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
     createdBy: userId,
   },
 });
-const saleNo = useField('saleNo');
+
 const date = useField<string>('date');
+const saleNo = useField('saleNo');
 const saleItems = useFieldArray('saleItems');
 
 const saleStore = useSaleStore();
@@ -246,8 +257,9 @@ interface InvProductAndSaleItems extends InvProductsData {
   subtotal: number;
 }
 const displayInvProducts = ref<InvProductAndSaleItems[]>([]);
+const displayItemSizesMap = ref<Map<string, ItemSize[]>>(new Map());
 const {
-  execute: executeFetch,
+  execute: fetchInvProducts,
   data: dataInvProducts,
   isFetching: isFetchingInvProducts,
   error: errorInvProducts,
@@ -257,33 +269,23 @@ const {
   paused: ({ invId }) => !invId,
   tags: [CACHE_INV_PRODUCTS],
   onData(data) {
-    console.log('Data Block Executed');
-    const saleItemSizesMap = new Map(
-      saleStore.sale?.saleItems.map((item) => [
-        item.productId,
-        item.saleItemSizes,
-      ]),
-    );
-    if (saleStore.sale?.saleItems && saleStore.sale?.saleItems.length > 0) {
-      const saleItems = saleStore.sale.saleItems;
-      displayInvProducts.value = data.getInvProducts
-        .filter((product) =>
-          saleItems.some((item) => item.productId === product.productId),
-        )
-        .map((product) => ({
-          ...product,
-          saleItemSizes: saleItemSizesMap.get(product.productId) || [],
-        }))
-        .map((product) => ({
-          ...product,
-          subtotal: product.price
-            ? product.saleItemSizes.reduce(
-                (sum, item) => (sum = sum + item.quantity),
-                0,
-              ) * product.price
-            : 0,
-        }));
-    }
+    console.log(`Data Block Executed => ${JSON.stringify(data)}`);
+
+    displayInvProducts.value = data.getInvProducts
+      .filter((product) => displayItemSizesMap.value.has(product.productId))
+      .map((product) => ({
+        ...product,
+        saleItemSizes: displayItemSizesMap.value.get(product.productId) || [],
+      }))
+      .map((product) => ({
+        ...product,
+        subtotal: product.price
+          ? product.saleItemSizes.reduce(
+              (sum, item) => (sum = sum + item.quantity),
+              0,
+            ) * product.price
+          : 0,
+      }));
   },
 });
 
@@ -293,7 +295,7 @@ const { isFetching: isFetchingSaleNo, execute: fetchSaleNo } = useQuery({
   onData(data) {
     saleNo.setValue(data.generateSaleNo);
   },
-  // fetchOnMount: false,
+  fetchOnMount: false,
 });
 
 const {
@@ -306,6 +308,40 @@ const {
   },
   clearCacheTags: [CACHE_SALES],
 });
+
+const {
+  execute: fetchSale,
+  data: dataSale,
+  isFetching: isFetchingSale,
+  error: errorSale,
+} = useQuery({
+  variables: { id: props.saleId! },
+  query: GetSaleDocument,
+  tags: [CACHE_SALE],
+  fetchOnMount: false,
+  onData(data) {
+    const sale = data.getSale;
+    date.value.value = sale.date;
+    saleNo.value.value = sale.saleNo;
+
+    displayItemSizesMap.value = new Map(
+      sale.saleItems.map((item) => [
+        item.productId,
+        item.saleItemSizes.map((itemSize) => ({
+          sizeId: itemSize.size.id,
+          eu: itemSize.size.eu,
+          quantity: itemSize.quantity,
+        })),
+      ]),
+    );
+  },
+});
+
+if (props.saleId) {
+  fetchSale();
+} else {
+  fetchSaleNo();
+}
 
 const onSubmit = handleSubmit((data) => {
   executeCreate({
@@ -333,25 +369,63 @@ watch(
 );
 
 watch(
+  () => displayItemSizesMap.value,
+  (newMap) => {
+    fetchInvProducts();
+  },
+);
+
+watch(
   () => saleStore.sale?.saleItems,
   (newItems) => {
     if (newItems) {
       saleItems.replace(newItems);
+
+      displayItemSizesMap.value = new Map(
+        saleStore.sale?.saleItems.map((item) => [
+          item.productId,
+          item.saleItemSizes,
+        ]),
+      );
+
+      // console.log(
+      //   `New Items Detected -> ${JSON.stringify(dataInvProducts.value)}`,
+      // );
+      // console.log(`New Items Are-> ${JSON.stringify(newItems)}`);
+      // if (dataInvProducts.value) {
+      //   displayInvProducts.value = dataInvProducts.value?.getInvProducts
+      //     .filter((product) =>
+      //       newItems.some((item) => item.productId === product.productId),
+      //     )
+      //     .map((product) => ({
+      //       ...product,
+      //       saleItemSizes: saleItemSizesMap.get(product.productId) || [],
+      //     }))
+      //     .map((product) => ({
+      //       ...product,
+      //       subtotal: product.price
+      //         ? product.saleItemSizes.reduce(
+      //             (sum, item) => (sum = sum + item.quantity),
+      //             0,
+      //           ) * product.price
+      //         : 0,
+      //     }));
+      // }
     }
   },
   { immediate: true },
 );
 
 watchEffect(() => {
-  console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
-  console.log(
-    `Data InvProducts -> ${JSON.stringify(displayInvProducts.value)}`,
-  );
-  console.log(`Sale Store = ${JSON.stringify(saleStore.sale)}`);
+  // console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
+  // console.log(
+  //   `Data InvProducts -> ${JSON.stringify(displayInvProducts.value)}`,
+  // );
+  // console.log(`Sale Store = ${JSON.stringify(saleStore.sale)}`);
 });
 
 function closeDialog() {
   dialog.isVisible = false;
-  executeFetch();
+  fetchInvProducts();
 }
 </script>

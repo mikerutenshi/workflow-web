@@ -1,13 +1,6 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
-      <v-row v-if="errors">
-        <v-col>
-          <v-alert type="error">
-            {{ errors }}
-          </v-alert>
-        </v-col>
-      </v-row>
       <v-autocomplete
         :label="$t('label.product')"
         auto-select-first

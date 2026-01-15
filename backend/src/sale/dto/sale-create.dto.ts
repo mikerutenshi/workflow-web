@@ -1,6 +1,12 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
-import { IsDate, Matches, Min, ValidateNested } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsDate,
+  Matches,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { SaleItemCreateDto } from './sale-item-create.dto';
 
 @InputType()
@@ -23,5 +29,6 @@ export class SaleCreateDto {
   @Field(() => [SaleItemCreateDto])
   @Type(() => SaleItemCreateDto)
   @ValidateNested({ each: true })
+  @ArrayNotEmpty()
   saleItems: SaleItemCreateDto[];
 }

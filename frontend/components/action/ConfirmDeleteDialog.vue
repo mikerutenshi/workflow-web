@@ -14,7 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { mdiClose } from '@mdi/js';
 const dialog = defineModel({
   type: Boolean,
   required: true,
@@ -23,7 +22,7 @@ const dialog = defineModel({
 const props = defineProps({
   itemTitle: {
     type: String,
-    default: "''",
+    default: '',
   },
 });
 const emit = defineEmits(['confirm']);

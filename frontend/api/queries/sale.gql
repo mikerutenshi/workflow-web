@@ -4,6 +4,7 @@ fragment SaleFragment on Sale {
   saleNo
   saleItems {
     id
+    productId
     saleItemSizes {
       quantity
       size {
@@ -24,6 +25,16 @@ query getSales {
   }
 }
 
+query getSale($id: ID!) {
+  getSale(id: $id) {
+    ...SaleFragment
+  }
+}
+
 query generateSaleNo {
   generateSaleNo
+}
+
+mutation deleteSale($id: ID!) {
+  deleteSale(id: $id)
 }

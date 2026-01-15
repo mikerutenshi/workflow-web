@@ -497,6 +497,7 @@ type Query {
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
   getSales: [Sale!]!
+  getSale(id: ID!): Sale!
   generateSaleNo: String!
 }
 
@@ -542,6 +543,8 @@ type Mutation {
   deleteInvTrfItem(id: ID!): Boolean!
   deleteInvTrf(id: ID!): Boolean!
   createSale(data: SaleCreateDto!): Sale!
+  updateSale(id: ID!, data: SaleUpdateDto!): Sale!
+  deleteSale(id: ID!): Boolean!
 }
 
 input RoleDto {
@@ -771,4 +774,12 @@ input SaleItemCreateDto {
 input SaleItemToSizeCreateDto {
   sizeId: ID!
   quantity: Float!
+}
+
+input SaleUpdateDto {
+  saleNo: String
+  date: Date
+  createdBy: ID
+  saleItems: [SaleItemCreateDto!]!
+  updatedBy: ID!
 }
