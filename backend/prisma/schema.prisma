@@ -351,7 +351,7 @@ model PriceFormula {
 
 model Sale {
   id                Int             @id @default(autoincrement())
-  saleNo            String
+  saleNo            String          @unique
   date              DateTime
   saleItems         SaleItem[]
 

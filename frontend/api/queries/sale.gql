@@ -19,6 +19,12 @@ mutation createSale($data: SaleCreateDto!) {
   }
 }
 
+mutation updateSale($id: ID!, $data: SaleUpdateDto!) {
+  updateSale(id: $id, data: $data) {
+    id
+  }
+}
+
 query getSales {
   getSales {
     ...SaleFragment

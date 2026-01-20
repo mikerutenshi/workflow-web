@@ -41,6 +41,8 @@
                     label="Total"
                     type="number"
                     :error-messages="totalQty.errorMessage.value"
+                    readonly
+                    color="primary"
                   />
                 </td>
               </tr>
@@ -57,7 +59,9 @@
 </template>
 
 <script setup lang="ts">
+import { mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
+import type { VDataTable } from 'vuetify/components';
 import { GetInvProductsDocument } from '~/api/generated/types';
 import type { ItemSize } from '~/models/size.model';
 import { SaleItemSchema } from '~/validation/schema';
@@ -78,7 +82,7 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   },
 });
 const productId = useField('productId');
-const totalQty = useField('totalQty');
+const totalQty = useField<number>('totalQty');
 const { fields, push, remove, replace } = useFieldArray('saleItemSizes');
 
 const props = defineProps({
@@ -97,7 +101,7 @@ const table = reactive({
     { title: t('label.size'), key: 'eu', sortable: false },
     { title: t('label.quantity'), key: 'availQty', sortable: false },
     { title: 'Selling Qty', key: 'sellQty', sortable: false },
-  ],
+  ] as const,
   items: [] as SizeItem[],
 });
 const saleStore = useSaleStore();

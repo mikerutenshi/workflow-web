@@ -146,7 +146,7 @@ const table = reactive({
     { title: t('label.date'), key: 'date' },
     { title: t('label.sale_no'), key: 'saleNo' },
     { title: '', key: 'actions', sortable: false, align: 'end' },
-  ],
+  ] as const,
 });
 const snack = reactive({
   isVisible: false,
@@ -169,7 +169,7 @@ const {
   },
 });
 const {
-  execute: executeFetch,
+  execute: fetchSales,
   data: salesData,
   isFetching: isFetchingSales,
   error: errorSales,
@@ -186,6 +186,7 @@ const {
   onData(data) {
     snack.message = t('status.deleted');
     snack.isVisible = true;
+    fetchSales();
   },
   clearCacheTags: [CACHE_SALES],
 });
@@ -198,6 +199,7 @@ watch(isFormDialogOpen, (isOpen) => {
 watch(
   () => [dialog.isVisible, dialog.content],
   ([visible, content]) => {
+    if (!visible) fetchSales();
     if (!visible && content === DialogContent.Create) {
       // executeFetch();
       dialogStore.closeFormDialog();

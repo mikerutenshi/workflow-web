@@ -1,10 +1,10 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
-      <v-row v-if="createError">
+      <v-row v-if="errorCreate">
         <v-col>
           <v-alert type="error">
-            {{ extractGraphQlError(createError) }}
+            {{ extractGraphQlError(errorCreate) }}
           </v-alert>
         </v-col>
       </v-row>
@@ -110,6 +110,15 @@
                 }}
               </tr>
             </template>
+
+            <template v-slot:item.actions="{ item }">
+              <v-btn
+                :icon="mdiTrashCan"
+                variant="text"
+                @click="deleteCartItem(item.productId)"
+              >
+              </v-btn>
+            </template>
           </v-data-table>
         </v-card-text>
       </v-card>
@@ -117,8 +126,8 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <ActionConfirm :loading="isCreating">{{
-        $t('btn.create')
+      <ActionConfirm :loading="isCreating || isUpdating">{{
+        submitBtnTitle
       }}</ActionConfirm>
     </v-card-actions>
   </v-form>
@@ -139,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { mdiPlus } from '@mdi/js';
+import { mdiPencil, mdiPlus, mdiTrashCan } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import { useTheme } from 'vuetify';
@@ -149,6 +158,7 @@ import {
   GetInvProductsDocument,
   GetSaleDocument,
   Progress,
+  UpdateSaleDocument,
   type GetInvProductsQuery,
   type InvProductDto,
 } from '~/api/generated/types';
@@ -172,6 +182,9 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['close-dialog']);
+const submitBtnTitle = computed(() =>
+  props.saleId ? t('btn.update') : t('btn.create'),
+);
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
@@ -235,7 +248,8 @@ const table = reactive({
       title: 'Subtotal',
       key: 'subtotal',
     },
-  ],
+    { title: '', key: 'actions', sortable: false, align: 'end' },
+  ] as const,
   productIds: [],
 });
 
@@ -254,10 +268,11 @@ type InvProductsData = GetInvProductsQuery['getInvProducts'][number];
 
 interface InvProductAndSaleItems extends InvProductsData {
   saleItemSizes: ItemSize[];
+  totalQty: number;
   subtotal: number;
 }
 const displayInvProducts = ref<InvProductAndSaleItems[]>([]);
-const displayItemSizesMap = ref<Map<string, ItemSize[]>>(new Map());
+const displayItemSizesMap = ref<Map<string, SaleItem>>(new Map());
 const {
   execute: fetchInvProducts,
   data: dataInvProducts,
@@ -275,16 +290,14 @@ const {
       .filter((product) => displayItemSizesMap.value.has(product.productId))
       .map((product) => ({
         ...product,
-        saleItemSizes: displayItemSizesMap.value.get(product.productId) || [],
+        saleItemSizes:
+          displayItemSizesMap.value.get(product.productId)?.saleItemSizes || [],
+        totalQty:
+          displayItemSizesMap.value.get(product.productId)?.totalQty || 0,
       }))
       .map((product) => ({
         ...product,
-        subtotal: product.price
-          ? product.saleItemSizes.reduce(
-              (sum, item) => (sum = sum + item.quantity),
-              0,
-            ) * product.price
-          : 0,
+        subtotal: product.price ? product.totalQty * product.price : 0,
       }));
   },
 });
@@ -300,13 +313,24 @@ const { isFetching: isFetchingSaleNo, execute: fetchSaleNo } = useQuery({
 
 const {
   isFetching: isCreating,
-  execute: executeCreate,
-  error: createError,
+  execute: createSale,
+  error: errorCreate,
 } = useMutation(CreateSaleDocument, {
   onData() {
     snack.isVisible = true;
   },
   clearCacheTags: [CACHE_SALES],
+});
+
+const {
+  isFetching: isUpdating,
+  execute: updateSale,
+  error: errorUpdate,
+} = useMutation(UpdateSaleDocument, {
+  onData() {
+    snack.isVisible = true;
+  },
+  clearCacheTags: [CACHE_SALES, CACHE_SALE],
 });
 
 const {
@@ -327,11 +351,18 @@ const {
     displayItemSizesMap.value = new Map(
       sale.saleItems.map((item) => [
         item.productId,
-        item.saleItemSizes.map((itemSize) => ({
-          sizeId: itemSize.size.id,
-          eu: itemSize.size.eu,
-          quantity: itemSize.quantity,
-        })),
+        {
+          productId: item.productId,
+          saleItemSizes: item.saleItemSizes.map((itemSize) => ({
+            sizeId: itemSize.size.id,
+            eu: itemSize.size.eu,
+            quantity: itemSize.quantity,
+          })),
+          totalQty: item.saleItemSizes.reduce(
+            (sum, subItem) => sum + subItem.quantity,
+            0,
+          ),
+        },
       ]),
     );
   },
@@ -344,19 +375,31 @@ if (props.saleId) {
 }
 
 const onSubmit = handleSubmit((data) => {
-  executeCreate({
-    data: {
-      ...data,
-      saleItems: data.saleItems.map((item) => ({
-        productId: item.productId,
-        invId: props.inventoryId,
-        saleItemSizes: item.saleItemSizes.map((itemSize) => ({
-          sizeId: itemSize.sizeId,
-          quantity: itemSize.quantity,
-        })),
-      })),
-    },
-  });
+  const saleItems = data.saleItems.map((item) => ({
+    productId: item.productId,
+    invId: props.inventoryId,
+    saleItemSizes: item.saleItemSizes.map((itemSize) => ({
+      sizeId: itemSize.sizeId,
+      quantity: itemSize.quantity,
+    })),
+  }));
+  if (props.saleId) {
+    updateSale({
+      id: props.saleId,
+      data: {
+        ...data,
+        updatedBy: userId,
+        saleItems,
+      },
+    });
+  } else {
+    createSale({
+      data: {
+        ...data,
+        saleItems,
+      },
+    });
+  }
 });
 
 watch(
@@ -368,64 +411,48 @@ watch(
   },
 );
 
-watch(
-  () => displayItemSizesMap.value,
-  (newMap) => {
-    fetchInvProducts();
-  },
-);
+// watch(
+//   () => displayItemSizesMap.value,
+//   (newMap) => {
+//     fetchInvProducts();
+//   },
+// );
 
 watch(
   () => saleStore.sale?.saleItems,
   (newItems) => {
     if (newItems) {
-      saleItems.replace(newItems);
-
       displayItemSizesMap.value = new Map(
-        saleStore.sale?.saleItems.map((item) => [
-          item.productId,
-          item.saleItemSizes,
-        ]),
+        saleStore.sale?.saleItems.map((item) => [item.productId, item]),
       );
-
-      // console.log(
-      //   `New Items Detected -> ${JSON.stringify(dataInvProducts.value)}`,
-      // );
-      // console.log(`New Items Are-> ${JSON.stringify(newItems)}`);
-      // if (dataInvProducts.value) {
-      //   displayInvProducts.value = dataInvProducts.value?.getInvProducts
-      //     .filter((product) =>
-      //       newItems.some((item) => item.productId === product.productId),
-      //     )
-      //     .map((product) => ({
-      //       ...product,
-      //       saleItemSizes: saleItemSizesMap.get(product.productId) || [],
-      //     }))
-      //     .map((product) => ({
-      //       ...product,
-      //       subtotal: product.price
-      //         ? product.saleItemSizes.reduce(
-      //             (sum, item) => (sum = sum + item.quantity),
-      //             0,
-      //           ) * product.price
-      //         : 0,
-      //     }));
-      // }
     }
   },
   { immediate: true },
 );
-
 watchEffect(() => {
-  // console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
-  // console.log(
-  //   `Data InvProducts -> ${JSON.stringify(displayInvProducts.value)}`,
-  // );
-  // console.log(`Sale Store = ${JSON.stringify(saleStore.sale)}`);
+  displayItemSizesMap.value.size;
+  fetchInvProducts();
+});
+watchEffect(() => {
+  displayItemSizesMap.value.size;
+  saleItems.replace(
+    displayInvProducts.value.map((product) => ({
+      productId: product.productId,
+      saleItemSizes: product.saleItemSizes,
+      totalQty: product.totalQty,
+    })),
+  );
+});
+watchEffect(() => {
+  console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
 });
 
 function closeDialog() {
   dialog.isVisible = false;
   fetchInvProducts();
+}
+function deleteCartItem(productId: string) {
+  const result = displayItemSizesMap.value.delete(productId);
+  console.log(`Result => ${result}`);
 }
 </script>
