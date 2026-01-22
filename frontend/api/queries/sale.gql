@@ -25,8 +25,8 @@ mutation updateSale($id: ID!, $data: SaleUpdateDto!) {
   }
 }
 
-query getSales {
-  getSales {
+query getSales($invId: ID) {
+  getSales(invId: $invId) {
     ...SaleFragment
   }
 }

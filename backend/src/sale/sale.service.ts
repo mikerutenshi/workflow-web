@@ -84,8 +84,15 @@ export class SaleService {
     });
   }
 
-  getSales(): Promise<Sale[]> {
+  getSales(invId?: number): Promise<Sale[]> {
     return this.prisma.sale.findMany({
+      where: {
+        saleItems: {
+          some: {
+            invId,
+          },
+        },
+      },
       include: {
         saleItems: {
           include: {

@@ -496,7 +496,7 @@ type Query {
   getInvTrfs: [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
-  getSales: [Sale!]!
+  getSales(invId: ID): [Sale!]!
   getSale(id: ID!): Sale!
   generateSaleNo: String!
 }

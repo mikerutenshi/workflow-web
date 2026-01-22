@@ -23,8 +23,15 @@ export class SaleResolver {
   }
 
   @Query(() => [Sale])
-  getSales(): Promise<Sale[]> {
-    return this.service.getSales();
+  getSales(
+    @Args(
+      'invId',
+      { type: () => ID, nullable: true },
+      new ParseIntPipe({ optional: true }),
+    )
+    invId?: number,
+  ): Promise<Sale[]> {
+    return this.service.getSales(invId);
   }
 
   @Query(() => Sale)

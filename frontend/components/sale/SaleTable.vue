@@ -12,7 +12,7 @@
         :label="$t('label.select_inventories')"
         :prepend-inner-icon="mdiWarehouse"
         :items="dataInventories?.getInventories"
-        v-model="inventoryId"
+        v-model="invId"
         item-title="name"
         item-value="id"
         :loading="isFetchingInventories"
@@ -83,7 +83,7 @@
 
   <ActionEditItemDialog :dialogTitle="dialog.title" v-model="dialog.isVisible">
     <SaleCreateForm
-      :inventory-id="inventoryId"
+      :inventory-id="invId"
       :sale-id="dialog.saleId"
       @close-dialog="dialog.isVisible = false"
     ></SaleCreateForm>
@@ -137,7 +137,7 @@ const dialog = reactive({
   isReadonly: false,
 });
 const dialogConfirmDelete = ref(false);
-const inventoryId = ref('');
+const invId = ref<string | null>(null);
 const table = reactive({
   search: '',
   page: 1,
@@ -164,10 +164,13 @@ const {
   onData(data) {
     let firstItem = data.getInventories.at(0);
     if (firstItem) {
-      inventoryId.value = firstItem.id;
+      invId.value = firstItem.id;
     }
   },
 });
+const salesVariables = computed(() => ({
+  invId: invId.value,
+}));
 const {
   execute: fetchSales,
   data: salesData,
@@ -175,7 +178,10 @@ const {
   error: errorSales,
 } = useQuery({
   query: GetSalesDocument,
+  variables: salesVariables,
   tags: [CACHE_SALES],
+  fetchOnMount: false,
+  paused: ({ invId }) => !invId,
 });
 
 const {
@@ -207,11 +213,19 @@ watch(
   },
 );
 const saleStore = useSaleStore();
-watch(inventoryId, (newValue, oldValue) => {
-  if (newValue != oldValue) {
-    saleStore.sale = null;
-  }
-});
+// watch(invId, (newValue, oldValue) => {
+//   if (newValue != oldValue) {
+//     saleStore.sale = null;
+//   }
+// });
+watch(
+  () => dialog.content,
+  (newValue, oldValue) => {
+    if (newValue != oldValue) {
+      saleStore.sale = null;
+    }
+  },
+);
 
 function showDialog(content: DialogContent, saleId?: string) {
   dialog.saleId = saleId ?? null;
@@ -245,5 +259,6 @@ function deleteItem(saleId: string) {
 
 watchEffect(() => {
   console.log(`Sales Data => ${JSON.stringify(salesData.value?.getSales)}`);
+  console.log(`InvId => ${invId.value}`);
 });
 </script>

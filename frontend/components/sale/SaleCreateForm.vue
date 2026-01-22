@@ -169,7 +169,7 @@ import { SaleSchema } from '~/validation/schema';
 
 const props = defineProps({
   inventoryId: {
-    type: String,
+    type: [String, null] as PropType<string | null>,
     required: true,
   },
   saleId: {
@@ -206,7 +206,7 @@ const saleItems = useFieldArray('saleItems');
 
 const saleStore = useSaleStore();
 
-if (!saleStore.sale) {
+if (!saleStore.sale && props.inventoryId) {
   saleStore.sale = {
     invId: props.inventoryId,
     saleNo: saleNo.value.value as string,
@@ -284,8 +284,6 @@ const {
   paused: ({ invId }) => !invId,
   tags: [CACHE_INV_PRODUCTS],
   onData(data) {
-    console.log(`Data Block Executed => ${JSON.stringify(data)}`);
-
     displayInvProducts.value = data.getInvProducts
       .filter((product) => displayItemSizesMap.value.has(product.productId))
       .map((product) => ({
@@ -299,6 +297,21 @@ const {
         ...product,
         subtotal: product.price ? product.totalQty * product.price : 0,
       }));
+
+    if (saleStore.sale) {
+      displayInvProducts.value.forEach((product) => {
+        saleStore.sale?.saleItems.push({
+          productId: product.productId,
+          totalQty: product.totalQty,
+          saleItemSizes: product.saleItemSizes,
+        });
+      });
+      // saleStore.sale.saleItems = displayInvProducts.value.map((product) => ({
+      //   productId: product.productId,
+      //   totalQty: product.totalQty,
+      //   saleItemSizes: product.saleItemSizes,
+      // }));
+    }
   },
 });
 
@@ -377,12 +390,13 @@ if (props.saleId) {
 const onSubmit = handleSubmit((data) => {
   const saleItems = data.saleItems.map((item) => ({
     productId: item.productId,
-    invId: props.inventoryId,
+    invId: props.inventoryId!,
     saleItemSizes: item.saleItemSizes.map((itemSize) => ({
       sizeId: itemSize.sizeId,
       quantity: itemSize.quantity,
     })),
   }));
+
   if (props.saleId) {
     updateSale({
       id: props.saleId,

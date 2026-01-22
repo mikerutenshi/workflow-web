@@ -105,6 +105,7 @@ const table = reactive({
   items: [] as SizeItem[],
 });
 const saleStore = useSaleStore();
+console.log(`SaleStore => ${JSON.stringify(saleStore.sale)}`);
 
 const {
   execute: executeFetch,
@@ -167,7 +168,6 @@ watch(
 
 const onSubmit = handleSubmit((data) => {
   if (saleStore.sale) {
-    console.log(`SaleStore => ${JSON.stringify(saleStore.sale)}`);
     saleStore.sale.saleItems = saleStore.sale.saleItems.filter(
       (product) => product.productId !== data.productId,
     );
