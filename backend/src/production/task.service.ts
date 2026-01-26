@@ -120,13 +120,14 @@ export class TaskService {
 
           // Reverse the effect: subtract quantities from inventory
           if (existingInvProduct) {
-            await this.invProductService.decrementInvProduct({
-              invId: existingInvProduct.invId,
-              productId: existingInvProduct.productId,
-              invProductSizes: existingInvProduct.invProductSizes.map(
-                (size) => ({ sizeId: size.sizeId, quantity: size.quantity }),
-              ),
-            });
+            await this.invProductService.decrementInvProduct(
+              existingInvProduct.invId,
+              existingInvProduct.productId,
+              existingInvProduct.invProductSizes.map((size) => ({
+                sizeId: size.sizeId,
+                quantity: size.quantity,
+              })),
+            );
 
             // const { invProductSizes } = existingInvProduct;
 

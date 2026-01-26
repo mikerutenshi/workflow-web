@@ -105,14 +105,14 @@ export class InvTrfService {
           });
 
           if (item.fromInvId) {
-            await this.invProductService.decrementInvProduct({
-              invId: item.fromInvId,
-              productId: item.productId,
-              invProductSizes: item.invTrfItemSizes.map((s) => ({
+            await this.invProductService.decrementInvProduct(
+              item.fromInvId,
+              item.productId,
+              item.invTrfItemSizes.map((s) => ({
                 sizeId: s.sizeId,
                 quantity: s.quantity,
               })),
-            });
+            );
           }
         }
       } else if (
@@ -120,14 +120,14 @@ export class InvTrfService {
         data.progress !== Progress.COMPLETED
       ) {
         for (const item of finalTrfData.invTrfItems) {
-          await this.invProductService.decrementInvProduct({
-            invId: item.toInvId,
-            productId: item.productId,
-            invProductSizes: item.invTrfItemSizes.map((s) => ({
+          await this.invProductService.decrementInvProduct(
+            item.toInvId,
+            item.productId,
+            item.invTrfItemSizes.map((s) => ({
               sizeId: s.sizeId,
               quantity: s.quantity,
             })),
-          });
+          );
 
           if (item.fromInvId) {
             await this.invProductService.upsertInvProduct({

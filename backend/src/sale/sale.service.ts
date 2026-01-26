@@ -5,44 +5,64 @@ import { Sale } from '@/models/sale.model';
 import { Operation } from '@/models/operation.enum';
 import { generateId } from '@/utils/functions.util';
 import { SaleUpdateDto } from './dto/sale-update.dto';
+import { InvProductService } from '@/inventory/inv-product.service';
 
 @Injectable()
 export class SaleService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private invProductService: InvProductService,
+  ) {}
 
   async createSale(data: SaleCreateDto): Promise<Sale> {
-    return await this.prisma.sale.create({
-      data: {
-        ...data,
-        saleItems: {
-          create: data.saleItems.map((item) => ({
-            invProduct: {
-              connect: {
-                invId_productId: {
-                  invId: item.invId,
-                  productId: item.productId,
+    const txResult = this.prisma.$transaction(async (tx) => {
+      const saleResult = await this.prisma.sale.create({
+        data: {
+          ...data,
+          saleItems: {
+            create: data.saleItems.map((item) => ({
+              invProduct: {
+                connect: {
+                  invId_productId: {
+                    invId: item.invId,
+                    productId: item.productId,
+                  },
                 },
               },
-            },
-            saleItemSizes: {
-              create: item.saleItemSizes.map((size) => ({
-                size: {
-                  connect: { id: size.sizeId },
-                },
-                quantity: size.quantity,
-              })),
-            },
-          })),
-        },
-      },
-      include: {
-        saleItems: {
-          include: {
-            saleItemSizes: { include: { size: true } },
+              saleItemSizes: {
+                create: item.saleItemSizes.map((size) => ({
+                  size: {
+                    connect: { id: size.sizeId },
+                  },
+                  quantity: size.quantity,
+                })),
+              },
+            })),
           },
         },
-      },
+        include: {
+          saleItems: {
+            include: {
+              saleItemSizes: { include: { size: true } },
+            },
+          },
+        },
+      });
+
+      Promise.all(
+        data.saleItems.map(async (item) => {
+          await this.invProductService.decrementInvProduct(
+            item.invId,
+            item.productId,
+            item.saleItemSizes,
+          );
+        }),
+      );
+
+      return saleResult;
     });
+
+    return txResult;
   }
 
   updateSale(id: number, dto: SaleUpdateDto): Promise<Sale> {
@@ -82,6 +102,15 @@ export class SaleService {
         },
       },
     });
+  }
+
+  async deleteSale(id: number): Promise<Boolean> {
+    await this.prisma.sale.delete({
+      where: {
+        id: id,
+      },
+    });
+    return true;
   }
 
   getSales(invId?: number): Promise<Sale[]> {
@@ -129,14 +158,5 @@ export class SaleService {
     const lastSaleNo = lastSale?.saleNo;
 
     return generateId(Operation.Sale, lastSaleNo);
-  }
-
-  async deleteSale(id: number): Promise<Boolean> {
-    await this.prisma.sale.delete({
-      where: {
-        id: id,
-      },
-    });
-    return true;
   }
 }

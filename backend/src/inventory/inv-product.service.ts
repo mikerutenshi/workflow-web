@@ -186,21 +186,21 @@ export class InvProductService {
     });
   }
 
-  decrementInvProduct(invProduct: {
-    invId: number;
-    productId: number;
+  decrementInvProduct(
+    invId: number,
+    productId: number,
     invProductSizes: {
       sizeId: number;
       quantity: number;
-    }[];
-  }): Promise<Boolean> {
+    }[],
+  ): Promise<Boolean> {
     return this.prisma.$transaction(async (tx) => {
-      for (const size of invProduct.invProductSizes) {
+      for (const size of invProductSizes) {
         const result = await tx.invProductToSize.update({
           where: {
             invId_productId_sizeId: {
-              invId: invProduct.invId,
-              productId: invProduct.productId,
+              invId,
+              productId,
               sizeId: size.sizeId,
             },
           },
@@ -212,8 +212,8 @@ export class InvProductService {
           await tx.invProductToSize.delete({
             where: {
               invId_productId_sizeId: {
-                invId: invProduct.invId,
-                productId: invProduct.productId,
+                invId,
+                productId,
                 sizeId: size.sizeId,
               },
             },
@@ -224,8 +224,8 @@ export class InvProductService {
       const finalProduct = await tx.invToProduct.findUniqueOrThrow({
         where: {
           invId_productId: {
-            invId: invProduct.invId,
-            productId: invProduct.productId,
+            invId,
+            productId,
           },
         },
         include: {
@@ -246,8 +246,8 @@ export class InvProductService {
         await tx.invToProduct.delete({
           where: {
             invId_productId: {
-              invId: invProduct.invId,
-              productId: invProduct.productId,
+              invId,
+              productId,
             },
           },
         });
