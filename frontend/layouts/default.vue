@@ -129,7 +129,7 @@ const { data, error } = await useQuery({
   },
   onError(err) {
     console.log(`Error => ${JSON.stringify(err)}`);
-    navigateTo(localePath('/login'));
+    // navigateTo(localePath('/login'));
   },
 });
 

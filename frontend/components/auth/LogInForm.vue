@@ -85,12 +85,14 @@ const onSubmit = handleSubmit((values) => {
   execute({ data: values });
 });
 
-// const authStore = useAuthStore();
+const authStore = useAuthStore();
 const localePath = useLocalePath();
 
 watch(data, (loginData) => {
   if (loginData?.logIn) {
-    // authStore.user = loginData.logIn;
+    const loginCookie = useCookie('isLoggedIn');
+    loginCookie.value = '1';
+    authStore.user = loginData.logIn;
     navigateTo(localePath('/'));
   }
 });
