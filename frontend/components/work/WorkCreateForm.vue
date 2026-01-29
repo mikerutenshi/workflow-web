@@ -166,7 +166,7 @@ const snack = reactive({
   color: SnackColor.Success,
 });
 
-const rules = [(v: string) => v.length <= 25 || 'Max 255 characters'];
+const rules = [(v: string) => v?.length <= 25 || 'Max 255 characters'];
 
 const {
   execute: executeCreate,

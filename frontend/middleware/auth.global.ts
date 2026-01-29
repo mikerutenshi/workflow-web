@@ -6,8 +6,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const localePath = useLocalePath();
   if (!isAuthenticated && to.path !== localePath('/login')) {
-    return navigateTo(localePath('/login'));
+    return await navigateTo(localePath('/login'));
   } else if (isAuthenticated && to.path === localePath('/login')) {
-    return navigateTo(localePath('/'));
+    return await navigateTo(localePath('/'));
   }
 });

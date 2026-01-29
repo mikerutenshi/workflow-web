@@ -137,9 +137,9 @@ const {
     CACHE_INV_PRODUCTS,
     CACHE_INV_TRFS,
   ],
-  onData() {
+  onData: async () => {
     snackbar.value = true;
-    if (route.params.id) navigateTo(localePath('/works'));
+    // if (route.params.id) await navigateTo(localePath('/works'));
     // else if (props.workId) emit('close-dialog');
   },
 });

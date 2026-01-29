@@ -88,12 +88,12 @@ const onSubmit = handleSubmit((values) => {
 const authStore = useAuthStore();
 const localePath = useLocalePath();
 
-watch(data, (loginData) => {
+watch(data, async (loginData) => {
   if (loginData?.logIn) {
     const loginCookie = useCookie('isLoggedIn');
     loginCookie.value = '1';
     authStore.user = loginData.logIn;
-    navigateTo(localePath('/'));
+    await navigateTo(localePath('/'));
   }
 });
 

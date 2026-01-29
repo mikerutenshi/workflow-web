@@ -23,13 +23,13 @@ const { error, execute, isFetching, isDone } = useMutation(LogOutDocument, {
 });
 const localePath = useLocalePath();
 
-watchEffect(() => {
+watchEffect(async () => {
   if (!error.value && isDone.value) {
     const authStore = useAuthStore();
     const loginCookie = useCookie('isLoggedIn');
     authStore.user = null;
     loginCookie.value = '';
-    navigateTo(localePath('login'));
+    await navigateTo(localePath('login'));
   }
 });
 </script>
