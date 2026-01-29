@@ -111,11 +111,23 @@ import {
   mdiTransfer,
   mdiWarehouse,
 } from '@mdi/js';
+import { useQuery } from 'villus';
 import { useRoute } from 'vue-router';
+import { MeDocument } from '~/api/generated/types';
 import { Role } from '~/utils/constants';
 
 const authStore = useAuthStore();
-const clearance = authStore.user?.role.clearanceLevel ?? 6;
+
+const { data, error } = await useQuery({
+  query: MeDocument,
+  tags: [CACHE_ME],
+});
+
+console.log(`Me => ${data.value?.me}`);
+if (!error.value) {
+  authStore.user = data.value!.me;
+}
+const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 
 const dialogStore = useDialogStore();
 const appBarStore = useAppBarStore();
@@ -125,7 +137,7 @@ const createBtn = reactive({
   route: '',
 });
 const createBtnTitles: Record<string, string> =
-  clearance > Role.Superuser
+  clearance.value > Role.Superuser
     ? {
         works: 'btn.work',
         products: 'btn.product',
@@ -153,7 +165,7 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 
 const navItems = computed(() => {
-  if (clearance <= Role.Finance) {
+  if (clearance.value <= Role.Finance) {
     return [
       { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
       {
@@ -214,7 +226,7 @@ const navItems = computed(() => {
         ],
       },
     ];
-  } else if (clearance <= Role.Planner) {
+  } else if (clearance.value <= Role.Planner) {
     return [
       { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
       {
@@ -265,7 +277,7 @@ const navItems = computed(() => {
         ],
       },
     ];
-  } else if (clearance <= Role.Field) {
+  } else if (clearance.value <= Role.Field) {
     return [
       { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
       {
