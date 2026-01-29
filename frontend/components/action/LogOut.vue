@@ -8,6 +8,7 @@
 import { useMutation } from 'villus';
 import { useAuthStore } from '@/stores/auth';
 import { LogOutDocument } from '~/api/generated/types';
+import { CACHE_ME } from '~/utils/cache-tags';
 
 const { t } = useI18n();
 defineProps({
@@ -17,7 +18,9 @@ defineProps({
   },
 });
 
-const { error, execute, isFetching, isDone } = useMutation(LogOutDocument);
+const { error, execute, isFetching, isDone } = useMutation(LogOutDocument, {
+  clearCacheTags: [CACHE_ME],
+});
 const localePath = useLocalePath();
 
 const authStore = useAuthStore();
