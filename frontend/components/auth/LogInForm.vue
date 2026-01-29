@@ -1,7 +1,7 @@
 <template>
   <!-- <v-row align="center" class="flex-column"><AuthUsersTable /> </v-row> -->
   <v-container>
-    <v-row justify="center" align="center ">
+    <v-row justify="center" align="center">
       <v-col class="translucent-background">
         <form @submit.prevent="onSubmit" class="d-flex flex-column">
           <v-row>
@@ -85,12 +85,12 @@ const onSubmit = handleSubmit((values) => {
   execute({ data: values });
 });
 
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
 const localePath = useLocalePath();
 
 watch(data, (loginData) => {
   if (loginData?.logIn) {
-    authStore.user = loginData.logIn;
+    // authStore.user = loginData.logIn;
     navigateTo(localePath('/'));
   }
 });

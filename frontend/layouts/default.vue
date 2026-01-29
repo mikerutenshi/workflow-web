@@ -117,16 +117,29 @@ import { MeDocument } from '~/api/generated/types';
 import { Role } from '~/utils/constants';
 
 const authStore = useAuthStore();
+const { t } = useI18n();
+const localePath = useLocalePath();
 
 const { data, error } = await useQuery({
   query: MeDocument,
   tags: [CACHE_ME],
+  onData(data) {
+    authStore.user = data.me;
+    console.log(`Me => ${JSON.stringify(data.me)}`);
+  },
+  onError(err) {
+    console.log(`Error => ${JSON.stringify(err)}`);
+    navigateTo(localePath('/login'));
+  },
 });
 
-console.log(`Me => ${data.value?.me}`);
-if (!error.value) {
-  authStore.user = data.value!.me;
-}
+// if (!error.value) {
+//   authStore.user = data.value!.me;
+//   console.log(`Me => ${JSON.stringify(data.value?.me)}`);
+// } else {
+//   console.log(`Error => ${JSON.stringify(error.value)}`);
+//   navigateTo(localePath('/login'));
+// }
 const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 
 const dialogStore = useDialogStore();
@@ -160,9 +173,6 @@ const toggleDrawer = () => {
 const closeDrawer = () => {
   drawer.value = false;
 };
-
-const { t } = useI18n();
-const localePath = useLocalePath();
 
 const navItems = computed(() => {
   if (clearance.value <= Role.Finance) {
