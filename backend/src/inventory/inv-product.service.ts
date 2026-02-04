@@ -257,6 +257,76 @@ export class InvProductService {
     });
   }
 
+  async decrementInvProductOp(
+    invId: number,
+    productId: number,
+    invProductSizes: {
+      sizeId: number;
+      quantity: number;
+    }[],
+    tx: Prisma.TransactionClient,
+  ): Promise<Boolean> {
+    for (const size of invProductSizes) {
+      const result = await tx.invProductToSize.update({
+        where: {
+          invId_productId_sizeId: {
+            invId,
+            productId,
+            sizeId: size.sizeId,
+          },
+        },
+        data: {
+          quantity: { decrement: size.quantity },
+        },
+      });
+      if (result.quantity === 0) {
+        await tx.invProductToSize.delete({
+          where: {
+            invId_productId_sizeId: {
+              invId,
+              productId,
+              sizeId: size.sizeId,
+            },
+          },
+        });
+      }
+    }
+
+    // const finalProduct = await tx.invToProduct.findUniqueOrThrow({
+    //   where: {
+    //     invId_productId: {
+    //       invId,
+    //       productId,
+    //     },
+    //   },
+    //   include: {
+    //     invProductSizes: {
+    //       include: {
+    //         size: true,
+    //       },
+    //     },
+    //   },
+    // });
+
+    // const finalSum = finalProduct.invProductSizes.reduce(
+    //   (sum, size) => sum + size.quantity,
+    //   0,
+    // );
+
+    // if (finalSum === 0) {
+    //   await tx.invToProduct.delete({
+    //     where: {
+    //       invId_productId: {
+    //         invId,
+    //         productId,
+    //       },
+    //     },
+    //   });
+    // }
+
+    return true;
+  }
+
   async deleteInvProduct(invId: number, productId: number): Promise<Boolean> {
     const invProduct = await this.prisma.invToProduct.delete({
       where: { invId_productId: { invId, productId } },

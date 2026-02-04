@@ -16,7 +16,7 @@ export class SaleService {
 
   async createSale(data: SaleCreateDto): Promise<Sale> {
     const txResult = this.prisma.$transaction(async (tx) => {
-      const saleResult = await this.prisma.sale.create({
+      const saleResult = await tx.sale.create({
         data: {
           ...data,
           saleItems: {
@@ -49,12 +49,13 @@ export class SaleService {
         },
       });
 
-      Promise.all(
+      await Promise.all(
         data.saleItems.map(async (item) => {
-          await this.invProductService.decrementInvProduct(
+          await this.invProductService.decrementInvProductOp(
             item.invId,
             item.productId,
             item.saleItemSizes,
+            tx,
           );
         }),
       );
