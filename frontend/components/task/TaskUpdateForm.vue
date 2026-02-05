@@ -136,6 +136,7 @@ const {
     CACHE_TASKS,
     CACHE_INV_PRODUCTS,
     CACHE_INV_TRFS,
+    CACHE_INV_TRFS_PER_ITEM,
   ],
   onData: async () => {
     snackbar.value = true;
