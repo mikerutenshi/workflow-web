@@ -194,7 +194,7 @@ const {
     snack.isVisible = true;
     fetchSales();
   },
-  clearCacheTags: [CACHE_SALES],
+  clearCacheTags: [CACHE_SALES, CACHE_INV_PRODUCTS],
 });
 
 watch(isFormDialogOpen, (isOpen) => {

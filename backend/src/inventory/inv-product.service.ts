@@ -145,24 +145,30 @@ export class InvProductService {
       });
 
       if (invProductSizes && invProductSizes.length > 0) {
-        invProductSizes.map(async (productSize) => {
-          await tx.invProductToSize.upsert({
-            where: {
-              invId_productId_sizeId: {
-                invId: upsertProduct.invId,
-                productId: upsertProduct.productId,
-                sizeId: productSize.sizeId,
-              },
-            },
-            update: { quantity: { increment: productSize.quantity } },
-            create: {
-              invId: upsertProduct.invId,
-              productId: upsertProduct.productId,
-              sizeId: productSize.sizeId,
-              quantity: productSize.quantity,
-            },
-          });
-        });
+        await this.incrementInvProductOp(
+          rest.invId,
+          rest.productId,
+          invProductSizes,
+          tx,
+        );
+        // invProductSizes.map(async (productSize) => {
+        //   await tx.invProductToSize.upsert({
+        //     where: {
+        //       invId_productId_sizeId: {
+        //         invId: upsertProduct.invId,
+        //         productId: upsertProduct.productId,
+        //         sizeId: productSize.sizeId,
+        //       },
+        //     },
+        //     update: { quantity: { increment: productSize.quantity } },
+        //     create: {
+        //       invId: upsertProduct.invId,
+        //       productId: upsertProduct.productId,
+        //       sizeId: productSize.sizeId,
+        //       quantity: productSize.quantity,
+        //     },
+        //   });
+        // });
       }
 
       const result = await tx.invToProduct.findUnique({
@@ -178,7 +184,7 @@ export class InvProductService {
           },
         },
       });
-      console.log(`Result: ${JSON.stringify(result)}`);
+      // console.log(`Result: ${JSON.stringify(result)}`);
       return {
         ...result,
         discount: result?.discount?.toFixed(2),
@@ -269,22 +275,10 @@ export class InvProductService {
       quantity: number;
     }[],
     tx: Prisma.TransactionClient,
-  ): Promise<Boolean> {
-    for (const size of invProductSizes) {
-      const result = await tx.invProductToSize.update({
-        where: {
-          invId_productId_sizeId: {
-            invId,
-            productId,
-            sizeId: size.sizeId,
-          },
-        },
-        data: {
-          quantity: { decrement: size.quantity },
-        },
-      });
-      if (result.quantity === 0) {
-        await tx.invProductToSize.delete({
+  ) {
+    await Promise.all(
+      invProductSizes.map(async (size) => {
+        const result = await tx.invProductToSize.update({
           where: {
             invId_productId_sizeId: {
               invId,
@@ -292,9 +286,23 @@ export class InvProductService {
               sizeId: size.sizeId,
             },
           },
+          data: {
+            quantity: { decrement: size.quantity },
+          },
         });
-      }
-    }
+        if (result.quantity === 0) {
+          await tx.invProductToSize.delete({
+            where: {
+              invId_productId_sizeId: {
+                invId,
+                productId,
+                sizeId: size.sizeId,
+              },
+            },
+          });
+        }
+      }),
+    );
 
     // const finalProduct = await tx.invToProduct.findUniqueOrThrow({
     //   where: {
@@ -327,8 +335,37 @@ export class InvProductService {
     //     },
     //   });
     // }
+  }
 
-    return true;
+  async incrementInvProductOp(
+    invId: number,
+    productId: number,
+    invProductSizes: {
+      sizeId: number;
+      quantity: number;
+    }[],
+    tx: Prisma.TransactionClient,
+  ) {
+    await Promise.all(
+      invProductSizes.map(async (size) => {
+        await tx.invProductToSize.upsert({
+          where: {
+            invId_productId_sizeId: {
+              invId: invId,
+              productId: productId,
+              sizeId: size.sizeId,
+            },
+          },
+          update: { quantity: { increment: size.quantity } },
+          create: {
+            invId: invId,
+            productId: productId,
+            sizeId: size.sizeId,
+            quantity: size.quantity,
+          },
+        });
+      }),
+    );
   }
 
   async deleteInvProduct(invId: number, productId: number): Promise<Boolean> {

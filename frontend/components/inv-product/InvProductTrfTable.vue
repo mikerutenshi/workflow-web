@@ -124,7 +124,7 @@
       v-model="dialogModel.isVisible"
     >
       <InvProductTrfForm
-        @close-dialog="dialogModel.isVisible = false"
+        @close-dialog="closeDialog"
         :inv-trf-id="dialogModel.id"
         :is-readonly="dialogModel.isReadonly"
       ></InvProductTrfForm>
@@ -214,6 +214,10 @@ function showDialog(content: DialogContent, id?: string | undefined) {
       dialogModel.isVisible = true;
       break;
   }
+}
+function closeDialog() {
+  dialogModel.isVisible = false;
+  executeFetch();
 }
 
 watch(isCreateDialogOpen, (open) => {

@@ -106,10 +106,28 @@ export class SaleService {
   }
 
   async deleteSale(id: number): Promise<Boolean> {
-    await this.prisma.sale.delete({
-      where: {
-        id: id,
-      },
+    this.prisma.$transaction(async (tx) => {
+      const saleItems = await tx.saleItem.findMany({
+        where: { saleId: id },
+        include: { saleItemSizes: true },
+      });
+
+      await Promise.all(
+        saleItems.map((product) => {
+          this.invProductService.incrementInvProductOp(
+            product.invId,
+            product.productId,
+            product.saleItemSizes,
+            tx,
+          );
+        }),
+      );
+
+      await tx.sale.delete({
+        where: {
+          id: id,
+        },
+      });
     });
     return true;
   }

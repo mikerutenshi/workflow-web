@@ -332,7 +332,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_SALES],
+  clearCacheTags: [CACHE_SALES, CACHE_INV_PRODUCTS],
 });
 
 const {
