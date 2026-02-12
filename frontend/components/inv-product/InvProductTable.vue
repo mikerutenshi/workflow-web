@@ -78,6 +78,12 @@
             {{ formatRupiah(item.price) }}
           </template>
 
+          <template #item.discount="{ item }">{{
+            item.discount
+              ? formatDiscount(convertDecimalToPercent(item.discount))
+              : null
+          }}</template>
+
           <template v-slot:item.invProductSizes="{ item }">
             <v-table density="compact">
               <tbody>

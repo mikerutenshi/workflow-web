@@ -156,7 +156,8 @@
     "discount": "Diskon",
     "msrp": "Harga Toko",
     "note": "Catetan",
-    "sale_no": "No. Jualan"
+    "sale_no": "No. Jualan",
+    "dest_price": "Harga Tujuan"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

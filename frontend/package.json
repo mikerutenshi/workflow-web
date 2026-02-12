@@ -20,6 +20,7 @@
     "@vee-validate/nuxt": "^4.15.0",
     "@vee-validate/zod": "^4.15.0",
     "dayjs": "^1.11.13",
+    "decimal.js-light": "^2.5.1",
     "jspdf": "^4.0.0",
     "jspdf-autotable": "^5.0.2",
     "maska": "^3.1.1",

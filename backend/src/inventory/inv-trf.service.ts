@@ -114,6 +114,16 @@ export class InvTrfService {
               })),
             );
           }
+
+          await tx.invToProduct.update({
+            data: { discount: item.discount },
+            where: {
+              invId_productId: {
+                invId: item.toInvId,
+                productId: item.productId,
+              },
+            },
+          });
         }
       } else if (
         initTrfData.progress === Progress.COMPLETED &&

@@ -235,9 +235,23 @@ watch(
     setFieldValue('discount', convertPercentToDecimal(newDisc));
   },
 );
+watchEffect(() => {
+  const selectedInv = availInventories.value.find(
+    (inv) => inv.id === toInvId.value.value,
+  );
+  const invPrice = calculatePrice(
+    invProduct?.product.productGroup.msrp ?? 0,
+    selectedInv?.priceFormula?.offset,
+    selectedInv?.priceFormula?.multiplier,
+  );
+  displayModel.price = invPrice;
+  console.log(`InvPrice: ${invPrice}`);
+});
 
 watchEffect(() => {
-  console.log(`Display Model: ${JSON.stringify(displayModel)}`);
+  // console.log(`Display Model: ${JSON.stringify(displayModel)}`);
+  // console.log(`toInv: ${toInvId.value.value}`);
+  // console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
   console.log(`Form Values: ${JSON.stringify(values)}`);
 });
 </script>

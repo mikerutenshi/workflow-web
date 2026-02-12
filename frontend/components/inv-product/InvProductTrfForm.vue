@@ -96,7 +96,7 @@
           }}</template>
 
           <template #item.product.productGroup.msrp="{ item }">{{
-            formatRupiah(item.product.productGroup.msrp)
+            formatRupiah(destPricePipe(item.product.productGroup.msrp))
           }}</template>
 
           <template v-slot:item.invTrfItemSizes="{ item }">
@@ -208,6 +208,7 @@ const { handleSubmit, values, errors, setFieldValue } = useForm({
   validationSchema,
   initialValues: {
     trfDate: dayjs().toISOString(),
+    progress: Progress.Initiated,
     createdBy: userId,
   },
 });
@@ -290,12 +291,21 @@ if (!props.invTrfId) {
 
 const computeTrfItems = computed(() => {
   if (props.isReadonly) {
-    return trfItemsData.value?.getInvTrfItems.filter(
-      (item) => item.invTrf !== null,
+    return trfItemsData.value?.getInvTrfItems.filter((item) =>
+      itemIdSelections.value.some((id) => id === item.id),
     );
   } else {
     return trfItemsData.value?.getInvTrfItems;
   }
+});
+const computeToInv = computed(() => {
+  const toInv = inventories.value?.getInventories
+    ? inventories.value.getInventories.find(
+        (inv) => inv.id === toInvId.value.value,
+      )
+    : null;
+
+  return toInv;
 });
 const {
   data: trfItemsData,
@@ -340,7 +350,7 @@ const tableHeaders: ReadOnlyHeaders = [
   { title: t('label.sku'), key: 'product.sku' },
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
-  { title: t('label.msrp'), key: 'product.productGroup.msrp' },
+  { title: t('label.dest_price'), key: 'product.productGroup.msrp' },
   { title: t('label.discount'), key: 'discount' },
   { title: t('label.status'), key: 'progress' },
   { title: t('label.sizes'), key: 'invTrfItemSizes', minWidth: '120' },
@@ -366,6 +376,19 @@ const onSubmit = handleSubmit((data) => {
 const deleteInvTrf = (id: string) => {
   executeDelete({ id });
 };
+
+function destPricePipe(msrp: number | null | undefined): number {
+  if (computeToInv.value) {
+    const invPrice = calculatePrice(
+      msrp ?? 0,
+      computeToInv.value.priceFormula?.offset,
+      computeToInv.value?.priceFormula?.multiplier,
+    );
+    return invPrice ?? 0;
+  } else {
+    return 0;
+  }
+}
 
 watch(itemIdSelections, (newValues) => {
   console.log(`item id selections: ${JSON.stringify(newValues)}`);

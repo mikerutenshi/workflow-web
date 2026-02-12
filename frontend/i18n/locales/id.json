@@ -155,7 +155,8 @@
     "discount": "Diskon",
     "msrp": "Harga Toko",
     "note": "Catatan",
-    "sale_no": "No. Penjualan"
+    "sale_no": "No. Penjualan",
+    "dest_price": "Harga Tujuan"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

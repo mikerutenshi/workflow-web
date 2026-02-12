@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js-light';
 import type { MaskInputOptions } from 'maska';
 import type { CombinedError } from 'villus';
 import { Gender, InvType, type Job } from '~/api/generated/types';
@@ -93,7 +94,7 @@ export const priceOffsetMask: MaskInputOptions = {
       const numericVal = val.replace(/[^\d.-]/g, '');
       console.log(`numericval: ${numericVal}`);
       const num = parseInt(numericVal);
-      const sign = num > 0 ? '+' : '-';
+      const sign = num >= 0 ? '+' : '-';
       const valUnsigned = val.replace('-', '');
 
       result = `${sign} Rp ${valUnsigned}`;
@@ -124,4 +125,16 @@ export function convertPercentToDecimal(numerator: string): string {
 
 export function convertDecimalToPercent(decimal: string): string {
   return (parseFloat(decimal) * 100).toFixed(2);
+}
+
+export function calculatePrice(
+  base: number | null,
+  offset?: number | null,
+  multiplier?: string | null,
+): number | undefined {
+  if (!base) return undefined;
+  const finalOffset = offset ?? 0;
+  const finalMultiplier = multiplier ? new Decimal(multiplier) : new Decimal(1);
+  const result = finalMultiplier.times(base + finalOffset).toNumber();
+  return result;
 }

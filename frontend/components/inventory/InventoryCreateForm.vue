@@ -102,6 +102,7 @@
                     priceFormulaModel.discounts.pop();
                 "
                 inputmode="numeric"
+                :error-messages="errors['priceFormula.discounts']"
               />
             </v-col>
             <v-col cols="3">
@@ -243,7 +244,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INVENTORIES, CACHE_INVENTORY],
+  clearCacheTags: [CACHE_INVENTORIES, CACHE_INVENTORY, CACHE_INV_PRODUCTS],
 });
 const {
   execute: executeDelete,

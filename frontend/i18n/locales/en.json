@@ -155,7 +155,8 @@
     "discount": "Discount",
     "msrp": "MSRP",
     "note": "Note",
-    "sale_no": "Sale No."
+    "sale_no": "Sale No.",
+    "dest_price": "Destination Price"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

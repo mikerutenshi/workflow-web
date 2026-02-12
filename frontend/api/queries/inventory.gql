@@ -61,6 +61,7 @@ query getInvProducts($invId: ID!) {
         productCategory {
           ...ProductCategory
         }
+        msrp
       }
       productColors {
         color {
