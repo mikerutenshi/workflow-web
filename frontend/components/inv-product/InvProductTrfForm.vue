@@ -295,7 +295,11 @@ const computeTrfItems = computed(() => {
       itemIdSelections.value.some((id) => id === item.id),
     );
   } else {
-    return trfItemsData.value?.getInvTrfItems;
+    return trfItemsData.value?.getInvTrfItems.filter(
+      (item) =>
+        item.progress === Progress.Pending ||
+        item.invTrf?.id === props.invTrfId,
+    );
   }
 });
 const computeToInv = computed(() => {

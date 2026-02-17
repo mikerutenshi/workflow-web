@@ -10,6 +10,7 @@ import { PayrollResolver } from './payroll.resolver';
 import { PayrollService } from './payroll.service';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTrfService } from '@/inventory/inv-trf.service';
+import { InventoryModule } from '@/inventory/inventory.module';
 
 @Module({
   providers: [
@@ -21,9 +22,7 @@ import { InvTrfService } from '@/inventory/inv-trf.service';
     TaskService,
     PayrollResolver,
     PayrollService,
-    InvProductService,
-    InvTrfService,
   ],
-  imports: [PrismaModule],
+  imports: [PrismaModule, InventoryModule],
 })
 export class ProductionModule {}

@@ -6,6 +6,7 @@ import { InvProductService } from './inv-product.service';
 import { InvProductResolver } from './inv-product.resolver';
 import { InvTrfService } from './inv-trf.service';
 import { InvTrfResolver } from './inv-trf.resolver';
+import { InvTxService } from './inv-tx.service';
 
 @Module({
   providers: [
@@ -15,7 +16,9 @@ import { InvTrfResolver } from './inv-trf.resolver';
     InvProductResolver,
     InvTrfResolver,
     InvTrfService,
+    InvTxService,
   ],
   imports: [PrismaModule],
+  exports: [InvProductService, InvTrfService],
 })
 export class InventoryModule {}

@@ -1,4 +1,4 @@
-import { Progress } from '@/generated/client';
+import { Progress, TxType } from '@/generated/client';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';
@@ -13,12 +13,14 @@ import { InvTrfSimpleDto } from './dto/inv-trf-simple.dto';
 import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvProductService } from './inv-product.service';
+import { InvTxService } from './inv-tx.service';
 
 @Injectable()
 export class InvTrfService {
   constructor(
     private prisma: PrismaService,
     private invProductService: InvProductService,
+    private invTxService: InvTxService,
   ) {}
 
   async createInvTrfItem(data: InvTrfItemCreateDto): Promise<InvTrfItem> {
@@ -94,62 +96,99 @@ export class InvTrfService {
         initTrfData.progress !== Progress.COMPLETED &&
         data.progress === Progress.COMPLETED
       ) {
-        for (const item of finalTrfData.invTrfItems) {
-          await this.invProductService.upsertInvProduct({
-            invId: item.toInvId,
-            productId: item.productId,
-            invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
-              sizeId: itemSizes.sizeId,
-              quantity: itemSizes.quantity,
-            })),
-          });
-
-          if (item.fromInvId) {
-            await this.invProductService.decrementInvProduct(
-              item.fromInvId,
-              item.productId,
-              item.invTrfItemSizes.map((s) => ({
-                sizeId: s.sizeId,
-                quantity: s.quantity,
-              })),
-            );
-          }
-
-          await tx.invToProduct.update({
-            data: { discount: item.discount },
-            where: {
-              invId_productId: {
-                invId: item.toInvId,
-                productId: item.productId,
-              },
-            },
-          });
-        }
-      } else if (
-        initTrfData.progress === Progress.COMPLETED &&
-        data.progress !== Progress.COMPLETED
-      ) {
-        for (const item of finalTrfData.invTrfItems) {
-          await this.invProductService.decrementInvProduct(
-            item.toInvId,
-            item.productId,
-            item.invTrfItemSizes.map((s) => ({
-              sizeId: s.sizeId,
-              quantity: s.quantity,
-            })),
-          );
-
-          if (item.fromInvId) {
+        await Promise.all(
+          finalTrfData.invTrfItems.map(async (item) => {
             await this.invProductService.upsertInvProduct({
-              invId: item.fromInvId,
+              invId: item.toInvId,
               productId: item.productId,
               invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
                 sizeId: itemSizes.sizeId,
                 quantity: itemSizes.quantity,
               })),
             });
-          }
-        }
+            await this.invTxService.createInvTx(
+              {
+                invId: item.toInvId,
+                productId: item.productId,
+                invTxSizes: item.invTrfItemSizes.map((size) => ({
+                  sizeId: size.sizeId,
+                  quantity: size.quantity,
+                })),
+
+                type: TxType.TRANSFER_IN,
+                saleId: undefined,
+                trfId: id,
+                createdBy: data.updatedBy,
+              },
+              tx,
+            );
+
+            if (item.fromInvId) {
+              await this.invProductService.decrementInvProduct(
+                item.fromInvId,
+                item.productId,
+                item.invTrfItemSizes.map((s) => ({
+                  sizeId: s.sizeId,
+                  quantity: s.quantity,
+                })),
+              );
+
+              await this.invTxService.createInvTx(
+                {
+                  invId: item.fromInvId,
+                  productId: item.productId,
+                  invTxSizes: item.invTrfItemSizes.map((size) => ({
+                    sizeId: size.sizeId,
+                    quantity: -size.quantity,
+                  })),
+
+                  type: TxType.TRANSFER_OUT,
+                  saleId: undefined,
+                  trfId: id,
+                  createdBy: data.updatedBy,
+                },
+                tx,
+              );
+            }
+
+            await tx.invToProduct.update({
+              data: { discount: item.discount },
+              where: {
+                invId_productId: {
+                  invId: item.toInvId,
+                  productId: item.productId,
+                },
+              },
+            });
+          }),
+        );
+      } else if (
+        initTrfData.progress === Progress.COMPLETED &&
+        data.progress !== Progress.COMPLETED
+      ) {
+        await Promise.all(
+          finalTrfData.invTrfItems.map(async (item) => {
+            await this.invProductService.decrementInvProduct(
+              item.toInvId,
+              item.productId,
+              item.invTrfItemSizes.map((s) => ({
+                sizeId: s.sizeId,
+                quantity: s.quantity,
+              })),
+            );
+
+            if (item.fromInvId) {
+              await this.invProductService.upsertInvProduct({
+                invId: item.fromInvId,
+                productId: item.productId,
+                invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
+                  sizeId: itemSizes.sizeId,
+                  quantity: itemSizes.quantity,
+                })),
+              });
+            }
+          }),
+        );
       }
 
       return finalTrfData;

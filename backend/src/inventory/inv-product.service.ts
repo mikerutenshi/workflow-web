@@ -1,11 +1,11 @@
+import { Prisma, Progress } from '@/generated/client';
+import { InvProduct } from '@/models/inv-product.model';
 import { PrismaService } from '@/prisma/prisma.service';
+import { calculatePrice } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
-import { InvProduct } from '@/models/inv-product.model';
-import { Prisma, Progress } from '@/generated/client';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductDto } from './dto/inv-product.dto';
-import { calculatePrice } from '@/utils/functions.util';
 
 @Injectable()
 export class InvProductService {
@@ -151,24 +151,6 @@ export class InvProductService {
           invProductSizes,
           tx,
         );
-        // invProductSizes.map(async (productSize) => {
-        //   await tx.invProductToSize.upsert({
-        //     where: {
-        //       invId_productId_sizeId: {
-        //         invId: upsertProduct.invId,
-        //         productId: upsertProduct.productId,
-        //         sizeId: productSize.sizeId,
-        //       },
-        //     },
-        //     update: { quantity: { increment: productSize.quantity } },
-        //     create: {
-        //       invId: upsertProduct.invId,
-        //       productId: upsertProduct.productId,
-        //       sizeId: productSize.sizeId,
-        //       quantity: productSize.quantity,
-        //     },
-        //   });
-        // });
       }
 
       const result = await tx.invToProduct.findUnique({
@@ -242,38 +224,6 @@ export class InvProductService {
         }
       }),
     );
-
-    // const finalProduct = await tx.invToProduct.findUniqueOrThrow({
-    //   where: {
-    //     invId_productId: {
-    //       invId,
-    //       productId,
-    //     },
-    //   },
-    //   include: {
-    //     invProductSizes: {
-    //       include: {
-    //         size: true,
-    //       },
-    //     },
-    //   },
-    // });
-
-    // const finalSum = finalProduct.invProductSizes.reduce(
-    //   (sum, size) => sum + size.quantity,
-    //   0,
-    // );
-
-    // if (finalSum === 0) {
-    //   await tx.invToProduct.delete({
-    //     where: {
-    //       invId_productId: {
-    //         invId,
-    //         productId,
-    //       },
-    //     },
-    //   });
-    // }
   }
 
   async incrementInvProductOp(

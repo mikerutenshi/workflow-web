@@ -221,8 +221,9 @@ model Size {
 
   sizeWorks           SizeToWork[]
   sizeInvProducts     InvProductToSize[]
-  InvTrfItemSize      InvTrfItemToSize[]
+  sizeInvTrfItems     InvTrfItemToSize[]
   sizeSaleItems       SaleItemToSize[]
+  sizeInvTxs          InvTxToSize[]
 
   @@unique([eu, gender])
   @@unique([us, gender])
@@ -250,8 +251,6 @@ model Inventory {
 
   invProducts       InvToProduct[]
   priceFormula      PriceFormula?
-  // invsale           Sale[]
-  // salemen           Salesman[]  
 
   fromTrfs          InvTrf[] @relation( "FromInventory")
   toTrfs            InvTrf[] @relation( "ToInventory")
@@ -326,6 +325,8 @@ model InvTrf {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
+  invTx             InvTx[]
+
   @@index([createdAt(sort: Desc)])
 }
 
@@ -336,6 +337,44 @@ model InvTrfItemToSize {
   quantity          Int
 
   invTrfItem        InvTrfItem      @relation(fields: [invTrfItemId], references: [id], onDelete: Cascade)
+  size              Size            @relation(fields: [sizeId], references: [id])
+}
+
+model InvTx {
+  id                Int             @id @default(autoincrement())
+  invId             Int
+  productId         Int
+  invTxSizes        InvTxToSize[]
+  type              TxType
+  saleId            Int?            
+  trfId             Int?            
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  sale              Sale?           @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  invTrf            InvTrf?         @relation(fields: [trfId], references: [id], onDelete: Cascade)
+  @@index([createdAt(sort: Desc)])
+}
+
+enum TxType {
+  SALE
+  TRANSFER_IN
+  TRANSFER_OUT
+  PRODUCTION
+  ADJUSTMENT
+}
+
+model InvTxToSize {
+  @@id([invTxId, sizeId])
+  invTxId           Int
+  sizeId            Int
+
+  quantity          Int
+
+  invTx             InvTx           @relation(fields: [invTxId], references: [id], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
 }
 
@@ -360,6 +399,7 @@ model Sale {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
+  invTx             InvTx[]
   @@index([createdAt(sort: Desc)])
 }
 
