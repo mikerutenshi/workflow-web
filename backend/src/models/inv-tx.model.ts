@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
 import { TxType } from '@/generated/client';
+import { Size } from './size.model';
 
 @ObjectType()
 export class InvTx extends BaseModel {
@@ -33,4 +34,7 @@ export class InvTxToSize {
 
   @Field()
   quantity: number;
+
+  @Field(() => Size)
+  size: Size;
 }

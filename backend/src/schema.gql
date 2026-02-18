@@ -313,6 +313,35 @@ type InvTrfSimpleDto {
   work: Work
 }
 
+type InvTx {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  invId: ID!
+  productId: ID!
+  invTxSizes: [InvTxToSize!]!
+  type: TxType!
+  saleId: ID
+  trfId: ID
+}
+
+enum TxType {
+  SALE
+  TRANSFER_IN
+  TRANSFER_OUT
+  PRODUCTION
+  ADJUSTMENT
+}
+
+type InvTxToSize {
+  invTxId: ID!
+  sizeId: ID!
+  quantity: Float!
+  size: Size!
+}
+
 type ProductGroupGetDto {
   id: ID!
   createdBy: ID!
@@ -496,6 +525,7 @@ type Query {
   getInvTrfs: [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
+  getInvTxs(invId: ID!, productId: ID!): [InvTx!]!
   getSales(invId: ID): [Sale!]!
   getSale(id: ID!): Sale!
   generateSaleNo: String!

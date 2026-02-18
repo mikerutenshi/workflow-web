@@ -4,6 +4,7 @@ import {
   Job,
   PrismaClient,
   Progress,
+  TxType,
 } from '@/generated/client';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -73,3 +74,4 @@ registerEnumType(Job, { name: 'Job' });
 registerEnumType(Gender, { name: 'Gender' });
 registerEnumType(Progress, { name: 'Progress' });
 registerEnumType(InvType, { name: 'InvType' });
+registerEnumType(TxType, { name: 'TxType' });

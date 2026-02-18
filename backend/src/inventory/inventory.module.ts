@@ -7,6 +7,7 @@ import { InvProductResolver } from './inv-product.resolver';
 import { InvTrfService } from './inv-trf.service';
 import { InvTrfResolver } from './inv-trf.resolver';
 import { InvTxService } from './inv-tx.service';
+import { InvTxResolver } from './inv-tx.resolver';
 
 @Module({
   providers: [
@@ -16,6 +17,7 @@ import { InvTxService } from './inv-tx.service';
     InvProductResolver,
     InvTrfResolver,
     InvTrfService,
+    InvTxResolver,
     InvTxService,
   ],
   imports: [PrismaModule],

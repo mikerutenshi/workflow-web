@@ -6,7 +6,7 @@ import { InvTx } from '@/models/inv-tx.model';
 
 @Injectable()
 export class InvTxService {
-  constructor() {}
+  constructor(private prisma: PrismaService) {}
 
   createInvTx(
     data: InvTxCreateDto,
@@ -27,7 +27,17 @@ export class InvTxService {
         trfId: data.trfId,
         createdBy: data.createdBy,
       },
-      include: { invTxSizes: true },
+      include: { invTxSizes: { include: { size: true } } },
+    });
+  }
+
+  getInvTxs(invId: number, productId: number): Promise<InvTx[]> {
+    return this.prisma.invTx.findMany({
+      include: { invTxSizes: { include: { size: true } } },
+      where: {
+        invId,
+        productId,
+      },
     });
   }
 }
