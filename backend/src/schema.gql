@@ -343,6 +343,7 @@ enum TxType {
   TRANSFER_OUT
   PRODUCTION
   ADJUSTMENT
+  REVERSION
 }
 
 type ProductGroupGetDto {
@@ -388,35 +389,6 @@ type SizeToWork {
   sizeId: ID!
   quantity: Float!
   size: Size!
-}
-
-type TaskWithArtisan {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  workId: ID!
-  type: Job!
-  artisanId: ID
-  doneAt: Date
-  artisan: Artisan
-}
-
-type WorkWithTasks {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  date: Date!
-  orderNo: String!
-  productId: ID!
-  progress: Progress!
-  note: String
-  workSizes: [SizeToWork!]!
-  tasks: [TaskWithArtisan!]!
-  product: Product!
 }
 
 type WorkWithProduct {
@@ -468,6 +440,35 @@ type PayrollGetDto {
   totalPayable: Float!
   totalQuantity: Float!
   artisans: [ArtisanWithTasks!]!
+}
+
+type TaskWithArtisan {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  workId: ID!
+  type: Job!
+  artisanId: ID
+  doneAt: Date
+  artisan: Artisan
+}
+
+type WorkWithTasks {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  date: Date!
+  orderNo: String!
+  productId: ID!
+  progress: Progress!
+  note: String
+  workSizes: [SizeToWork!]!
+  tasks: [TaskWithArtisan!]!
+  product: Product!
 }
 
 type SaleItemToSize {

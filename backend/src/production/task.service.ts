@@ -2,9 +2,10 @@ import { TaskWithArtisan } from '@/models/task-with-artisan.model';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { TaskUpdateDto } from './dto/task-update.dto';
-import { Progress } from '@/generated/client';
+import { Progress, TxType } from '@/generated/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTrfService } from '@/inventory/inv-trf.service';
+import { InvTxService } from '@/inventory/inv-tx.service';
 
 @Injectable()
 export class TaskService {
@@ -12,6 +13,7 @@ export class TaskService {
     private prisma: PrismaService,
     private invProductService: InvProductService,
     private invTrfService: InvTrfService,
+    private invTxService: InvTxService,
   ) {}
 
   updateTasks(tasks: TaskUpdateDto[]): Promise<TaskWithArtisan[]> {
@@ -75,7 +77,7 @@ export class TaskService {
         if (!factory) throw Error('Factory is not found');
 
         const existingInvProduct = await tx.invToProduct.findFirst({
-          where: { productId: initialWork!.productId },
+          where: { productId: initialWork!.productId, invId: factory.id },
           include: { invProductSizes: true },
         });
 
@@ -94,7 +96,7 @@ export class TaskService {
             progress: Progress.COMPLETED,
             createdBy: userId,
           });
-          await this.invTrfService.createInvTrf({
+          const invTrf = await this.invTrfService.createInvTrf({
             trfNo,
             fromInvId: null,
             toInvId: factory.id,
@@ -112,6 +114,21 @@ export class TaskService {
               quantity: workSize.quantity,
             })),
           });
+
+          await this.invTxService.createInvTx(
+            {
+              invId: factory.id,
+              productId: initialWork!.productId,
+              type: TxType.PRODUCTION,
+              trfId: invTrf.id,
+              createdBy: userId,
+              invTxSizes: initialWork!.workSizes.map((s) => ({
+                sizeId: s.sizeId,
+                quantity: s.quantity,
+              })),
+            },
+            tx,
+          );
         } else if (initialProgress === Progress.COMPLETED && !allDone) {
           //Delete the InvTrf
           const invTrfId = initialWork!.invTrf?.id;
@@ -120,72 +137,30 @@ export class TaskService {
 
           // Reverse the effect: subtract quantities from inventory
           if (existingInvProduct) {
-            await this.invProductService.decrementInvProduct(
+            await this.invProductService.decrementInvProductOp(
               existingInvProduct.invId,
               existingInvProduct.productId,
               existingInvProduct.invProductSizes.map((size) => ({
                 sizeId: size.sizeId,
                 quantity: size.quantity,
               })),
+              tx,
             );
 
-            // const { invProductSizes } = existingInvProduct;
-
-            // for (const workSize of initialWork!.workSizes) {
-            //   const existingSize = invProductSizes.find(
-            //     (invSize) => invSize.sizeId === workSize.sizeId,
-            //   );
-
-            //   if (existingSize) {
-            //     const newQuantity = existingSize.quantity - workSize.quantity;
-
-            //     if (newQuantity > 0) {
-            //       // Update existing size by subtracting quantity
-            //       await tx.invProductToSize.update({
-            //         where: {
-            //           invId_productId_sizeId: {
-            //             invId: existingInvProduct.invId,
-            //             productId: existingInvProduct.productId,
-            //             sizeId: existingSize.sizeId,
-            //           },
-            //         },
-            //         data: {
-            //           quantity: newQuantity,
-            //         },
-            //       });
-            //     } else {
-            //       // Delete size entry if quantity becomes 0 or negative
-            //       await tx.invProductToSize.delete({
-            //         where: {
-            //           invId_productId_sizeId: {
-            //             invId: existingInvProduct.invId,
-            //             productId: existingInvProduct.productId,
-            //             sizeId: existingSize.sizeId,
-            //           },
-            //         },
-            //       });
-            //     }
-            //   }
-            // }
-
-            // // Check if all sizes have been removed and delete the invProduct if empty
-            // const remainingSizes = await tx.invProductToSize.findMany({
-            //   where: {
-            //     invId: existingInvProduct.invId,
-            //     productId: existingInvProduct.productId,
-            //   },
-            // });
-
-            // if (remainingSizes.length === 0) {
-            //   await tx.invToProduct.delete({
-            //     where: {
-            //       invId_productId: {
-            //         invId: existingInvProduct.invId,
-            //         productId: existingInvProduct.productId,
-            //       },
-            //     },
-            //   });
-            // }
+            await this.invTxService.createInvTx(
+              {
+                invId: factory.id,
+                productId: initialWork!.productId,
+                type: TxType.REVERSION,
+                trfId: invTrfId,
+                createdBy: userId,
+                invTxSizes: initialWork!.workSizes.map((s) => ({
+                  sizeId: s.sizeId,
+                  quantity: -s.quantity,
+                })),
+              },
+              tx,
+            );
           }
         }
       }

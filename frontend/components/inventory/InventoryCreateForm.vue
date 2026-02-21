@@ -291,8 +291,8 @@ watch(
   },
   { deep: true },
 );
-watchEffect(() => {
-  console.log(`Values: ${JSON.stringify(values)}`);
-  console.log(`Model: ${JSON.stringify(priceFormulaModel)}`);
-});
+// watchEffect(() => {
+//   console.log(`Values: ${JSON.stringify(values)}`);
+//   console.log(`Model: ${JSON.stringify(priceFormulaModel)}`);
+// });
 </script>

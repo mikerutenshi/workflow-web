@@ -457,9 +457,9 @@ watchEffect(() => {
     })),
   );
 });
-watchEffect(() => {
-  console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
-});
+// watchEffect(() => {
+//   console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
+// });
 
 function closeDialog() {
   dialog.isVisible = false;

@@ -21,6 +21,6 @@ import { InvTxResolver } from './inv-tx.resolver';
     InvTxService,
   ],
   imports: [PrismaModule],
-  exports: [InvProductService, InvTrfService],
+  exports: [InvProductService, InvTrfService, InvTxService],
 })
 export class InventoryModule {}

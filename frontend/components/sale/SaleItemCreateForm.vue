@@ -189,8 +189,8 @@ const onSubmit = handleSubmit((data) => {
   emit('close-dialog');
 });
 
-watchEffect(() => {
-  // console.log(`Table => ${JSON.stringify(table.items)}`);
-  // console.log(`Values => ${JSON.stringify(values)}`);
-});
+// watchEffect(() => {
+//   console.log(`Table => ${JSON.stringify(table.items)}`);
+//   console.log(`Values => ${JSON.stringify(values)}`);
+// });
 </script>

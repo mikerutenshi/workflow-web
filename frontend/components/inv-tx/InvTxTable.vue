@@ -101,7 +101,7 @@ const {
 } = useQuery({
   variables: invId && productId ? { invId, productId } : undefined,
   query: GetInvTxsDocument,
-  tags: [CACHE_INV_TXS],
+  cachePolicy: 'network-only',
 });
 const headers = [
   { title: 'txNo', key: 'txNo' },

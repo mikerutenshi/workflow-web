@@ -261,8 +261,8 @@ function deleteItem(saleId: string) {
   dialogConfirmDelete.value = true;
 }
 
-watchEffect(() => {
-  console.log(`Sales Data => ${JSON.stringify(salesData.value?.getSales)}`);
-  console.log(`InvId => ${invId.value}`);
-});
+// watchEffect(() => {
+//   console.log(`Sales Data => ${JSON.stringify(salesData.value?.getSales)}`);
+//   console.log(`InvId => ${invId.value}`);
+// });
 </script>

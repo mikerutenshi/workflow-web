@@ -35,7 +35,10 @@ export class InvTxService {
   async getInvTxs(invId: number, productId: number): Promise<InvTxDto[]> {
     const txs = await this.prisma.invTx.findMany({
       include: {
-        invTxSizes: { include: { size: true } },
+        invTxSizes: {
+          include: { size: true },
+          orderBy: { size: { eu: 'asc' } },
+        },
         sale: true,
         invTrf: true,
       },
@@ -51,7 +54,7 @@ export class InvTxService {
         : (t.invTrf?.trfDate ?? t.createdAt),
       progress: t.saleId
         ? Progress.COMPLETED
-        : (t.invTrf?.progress ?? Progress.INITIATED),
+        : (t.invTrf?.progress ?? Progress.COMPLETED),
       ...t,
     }));
   }

@@ -1,16 +1,14 @@
-import { Module } from '@nestjs/common';
-import { SizeResolver } from './size.resolver';
-import { SizeService } from './size.service';
-import { WorkResolver } from './work.resolver';
-import { WorkService } from './work.service';
+import { InventoryModule } from '@/inventory/inventory.module';
 import { PrismaModule } from '@/prisma/prisma.module';
-import { TaskResolver } from './task.resolver';
-import { TaskService } from './task.service';
+import { Module } from '@nestjs/common';
 import { PayrollResolver } from './payroll.resolver';
 import { PayrollService } from './payroll.service';
-import { InvProductService } from '@/inventory/inv-product.service';
-import { InvTrfService } from '@/inventory/inv-trf.service';
-import { InventoryModule } from '@/inventory/inventory.module';
+import { SizeResolver } from './size.resolver';
+import { SizeService } from './size.service';
+import { TaskResolver } from './task.resolver';
+import { TaskService } from './task.service';
+import { WorkResolver } from './work.resolver';
+import { WorkService } from './work.service';
 
 @Module({
   providers: [

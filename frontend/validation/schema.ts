@@ -144,11 +144,13 @@ export const InventorySchema = z.object({
       })
       .optional()
       .nullable(),
-    discounts: z.array(
-      z.string().regex(/^\d+(\.\d{1,4})?$/, {
-        message: 'Must be a number with up to 4 decimal places',
-      }),
-    ),
+    discounts: z
+      .array(
+        z.string().regex(/^\d+(\.\d{1,4})?$/, {
+          message: 'Must be a number with up to 4 decimal places',
+        }),
+      )
+      .default([]),
   }),
 });
 

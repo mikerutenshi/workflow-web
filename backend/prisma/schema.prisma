@@ -354,8 +354,8 @@ model InvTx {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
-  sale              Sale?           @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  invTrf            InvTrf?         @relation(fields: [trfId], references: [id], onDelete: Cascade)
+  sale              Sale?           @relation(fields: [saleId], references: [id], onDelete: SetNull)
+  invTrf            InvTrf?         @relation(fields: [trfId], references: [id], onDelete: SetNull)
   @@index([createdAt(sort: Desc)])
 }
 
@@ -365,6 +365,7 @@ enum TxType {
   TRANSFER_OUT
   PRODUCTION
   ADJUSTMENT
+  REVERSION
 }
 
 model InvTxToSize {

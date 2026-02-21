@@ -248,10 +248,10 @@ watchEffect(() => {
   console.log(`InvPrice: ${invPrice}`);
 });
 
-watchEffect(() => {
-  // console.log(`Display Model: ${JSON.stringify(displayModel)}`);
-  // console.log(`toInv: ${toInvId.value.value}`);
-  // console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
-  console.log(`Form Values: ${JSON.stringify(values)}`);
-});
+// watchEffect(() => {
+//   console.log(`Display Model: ${JSON.stringify(displayModel)}`);
+//   console.log(`toInv: ${toInvId.value.value}`);
+//   console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
+//   console.log(`Form Values: ${JSON.stringify(values)}`);
+// });
 </script>
