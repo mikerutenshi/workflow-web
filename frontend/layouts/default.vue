@@ -161,7 +161,7 @@ const createBtnTitles: Record<string, string> =
         works: 'btn.work',
         products: 'btn.product',
         artisans: 'btn.artisan',
-        'inv-product-transfers': 'btn.inv_trf',
+        'inv-trfs': 'btn.inv_trf',
         sales: 'btn.sale',
         'setting-inventories': 'btn.inventory',
         'setting-colors': 'btn.color',
@@ -195,7 +195,7 @@ const navItems = computed(() => {
       },
       {
         title: t('nav.inventory_transfers'),
-        route: localePath('/inv-product-transfers'),
+        route: localePath('/inv-trfs'),
         icon: mdiTransfer,
       },
       {
@@ -251,7 +251,7 @@ const navItems = computed(() => {
       },
       {
         title: t('nav.inventory_transfers'),
-        route: localePath('/inv-product-transfers'),
+        route: localePath('/inv-trfs'),
         icon: mdiTransfer,
       },
       {

@@ -148,6 +148,7 @@
     "from_inv": "Ti Gudang ",
     "to_inv": "Ka Gudang",
     "show_trf_detail": "Nempo Rinci Mindahkeun",
+    "show_tx_detail": "Nempo Rinci Transaksi",
     "send_to": "Kirim Sapatu",
     "pending_trfs": "Pending Mindahkeun",
     "show_item_detail": "Nempo Rinci Barang",

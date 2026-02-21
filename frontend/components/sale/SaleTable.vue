@@ -48,6 +48,10 @@
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>
 
+        <template v-slot:item.date="{ item }">
+          {{ adapter.format(item.date, 'fullDateTime12h') }}
+        </template>
+
         <template v-slot:item.actions="{ item }">
           <v-menu transition="slide-y-transition" open-on-hover>
             <template v-slot:activator="{ props }">

@@ -313,7 +313,14 @@ type InvTrfSimpleDto {
   work: Work
 }
 
-type InvTx {
+type InvTxToSize {
+  invTxId: ID!
+  sizeId: ID!
+  quantity: Float!
+  size: Size!
+}
+
+type InvTxDto {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -325,6 +332,9 @@ type InvTx {
   type: TxType!
   saleId: ID
   trfId: ID
+  txNo: String!
+  txDate: Date!
+  progress: Progress!
 }
 
 enum TxType {
@@ -333,13 +343,6 @@ enum TxType {
   TRANSFER_OUT
   PRODUCTION
   ADJUSTMENT
-}
-
-type InvTxToSize {
-  invTxId: ID!
-  sizeId: ID!
-  quantity: Float!
-  size: Size!
 }
 
 type ProductGroupGetDto {
@@ -525,7 +528,7 @@ type Query {
   getInvTrfs: [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo: String!
-  getInvTxs(invId: ID!, productId: ID!): [InvTx!]!
+  getInvTxs(invId: ID!, productId: ID!): [InvTxDto!]!
   getSales(invId: ID): [Sale!]!
   getSale(id: ID!): Sale!
   generateSaleNo: String!

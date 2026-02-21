@@ -131,7 +131,7 @@
                   @click="
                     () => {
                       const { pendingCount, ...rest } = item;
-                      showItemDetailDialog(rest as InvProductDto);
+                      showItemTrfDialog(rest as InvProductDto);
                     }
                   "
                   :prepend-icon="mdiFileDocumentArrowRightOutline"
@@ -140,6 +140,21 @@
                     $t('label.show_trf_detail')
                   }}</v-list-item-title>
                 </v-list-item>
+
+                <v-list-item
+                  @click="
+                    () => {
+                      const { pendingCount, ...rest } = item;
+                      showItemTxDialog(rest as InvProductDto);
+                    }
+                  "
+                  :prepend-icon="mdiFileDocumentArrowRightOutline"
+                >
+                  <v-list-item-title>{{
+                    $t('label.show_tx_detail')
+                  }}</v-list-item-title>
+                </v-list-item>
+
                 <v-list-item
                   v-if="
                     item.invProductSizes.reduce(
@@ -167,30 +182,26 @@
     </v-row>
 
     <ActionEditItemDialog
-      :dialogTitle="
-        dialog.content === DialogContent.ItemDetail
-          ? $t('page.trf_detail_for', {
-              item: itemSelectionObject?.product.sku || 'Item',
-            })
-          : dialog.content === DialogContent.Form
-            ? $t('page.send_to', {
-                product: itemSelectionObject?.product.sku,
-              })
-            : ''
-      "
+      :dialogTitle="dialog.title"
       v-model="dialog.isVisible"
     >
-      <template v-if="dialog.content === DialogContent.ItemDetail">
+      <template v-if="dialog.content === DialogContent.TrfDetail">
         <InvProductItemTrfTable
           :inv-product-dto="itemSelectionObject"
           @refresh-table="executeFetch"
         ></InvProductItemTrfTable>
       </template>
+      <template v-if="dialog.content === DialogContent.TxDetail">
+        <InvTxTable
+          :inv-product-dto="itemSelectionObject"
+          @refresh-table="executeFetch"
+        ></InvTxTable>
+      </template>
       <template v-else-if="dialog.content === DialogContent.Form">
-        <InvProductTrfItemForm
+        <InvTrfItemForm
           :inv-product-dto="itemSelectionObject"
           @close-dialog="closeItemFormDialog"
-        ></InvProductTrfItemForm>
+        ></InvTrfItemForm>
       </template>
     </ActionEditItemDialog>
 
@@ -251,7 +262,8 @@ import { Role } from '~/utils/constants';
 
 enum DialogContent {
   None = 'NONE',
-  ItemDetail = 'VIEW_DETAIL',
+  TrfDetail = 'TRF_DETAIL',
+  TxDetail = 'TX_DETAIL',
   Form = 'FORM',
 }
 const authStore = useAuthStore();
@@ -333,17 +345,32 @@ const search = ref('');
 const dialog = reactive({
   isVisible: false,
   content: DialogContent.None,
+  title: '',
 });
 
-function showItemDetailDialog(item: InvProductDto) {
+function showItemTrfDialog(item: InvProductDto) {
   dialog.isVisible = true;
-  dialog.content = DialogContent.ItemDetail;
+  dialog.content = DialogContent.TrfDetail;
   itemSelectionObject.value = item;
+  dialog.title = t('page.trf_detail_for', {
+    item: itemSelectionObject.value.product.sku || 'Item',
+  });
+}
+function showItemTxDialog(item: InvProductDto) {
+  dialog.isVisible = true;
+  dialog.content = DialogContent.TxDetail;
+  itemSelectionObject.value = item;
+  dialog.title = t('page.tx_detail_for', {
+    item: itemSelectionObject.value.product.sku || 'Item',
+  });
 }
 function showItemFormDialog(item: InvProductDto) {
   dialog.isVisible = true;
   dialog.content = DialogContent.Form;
   itemSelectionObject.value = item;
+  dialog.title = t('page.send_to', {
+    product: itemSelectionObject.value.product.sku,
+  });
 }
 function closeItemFormDialog() {
   dialog.isVisible = false;

@@ -123,11 +123,11 @@
       :dialogTitle="dialogModel.title"
       v-model="dialogModel.isVisible"
     >
-      <InvProductTrfForm
+      <InvTrfForm
         @close-dialog="closeDialog"
         :inv-trf-id="dialogModel.id"
         :is-readonly="dialogModel.isReadonly"
-      ></InvProductTrfForm>
+      ></InvTrfForm>
     </ActionEditItemDialog>
   </template>
 </template>

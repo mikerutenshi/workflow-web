@@ -284,6 +284,17 @@ query generateInvTrfNo {
 query getInvTxs($invId: ID!, $productId: ID!) {
   getInvTxs(invId: $invId, productId: $productId) {
     id
-    productId
+    type
+    saleId
+    trfId
+    invTxSizes {
+      size {
+        ...Size
+      }
+      quantity
+    }
+    txNo
+    txDate
+    progress
   }
 }

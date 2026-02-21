@@ -147,6 +147,7 @@
     "from_inv": "Dari Gudang ",
     "to_inv": "Ke Gudang",
     "show_trf_detail": "Lihat Rincian Transfer",
+    "show_tx_detail": "Lihat Rincian Transaksi",
     "send_to": "Kirim Sepatu",
     "pending_trfs": "Transfer Tertunda",
     "show_item_detail": "Lihat Rincian Barang ",

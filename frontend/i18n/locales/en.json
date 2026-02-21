@@ -147,6 +147,7 @@
     "from_inv": "From Warehouse",
     "to_inv": "To Warehouse",
     "show_trf_detail": "Show Transfer Detail",
+    "show_tx_detail": "Show Transaction Detail",
     "send_to": "Send Shoes",
     "pending_trfs": "Pending Transfers",
     "show_item_detail": "Show Item Detail",
