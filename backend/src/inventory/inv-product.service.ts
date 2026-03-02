@@ -132,46 +132,47 @@ export class InvProductService {
     } as InvProduct;
   }
 
-  upsertInvProduct(data: InvProductCreateDto): Promise<InvProduct> {
+  async upsertInvProductOp(
+    data: InvProductCreateDto,
+    tx: Prisma.TransactionClient,
+  ): Promise<InvProduct> {
     const { invProductSizes, ...rest } = data;
 
-    return this.prisma.$transaction(async (tx) => {
-      const upsertProduct = await tx.invToProduct.upsert({
-        where: {
-          invId_productId: { invId: data.invId, productId: data.productId },
-        },
-        update: rest,
-        create: rest,
-      });
-
-      if (invProductSizes && invProductSizes.length > 0) {
-        await this.incrementInvProductOp(
-          rest.invId,
-          rest.productId,
-          invProductSizes,
-          tx,
-        );
-      }
-
-      const result = await tx.invToProduct.findUnique({
-        where: {
-          invId_productId: {
-            invId: upsertProduct.invId,
-            productId: upsertProduct.productId,
-          },
-        },
-        include: {
-          invProductSizes: {
-            include: { size: true },
-          },
-        },
-      });
-      // console.log(`Result: ${JSON.stringify(result)}`);
-      return {
-        ...result,
-        discount: result?.discount?.toFixed(2),
-      } as InvProduct;
+    const upsertProduct = await tx.invToProduct.upsert({
+      where: {
+        invId_productId: { invId: data.invId, productId: data.productId },
+      },
+      update: rest,
+      create: rest,
     });
+
+    if (invProductSizes && invProductSizes.length > 0) {
+      await this.incrementInvProductOp(
+        rest.invId,
+        rest.productId,
+        invProductSizes,
+        tx,
+      );
+    }
+
+    const result = await tx.invToProduct.findUnique({
+      where: {
+        invId_productId: {
+          invId: upsertProduct.invId,
+          productId: upsertProduct.productId,
+        },
+      },
+      include: {
+        invProductSizes: {
+          include: { size: true },
+        },
+      },
+    });
+    // console.log(`Result: ${JSON.stringify(result)}`);
+    return {
+      ...result,
+      discount: result?.discount?.toFixed(2),
+    } as InvProduct;
   }
 
   decrementInvProduct(

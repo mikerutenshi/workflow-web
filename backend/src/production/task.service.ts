@@ -83,39 +83,48 @@ export class TaskService {
 
         //Create new inv product if grogress == completed
         if (initialProgress !== Progress.COMPLETED && allDone) {
-          const trfNo = await this.invTrfService.generateInvTrfPrdNo();
+          const trfNo = await this.invTrfService.generateInvTrfPrdNoOp(tx);
 
-          const invTrfItem = await this.invTrfService.createInvTrfItem({
-            fromInvId: null,
-            toInvId: factory.id,
-            productId: initialWork!.productId,
-            invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
-              sizeId: workSize.sizeId,
-              quantity: workSize.quantity,
-            })),
-            progress: Progress.COMPLETED,
-            createdBy: userId,
-          });
-          const invTrf = await this.invTrfService.createInvTrf({
-            trfNo,
-            fromInvId: null,
-            toInvId: factory.id,
-            progress: Progress.COMPLETED,
-            invTrfItemIds: [invTrfItem.id],
-            workId: initialWork!.id,
-            createdBy: userId,
-          });
+          const invTrfItem = await this.invTrfService.createInvTrfItem(
+            {
+              fromInvId: null,
+              toInvId: factory.id,
+              productId: initialWork!.productId,
+              invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
+                sizeId: workSize.sizeId,
+                quantity: workSize.quantity,
+              })),
+              progress: Progress.COMPLETED,
+              createdBy: userId,
+            },
+            tx,
+          );
+          const invTrf = await this.invTrfService.createInvTrf(
+            {
+              trfNo,
+              fromInvId: null,
+              toInvId: factory.id,
+              progress: Progress.COMPLETED,
+              invTrfItemIds: [invTrfItem.id],
+              workId: initialWork!.id,
+              createdBy: userId,
+            },
+            tx,
+          );
 
-          await this.invProductService.upsertInvProduct({
-            invId: factory.id,
-            productId: initialWork!.productId,
-            invProductSizes: initialWork!.workSizes.map((workSize) => ({
-              sizeId: workSize.sizeId,
-              quantity: workSize.quantity,
-            })),
-          });
+          await this.invProductService.upsertInvProductOp(
+            {
+              invId: factory.id,
+              productId: initialWork!.productId,
+              invProductSizes: initialWork!.workSizes.map((workSize) => ({
+                sizeId: workSize.sizeId,
+                quantity: workSize.quantity,
+              })),
+            },
+            tx,
+          );
 
-          await this.invTxService.createInvTx(
+          await this.invTxService.createInvTxOp(
             {
               invId: factory.id,
               productId: initialWork!.productId,
@@ -133,7 +142,7 @@ export class TaskService {
           //Delete the InvTrf
           const invTrfId = initialWork!.invTrf?.id;
 
-          if (invTrfId) this.invTrfService.deleteInvTrf(invTrfId);
+          if (invTrfId) this.invTrfService.deleteInvTrf(invTrfId, tx);
 
           // Reverse the effect: subtract quantities from inventory
           if (existingInvProduct) {
@@ -147,7 +156,7 @@ export class TaskService {
               tx,
             );
 
-            await this.invTxService.createInvTx(
+            await this.invTxService.createInvTxOp(
               {
                 invId: factory.id,
                 productId: initialWork!.productId,

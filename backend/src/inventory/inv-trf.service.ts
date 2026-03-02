@@ -1,4 +1,4 @@
-import { Progress, TxType } from '@/generated/client';
+import { Prisma, Progress, TxType } from '@/generated/client';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';
@@ -23,8 +23,13 @@ export class InvTrfService {
     private invTxService: InvTxService,
   ) {}
 
-  async createInvTrfItem(data: InvTrfItemCreateDto): Promise<InvTrfItem> {
-    const { discount, ...rest } = await this.prisma.invTrfItem.create({
+  async createInvTrfItem(
+    data: InvTrfItemCreateDto,
+    tx?: Prisma.TransactionClient,
+  ): Promise<InvTrfItem> {
+    const prisma = tx ?? this.prisma;
+
+    const { discount, ...rest } = await prisma.invTrfItem.create({
       data: {
         ...data,
         invTrfItemSizes: {
@@ -44,15 +49,21 @@ export class InvTrfService {
     return { ...rest, discount: discount?.toFixed(4) || null };
   }
 
-  createInvTrf(data: InvTrfCreateDto): Promise<InvTrf> {
+  async createInvTrf(
+    data: InvTrfCreateDto,
+    tx?: Prisma.TransactionClient,
+  ): Promise<InvTrf> {
     const { invTrfItemIds, ...rest } = data;
-    return this.prisma.$transaction(async (tx) => {
-      invTrfItemIds.map(async (id) => {
-        await tx.invTrfItem.update({
-          where: { id },
-          data: { progress: data.progress },
-        });
-      });
+
+    if (tx) {
+      await Promise.all(
+        invTrfItemIds.map(async (id) => {
+          await tx.invTrfItem.update({
+            where: { id },
+            data: { progress: data.progress },
+          });
+        }),
+      );
       const result = await tx.invTrf.create({
         data: {
           ...rest,
@@ -63,7 +74,28 @@ export class InvTrfService {
       });
 
       return result;
-    });
+    } else {
+      return this.prisma.$transaction(async (tx) => {
+        await Promise.all(
+          invTrfItemIds.map(async (id) => {
+            await tx.invTrfItem.update({
+              where: { id },
+              data: { progress: data.progress },
+            });
+          }),
+        );
+        const result = await tx.invTrf.create({
+          data: {
+            ...rest,
+            invTrfItems: {
+              connect: invTrfItemIds.map((id) => ({ id })),
+            },
+          },
+        });
+
+        return result;
+      });
+    }
   }
 
   updateInvTrf(id: number, data: InvTrfUpdateDto): Promise<InvTrf> {
@@ -98,15 +130,18 @@ export class InvTrfService {
       ) {
         await Promise.all(
           finalTrfData.invTrfItems.map(async (item) => {
-            await this.invProductService.upsertInvProduct({
-              invId: item.toInvId,
-              productId: item.productId,
-              invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
-                sizeId: itemSizes.sizeId,
-                quantity: itemSizes.quantity,
-              })),
-            });
-            await this.invTxService.createInvTx(
+            await this.invProductService.upsertInvProductOp(
+              {
+                invId: item.toInvId,
+                productId: item.productId,
+                invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
+                  sizeId: itemSizes.sizeId,
+                  quantity: itemSizes.quantity,
+                })),
+              },
+              tx,
+            );
+            await this.invTxService.createInvTxOp(
               {
                 invId: item.toInvId,
                 productId: item.productId,
@@ -124,16 +159,17 @@ export class InvTrfService {
             );
 
             if (item.fromInvId) {
-              await this.invProductService.decrementInvProduct(
+              await this.invProductService.decrementInvProductOp(
                 item.fromInvId,
                 item.productId,
                 item.invTrfItemSizes.map((s) => ({
                   sizeId: s.sizeId,
                   quantity: s.quantity,
                 })),
+                tx,
               );
 
-              await this.invTxService.createInvTx(
+              await this.invTxService.createInvTxOp(
                 {
                   invId: item.fromInvId,
                   productId: item.productId,
@@ -168,24 +204,28 @@ export class InvTrfService {
       ) {
         await Promise.all(
           finalTrfData.invTrfItems.map(async (item) => {
-            await this.invProductService.decrementInvProduct(
+            await this.invProductService.decrementInvProductOp(
               item.toInvId,
               item.productId,
               item.invTrfItemSizes.map((s) => ({
                 sizeId: s.sizeId,
                 quantity: s.quantity,
               })),
+              tx,
             );
 
             if (item.fromInvId) {
-              await this.invProductService.upsertInvProduct({
-                invId: item.fromInvId,
-                productId: item.productId,
-                invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
-                  sizeId: itemSizes.sizeId,
-                  quantity: itemSizes.quantity,
-                })),
-              });
+              await this.invProductService.upsertInvProductOp(
+                {
+                  invId: item.fromInvId,
+                  productId: item.productId,
+                  invProductSizes: item.invTrfItemSizes.map((itemSizes) => ({
+                    sizeId: itemSizes.sizeId,
+                    quantity: itemSizes.quantity,
+                  })),
+                },
+                tx,
+              );
             }
           }),
         );
@@ -310,8 +350,13 @@ export class InvTrfService {
     };
   }
 
-  async deleteInvTrf(id: number): Promise<Boolean> {
-    const result = await this.prisma.invTrf.delete({
+  async deleteInvTrf(
+    id: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Boolean> {
+    const prisma = tx ?? this.prisma;
+
+    const result = await prisma.invTrf.delete({
       where: { id },
     });
 
@@ -332,8 +377,8 @@ export class InvTrfService {
     return generateId(Operation.Transfer, lastTrfNo);
   }
 
-  async generateInvTrfPrdNo(): Promise<string> {
-    const lastInvPrd = await this.prisma.invTrf.findFirst({
+  async generateInvTrfPrdNoOp(tx: Prisma.TransactionClient): Promise<string> {
+    const lastInvPrd = await tx.invTrf.findFirst({
       where: { workId: { not: null } },
       orderBy: { createdAt: 'desc' },
     });

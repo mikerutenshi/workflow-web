@@ -9,7 +9,7 @@ import { InvTxDto } from './dto/inv-tx.dto';
 export class InvTxService {
   constructor(private prisma: PrismaService) {}
 
-  createInvTx(
+  createInvTxOp(
     data: InvTxCreateDto,
     tx: Prisma.TransactionClient,
   ): Promise<InvTx> {
