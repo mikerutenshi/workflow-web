@@ -59,12 +59,14 @@
               :key="childIndex"
               :to="child.route"
               router
-              :title="child.title"
               slim
               :prepend-icon="child.icon"
             >
               <template #prepend>
                 <v-icon :icon="child.icon"></v-icon>
+              </template>
+              <template #title>
+                <span class="list-item-title">{{ child.title }}</span>
               </template>
             </v-list-item>
           </v-list-group>
@@ -94,6 +96,12 @@
     </v-main>
   </v-app>
 </template>
+
+<style scoped lang="sass">
+.list-item-title
+  white-space: normal
+  word-break: break-word
+</style>
 
 <script setup lang="ts">
 import {
@@ -204,25 +212,25 @@ const navItems = computed(() => {
         icon: mdiPrinterPos,
       },
       {
-        title: t('nav.products'),
-        route: localePath('/products'),
-        icon: mdiShoeSneaker,
-      },
-      {
-        title: t('nav.labor_costs'),
-        route: localePath('/labor-costs'),
-        icon: mdiCalculator,
-      },
-      {
-        title: t('nav.artisans'),
-        route: localePath('/artisans'),
-        icon: mdiAccountWrench,
-      },
-      {
         title: t('nav.setting'),
         route: localePath('/setting'),
         icon: mdiCogs,
         children: [
+          {
+            title: t('nav.products'),
+            route: localePath('/products'),
+            icon: mdiShoeSneaker,
+          },
+          {
+            title: t('nav.labor_costs'),
+            route: localePath('/labor-costs'),
+            icon: mdiCalculator,
+          },
+          {
+            title: t('nav.artisans'),
+            route: localePath('/artisans'),
+            icon: mdiAccountWrench,
+          },
           {
             title: t('nav.setting_inventories'),
             route: localePath('/setting/inventories'),
@@ -260,20 +268,20 @@ const navItems = computed(() => {
         icon: mdiCashMultiple,
       },
       {
-        title: t('nav.products'),
-        route: localePath('/products'),
-        icon: mdiShoeSneaker,
-      },
-      {
-        title: t('nav.artisans'),
-        route: localePath('/artisans'),
-        icon: mdiAccountWrench,
-      },
-      {
         title: t('nav.setting'),
         route: localePath('/setting'),
         icon: mdiCogs,
         children: [
+          {
+            title: t('nav.products'),
+            route: localePath('/products'),
+            icon: mdiShoeSneaker,
+          },
+          {
+            title: t('nav.artisans'),
+            route: localePath('/artisans'),
+            icon: mdiAccountWrench,
+          },
           {
             title: t('nav.setting_inventories'),
             route: localePath('/setting/inventories'),
@@ -296,14 +304,21 @@ const navItems = computed(() => {
         icon: mdiFactory,
       },
       {
-        title: t('nav.artisans'),
-        route: localePath('/artisans'),
-        icon: mdiAccountWrench,
-      },
-      {
-        title: t('nav.products'),
-        route: localePath('/products'),
-        icon: mdiShoeSneaker,
+        title: t('nav.setting'),
+        route: localePath('/setting'),
+        icon: mdiCogs,
+        children: [
+          {
+            title: t('nav.artisans'),
+            route: localePath('/artisans'),
+            icon: mdiAccountWrench,
+          },
+          {
+            title: t('nav.products'),
+            route: localePath('/products'),
+            icon: mdiShoeSneaker,
+          },
+        ],
       },
     ];
   }
