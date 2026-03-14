@@ -342,6 +342,7 @@ model InvTrfItemToSize {
 
 model InvTx {
   id                Int             @id @default(autoincrement())
+  txNo              String
   invId             Int
   productId         Int
   invTxSizes        InvTxToSize[]

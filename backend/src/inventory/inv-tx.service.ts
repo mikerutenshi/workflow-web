@@ -4,6 +4,7 @@ import { InvTxCreateDto } from './dto/inv-tx-create.dto';
 import { Prisma, Progress, TxType } from '@/generated/client';
 import { InvTx } from '@/models/inv-tx.model';
 import { InvTxDto } from './dto/inv-tx.dto';
+import { Operation } from '@/models/operation.enum';
 
 @Injectable()
 export class InvTxService {
@@ -17,6 +18,7 @@ export class InvTxService {
       data: {
         invId: data.invId,
         productId: data.productId,
+        txNo: data.txNo,
         invTxSizes: {
           create: data.invTxSizes.map((size) => ({
             size: { connect: { id: size.sizeId } },
@@ -48,14 +50,14 @@ export class InvTxService {
       },
     });
     return txs.map((t) => ({
-      txNo: t.saleId ? (t.sale?.saleNo ?? 'N/A') : (t.invTrf?.trfNo ?? 'N/A'),
+      ...t,
+      txNo: t.saleId ? (t.sale?.saleNo ?? t.txNo) : (t.invTrf?.trfNo ?? t.txNo),
       txDate: t.saleId
         ? (t.sale?.date ?? t.createdAt)
         : (t.invTrf?.trfDate ?? t.createdAt),
       progress: t.saleId
         ? Progress.COMPLETED
         : (t.invTrf?.progress ?? Progress.COMPLETED),
-      ...t,
     }));
   }
 }

@@ -3,6 +3,7 @@ import { TxType } from '@/generated/client';
 export class InvTxCreateDto {
   invId: number;
   productId: number;
+  txNo: string;
   invTxSizes: InvTxSizeCreateDto[];
   type: TxType;
   saleId?: number;

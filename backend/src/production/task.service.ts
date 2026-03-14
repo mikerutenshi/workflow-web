@@ -128,6 +128,7 @@ export class TaskService {
             {
               invId: factory.id,
               productId: initialWork!.productId,
+              txNo: invTrf.trfNo,
               type: TxType.PRODUCTION,
               trfId: invTrf.id,
               createdBy: userId,
@@ -142,7 +143,25 @@ export class TaskService {
           //Delete the InvTrf
           const invTrfId = initialWork!.invTrf?.id;
 
-          if (invTrfId) this.invTrfService.deleteInvTrf(invTrfId, tx);
+          if (invTrfId) {
+            const invTrf = await this.invTrfService.getInvTrf(invTrfId, tx);
+            await this.invTrfService.deleteInvTrf(invTrfId, tx);
+
+            await this.invTxService.createInvTxOp(
+              {
+                invId: factory.id,
+                productId: initialWork!.productId,
+                txNo: invTrf.trfNo,
+                type: TxType.REVERSION,
+                createdBy: userId,
+                invTxSizes: initialWork!.workSizes.map((s) => ({
+                  sizeId: s.sizeId,
+                  quantity: -s.quantity,
+                })),
+              },
+              tx,
+            );
+          }
 
           // Reverse the effect: subtract quantities from inventory
           if (existingInvProduct) {
@@ -153,21 +172,6 @@ export class TaskService {
                 sizeId: size.sizeId,
                 quantity: size.quantity,
               })),
-              tx,
-            );
-
-            await this.invTxService.createInvTxOp(
-              {
-                invId: factory.id,
-                productId: initialWork!.productId,
-                type: TxType.REVERSION,
-                trfId: invTrfId,
-                createdBy: userId,
-                invTxSizes: initialWork!.workSizes.map((s) => ({
-                  sizeId: s.sizeId,
-                  quantity: -s.quantity,
-                })),
-              },
               tx,
             );
           }

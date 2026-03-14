@@ -145,6 +145,7 @@ export class InvTrfService {
               {
                 invId: item.toInvId,
                 productId: item.productId,
+                txNo: initTrfData.trfNo,
                 invTxSizes: item.invTrfItemSizes.map((size) => ({
                   sizeId: size.sizeId,
                   quantity: size.quantity,
@@ -173,6 +174,7 @@ export class InvTrfService {
                 {
                   invId: item.fromInvId,
                   productId: item.productId,
+                  txNo: initTrfData.trfNo,
                   invTxSizes: item.invTrfItemSizes.map((size) => ({
                     sizeId: size.sizeId,
                     quantity: -size.quantity,
@@ -311,8 +313,12 @@ export class InvTrfService {
     return data;
   }
 
-  async getInvTrf(id: number): Promise<InvTrfDto> {
-    const result = await this.prisma.invTrf.findUnique({
+  async getInvTrf(
+    id: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<InvTrfDto> {
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.invTrf.findUnique({
       where: { id },
       include: {
         fromInv: true,
