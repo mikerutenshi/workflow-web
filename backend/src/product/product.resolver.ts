@@ -3,7 +3,7 @@ import { Product } from '@/models/product.model';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductCreateDto } from './dto/product-create.dto';
-import { ProductDto } from './dto/product-get.dto';
+import { ProductDto } from './dto/product.dto';
 import { ProductService } from './product.service';
 import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';

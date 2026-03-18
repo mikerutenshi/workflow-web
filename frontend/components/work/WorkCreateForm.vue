@@ -46,12 +46,6 @@
         :error-messages="errors[`workSizes`]"
         :disabled="isSizesDisabled"
       >
-        <!-- <template #item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :title="`${item.raw.eu} | ${item.raw.us} | ${item.raw.uk}`"
-            ></v-list-item>
-          </template> -->
       </v-select>
 
       <v-card v-if="isShowSizeQuantities" class="mb-4" variant="outlined">

@@ -19,7 +19,7 @@
 
   <v-card rounded variant="flat">
     <v-row no-gutters class="d-flex">
-      <v-col class="d-flex flex-column align-center justify-end pa-4">
+      <v-col class="d-flex flex-column align-center justify-end">
         <div
           class="d-flex flex-column align-start justify-space-between flex-grow-1"
         >
@@ -30,7 +30,7 @@
         </div>
       </v-col>
       <v-divider vertical thickness="3" class="mx-4"></v-divider>
-      <v-col class="d-flex flex-column align-center justify-end pa-4">
+      <v-col class="d-flex flex-column align-center justify-end">
         <div
           class="d-flex flex-column align-start justify-space-between flex-grow-1"
         >
@@ -75,6 +75,7 @@
           :headers="headers"
           hide-default-footer
           items-per-page="-1"
+          :group-by="groupBy"
         >
           <template #item.type="{ item }">
             {{ $t(renderJob(item.type)) }}
@@ -90,6 +91,72 @@
           </template>
           <template #item.quantityPerTask="{ item }">
             {{ $t('label.pairs', item.quantityPerTask) }}
+          </template>
+
+          <template #group-header="{ item, columns, toggleGroup, isGroupOpen }">
+            <tr>
+              <td
+                :colspan="columns.length"
+                :class="item.depth === 1 ? 'pl-8' : ''"
+              >
+                <v-btn
+                  size="small"
+                  variant="text"
+                  :icon="isGroupOpen(item) ? '$expand' : '$next'"
+                  @click="toggleGroup(item)"
+                ></v-btn>
+                <span>{{
+                  Object.values(JOB).includes(item.value)
+                    ? $t(renderJob(item.value))
+                    : item.value
+                }}</span>
+                <span class="text-grey" v-if="item.items[0]['columns']">
+                  ({{
+                    $t(
+                      'label.pairs',
+                      item.items.reduce(
+                        (sum, item) =>
+                          sum + Number(item['columns']['quantityPerTask'] || 0),
+                        0,
+                      ),
+                    )
+                  }})</span
+                >
+              </td>
+            </tr>
+          </template>
+
+          <template #group-summary="{ item }">
+            <tr v-if="item.items[0]['columns']">
+              <td colspan="6">Subtotal</td>
+              <td colspan="2">
+                <h3>
+                  {{
+                    $t(
+                      'label.pairs',
+                      item.items.reduce(
+                        (sum, item) =>
+                          sum + Number(item['columns']['quantityPerTask'] || 0),
+                        0,
+                      ),
+                    )
+                  }}
+                </h3>
+              </td>
+              <td>
+                <h3>
+                  {{
+                    formatRupiah(
+                      item.items.reduce(
+                        (sum, item) =>
+                          sum + Number(item['columns']['payablePerTask'] || 0),
+                        0,
+                      ),
+                    )
+                  }}
+                </h3>
+              </td>
+            </tr>
           </template>
         </v-data-table>
       </v-expansion-panel-text>
@@ -152,48 +219,30 @@ const { execute, data, isFetching, error } = useQuery({
   })),
 });
 
-const display = reactive({
-  totalPayable: '',
-  totalQuantity: '',
-  artisans: [
-    {
-      payablePerARtisan: '',
-      quantityPerARtisan: '',
-      tasks: [
-        {
-          quantityPerTask: '',
-          costPerTask: '',
-          payablePerTask: '',
-          work: {
-            workSizes: [
-              {
-                size: {
-                  eu: '',
-                  us: '',
-                  uk: '',
-                },
-              },
-            ],
-          },
-          product: {
-            sku: '',
-          },
-        },
-      ],
-    },
-  ],
-});
-
 const { t } = useI18n();
 const headers = [
   { title: t('label.order_no'), key: 'work.orderNo' },
   { title: t('label.product'), key: 'work.product.sku' },
+  {
+    title: t('label.product_category'),
+    key: 'work.product.productGroup.productCategory.name',
+  },
   { title: t('label.job'), key: 'type' },
   { title: t('label.done_at'), key: 'doneAt' },
   { title: t('label.quantity'), key: 'quantityPerTask' },
   { title: t('label.cost'), key: 'costPerTask' },
   { title: t('label.payable'), key: 'payablePerTask' },
 ];
+const groupBy = ref([
+  {
+    key: 'type',
+    order: 'asc' as const,
+  },
+  {
+    key: 'work.product.productGroup.productCategory.name',
+    order: 'asc' as const,
+  },
+]);
 
 function manageDates(newDates: string[] | string) {
   form.startDate = newDates[0];

@@ -22,8 +22,8 @@
             <template v-slot:item="{ props, item }">
               <v-list-item
                 v-bind="props"
-                :title="item.raw.name"
-                :subtitle="$t(renderGender(item.raw.gender))"
+                :title="item.name"
+                :subtitle="$t(renderGender(item.gender))"
               >
                 <template #append>
                   <v-btn
@@ -31,7 +31,7 @@
                     :icon="mdiPencil"
                     size="small"
                     variant="text"
-                    @click="showDialogWithId(item.value)"
+                    @click="showDialogWithId(item.id)"
                   ></v-btn>
                 </template>
               </v-list-item>

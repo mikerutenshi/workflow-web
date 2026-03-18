@@ -28,13 +28,13 @@
               <v-list-item
                 v-bind="props"
                 :title="
-                  item.raw.name
-                    ? `${item.raw.skuNumeric} / ${item.raw.name}`
-                    : item.raw.skuNumeric
+                  item.name
+                    ? `${item.skuNumeric} / ${item.name}`
+                    : item.skuNumeric
                 "
                 :subtitle="`
-                    ${item.raw.productCategory.name} | 
-                  ${$t(renderGender(item.raw.productCategory.gender))}
+                    ${item.productCategory.name} | 
+                  ${$t(renderGender(item.productCategory.gender))}
                     `"
               >
                 <template #append>
@@ -43,7 +43,7 @@
                     :icon="mdiPencil"
                     size="small"
                     variant="text"
-                    @click="showDialogWithId(item.value)"
+                    @click="showDialogWithId(item.id)"
                   ></v-btn>
                 </template>
               </v-list-item>
@@ -80,11 +80,11 @@
         :error-messages="colorIds.errorMessage.value"
       >
         <template #item="{ item, props }">
-          <v-list-item v-bind="props" :title="item.value.name">
+          <v-list-item v-bind="props" :title="item.name">
             <template #prepend>
               <div
                 class="color-box"
-                :style="{ backgroundColor: item.value.hexCode }"
+                :style="{ backgroundColor: item.hexCode }"
               />
             </template>
           </v-list-item>
@@ -94,11 +94,11 @@
           <v-chip @click="remove(index)">
             <template #prepend>
               <div
-                :style="{ backgroundColor: item.value.hexCode }"
+                :style="{ backgroundColor: item.hexCode }"
                 class="color-box"
               ></div>
             </template>
-            <span>{{ item.value.name }}</span>
+            <span>{{ item.name }}</span>
           </v-chip>
         </template>
       </v-select>

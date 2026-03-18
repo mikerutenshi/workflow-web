@@ -391,6 +391,17 @@ type SizeToWork {
   size: Size!
 }
 
+type ProductWithCategoryDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  sku: String!
+  productGroupId: ID!
+  productGroup: ProductGroupWithCategory!
+}
+
 type WorkWithProduct {
   id: ID!
   createdBy: ID!
@@ -403,7 +414,7 @@ type WorkWithProduct {
   progress: Progress!
   note: String
   workSizes: [SizeToWork!]!
-  product: Product!
+  product: ProductWithCategoryDto!
 }
 
 type TaskWithWork {

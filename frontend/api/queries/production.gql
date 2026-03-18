@@ -160,14 +160,16 @@ query getPayroll($startDate: Date!, $endDate: Date!) {
             quantity
           }
           product {
+            id
             sku
-            # productGroup {
-            #   skuNumeric
-            #   laborCosts {
-            #     type
-            #     cost
-            #   }
-            # }
+            productGroup {
+              id
+              skuNumeric
+              productCategory {
+                id
+                name
+              }
+            }
           }
         }
       }

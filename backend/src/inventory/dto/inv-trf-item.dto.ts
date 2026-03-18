@@ -1,6 +1,6 @@
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
-import { ProductDto } from '@/product/dto/product-get.dto';
+import { ProductDto } from '@/product/dto/product.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()

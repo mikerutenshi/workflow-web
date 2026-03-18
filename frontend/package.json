@@ -30,7 +30,7 @@
     "villus": "^3.5.2",
     "vue": "latest",
     "vue-router": "latest",
-    "vuetify": "^3.7.14",
+    "vuetify": "^4.0.2",
     "zod": "^3.25.7"
   },
   "devDependencies": {
@@ -50,6 +50,6 @@
     "prettier": "^3.6.2",
     "sass": "^1.93.2",
     "typescript-eslint": "^8.38.0",
-    "vite-plugin-vuetify": "^2.0.4"
+    "vite-plugin-vuetify": "^2.1.3"
   }
 }

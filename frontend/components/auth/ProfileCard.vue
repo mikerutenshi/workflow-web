@@ -39,7 +39,7 @@
                   <v-list-item v-bind="props">
                     <template v-slot:prepend>
                       <v-img
-                        :src="item.raw.avatar"
+                        :src="item.avatar"
                         aspect-ratio="4/3"
                         width="30"
                         class="mr-4"
@@ -50,11 +50,11 @@
 
                 <template v-slot:selection="{ item }">
                   <v-img
-                    :src="item.raw.avatar"
+                    :src="item.avatar"
                     aspect-ratio="4/3"
                     width="30"
                   ></v-img>
-                  <span class="ml-4">{{ item.raw.name }}</span>
+                  <span class="ml-4">{{ item.name }}</span>
                 </template>
               </v-select>
             </v-col>

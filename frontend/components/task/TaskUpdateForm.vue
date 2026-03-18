@@ -62,13 +62,11 @@
                 <template #item="{ props, item }">
                   <v-list-item
                     v-bind="props"
-                    :title="`${item.raw.firstName} ${item.raw.lastName ?? ''}`"
+                    :title="`${item.firstName} ${item.lastName ?? ''}`"
                   >
                     <template #subtitle>
                       {{
-                        item.raw.jobs
-                          .map((job) => $t(renderJob(job)))
-                          .join(', ')
+                        item.jobs.map((job) => $t(renderJob(job))).join(', ')
                       }}
                     </template>
                   </v-list-item>

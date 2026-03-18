@@ -22,14 +22,13 @@ export class PayrollService {
             work: {
               include: {
                 workSizes: { include: { size: true } },
-                product: true,
-                // {
-                // include: {
-                //   productGroup: {
-                //     include: { productCategory: true, laborCosts: true },
-                //   },
-                // },
-                // },
+                product: {
+                  include: {
+                    productGroup: {
+                      include: { productCategory: true },
+                    },
+                  },
+                },
               },
             },
           },
@@ -83,7 +82,7 @@ export class PayrollService {
       };
     });
 
-    for (const artisan of payroll.artisans) {
+    payroll.artisans.forEach((artisan) => {
       artisan.payablePerArtisan =
         Math.round(
           artisan.tasks.reduce((sum, task) => sum + task.payablePerTask, 0) /
@@ -93,7 +92,19 @@ export class PayrollService {
         (sum, task) => sum + task.quantityPerTask,
         0,
       );
-    }
+    });
+
+    // for (const artisan of payroll.artisans) {
+    //   artisan.payablePerArtisan =
+    //     Math.round(
+    //       artisan.tasks.reduce((sum, task) => sum + task.payablePerTask, 0) /
+    //         1000,
+    //     ) * 1000;
+    //   artisan.quantityPerArtisan = artisan.tasks.reduce(
+    //     (sum, task) => sum + task.quantityPerTask,
+    //     0,
+    //   );
+    // }
 
     payroll.totalPayable = payroll.artisans.reduce(
       (sum, artisan) => sum + artisan.payablePerArtisan,
