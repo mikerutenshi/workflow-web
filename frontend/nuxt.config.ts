@@ -76,6 +76,7 @@ export default defineNuxtConfig({
         'decimal.js-light',
         'dayjs/plugin/weekday', // CJS
         'jspdf-autotable',
+        'jspdf',
         'maska',
       ],
     },
