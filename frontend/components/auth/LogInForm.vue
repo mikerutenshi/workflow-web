@@ -2,31 +2,27 @@
   <!-- <v-row align="center" class="flex-column"><AuthUsersTable /> </v-row> -->
   <v-container>
     <v-row justify="center" align="center">
-      <v-col class="translucent-background">
+      <v-col>
         <form @submit.prevent="onSubmit" class="d-flex flex-column">
-          <v-row>
-            <v-col>
-              <v-row v-if="error">
-                <v-col>
-                  <v-alert type="error">
-                    {{ errorMessage }}
-                  </v-alert>
-                </v-col>
-              </v-row>
-
+          <v-card class="translucent-background">
+            <v-card-text>
               <v-row>
                 <v-col>
+                  <v-row v-if="error">
+                    <v-col>
+                      <v-alert type="error">
+                        {{ errorMessage }}
+                      </v-alert>
+                    </v-col>
+                  </v-row>
+
                   <v-text-field
                     v-model="email.value.value"
                     label="Email"
                     class="full-width"
                     :error-messages="email.errorMessage.value"
                   />
-                </v-col>
-              </v-row>
 
-              <v-row>
-                <v-col>
                   <v-text-field
                     v-model="password.value.value"
                     :label="$t('auth.password')"
@@ -35,16 +31,11 @@
                   />
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col>
-              <v-btn :loading="isFetching" type="submit" block>{{
-                $t('auth.login')
-              }}</v-btn>
-            </v-col>
-          </v-row>
+            </v-card-text>
+            <v-btn :loading="isFetching" type="submit" block>{{
+              $t('auth.login')
+            }}</v-btn>
+          </v-card>
         </form>
       </v-col>
     </v-row>
