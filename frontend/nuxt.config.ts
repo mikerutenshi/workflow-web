@@ -15,6 +15,9 @@ export default defineNuxtConfig({
       baseUrl: process.env.BASE_URL,
     },
   },
+  experimental: {
+    payloadExtraction: true,
+  },
   modules: [
     '@pinia/nuxt',
     (_options, nuxt) => {
@@ -58,6 +61,23 @@ export default defineNuxtConfig({
       alias: {
         jspdf: 'jspdf/dist/jspdf.es.js',
       },
+    },
+    optimizeDeps: {
+      include: [
+        'maska/vue',
+        'villus',
+        'dayjs/locale/en', // CJS
+        'dayjs/locale/id', // CJS
+        '@date-io/dayjs',
+        'dayjs', // CJS
+        '@mdi/js',
+        '@vee-validate/zod',
+        'zod',
+        'decimal.js-light',
+        'dayjs/plugin/weekday', // CJS
+        'jspdf-autotable',
+        'maska',
+      ],
     },
   },
   sourcemap: true,
