@@ -24,12 +24,12 @@
           :prepend-icon="mdiPlus"
           color="primary"
           @click="dialog.isVisible = true"
-          >{{ 'Add Shoe' }}</v-btn
+          >{{ $t('btn.add_product') }}</v-btn
         >
       </v-col>
 
       <v-card variant="outlined" class="my-4">
-        <v-card-title>{{ 'Shopping Cart' }}</v-card-title>
+        <v-card-title>{{ $t('label.shopping_cart') }}</v-card-title>
         <v-card-subtitle></v-card-subtitle>
         <v-card-text>
           <v-data-table
@@ -189,7 +189,6 @@ const submitBtnTitle = computed(() =>
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 
-const errorColor = useTheme().themes.value.light.colors.error;
 const { t } = useI18n();
 const validationSchema = toTypedSchema(SaleSchema);
 const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
@@ -261,7 +260,7 @@ enum DialogContent {
 const dialog = reactive({
   isVisible: false,
   content: DialogContent.None,
-  title: 'Sale Item Form',
+  title: t('page.add_to_cart'),
 });
 
 type InvProductsData = GetInvProductsQuery['getInvProducts'][number];

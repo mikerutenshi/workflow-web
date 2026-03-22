@@ -104,10 +104,10 @@ const {
   cachePolicy: 'network-only',
 });
 const headers = [
-  { title: 'txNo', key: 'txNo' },
-  { title: 'txDate', key: 'txDate' },
-  { title: 'progress', key: 'progress' },
-  { title: 'type', key: 'type' },
+  { title: t('label.tx_no'), key: 'txNo' },
+  { title: t('label.tx_date'), key: 'txDate' },
+  { title: t('label.status'), key: 'progress' },
+  { title: t('label.type'), key: 'type' },
   { title: t('label.sizes'), key: 'invTxSizes', minWidth: '120' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ] as const;

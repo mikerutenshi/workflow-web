@@ -63,9 +63,11 @@
     "sale_edit": "Edit a Sale",
     "setting_colors": "Color Setting",
     "trf_detail_for": "Transfer Detail for {item}",
+    "tx_detail_for": "Transaction Detail for {item}",
     "item_detail_for": "Item Detail for {item}",
     "send_to": "Send {product}",
-    "delete_confirm": "Delete Confirmation"
+    "delete_confirm": "Delete Confirmation",
+    "add_to_cart": "Add to Cart"
   },
   "btn": {
     "product": "New Shoe",
@@ -83,7 +85,8 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "add_product": "Add Shoe"
   },
   "label": {
     "id": "ID",
@@ -95,7 +98,7 @@
     "sizes": "Size {'|'} Quantity",
     "quantity": "Quantity",
     "tasks": "Tasks",
-    "type": "Task",
+    "task": "Task",
     "artisan": "Artisan",
     "done_at": "Completion Date",
     "product": "Shoes",
@@ -157,7 +160,11 @@
     "msrp": "MSRP",
     "note": "Note",
     "sale_no": "Sale No.",
-    "dest_price": "Destination Price"
+    "shopping_cart": "shopping_cart",
+    "dest_price": "Destination Price",
+    "tx_no": "Transaction No.",
+    "tx_date": "Transaction Date",
+    "type": "Type"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

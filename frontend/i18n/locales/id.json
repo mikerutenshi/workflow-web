@@ -63,9 +63,11 @@
     "sale_edit": "Ubah Penjualan",
     "setting_colors": "Pengaturan Warna",
     "trf_detail_for": "Rincian Transfer untuk {item}",
+    "tx_detail_for": "Rincian Transaksi untuk {item}",
     "send_to": "Kirim {product}",
     "item_detail_for": "Rincian Barang untuk {item}",
-    "delete_confirm": "Konfirmasi Penghapusan"
+    "delete_confirm": "Konfirmasi Penghapusan",
+    "add_to_cart": "Tambahkan ke Keranjang"
   },
   "btn": {
     "product": "Sepatu Baru",
@@ -83,7 +85,8 @@
     "delete": "Hapus",
     "cancel": "Batal",
     "yes": "Iya",
-    "no": "Tidak"
+    "no": "Tidak",
+    "add_product": "Tambah Sepatu"
   },
   "label": {
     "id": "ID",
@@ -95,7 +98,7 @@
     "sizes": "Ukuran {'|'} Jumlah",
     "quantity": "Jumlah",
     "tasks": "Tugas",
-    "type": "Tugas",
+    "task": "Tugas",
     "artisan": "Perajin",
     "done_at": "Tanggal Selesai",
     "product": "Sepatu",
@@ -157,7 +160,11 @@
     "msrp": "Harga Toko",
     "note": "Catatan",
     "sale_no": "No. Penjualan",
-    "dest_price": "Harga Tujuan"
+    "shopping_cart": "Keranjang Belanja",
+    "dest_price": "Harga Tujuan",
+    "tx_no": "No. Transaksi",
+    "tx_date": "Tanggal Transaksi",
+    "type": "Tipe"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
