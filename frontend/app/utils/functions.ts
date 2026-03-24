@@ -131,10 +131,18 @@ export function calculatePrice(
   base: number | null,
   offset?: number | null,
   multiplier?: string | null,
+  discounts?: string[] | null,
 ): number | undefined {
   if (!base) return undefined;
   const finalOffset = offset ?? 0;
   const finalMultiplier = multiplier ? new Decimal(multiplier) : new Decimal(1);
-  const result = finalMultiplier.times(base + finalOffset).toNumber();
+  var result = finalMultiplier.times(base + finalOffset).toNumber();
+
+  discounts?.forEach((disc) => {
+    result = result - new Decimal(disc).times(result).toNumber();
+  });
+
+  result = Math.ceil(result / 10000) * 10000 - 100;
+
   return result;
 }

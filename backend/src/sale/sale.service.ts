@@ -6,12 +6,15 @@ import { Operation } from '@/models/operation.enum';
 import { generateId } from '@/utils/functions.util';
 import { SaleUpdateDto } from './dto/sale-update.dto';
 import { InvProductService } from '@/inventory/inv-product.service';
+import { InvTxService } from '@/inventory/inv-tx.service';
+import { TxType } from '@/generated/client';
 
 @Injectable()
 export class SaleService {
   constructor(
     private prisma: PrismaService,
     private invProductService: InvProductService,
+    private invTxService: InvTxService,
   ) {}
 
   async createSale(data: SaleCreateDto): Promise<Sale> {
@@ -43,7 +46,10 @@ export class SaleService {
         include: {
           saleItems: {
             include: {
-              saleItemSizes: { include: { size: true } },
+              saleItemSizes: {
+                include: { size: true },
+                orderBy: [{ sizeId: 'asc' }],
+              },
             },
           },
         },
@@ -55,6 +61,22 @@ export class SaleService {
             item.invId,
             item.productId,
             item.saleItemSizes,
+            tx,
+          );
+
+          await this.invTxService.createInvTxOp(
+            {
+              invId: item.invId,
+              productId: item.productId,
+              txNo: saleResult.saleNo,
+              type: TxType.SALE,
+              saleId: saleResult.id,
+              createdBy: data.createdBy,
+              invTxSizes: item.saleItemSizes.map((size) => ({
+                sizeId: size.sizeId,
+                quantity: -size.quantity,
+              })),
+            },
             tx,
           );
         }),
@@ -98,7 +120,10 @@ export class SaleService {
       include: {
         saleItems: {
           include: {
-            saleItemSizes: { include: { size: true } },
+            saleItemSizes: {
+              include: { size: true },
+              orderBy: [{ sizeId: 'asc' }],
+            },
           },
         },
       },
@@ -107,27 +132,57 @@ export class SaleService {
 
   async deleteSale(id: number): Promise<Boolean> {
     this.prisma.$transaction(async (tx) => {
-      const saleItems = await tx.saleItem.findMany({
-        where: { saleId: id },
-        include: { saleItemSizes: true },
-      });
+      // const saleItems = await tx.saleItem.findMany({
+      //   where: { saleId: id },
+      //   include: { saleItemSizes: true },
+      // });
 
-      await Promise.all(
-        saleItems.map((product) => {
-          this.invProductService.incrementInvProductOp(
-            product.invId,
-            product.productId,
-            product.saleItemSizes,
-            tx,
-          );
-        }),
-      );
-
-      await tx.sale.delete({
-        where: {
-          id: id,
+      const sale = await tx.sale.findUnique({
+        where: { id },
+        include: {
+          saleItems: {
+            include: {
+              saleItemSizes: {
+                include: { size: true },
+                orderBy: [{ sizeId: 'asc' }],
+              },
+            },
+          },
         },
       });
+
+      if (sale) {
+        await Promise.all(
+          sale.saleItems.map(async (item) => {
+            await this.invProductService.incrementInvProductOp(
+              item.invId,
+              item.productId,
+              item.saleItemSizes,
+              tx,
+            );
+            await this.invTxService.createInvTxOp(
+              {
+                invId: item.invId,
+                productId: item.productId,
+                txNo: sale.saleNo,
+                type: TxType.REVERSION,
+                createdBy: sale.createdBy,
+                invTxSizes: item.saleItemSizes.map((size) => ({
+                  sizeId: size.sizeId,
+                  quantity: size.quantity,
+                })),
+              },
+              tx,
+            );
+          }),
+        );
+
+        await tx.sale.delete({
+          where: {
+            id: id,
+          },
+        });
+      }
     });
     return true;
   }
@@ -144,7 +199,10 @@ export class SaleService {
       include: {
         saleItems: {
           include: {
-            saleItemSizes: { include: { size: true } },
+            saleItemSizes: {
+              include: { size: true },
+              orderBy: [{ sizeId: 'asc' }],
+            },
           },
         },
       },
@@ -157,7 +215,10 @@ export class SaleService {
       include: {
         saleItems: {
           include: {
-            saleItemSizes: { include: { size: true } },
+            saleItemSizes: {
+              include: { size: true },
+              orderBy: [{ sizeId: 'asc' }],
+            },
           },
         },
       },

@@ -21,7 +21,10 @@ export class PayrollService {
             laborCost: true,
             work: {
               include: {
-                workSizes: { include: { size: true } },
+                workSizes: {
+                  include: { size: true },
+                  orderBy: [{ sizeId: 'asc' }],
+                },
                 product: {
                   include: {
                     productGroup: {

@@ -42,7 +42,10 @@ export class InvTrfService {
       include: {
         fromInv: true,
         toInv: true,
-        invTrfItemSizes: { include: { size: true } },
+        invTrfItemSizes: {
+          include: { size: true },
+          orderBy: [{ sizeId: 'asc' }],
+        },
       },
     });
 
@@ -337,7 +340,10 @@ export class InvTrfService {
                 productColors: { include: { color: true } },
               },
             },
-            invTrfItemSizes: { include: { size: true } },
+            invTrfItemSizes: {
+              include: { size: true },
+              orderBy: [{ sizeId: 'asc' }],
+            },
           },
         },
       },

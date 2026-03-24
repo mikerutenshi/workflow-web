@@ -34,10 +34,18 @@ export function calculatePrice(
   base: number | null,
   offset?: number | null,
   multiplier?: Prisma.Decimal | null,
+  discounts?: Prisma.Decimal[] | null,
 ): number | undefined {
   if (!base) return undefined;
   const finalOffset = offset ?? 0;
   const finalMultiplier = multiplier ? multiplier : new Prisma.Decimal(1);
-  const result = finalMultiplier.times(base + finalOffset).toNumber();
+  var result = finalMultiplier.times(base + finalOffset).toNumber();
+
+  discounts?.forEach((disc) => {
+    result = result - disc.times(result).toNumber();
+  });
+
+  result = Math.ceil(result / 10000) * 10000 - 100;
+
   return result;
 }

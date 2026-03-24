@@ -387,6 +387,7 @@ function destPricePipe(msrp: number | null | undefined): number {
       msrp ?? 0,
       computeToInv.value.priceFormula?.offset,
       computeToInv.value?.priceFormula?.multiplier,
+      computeToInv.value?.priceFormula?.discounts,
     );
     return invPrice ?? 0;
   } else {

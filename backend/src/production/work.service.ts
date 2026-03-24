@@ -76,7 +76,7 @@ export class WorkService {
           include: {
             size: true,
           },
-          orderBy: { size: { eu: 'asc' } },
+          orderBy: [{ sizeId: 'asc' }],
         },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: true,
@@ -93,7 +93,7 @@ export class WorkService {
       include: {
         workSizes: {
           include: { size: true },
-          orderBy: { size: { eu: 'asc' } },
+          orderBy: [{ sizeId: 'asc' }],
         },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: true,

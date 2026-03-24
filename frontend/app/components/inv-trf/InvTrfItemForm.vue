@@ -243,6 +243,7 @@ watchEffect(() => {
     invProduct?.product.productGroup.msrp ?? 0,
     selectedInv?.priceFormula?.offset,
     selectedInv?.priceFormula?.multiplier,
+    selectedInv?.priceFormula?.discounts,
   );
   displayModel.price = invPrice;
   console.log(`InvPrice: ${invPrice}`);

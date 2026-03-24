@@ -117,9 +117,9 @@ const {
   variables: { invId: props.inventoryId ?? '' },
   paused: ({ invId }) => !invId,
   tags: [CACHE_INV_PRODUCTS],
-  onData(data) {
-    console.log('My Data' + JSON.stringify(data.getInvProducts));
-  },
+  // onData(data) {
+  //   console.log('My Data' + JSON.stringify(data.getInvProducts));
+  // },
 });
 
 watch(

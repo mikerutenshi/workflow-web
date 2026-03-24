@@ -24,6 +24,7 @@ export class InvProductService {
         include: {
           invProductSizes: {
             include: { size: true },
+            orderBy: [{ sizeId: 'asc' }],
           },
         },
       });
@@ -50,10 +51,14 @@ export class InvProductService {
         },
         invProductSizes: {
           include: { size: true },
+          orderBy: [{ sizeId: 'asc' }],
         },
         invTrfItems: {
           include: {
-            invTrfItemSizes: { include: { size: true } },
+            invTrfItemSizes: {
+              include: { size: true },
+              orderBy: [{ sizeId: 'asc' }],
+            },
           },
           where: {
             progress: { not: Progress.COMPLETED },
@@ -61,7 +66,9 @@ export class InvProductService {
         },
         inventory: {
           select: {
-            priceFormula: { select: { offset: true, multiplier: true } },
+            priceFormula: {
+              select: { offset: true, multiplier: true, discounts: true },
+            },
           },
         },
       },
@@ -98,6 +105,7 @@ export class InvProductService {
         product.product.productGroup.msrp,
         inventory.priceFormula?.offset,
         inventory.priceFormula?.multiplier,
+        inventory.priceFormula?.discounts,
       ),
     })) as InvProductDto[];
   }
@@ -122,6 +130,7 @@ export class InvProductService {
       include: {
         invProductSizes: {
           include: { size: true },
+          orderBy: [{ sizeId: 'asc' }],
         },
       },
     });
@@ -165,6 +174,7 @@ export class InvProductService {
       include: {
         invProductSizes: {
           include: { size: true },
+          orderBy: [{ sizeId: 'asc' }],
         },
       },
     });

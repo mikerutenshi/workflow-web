@@ -30,7 +30,9 @@ export class InvTxService {
         trfId: data.trfId,
         createdBy: data.createdBy,
       },
-      include: { invTxSizes: { include: { size: true } } },
+      include: {
+        invTxSizes: { include: { size: true }, orderBy: [{ sizeId: 'asc' }] },
+      },
     });
   }
 
@@ -39,7 +41,7 @@ export class InvTxService {
       include: {
         invTxSizes: {
           include: { size: true },
-          orderBy: { size: { eu: 'asc' } },
+          orderBy: [{ sizeId: 'asc' }],
         },
         sale: true,
         invTrf: true,

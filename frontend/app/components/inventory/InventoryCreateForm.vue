@@ -58,23 +58,23 @@
 
       <v-card class="mb-4" variant="outlined">
         <v-card-title>
-          {{ 'Store Wide Price Formula' }}
+          {{ $t('label.store_price_formula') }}
         </v-card-title>
         <v-card-subtitle>
-          {{ '(Base price  + Offset) x Multiplier = Price' }}
+          {{ $t('label.price_formula_equation') }}
         </v-card-subtitle>
         <v-card-text>
           <v-row>
             <v-col>
               <v-text-field
-                label="Offset"
+                :label="$t('label.price_offset')"
                 v-maska:offsetUnmasked.unmasked="priceOffsetMask"
                 v-model="priceFormulaModel.offset"
                 inputmode="number"
                 :error-messages="offset.errorMessage.value"
               />
               <v-text-field
-                label="Multiplier"
+                :label="$t('label.price_multiplier')"
                 v-maska:multiplierUnmasked.unmasked="multiplierMask"
                 v-model="priceFormulaModel.multiplier"
                 inputmode="numeric"
@@ -87,7 +87,7 @@
             <v-col cols="9">
               <v-text-field
                 v-for="(_, index) in priceFormulaModel.discounts"
-                :label="`Discount ${index + 1}`"
+                :label="`${$t('label.discount')} ${index + 1}`"
                 v-maska="percentageMask"
                 :key="index"
                 clearable
