@@ -3,10 +3,10 @@
     <ComingSoon></ComingSoon>
   </template>
   <template v-else>
-    <v-row v-if="invTrfsError" class="flex-grow-0">
+    <v-row v-if="invTrfsError || deleteError" class="flex-grow-0">
       <v-col>
         <v-alert type="error">
-          {{ extractGraphQlError(invTrfsError) }}
+          {{ extractGraphQlError(invTrfsError || deleteError) }}
         </v-alert>
       </v-col>
     </v-row>
@@ -95,29 +95,19 @@
                 >
                   <v-list-item-title>{{ t('btn.print') }}</v-list-item-title>
                 </v-list-item>
+                <v-list-item
+                  :prepend-icon="mdiTrashCan"
+                  @click="showDeleteDialog(item.id)"
+                  class="text-error"
+                >
+                  <v-list-item-title>{{ t('btn.delete') }}</v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-menu>
           </template>
         </v-data-table>
       </v-col>
     </v-row>
-
-    <!-- <v-dialog v-model="dialogView" max-width="1200px">
-      <v-card>
-        <v-toolbar>
-          <v-toolbar-title>
-            {{
-              t('page.item_detail_for', { item: selectItemObject?.trfNo })
-            }}</v-toolbar-title
-          >
-        </v-toolbar>
-        <v-container class="d-flex flex-column">
-          <InvProductTrfItemTable
-            :inv-trf-dto="selectItemObject"
-          ></InvProductTrfItemTable>
-        </v-container>
-      </v-card>
-    </v-dialog> -->
 
     <ActionEditItemDialog
       :dialogTitle="dialogModel.title"
@@ -129,15 +119,40 @@
         :is-readonly="dialogModel.isReadonly"
       ></InvTrfForm>
     </ActionEditItemDialog>
+
+    <ActionConfirmDeleteDialog
+      v-model="confirmDeleteDialog"
+      @confirm="if (dialogModel.id) executeDelete({ id: dialogModel.id });"
+      :loading="isDeleting"
+    ></ActionConfirmDeleteDialog>
+
+    <ActionShowSnack
+      v-model="snack.isVisible"
+      :message="snack.message"
+      :color="snack.color"
+      @close-dialog="confirmDeleteDialog = false"
+    ></ActionShowSnack>
   </template>
 </template>
 
 <script setup lang="ts">
-import { mdiDotsVertical, mdiMagnify, mdiPencil, mdiPrinter } from '@mdi/js';
-import { useQuery } from 'villus';
+import {
+  mdiDotsVertical,
+  mdiMagnify,
+  mdiPencil,
+  mdiPrinter,
+  mdiTrashCan,
+} from '@mdi/js';
+import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetInvTrfsDocument, type InvTrfDto } from '~/api/generated/types';
+import {
+  DeleteInvTrfDocument,
+  GetInvTrfsDocument,
+  type InvTrfDto,
+} from '~/api/generated/types';
+const { t } = useI18n();
+const adapter = useDate();
 
 const authStore = useAuthStore();
 const clearance = authStore.user?.role.clearanceLevel ?? 6;
@@ -165,6 +180,12 @@ const dialogStore = useDialogStore();
 const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
 
 const selectItemObject = shallowRef<InvTrfDto | null>(null);
+const confirmDeleteDialog = ref(false);
+const snack = reactive({
+  isVisible: false,
+  message: t('status.deleted'),
+  color: SnackColor.Success,
+});
 
 const {
   execute: executeFetch,
@@ -176,8 +197,18 @@ const {
   tags: [CACHE_INV_TRFS],
 });
 
-const { t } = useI18n();
-const adapter = useDate();
+const {
+  execute: executeDelete,
+  error: deleteError,
+  isFetching: isDeleting,
+} = useMutation(DeleteInvTrfDocument, {
+  onData(data) {
+    snack.message = t('status.deleted');
+    snack.isVisible = true;
+    executeFetch();
+  },
+  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
+});
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
@@ -218,6 +249,11 @@ function showDialog(content: DialogContent, id?: string | undefined) {
 function closeDialog() {
   dialogModel.isVisible = false;
   executeFetch();
+}
+
+function showDeleteDialog(invTrfId: string) {
+  dialogModel.id = invTrfId;
+  confirmDeleteDialog.value = true;
 }
 
 watch(isCreateDialogOpen, (open) => {

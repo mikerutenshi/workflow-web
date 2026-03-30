@@ -94,13 +94,14 @@
   </ActionEditItemDialog>
 
   <ActionConfirmDeleteDialog
-    v-model="dialogConfirmDelete"
+    v-model="confirmDeleteDialog"
     @confirm="if (dialog.saleId) executeDelete({ id: dialog.saleId });"
   ></ActionConfirmDeleteDialog>
   <ActionShowSnack
     v-model="snack.isVisible"
     :message="snack.message"
     :color="snack.color"
+    @close-dialog="confirmDeleteDialog = false"
   ></ActionShowSnack>
 </template>
 
@@ -140,7 +141,7 @@ const dialog = reactive({
   isVisible: false,
   isReadonly: false,
 });
-const dialogConfirmDelete = ref(false);
+const confirmDeleteDialog = ref(false);
 const invId = ref<string | null>(null);
 const table = reactive({
   search: '',
@@ -258,7 +259,7 @@ function showDialog(content: DialogContent, saleId?: string) {
 
 function deleteItem(saleId: string) {
   dialog.saleId = saleId;
-  dialogConfirmDelete.value = true;
+  confirmDeleteDialog.value = true;
 }
 
 // watchEffect(() => {

@@ -6,7 +6,9 @@
         $t('label.delete_confirm', { item: itemTitle })
       }}</v-card-text>
       <v-card-actions>
-        <v-btn @click="handleConfirm">{{ $t('btn.yes') }}</v-btn>
+        <v-btn :loading="loading" @click="handleConfirm">{{
+          $t('btn.yes')
+        }}</v-btn>
         <v-btn @click="dialog = false">{{ $t('btn.no') }}</v-btn>
       </v-card-actions>
     </v-card>
@@ -23,6 +25,10 @@ const props = defineProps({
   itemTitle: {
     type: String,
     default: '',
+  },
+  loading: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(['confirm']);

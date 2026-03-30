@@ -138,12 +138,6 @@
         ></ActionPrintInvTrf>
       </template>
       <template v-else>
-        <ActionDelete
-          v-if="props.invTrfId"
-          @click="deleteInvTrf(props.invTrfId)"
-          :item-title="invTrfData?.getInvTrf.trfNo"
-          :loading="isDeleting"
-        ></ActionDelete>
         <ActionConfirm :loading="props.invTrfId ? isUpdating : isCreating">{{
           submitBtnTitle
         }}</ActionConfirm>
