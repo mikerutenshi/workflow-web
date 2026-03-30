@@ -1,5 +1,12 @@
 <template>
   <v-row class="flex-grow-0">
+    <v-row v-if="deleteError">
+      <v-col>
+        <v-alert type="error">
+          {{ extractGraphQlError(deleteError) }}
+        </v-alert>
+      </v-col>
+    </v-row>
     <v-col>
       <ActionPickDate
         v-model="dates"
@@ -142,6 +149,14 @@
             >
               <v-list-item-title>{{ $t('page.task_edit') }}</v-list-item-title>
             </v-list-item>
+
+            <v-list-item
+              :prepend-icon="mdiTrashCan"
+              @click="showDeleteDialog(item.id)"
+              class="text-error"
+            >
+              <v-list-item-title>{{ t('btn.delete') }}</v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
       </template>
@@ -184,44 +199,19 @@
       ></TaskUpdateForm>
     </template>
   </ActionEditItemDialog>
-  <!-- <v-dialog
-    v-model="dialog.isVisible"
-    fullscreen
-    transition="dialog-bottom-transition"
-  >
-    <v-card>
-      <v-toolbar>
-        <v-btn :icon="mdiClose" @click="closeDialog"></v-btn>
-        <v-toolbar-title>{{
-          dialog.content === DialogContent.CreateWork
-            ? $t('page.work_create')
-            : dialog.content === DialogContent.EditWork
-              ? $t('page.work_edit')
-              : dialog.content === DialogContent.EditTask
-                ? $t('page.task_edit')
-                : ''
-        }}</v-toolbar-title>
-      </v-toolbar>
 
-      <v-container class="h-100 d-flex flex-column">
-        <template v-if="dialog.content === DialogContent.CreateWork">
-          <WorkCreateForm @close-dialog="save"></WorkCreateForm>
-        </template>
-        <template v-if="dialog.content === DialogContent.EditWork">
-          <WorkCreateForm
-            :work-id="currentWorkId"
-            @close-dialog="save"
-          ></WorkCreateForm>
-        </template>
-        <template v-if="dialog.content === DialogContent.EditTask">
-          <TaskUpdateForm
-            :work-id="currentWorkId"
-            @close-dialog="save"
-          ></TaskUpdateForm>
-        </template>
-      </v-container>
-    </v-card>
-  </v-dialog> -->
+  <ActionConfirmDeleteDialog
+    v-model="confirmDeleteDialog"
+    @confirm="if (currentWorkId) executeDelete({ id: currentWorkId });"
+    :loading="isDeleting"
+  ></ActionConfirmDeleteDialog>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @close-dialog="confirmDeleteDialog = false"
+  ></ActionShowSnack>
 </template>
 
 <style scoped lang="sass">
@@ -233,23 +223,23 @@
 
 <script setup lang="ts">
 import {
-  mdiClose,
+  mdiDotsVertical,
   mdiMagnify,
   mdiPencil,
-  mdiCheckAll,
-  mdiProgressClock,
   mdiTimerSand,
-  mdiTimerSandEmpty,
   mdiTimerSandComplete,
-  mdiFileDocumentEdit,
-  mdiFileDocumentEditOutline,
-  mdiDotsVertical,
+  mdiTimerSandEmpty,
+  mdiTrashCan,
 } from '@mdi/js';
 import dayjs from 'dayjs';
-import { useQuery } from 'villus';
+import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
-import { GetWorksDocument, Progress } from '~/api/generated/types';
+import {
+  DeleteWorkDocument,
+  GetWorksDocument,
+  Progress,
+} from '~/api/generated/types';
 import { CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
@@ -318,6 +308,20 @@ const {
     endDate: form.endDate,
   })),
 });
+
+const {
+  execute: executeDelete,
+  error: deleteError,
+  isFetching: isDeleting,
+} = useMutation(DeleteWorkDocument, {
+  onData(data) {
+    snack.message = t('status.deleted');
+    snack.isVisible = true;
+    executeFetch();
+  },
+  clearCacheTags: [CACHE_WORKS],
+});
+
 const computedWorks = computed(() => {
   return data.value?.getWorks.map((work) => {
     var displayProgress = Progress.Initiated;
@@ -351,9 +355,16 @@ const headers: ReadOnlyHeaders = [
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
+const confirmDeleteDialog = ref(false);
+const snack = reactive({
+  isVisible: false,
+  message: t('status.deleted'),
+  color: SnackColor.Success,
+});
+
 function manageDates(newDates: string[] | string) {
-  form.startDate = newDates[0];
-  form.endDate = newDates[newDates.length - 1];
+  form.startDate = newDates[0] ?? '';
+  form.endDate = newDates[newDates.length - 1] ?? '';
 
   sessionStorage.setItem(
     'workTableDates',
@@ -398,6 +409,11 @@ function showEditTaskDialog(workId: string) {
   currentWorkId.value = workId;
   dialog.content = DialogContent.EditTask;
   dialog.isVisible = true;
+}
+
+function showDeleteDialog(workId: string) {
+  currentWorkId.value = workId;
+  confirmDeleteDialog.value = true;
 }
 
 // watch(isFormDialogOpen, (isOpen) => {

@@ -1,10 +1,10 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
-      <v-row v-if="updateError || createError || deleteError">
+      <v-row v-if="updateError || createError">
         <v-col>
           <v-alert type="error">
-            {{ extractGraphQlError(updateError || createError || deleteError) }}
+            {{ extractGraphQlError(updateError || createError) }}
           </v-alert>
         </v-col>
       </v-row>
@@ -84,11 +84,6 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <ActionDelete
-        v-if="workId"
-        :loading="isDeleting"
-        @click="executeDelete({ id: workId })"
-      ></ActionDelete>
       <ActionConfirm :loading="isCreating || isUpdating">{{
         submitBtnTitle
       }}</ActionConfirm>
@@ -109,7 +104,6 @@ import { useMutation, useQuery } from 'villus';
 import { useRoute, useRouter } from 'vue-router';
 import {
   CreateWorkDocument,
-  DeleteWorkDocument,
   Gender,
   GetProductsDocument,
   GetSizesDocument,
@@ -184,19 +178,19 @@ const {
     snack.isVisible = true;
   },
 });
-const {
-  execute: executeDelete,
-  isFetching: isDeleting,
-  error: deleteError,
-} = useMutation(DeleteWorkDocument, {
-  clearCacheTags: [CACHE_WORKS],
-  onData(data) {
-    if (data.deleteWork) {
-      snack.message = t('status.deleted');
-      snack.isVisible = true;
-    }
-  },
-});
+// const {
+//   execute: executeDelete,
+//   isFetching: isDeleting,
+//   error: deleteError,
+// } = useMutation(DeleteWorkDocument, {
+//   clearCacheTags: [CACHE_WORKS],
+//   onData(data) {
+//     if (data.deleteWork) {
+//       snack.message = t('status.deleted');
+//       snack.isVisible = true;
+//     }
+//   },
+// });
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';

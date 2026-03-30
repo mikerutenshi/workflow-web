@@ -93,7 +93,7 @@ docker compose push
 docker compose pull
 docker image prune
 
-TODO: Move all delete commands from form to tables.
+TODO: Move all delete commands for work
 Create migration files for production.
 Temporarily re-disjoint production from InvTrf.
 Add Notes to major transactions
