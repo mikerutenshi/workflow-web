@@ -210,7 +210,7 @@
     v-model="snack.isVisible"
     :message="snack.message"
     :color="snack.color"
-    @close-dialog="confirmDeleteDialog = false"
+    @on-confirm="confirmDeleteDialog = false"
   ></ActionShowSnack>
 </template>
 

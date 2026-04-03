@@ -9,6 +9,11 @@ fragment AuthUser on User {
     clearanceLevel
   }
 }
+mutation createUser($data: UserCreateDto!) {
+  createUser(data: $data) {
+    ...AuthUser
+  }
+}
 
 mutation logIn($data: LogInDto!) {
   logIn(data: $data) {
@@ -31,5 +36,13 @@ query me {
 query getUsers {
   getUsers {
     ...AuthUser
+  }
+}
+
+query getRoles {
+  getRoles {
+    id
+    name
+    description
   }
 }

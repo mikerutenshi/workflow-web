@@ -88,7 +88,7 @@
   <ActionShowSnack
     v-model="snackbar"
     :message="snackbarMsg"
-    @close-dialog="emit('close-dialog')"
+    @on-confirm="emit('close-dialog')"
   ></ActionShowSnack>
 </template>
 

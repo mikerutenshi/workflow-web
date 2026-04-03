@@ -93,7 +93,7 @@
   <ActionShowSnack
     v-model="snack.isVisible"
     :message="snack.message"
-    @close-dialog="emit('close-dialog')"
+    @on-confirm="emit('close-dialog')"
   ></ActionShowSnack>
 </template>
 

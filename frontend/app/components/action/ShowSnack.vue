@@ -6,7 +6,7 @@
     :text="props.message"
   >
     <template #actions>
-      <v-btn color="white" @click="emit('close-dialog')">
+      <v-btn color="white" @click="emit('on-confirm')">
         {{ $t('label.ok') }}
       </v-btn>
     </template>
@@ -30,11 +30,11 @@ const props = defineProps({
     default: 'Snackbar Success',
   },
 });
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['on-confirm']);
 
 watch(isVisible, (newState) => {
   if (newState == false) {
-    emit('close-dialog');
+    emit('on-confirm');
   }
 });
 </script>

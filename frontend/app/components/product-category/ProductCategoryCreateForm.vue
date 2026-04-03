@@ -59,7 +59,7 @@
     v-model="snack.isVisible"
     :message="snack.message"
     :color="snack.color"
-    @close-dialog="emit('close-dialog')"
+    @on-confirm="emit('close-dialog')"
   ></ActionShowSnack>
 </template>
 

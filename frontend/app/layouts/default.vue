@@ -18,7 +18,7 @@
         @click="dialogStore.openFormDialog()"
       >
         <v-icon left :icon="mdiPlus"></v-icon>
-        {{ t(`${createBtnTitles[currentRouteName]}`) }}
+        {{ t(`${createBtnTitles.currentRouteName}`) }}
       </v-btn>
 
       <v-btn

@@ -1,36 +1,32 @@
 <template>
-  <!-- <v-row align="center" class="flex-column"><AuthUsersTable /> </v-row> -->
   <v-container>
     <v-row justify="center" align="center">
       <v-col>
         <form @submit.prevent="onSubmit" class="d-flex flex-column">
           <v-card class="translucent-background">
             <v-card-text>
-              <v-row>
+              <v-row v-if="error">
                 <v-col>
-                  <v-row v-if="error">
-                    <v-col>
-                      <v-alert type="error">
-                        {{ errorMessage }}
-                      </v-alert>
-                    </v-col>
-                  </v-row>
-
-                  <v-text-field
-                    v-model="email.value.value"
-                    label="Email"
-                    class="full-width"
-                    :error-messages="email.errorMessage.value"
-                  />
-
-                  <v-text-field
-                    v-model="password.value.value"
-                    :label="$t('auth.password')"
-                    class="full-width"
-                    :error-messages="password.errorMessage.value"
-                  />
+                  <v-alert type="error">
+                    {{ extractGraphQlError(error) }}
+                  </v-alert>
                 </v-col>
               </v-row>
+
+              <v-text-field
+                v-model="email.value.value"
+                label="Email"
+                :error-messages="email.errorMessage.value"
+              />
+
+              <v-text-field
+                v-model="password.value.value"
+                :label="$t('auth.password')"
+                :append-icon="showPassword ? mdiEye : mdiEye"
+                @click:append="showPassword = !showPassword"
+                :type="showPassword ? 'text' : 'password'"
+                :error-messages="password.errorMessage.value"
+              />
             </v-card-text>
             <v-btn :loading="isFetching" type="submit" block>{{
               $t('auth.login')
@@ -55,15 +51,9 @@ import { useMutation } from 'villus';
 import { useAuthStore } from '~/stores/auth';
 import { LogInDocument } from '~/api/generated/types';
 import { AuthSchema } from '~/validation/schema';
+import { mdiEye } from '@mdi/js';
 
-const errorMessage = ref('');
-const { data, isFetching, execute, error } = useMutation(LogInDocument, {
-  onError(err) {
-    errorMessage.value =
-      (err.graphqlErrors?.[0]?.extensions?.['originalError'] as string) ??
-      err.message;
-  },
-});
+const { data, isFetching, execute, error } = useMutation(LogInDocument);
 
 const validationSchema = toTypedSchema(AuthSchema);
 const { handleSubmit, values } = useForm({
@@ -78,6 +68,7 @@ const onSubmit = handleSubmit((values) => {
 
 const authStore = useAuthStore();
 const localePath = useLocalePath();
+const showPassword = ref(false);
 
 watch(data, async (loginData) => {
   if (loginData?.logIn) {

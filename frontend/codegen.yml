@@ -1,8 +1,8 @@
 overwrite: true
 schema: 'http://localhost:3001/graphql'
-documents: 'api/queries/*.gql'
+documents: 'app/api/queries/*.gql'
 generates:
-  api/generated/types.ts:
+  app/api/generated/types.ts:
     plugins:
       - typescript
       - typescript-operations

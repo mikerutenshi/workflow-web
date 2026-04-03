@@ -223,8 +223,9 @@
       },
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom ieu wajib diisi",
-      "custom": "tanggal kaluar tina rentang ditarima",
-      "invalid_enum_value": "Nilai di luar daptar. Diharapkeun {options}"
+      "invalid_enum_value": "Nilai di luar daptar. Diharapkeun {options}",
+      "repeat_password_mismatch": "Sandi anu diulang teu sarua",
+      "date_outside_range": "tanggal kaluar tina rentang anu ditarima"
     },
     "types": {
       "object": "Jenisna kudu obyék",

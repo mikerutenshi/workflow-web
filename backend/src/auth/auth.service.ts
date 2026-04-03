@@ -31,6 +31,12 @@ export class AuthService {
     });
   }
 
+  async getRoles(): Promise<Role[]> {
+    let roles = await this.prisma.role.findMany();
+    roles.shift();
+    return roles;
+  }
+
   async createUser(data: UserCreateDto): Promise<User> {
     const password = await bcrypt.hash(data.password, 12);
 

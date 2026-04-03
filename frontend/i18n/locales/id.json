@@ -223,8 +223,9 @@
       },
       "invalid_type": "Jenis input salah",
       "invalid_type_received_undefined": "Kolom wajib diisi",
-      "custom": "Tanggal di luar rentang yang diterima",
-      "invalid_enum_value": "Nilai di luar daftar. Diharapkan {options}"
+      "invalid_enum_value": "Nilai di luar daftar. Diharapkan {options}",
+      "repeat_password_mismatch": "Password yang diulang tidak sama",
+      "date_outside_range": "Tanggal di luar rentang yang diterima"
     },
     "types": {
       "object": "Tipe harus berupa objek",

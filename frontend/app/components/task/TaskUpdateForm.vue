@@ -87,7 +87,7 @@
   <ActionShowSnack
     v-model="snackbar"
     :message="$t('status.saved')"
-    @close-dialog="emit('close-dialog')"
+    @on-confirm="emit('close-dialog')"
   ></ActionShowSnack>
 </template>
 

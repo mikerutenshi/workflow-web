@@ -10,17 +10,35 @@ import { InvType, Job, Gender, Progress } from '~/api/generated/types';
 //     z.config(z.locales.id());
 //   }
 // }
+const positiveNumberString = z
+  .string()
+  .trim()
+  .refine((val) => !isNaN(Number(val)))
+  .refine((num) => Number(num) > 0);
 
 export const AuthSchema = z.object({
   email: z.string().email().trim(),
   password: z.string().min(8).trim(),
 });
 
-const positiveNumberString = z
-  .string()
-  .trim()
-  .refine((val) => !isNaN(Number(val)))
-  .refine((num) => Number(num) > 0);
+export const RegisterSchema = z
+  .object({
+    roleId: positiveNumberString,
+    email: z.string().email().trim(),
+    firstName: z.string().min(1).trim(),
+    lastName: z.string().trim().optional().nullable(),
+    password: z.string().min(8).trim(),
+    repeatPassword: z.string().min(8).trim(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.password !== data.repeatPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['repeatPassword'],
+        params: { i18n: 'zodI18n.errors.repeat_password_mismatch' },
+      });
+    }
+  });
 
 export const ArtisanSchema = z.object({
   firstName: z.string().min(1).trim(),
@@ -121,6 +139,7 @@ export function createTaskSchema(
                 code: z.ZodIssueCode.custom,
                 message: undefined,
                 path: ['doneAt'],
+                params: { i18n: 'zodI18n.errors.date_outside_range' },
               });
             }
           }),
