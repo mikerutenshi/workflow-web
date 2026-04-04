@@ -8,10 +8,10 @@
               {{ 'Register a New User' }}
             </v-card-title>
             <v-card-text>
-              <v-row v-if="createError">
+              <v-row v-if="createError || rolesError">
                 <v-col>
                   <v-alert type="error">
-                    {{ extractGraphQlError(createError) }}
+                    {{ extractGraphQlError(createError || rolesError) }}
                   </v-alert>
                 </v-col>
               </v-row>
@@ -74,6 +74,10 @@
                 hint="At least 8 characters"
                 :error-messages="repeatPassword.errorMessage.value"
               />
+              <v-row>
+                <v-spacer></v-spacer>
+                <NuxtTurnstile v-model="token" />
+              </v-row>
             </v-card-text>
             <v-btn type="submit" block :loading="isCreating">{{
               'Register'
@@ -120,11 +124,6 @@
         </v-card>
       </v-col>
     </v-row>
-    <!-- <v-row>
-      <v-col>
-        <AuthUserTable></AuthUserTable>
-      </v-col>
-    </v-row> -->
   </v-container>
   <ActionShowSnack
     v-model="snack.isVisible"
@@ -143,18 +142,13 @@
 </style>
 
 <script setup lang="ts">
-import { useMutation, useQuery } from 'villus';
-import { useAuthStore } from '~/stores/auth';
-import {
-  CreateUserDocument,
-  GetRolesDocument,
-  LogInDocument,
-  type UserCreateDto,
-} from '~/api/generated/types';
-import { AuthSchema, RegisterSchema } from '~/validation/schema';
-import { CACHE_ROLES } from '~/utils/cache-tags';
 import { mdiEye, mdiEyeOff } from '@mdi/js';
+import { useMutation, useQuery } from 'villus';
+import { CreateUserDocument, GetRolesDocument } from '~/api/generated/types';
+import { CACHE_ROLES } from '~/utils/cache-tags';
+import { RegisterSchema } from '~/validation/schema';
 
+const token = ref('');
 const { t } = useI18n();
 const snack = reactive({
   isVisible: false,
@@ -193,9 +187,14 @@ const lastName = useField('lastName');
 const password = useField('password');
 const repeatPassword = useField('repeatPassword');
 
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit(async (values) => {
   const { repeatPassword, ...rest } = values;
-  executeCreate({ data: rest });
+  const turnstile = await $fetch('/api/validateTurnstile', {
+    method: 'POST',
+    body: { token: token.value },
+  });
+
+  if (turnstile.success) executeCreate({ data: rest });
 });
 
 const show1 = ref(false);
@@ -208,6 +207,7 @@ watchEffect(() => {
   }
 });
 // watchEffect(() => {
-//   console.log(`Register Form => ${JSON.stringify(values)}`);
+//   console.log(`Token => ${JSON.stringify(token.value)}`);
+//   console.log(`Form => ${JSON.stringify(values)}`);
 // });
 </script>

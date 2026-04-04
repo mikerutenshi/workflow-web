@@ -14,6 +14,9 @@ export default defineNuxtConfig({
     public: {
       baseUrl: process.env.BASE_URL,
     },
+    turnstile: {
+      secretKey: process.env.NUXT_TURNSTILE_SECRET_KEY,
+    },
   },
   experimental: {
     payloadExtraction: true,
@@ -29,7 +32,11 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     'nuxt-zod-i18n',
     '@vueuse/nuxt',
+    '@nuxtjs/turnstile',
   ],
+  turnstile: {
+    siteKey: process.env.NUXT_TURNSTILE_SITE_KEY,
+  },
   i18n: {
     defaultLocale: 'en',
     locales: [
