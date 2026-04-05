@@ -1,5 +1,11 @@
 <template>
-  <v-btn :loading="isFetching" color="primary" block @click="execute">
+  <v-btn
+    :loading="isFetching"
+    color="primary"
+    block
+    @click="execute"
+    rounded="0"
+  >
     {{ $t('auth.logout') }}
   </v-btn>
 </template>

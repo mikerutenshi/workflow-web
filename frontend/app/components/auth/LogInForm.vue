@@ -28,7 +28,7 @@
                 :error-messages="password.errorMessage.value"
               />
             </v-card-text>
-            <v-btn :loading="isFetching" type="submit" block>{{
+            <v-btn :loading="isFetching" type="submit" block rounded="0">{{
               $t('auth.login')
             }}</v-btn>
           </v-card>

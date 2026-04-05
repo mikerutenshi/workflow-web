@@ -1,3 +1,4 @@
 #sql
 *backup.sql
 backup*.sql
+*.dump

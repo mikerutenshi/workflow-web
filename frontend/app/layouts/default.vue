@@ -10,7 +10,7 @@
       <v-btn
         v-if="
           currentRouteName &&
-          currentRouteName in createBtnTitles &&
+          createBtnTitles.includes(String(currentRouteName)) &&
           clearance <= Role.Planner
         "
         variant="flat"
@@ -18,7 +18,7 @@
         @click="dialogStore.openFormDialog()"
       >
         <v-icon left :icon="mdiPlus"></v-icon>
-        {{ t(`${createBtnTitles.currentRouteName}`) }}
+        {{ t(`btn.${String(currentRouteName)}`) }}
       </v-btn>
 
       <v-btn
@@ -85,9 +85,7 @@
         </template>
       </v-list>
       <template #append>
-        <div class="pa-4">
-          <ActionLogOut></ActionLogOut>
-        </div>
+        <ActionLogOut></ActionLogOut>
       </template>
     </v-navigation-drawer>
 
@@ -153,27 +151,24 @@ const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 const dialogStore = useDialogStore();
 const appBarStore = useAppBarStore();
 const drawer = ref(false);
-const createBtn = reactive({
-  title: '',
-  route: '',
-});
-const createBtnTitles: Record<string, string> =
-  clearance.value > Role.Superuser
-    ? {
-        works: 'btn.work',
-        products: 'btn.product',
-        artisans: 'btn.artisan',
-        'setting-colors': 'btn.color',
-      }
-    : {
-        works: 'btn.work',
-        products: 'btn.product',
-        artisans: 'btn.artisan',
-        'inv-trfs': 'btn.inv_trf',
-        sales: 'btn.sale',
-        'setting-inventories': 'btn.inventory',
-        'setting-colors': 'btn.color',
-      };
+// const createBtnTitles: Record<string, string> = {
+//   works: 'btn.work',
+//   products: 'btn.product',
+//   artisans: 'btn.artisan',
+//   'inv-trfs': 'btn.inv_trf',
+//   sales: 'btn.sale',
+//   'setting-inventories': 'btn.inventory',
+//   'setting-colors': 'btn.color',
+// };
+const createBtnTitles = [
+  'works',
+  'products',
+  'artisans',
+  'inv-trfs',
+  'sales',
+  'setting-inventories',
+  'setting-colors',
+];
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
@@ -183,7 +178,7 @@ const closeDrawer = () => {
 };
 
 const navItems = computed(() => {
-  if (clearance.value <= Role.Finance) {
+  if (clearance.value <= Role.Superuser) {
     return [
       { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
       {
@@ -244,6 +239,67 @@ const navItems = computed(() => {
         ],
       },
     ];
+  } else if (clearance.value <= Role.Finance) {
+    return [
+      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
+      {
+        title: t('nav.payroll'),
+        route: localePath('/payroll'),
+        icon: mdiCashMultiple,
+      },
+      {
+        title: t('nav.production_status'),
+        route: localePath('/works'),
+        icon: mdiFactory,
+      },
+      // {
+      //   title: t('nav.inventory'),
+      //   route: localePath('/inv-products'),
+      //   icon: mdiWarehouse,
+      // },
+      // {
+      //   title: t('nav.inventory_transfers'),
+      //   route: localePath('/inv-trfs'),
+      //   icon: mdiTransfer,
+      // },
+      // {
+      //   title: t('nav.sales'),
+      //   route: localePath('/sales'),
+      //   icon: mdiPrinterPos,
+      // },
+      {
+        title: t('nav.setting'),
+        route: localePath('/setting'),
+        icon: mdiCogs,
+        children: [
+          {
+            title: t('nav.products'),
+            route: localePath('/products'),
+            icon: mdiShoeSneaker,
+          },
+          {
+            title: t('nav.labor_costs'),
+            route: localePath('/labor-costs'),
+            icon: mdiCalculator,
+          },
+          {
+            title: t('nav.artisans'),
+            route: localePath('/artisans'),
+            icon: mdiAccountWrench,
+          },
+          // {
+          //   title: t('nav.setting_inventories'),
+          //   route: localePath('/setting/inventories'),
+          //   icon: mdiWarehouse,
+          // },
+          {
+            title: t('nav.setting_colors'),
+            route: localePath('/setting/colors'),
+            icon: mdiPalette,
+          },
+        ],
+      },
+    ];
   } else if (clearance.value <= Role.Planner) {
     return [
       { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
@@ -252,16 +308,16 @@ const navItems = computed(() => {
         route: localePath('/works'),
         icon: mdiFactory,
       },
-      {
-        title: t('nav.inventory'),
-        route: localePath('/inv-products'),
-        icon: mdiWarehouse,
-      },
-      {
-        title: t('nav.inventory_transfers'),
-        route: localePath('/inv-trfs'),
-        icon: mdiTransfer,
-      },
+      // {
+      //   title: t('nav.inventory'),
+      //   route: localePath('/inv-products'),
+      //   icon: mdiWarehouse,
+      // },
+      // {
+      //   title: t('nav.inventory_transfers'),
+      //   route: localePath('/inv-trfs'),
+      //   icon: mdiTransfer,
+      // },
       {
         title: t('nav.payroll'),
         route: localePath('/payroll'),
@@ -282,11 +338,11 @@ const navItems = computed(() => {
             route: localePath('/artisans'),
             icon: mdiAccountWrench,
           },
-          {
-            title: t('nav.setting_inventories'),
-            route: localePath('/setting/inventories'),
-            icon: mdiWarehouse,
-          },
+          // {
+          //   title: t('nav.setting_inventories'),
+          //   route: localePath('/setting/inventories'),
+          //   icon: mdiWarehouse,
+          // },
           {
             title: t('nav.setting_colors'),
             route: localePath('/setting/colors'),

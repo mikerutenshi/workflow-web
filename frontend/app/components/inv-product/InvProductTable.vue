@@ -1,211 +1,202 @@
 <template>
-  <template v-if="isComingSoon">
-    <ComingSoon></ComingSoon>
-  </template>
-  <template v-else>
-    <v-row v-if="errorInvProducts || errorInventories" class="flex-grow-0">
-      <v-col>
-        <v-alert type="error">
-          {{ extractGraphQlError(errorInvProducts || errorInventories) }}
-        </v-alert>
-      </v-col>
-    </v-row>
+  <v-row v-if="errorInvProducts || errorInventories" class="flex-grow-0">
+    <v-col>
+      <v-alert type="error">
+        {{ extractGraphQlError(errorInvProducts || errorInventories) }}
+      </v-alert>
+    </v-col>
+  </v-row>
 
-    <v-row class="flex-grow-0">
-      <v-col>
-        <v-select
-          :label="$t('label.select_inventories')"
-          :prepend-inner-icon="mdiWarehouse"
-          :items="dataInventories?.getInventories"
-          v-model="selectInvId"
-          item-title="name"
-          item-value="id"
-        ></v-select>
-      </v-col>
-      <v-col>
-        <v-text-field
-          v-model="search"
-          :label="$t('label.search')"
-          :prepend-inner-icon="mdiMagnify"
-          hide-details
-          single-line
-        ></v-text-field>
-      </v-col>
-    </v-row>
+  <v-row class="flex-grow-0">
+    <v-col>
+      <v-select
+        :label="$t('label.select_inventories')"
+        :prepend-inner-icon="mdiWarehouse"
+        :items="dataInventories?.getInventories"
+        v-model="selectInvId"
+        item-title="name"
+        item-value="id"
+      ></v-select>
+    </v-col>
+    <v-col>
+      <v-text-field
+        v-model="search"
+        :label="$t('label.search')"
+        :prepend-inner-icon="mdiMagnify"
+        hide-details
+        single-line
+      ></v-text-field>
+    </v-col>
+  </v-row>
 
-    <v-row>
-      <v-col class="d-flex flex-column">
-        <v-data-table
-          :headers="headers"
-          :items="invProductsDisplay"
-          :search="search"
-          :loading="isFetchingInvProducts"
-          item-value="id"
-          class="flex-grow-1"
-          fixed-header
-          :height="`calc(100vh - 262px)`"
-          hover
-          :page="pageNo"
-          :items-per-page="itemsPerPage"
+  <v-row>
+    <v-col class="d-flex flex-column">
+      <v-data-table
+        :headers="headers"
+        :items="invProductsDisplay"
+        :search="search"
+        :loading="isFetchingInvProducts"
+        item-value="id"
+        class="flex-grow-1"
+        fixed-header
+        :height="`calc(100vh - 262px)`"
+        hover
+        :page="pageNo"
+        :items-per-page="itemsPerPage"
+      >
+        <template #loading>
+          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+        </template>
+
+        <template v-slot:item.product.productColors="{ item }">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <template v-for="color in item.product.productColors">
+              <v-chip class="d-flex align-center">
+                <div
+                  class="color-box"
+                  :style="{ backgroundColor: color.color.hexCode }"
+                />
+                <span>{{ color.color.name }}</span>
+              </v-chip>
+            </template>
+          </div>
+        </template>
+
+        <template
+          v-slot:item.product.productGroup.productCategory.gender="{ item }"
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-          </template>
+          {{
+            $t(renderGender(item.product.productGroup.productCategory.gender))
+          }}
+        </template>
 
-          <template v-slot:item.product.productColors="{ item }">
-            <div style="display: flex; flex-wrap: wrap; gap: 8px">
-              <template v-for="color in item.product.productColors">
-                <v-chip class="d-flex align-center">
-                  <div
-                    class="color-box"
-                    :style="{ backgroundColor: color.color.hexCode }"
-                  />
-                  <span>{{ color.color.name }}</span>
-                </v-chip>
-              </template>
-            </div>
-          </template>
+        <template v-slot:item.price="{ item }">
+          {{ formatRupiah(item.price) }}
+        </template>
 
-          <template
-            v-slot:item.product.productGroup.productCategory.gender="{ item }"
-          >
-            {{
-              $t(renderGender(item.product.productGroup.productCategory.gender))
-            }}
-          </template>
+        <template #item.discount="{ item }">{{
+          item.discount
+            ? formatDiscount(convertDecimalToPercent(item.discount))
+            : null
+        }}</template>
 
-          <template v-slot:item.price="{ item }">
-            {{ formatRupiah(item.price) }}
-          </template>
+        <template v-slot:item.invProductSizes="{ item }">
+          <v-table density="compact">
+            <tbody>
+              <tr v-for="size in item.invProductSizes" :key="size.size.id">
+                <td>{{ size.size.eu }}</td>
+                <td>{{ size.quantity }}</td>
+              </tr>
+              <tr>
+                <td><i>Total</i></td>
+                <td>
+                  <i>
+                    {{
+                      item.invProductSizes.reduce(
+                        (sum, size) => sum + size.quantity,
+                        0,
+                      )
+                    }}
+                  </i>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+        </template>
 
-          <template #item.discount="{ item }">{{
-            item.discount
-              ? formatDiscount(convertDecimalToPercent(item.discount))
-              : null
-          }}</template>
+        <template v-slot:item.invTrfItems="{ item }">
+          <div v-if="item.pendingCount > 0">
+            {{ item.pendingCount }}
+            <v-icon :icon="mdiProgressAlert"></v-icon>
+          </div>
+        </template>
 
-          <template v-slot:item.invProductSizes="{ item }">
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="size in item.invProductSizes" :key="size.size.id">
-                  <td>{{ size.size.eu }}</td>
-                  <td>{{ size.quantity }}</td>
-                </tr>
-                <tr>
-                  <td><i>Total</i></td>
-                  <td>
-                    <i>
-                      {{
-                        item.invProductSizes.reduce(
-                          (sum, size) => sum + size.quantity,
-                          0,
-                        )
-                      }}
-                    </i>
-                  </td>
-                </tr>
-              </tbody>
-            </v-table>
-          </template>
+        <template v-slot:item.actions="{ item }">
+          <v-menu transition="slide-y-transition" open-on-hover>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :icon="mdiDotsVertical"
+                color="primary"
+                v-bind="props"
+                variant="text"
+              >
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                @click="
+                  () => {
+                    const { pendingCount, ...rest } = item;
+                    showItemTrfDialog(rest as InvProductDto);
+                  }
+                "
+                :prepend-icon="mdiFileDocumentArrowRightOutline"
+              >
+                <v-list-item-title>{{
+                  $t('label.show_trf_detail')
+                }}</v-list-item-title>
+              </v-list-item>
 
-          <template v-slot:item.invTrfItems="{ item }">
-            <div v-if="item.pendingCount > 0">
-              {{ item.pendingCount }}
-              <v-icon :icon="mdiProgressAlert"></v-icon>
-            </div>
-          </template>
+              <v-list-item
+                @click="
+                  () => {
+                    const { pendingCount, ...rest } = item;
+                    showItemTxDialog(rest as InvProductDto);
+                  }
+                "
+                :prepend-icon="mdiFileDocumentArrowRightOutline"
+              >
+                <v-list-item-title>{{
+                  $t('label.show_tx_detail')
+                }}</v-list-item-title>
+              </v-list-item>
 
-          <template v-slot:item.actions="{ item }">
-            <v-menu transition="slide-y-transition" open-on-hover>
-              <template v-slot:activator="{ props }">
-                <v-btn
-                  :icon="mdiDotsVertical"
-                  color="primary"
-                  v-bind="props"
-                  variant="text"
-                >
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  @click="
-                    () => {
-                      const { pendingCount, ...rest } = item;
-                      showItemTrfDialog(rest as InvProductDto);
-                    }
-                  "
-                  :prepend-icon="mdiFileDocumentArrowRightOutline"
-                >
-                  <v-list-item-title>{{
-                    $t('label.show_trf_detail')
-                  }}</v-list-item-title>
-                </v-list-item>
+              <v-list-item
+                v-if="
+                  item.invProductSizes.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0,
+                  ) > 0
+                "
+                @click="
+                  () => {
+                    const { pendingCount, ...rest } = item;
+                    showItemFormDialog(rest as InvProductDto);
+                  }
+                "
+                :prepend-icon="mdiTransferRight"
+              >
+                <v-list-item-title>{{ $t('label.send_to') }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-data-table>
+    </v-col>
+  </v-row>
 
-                <v-list-item
-                  @click="
-                    () => {
-                      const { pendingCount, ...rest } = item;
-                      showItemTxDialog(rest as InvProductDto);
-                    }
-                  "
-                  :prepend-icon="mdiFileDocumentArrowRightOutline"
-                >
-                  <v-list-item-title>{{
-                    $t('label.show_tx_detail')
-                  }}</v-list-item-title>
-                </v-list-item>
+  <ActionEditItemDialog :dialogTitle="dialog.title" v-model="dialog.isVisible">
+    <template v-if="dialog.content === DialogContent.TrfDetail">
+      <InvProductItemTrfTable
+        :inv-product-dto="itemSelectionObject"
+        @refresh-table="executeFetch"
+      ></InvProductItemTrfTable>
+    </template>
+    <template v-if="dialog.content === DialogContent.TxDetail">
+      <InvTxTable
+        :inv-product-dto="itemSelectionObject"
+        @refresh-table="executeFetch"
+      ></InvTxTable>
+    </template>
+    <template v-else-if="dialog.content === DialogContent.Form">
+      <InvTrfItemForm
+        :inv-product-dto="itemSelectionObject"
+        @close-dialog="closeItemFormDialog"
+      ></InvTrfItemForm>
+    </template>
+  </ActionEditItemDialog>
 
-                <v-list-item
-                  v-if="
-                    item.invProductSizes.reduce(
-                      (sum, item) => sum + item.quantity,
-                      0,
-                    ) > 0
-                  "
-                  @click="
-                    () => {
-                      const { pendingCount, ...rest } = item;
-                      showItemFormDialog(rest as InvProductDto);
-                    }
-                  "
-                  :prepend-icon="mdiTransferRight"
-                >
-                  <v-list-item-title>{{
-                    $t('label.send_to')
-                  }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
-
-    <ActionEditItemDialog
-      :dialogTitle="dialog.title"
-      v-model="dialog.isVisible"
-    >
-      <template v-if="dialog.content === DialogContent.TrfDetail">
-        <InvProductItemTrfTable
-          :inv-product-dto="itemSelectionObject"
-          @refresh-table="executeFetch"
-        ></InvProductItemTrfTable>
-      </template>
-      <template v-if="dialog.content === DialogContent.TxDetail">
-        <InvTxTable
-          :inv-product-dto="itemSelectionObject"
-          @refresh-table="executeFetch"
-        ></InvTxTable>
-      </template>
-      <template v-else-if="dialog.content === DialogContent.Form">
-        <InvTrfItemForm
-          :inv-product-dto="itemSelectionObject"
-          @close-dialog="closeItemFormDialog"
-        ></InvTrfItemForm>
-      </template>
-    </ActionEditItemDialog>
-
-    <!-- <v-dialog v-model="dialog.isVisible" max-width="1200px">
+  <!-- <v-dialog v-model="dialog.isVisible" max-width="1200px">
       <v-card>
         <v-toolbar>
           <v-toolbar-title>{{
@@ -237,7 +228,6 @@
         </v-container>
       </v-card>
     </v-dialog> -->
-  </template>
 </template>
 
 <script setup lang="ts">
@@ -266,11 +256,6 @@ enum DialogContent {
   TxDetail = 'TX_DETAIL',
   Form = 'FORM',
 }
-const authStore = useAuthStore();
-const clearance = authStore.user?.role.clearanceLevel ?? 6;
-const isComingSoon = computed(() => {
-  return clearance > Role.Superuser;
-});
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
