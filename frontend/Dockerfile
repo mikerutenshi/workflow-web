@@ -2,7 +2,6 @@ FROM node:20.19.0-alpine AS build
 WORKDIR /app
 
 COPY frontend/package*.json ./frontend/
-# COPY shared/schema.ts ./shared/
 
 WORKDIR /app/frontend
 RUN npm ci
