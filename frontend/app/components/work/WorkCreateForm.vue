@@ -78,6 +78,7 @@
         counter
         clearable
         :rules="rules"
+        rows="3"
       >
       </v-textarea>
     </v-card-text>
@@ -154,7 +155,7 @@ const snack = reactive({
   color: SnackColor.Success,
 });
 
-const rules = [(v: string) => v?.length <= 25 || 'Max 255 characters'];
+const rules = [(v: string) => v?.length <= 255 || 'Max 255 characters'];
 
 const {
   execute: executeCreate,

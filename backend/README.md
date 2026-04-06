@@ -94,8 +94,6 @@ docker compose pull
 docker image prune
 
 TODO:
-Add register form
-Create migration files for production.
 Temporarily re-disjoint production from InvTrf.
+Create migration files for production.
 Add Notes to major transactions
-Move all delete commands for work

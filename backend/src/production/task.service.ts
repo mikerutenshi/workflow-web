@@ -70,110 +70,114 @@ export class TaskService {
           data: { progress },
         });
 
-        const factory = await tx.inventory.findFirst({
-          where: { type: 'FACTORY' },
-        });
+        const isUpdateInventory = false;
 
-        if (!factory) throw Error('Factory is not found');
+        if (isUpdateInventory) {
+          const factory = await tx.inventory.findFirst({
+            where: { type: 'FACTORY' },
+          });
 
-        const existingInvProduct = await tx.invToProduct.findFirst({
-          where: { productId: initialWork!.productId, invId: factory.id },
-          include: { invProductSizes: true },
-        });
+          if (!factory) throw Error('Factory is not found');
 
-        //Create new inv product if grogress == completed
-        if (initialProgress !== Progress.COMPLETED && allDone) {
-          const trfNo = await this.invTrfService.generateInvTrfPrdNoOp(tx);
+          const existingInvProduct = await tx.invToProduct.findFirst({
+            where: { productId: initialWork!.productId, invId: factory.id },
+            include: { invProductSizes: true },
+          });
 
-          const invTrfItem = await this.invTrfService.createInvTrfItem(
-            {
-              fromInvId: null,
-              toInvId: factory.id,
-              productId: initialWork!.productId,
-              invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
-                sizeId: workSize.sizeId,
-                quantity: workSize.quantity,
-              })),
-              progress: Progress.COMPLETED,
-              createdBy: userId,
-            },
-            tx,
-          );
-          const invTrf = await this.invTrfService.createInvTrf(
-            {
-              trfNo,
-              fromInvId: null,
-              toInvId: factory.id,
-              progress: Progress.COMPLETED,
-              invTrfItemIds: [invTrfItem.id],
-              workId: initialWork!.id,
-              createdBy: userId,
-            },
-            tx,
-          );
+          //Create new inv product if grogress == completed
+          if (initialProgress !== Progress.COMPLETED && allDone) {
+            const trfNo = await this.invTrfService.generateInvTrfPrdNoOp(tx);
 
-          await this.invProductService.upsertInvProductOp(
-            {
-              invId: factory.id,
-              productId: initialWork!.productId,
-              invProductSizes: initialWork!.workSizes.map((workSize) => ({
-                sizeId: workSize.sizeId,
-                quantity: workSize.quantity,
-              })),
-            },
-            tx,
-          );
+            const invTrfItem = await this.invTrfService.createInvTrfItem(
+              {
+                fromInvId: null,
+                toInvId: factory.id,
+                productId: initialWork!.productId,
+                invTrfItemSizes: initialWork!.workSizes.map((workSize) => ({
+                  sizeId: workSize.sizeId,
+                  quantity: workSize.quantity,
+                })),
+                progress: Progress.COMPLETED,
+                createdBy: userId,
+              },
+              tx,
+            );
+            const invTrf = await this.invTrfService.createInvTrf(
+              {
+                trfNo,
+                fromInvId: null,
+                toInvId: factory.id,
+                progress: Progress.COMPLETED,
+                invTrfItemIds: [invTrfItem.id],
+                workId: initialWork!.id,
+                createdBy: userId,
+              },
+              tx,
+            );
 
-          await this.invTxService.createInvTxOp(
-            {
-              invId: factory.id,
-              productId: initialWork!.productId,
-              txNo: invTrf.trfNo,
-              type: TxType.PRODUCTION,
-              trfId: invTrf.id,
-              createdBy: userId,
-              invTxSizes: initialWork!.workSizes.map((s) => ({
-                sizeId: s.sizeId,
-                quantity: s.quantity,
-              })),
-            },
-            tx,
-          );
-        } else if (initialProgress === Progress.COMPLETED && !allDone) {
-          //Delete the InvTrf
-          const invTrfId = initialWork!.invTrf?.id;
-
-          if (invTrfId) {
-            const invTrf = await this.invTrfService.getInvTrf(invTrfId, tx);
-            await this.invTrfService.deleteInvTrf(invTrfId, tx);
+            await this.invProductService.upsertInvProductOp(
+              {
+                invId: factory.id,
+                productId: initialWork!.productId,
+                invProductSizes: initialWork!.workSizes.map((workSize) => ({
+                  sizeId: workSize.sizeId,
+                  quantity: workSize.quantity,
+                })),
+              },
+              tx,
+            );
 
             await this.invTxService.createInvTxOp(
               {
                 invId: factory.id,
                 productId: initialWork!.productId,
                 txNo: invTrf.trfNo,
-                type: TxType.REVERSION,
+                type: TxType.PRODUCTION,
+                trfId: invTrf.id,
                 createdBy: userId,
                 invTxSizes: initialWork!.workSizes.map((s) => ({
                   sizeId: s.sizeId,
-                  quantity: -s.quantity,
+                  quantity: s.quantity,
                 })),
               },
               tx,
             );
-          }
+          } else if (initialProgress === Progress.COMPLETED && !allDone) {
+            //Delete the InvTrf
+            const invTrfId = initialWork!.invTrf?.id;
 
-          // Reverse the effect: subtract quantities from inventory
-          if (existingInvProduct) {
-            await this.invProductService.decrementInvProductOp(
-              existingInvProduct.invId,
-              existingInvProduct.productId,
-              existingInvProduct.invProductSizes.map((size) => ({
-                sizeId: size.sizeId,
-                quantity: size.quantity,
-              })),
-              tx,
-            );
+            if (invTrfId) {
+              const invTrf = await this.invTrfService.getInvTrf(invTrfId, tx);
+              await this.invTrfService.deleteInvTrf(invTrfId, tx);
+
+              await this.invTxService.createInvTxOp(
+                {
+                  invId: factory.id,
+                  productId: initialWork!.productId,
+                  txNo: invTrf.trfNo,
+                  type: TxType.REVERSION,
+                  createdBy: userId,
+                  invTxSizes: initialWork!.workSizes.map((s) => ({
+                    sizeId: s.sizeId,
+                    quantity: -s.quantity,
+                  })),
+                },
+                tx,
+              );
+            }
+
+            // Reverse the effect: subtract quantities from inventory
+            if (existingInvProduct) {
+              await this.invProductService.decrementInvProductOp(
+                existingInvProduct.invId,
+                existingInvProduct.productId,
+                existingInvProduct.invProductSizes.map((size) => ({
+                  sizeId: size.sizeId,
+                  quantity: size.quantity,
+                })),
+                tx,
+              );
+            }
           }
         }
       }
