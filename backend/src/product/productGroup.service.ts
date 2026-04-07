@@ -1,15 +1,19 @@
 import { ProductGroup } from '@/models/product-group.model';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
+import { PrismaClient } from '@/generated/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ProductGroupService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('PrismaService')
+    private prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async createProductGroup(data: ProductGroupCreateDto): Promise<ProductGroup> {
-    return await this.prisma.productGroup.create({
+    return await this.prisma.client.productGroup.create({
       data: {
         skuNumeric: data.skuNumeric,
         productCategoryId: data.productCategoryId,
@@ -23,11 +27,11 @@ export class ProductGroupService {
     id: number,
     data: ProductGroupCreateDto,
   ): Promise<ProductGroup> {
-    return this.prisma.productGroup.update({ where: { id }, data });
+    return this.prisma.client.productGroup.update({ where: { id }, data });
   }
 
   async getProductGroups(): Promise<ProductGroupGetDto[]> {
-    return await this.prisma.productGroup.findMany({
+    return await this.prisma.client.productGroup.findMany({
       include: {
         productCategory: true,
       },
@@ -35,7 +39,7 @@ export class ProductGroupService {
   }
 
   async getProductGroup(id: number): Promise<ProductGroupGetDto> {
-    const result = await this.prisma.productGroup.findUnique({
+    const result = await this.prisma.client.productGroup.findUnique({
       where: {
         id: id,
       },
@@ -51,7 +55,7 @@ export class ProductGroupService {
   }
 
   async deleteProductGroup(id: number): Promise<Boolean> {
-    const productGroup = await this.prisma.productGroup.delete({
+    const productGroup = await this.prisma.client.productGroup.delete({
       where: { id },
     });
 

@@ -1,5 +1,4 @@
 import { InventoryModule } from '@/inventory/inventory.module';
-import { PrismaModule } from '@/prisma/prisma.module';
 import { Module } from '@nestjs/common';
 import { PayrollResolver } from './payroll.resolver';
 import { PayrollService } from './payroll.service';
@@ -21,6 +20,6 @@ import { WorkService } from './work.service';
     PayrollResolver,
     PayrollService,
   ],
-  imports: [PrismaModule, InventoryModule],
+  imports: [InventoryModule],
 })
 export class ProductionModule {}

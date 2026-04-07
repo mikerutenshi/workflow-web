@@ -1,21 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
 import { LaborCost } from '@/models/labor-cost.model';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
 import { LaborCostUpdateDto } from './dto/labor-cost-update.dto';
-import { Job } from '@/generated/client';
+import { Job, PrismaClient } from '@/generated/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class LaborCostService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('PrismaService')
+    private prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async upsertLaborCosts(
     productGroupId: number,
     data: LaborCostUpsertDto[],
   ): Promise<LaborCost[]> {
     try {
-      return this.prisma.$transaction(async (tx) => {
+      return this.prisma.client.$transaction(async (tx) => {
         let upsertCosts: Promise<LaborCost[]> = Promise.resolve([]);
 
         if (data.length == 0) {
@@ -108,7 +111,7 @@ export class LaborCostService {
     ];
 
     try {
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.client.$transaction(async (tx) => {
         await Promise.all(
           jobTypes.map(async ({ key, type }) => {
             const cost = data[key];
@@ -174,7 +177,7 @@ export class LaborCostService {
   }
 
   getLaborCosts(): Promise<LaborCostGetDto[]> {
-    return this.prisma.productGroup.findMany({
+    return this.prisma.client.productGroup.findMany({
       include: {
         productCategory: true,
         laborCosts: true,
@@ -184,7 +187,7 @@ export class LaborCostService {
   }
 
   async getLaborCost(id: number): Promise<LaborCostGetDto> {
-    const result = await this.prisma.productGroup.findUnique({
+    const result = await this.prisma.client.productGroup.findUnique({
       where: {
         id,
       },

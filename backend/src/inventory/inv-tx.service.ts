@@ -1,14 +1,16 @@
-import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
-import { InvTxCreateDto } from './dto/inv-tx-create.dto';
-import { Prisma, Progress, TxType } from '@/generated/client';
+import { Prisma, PrismaClient, Progress } from '@/generated/client';
 import { InvTx } from '@/models/inv-tx.model';
+import { Inject, Injectable } from '@nestjs/common';
+import { InvTxCreateDto } from './dto/inv-tx-create.dto';
 import { InvTxDto } from './dto/inv-tx.dto';
-import { Operation } from '@/models/operation.enum';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class InvTxService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('PrismaService')
+    private prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   createInvTxOp(
     data: InvTxCreateDto,
@@ -37,7 +39,7 @@ export class InvTxService {
   }
 
   async getInvTxs(invId: number, productId: number): Promise<InvTxDto[]> {
-    const txs = await this.prisma.invTx.findMany({
+    const txs = await this.prisma.client.invTx.findMany({
       include: {
         invTxSizes: {
           include: { size: true },

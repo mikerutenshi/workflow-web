@@ -8,7 +8,7 @@ import {
 } from '@/generated/client';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule, registerEnumType } from '@nestjs/graphql';
 import { Request } from 'express';
@@ -23,8 +23,8 @@ import { AuthService } from './auth/auth.service';
 import { InventoryModule } from './inventory/inventory.module';
 import { ProductModule } from './product/product.module';
 import { ProductionModule } from './production/production.module';
-import { DateScalar } from './scalars/date.scalar';
 import { SaleModule } from './sale/sale.module';
+import { DateScalar } from './scalars/date.scalar';
 
 const ENV = process.env.NODE_ENV || 'development';
 @Module({
@@ -32,7 +32,6 @@ const ENV = process.env.NODE_ENV || 'development';
     ConfigModule.forRoot({
       envFilePath: `.env.${ENV}`,
     }),
-    AuthModule,
     CustomPrismaModule.forRoot({
       isGlobal: true,
       name: 'PrismaService',

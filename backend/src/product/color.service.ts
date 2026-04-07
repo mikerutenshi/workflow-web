@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { ColorCreateDto } from './dto/color-create.dto';
 import { Color } from '@/models/color.model';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { PrismaClient } from '@/generated/client';
 
 @Injectable()
 export class ColorService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('PrismaService')
+    private prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   createColor(data: ColorCreateDto): Promise<Color> {
-    return this.prisma.color.create({
+    return this.prisma.client.color.create({
       data: {
         name: data.name,
         hexCode: data.hexCode,
@@ -17,11 +21,15 @@ export class ColorService {
   }
 
   getColors(): Promise<Color[]> {
-    return this.prisma.color.findMany({ orderBy: { name: 'asc' } });
+    return this.prisma.client.color.findMany({
+      orderBy: { name: 'asc' },
+    });
   }
 
   async getColor(id: number): Promise<Color> {
-    const result = await this.prisma.color.findUnique({ where: { id: id } });
+    const result = await this.prisma.client.color.findUnique({
+      where: { id: id },
+    });
 
     if (!result) throw new Error(`Product with ID ${id} not found.`);
 
@@ -29,7 +37,7 @@ export class ColorService {
   }
 
   updateColor(id: number, data: ColorCreateDto): Promise<Color> {
-    return this.prisma.color.update({
+    return this.prisma.client.color.update({
       where: { id: id },
       data: {
         name: data.name,
@@ -39,7 +47,7 @@ export class ColorService {
   }
 
   async deleteColor(id: number): Promise<Boolean> {
-    const color = await this.prisma.color.delete({
+    const color = await this.prisma.client.color.delete({
       where: {
         id: id,
       },

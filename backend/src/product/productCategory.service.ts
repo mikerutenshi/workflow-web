@@ -1,16 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ProductCategoryCreateDto } from './dto/product-category-create.dto';
 import { ProductCategory } from '@/models/product-category.model ';
-import { PrismaService } from '@/prisma/prisma.service';
+import { PrismaClient } from '@/generated/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ProductCategoryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('PrismaService')
+    private prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async createProductCategory(
     data: ProductCategoryCreateDto,
   ): Promise<ProductCategory> {
-    return await this.prisma.productCategory.create({
+    return await this.prisma.client.productCategory.create({
       data: {
         name: data.name,
         gender: data.gender,
@@ -21,17 +25,17 @@ export class ProductCategoryService {
     id: number,
     data: ProductCategoryCreateDto,
   ): Promise<ProductCategory> {
-    return this.prisma.productCategory.update({ where: { id }, data });
+    return this.prisma.client.productCategory.update({ where: { id }, data });
   }
 
   async getProductCategories(): Promise<ProductCategory[]> {
-    return await this.prisma.productCategory.findMany();
+    return await this.prisma.client.productCategory.findMany();
   }
 
   async getProductCategory(
     productCategoryId: number,
   ): Promise<ProductCategory> {
-    const category = await this.prisma.productCategory.findFirst({
+    const category = await this.prisma.client.productCategory.findFirst({
       where: {
         id: productCategoryId,
       },
@@ -44,7 +48,7 @@ export class ProductCategoryService {
   }
 
   async deleteProductCategory(id: number): Promise<Boolean> {
-    const productCategory = await this.prisma.productCategory.delete({
+    const productCategory = await this.prisma.client.productCategory.delete({
       where: { id },
     });
 

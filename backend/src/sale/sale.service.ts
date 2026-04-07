@@ -1,24 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
-import { SaleCreateDto } from './dto/sale-create.dto';
-import { Sale } from '@/models/sale.model';
-import { Operation } from '@/models/operation.enum';
-import { generateId } from '@/utils/functions.util';
-import { SaleUpdateDto } from './dto/sale-update.dto';
+import { PrismaClient, TxType } from '@/generated/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTxService } from '@/inventory/inv-tx.service';
-import { TxType } from '@/generated/client';
+import { Operation } from '@/models/operation.enum';
+import { Sale } from '@/models/sale.model';
+import { generateId } from '@/utils/functions.util';
+import { Inject, Injectable } from '@nestjs/common';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { SaleCreateDto } from './dto/sale-create.dto';
+import { SaleUpdateDto } from './dto/sale-update.dto';
 
 @Injectable()
 export class SaleService {
   constructor(
-    private prisma: PrismaService,
+    @Inject('PrismaService')
+    private prisma: CustomPrismaService<PrismaClient>,
     private invProductService: InvProductService,
     private invTxService: InvTxService,
   ) {}
 
   async createSale(data: SaleCreateDto): Promise<Sale> {
-    const txResult = this.prisma.$transaction(async (tx) => {
+    const txResult = this.prisma.client.$transaction(async (tx) => {
       const saleResult = await tx.sale.create({
         data: {
           ...data,
@@ -89,7 +90,7 @@ export class SaleService {
   }
 
   updateSale(id: number, dto: SaleUpdateDto): Promise<Sale> {
-    return this.prisma.sale.update({
+    return this.prisma.client.sale.update({
       where: { id },
       data: {
         saleNo: dto.saleNo,
@@ -131,7 +132,7 @@ export class SaleService {
   }
 
   async deleteSale(id: number): Promise<Boolean> {
-    this.prisma.$transaction(async (tx) => {
+    this.prisma.client.$transaction(async (tx) => {
       // const saleItems = await tx.saleItem.findMany({
       //   where: { saleId: id },
       //   include: { saleItemSizes: true },
@@ -188,7 +189,7 @@ export class SaleService {
   }
 
   getSales(invId?: number): Promise<Sale[]> {
-    return this.prisma.sale.findMany({
+    return this.prisma.client.sale.findMany({
       where: {
         saleItems: {
           some: {
@@ -210,7 +211,7 @@ export class SaleService {
   }
 
   async getSale(id: number): Promise<Sale> {
-    const sale = await this.prisma.sale.findUnique({
+    const sale = await this.prisma.client.sale.findUnique({
       where: { id },
       include: {
         saleItems: {
@@ -232,7 +233,7 @@ export class SaleService {
   }
 
   async generateSaleNo(): Promise<string> {
-    const lastSale = await this.prisma.sale.findFirst({
+    const lastSale = await this.prisma.client.sale.findFirst({
       orderBy: { createdAt: 'desc' },
     });
     const lastSaleNo = lastSale?.saleNo;

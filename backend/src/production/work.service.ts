@@ -1,16 +1,20 @@
 import { WorkWithTasks } from '@/models/work-with-tasks.model';
 import { Work } from '@/models/work.model';
-import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { WorkCreateDto } from './dto/work-create.dto';
 import { WorkUpdateDto } from './dto/work-update.dto';
+import { PrismaClient } from '@/generated/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class WorkService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('PrismaService')
+    private prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async createWork(data: WorkCreateDto): Promise<Work> {
-    return this.prisma.$transaction(async (tx) => {
+    return this.prisma.client.$transaction(async (tx) => {
       const createdWork = await tx.work.create({
         data: {
           ...data,
@@ -53,7 +57,7 @@ export class WorkService {
   }
 
   updateWork(id: number, data: WorkUpdateDto): Promise<Work> {
-    return this.prisma.work.update({
+    return this.prisma.client.work.update({
       where: { id },
       data: {
         ...data,
@@ -69,7 +73,7 @@ export class WorkService {
   }
 
   async getWork(id: number): Promise<WorkWithTasks> {
-    const work = await this.prisma.work.findUnique({
+    const work = await this.prisma.client.work.findUnique({
       where: { id },
       include: {
         workSizes: {
@@ -89,7 +93,7 @@ export class WorkService {
   }
 
   getWorks(startDate: Date, endDate: Date): Promise<WorkWithTasks[]> {
-    return this.prisma.work.findMany({
+    return this.prisma.client.work.findMany({
       include: {
         workSizes: {
           include: { size: true },
@@ -109,7 +113,7 @@ export class WorkService {
   }
 
   async deleteWork(id: number): Promise<Boolean> {
-    const work = await this.prisma.work.delete({ where: { id } });
+    const work = await this.prisma.client.work.delete({ where: { id } });
 
     if (!work) throw new Error(`Delete work with ID ${id} failed.`);
     return !!work;

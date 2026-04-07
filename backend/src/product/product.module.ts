@@ -7,7 +7,6 @@ import { ProductService } from './product.service';
 import { ProductCategoryService } from './productCategory.service';
 import { ProductGroupService } from './productGroup.service';
 import { LaborCostService } from './laborCost.service';
-import { PrismaModule } from '@/prisma/prisma.module';
 import { ColorResolver } from './color.resolver';
 import { ColorService } from './color.service';
 
@@ -24,6 +23,5 @@ import { ColorService } from './color.service';
     LaborCostResolver,
     LaborCostService,
   ],
-  imports: [PrismaModule],
 })
 export class ProductModule {}

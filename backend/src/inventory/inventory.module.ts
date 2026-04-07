@@ -1,4 +1,3 @@
-import { PrismaModule } from '@/prisma/prisma.module';
 import { Module } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { InventoryResolver } from './inventory.resolver';
@@ -20,7 +19,6 @@ import { InvTxResolver } from './inv-tx.resolver';
     InvTxResolver,
     InvTxService,
   ],
-  imports: [PrismaModule],
   exports: [InvProductService, InvTrfService, InvTxService],
 })
 export class InventoryModule {}
