@@ -1,5 +1,5 @@
 FROM node:20.19.0-alpine AS build
-WORKDIR /app/backend
+WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma
@@ -9,12 +9,12 @@ COPY . .
 RUN npm run build
 
 FROM node:20.19.0-alpine AS base
-WORKDIR /app/backend
-COPY --from=build /app/backend/dist ./dist
-COPY --from=build /app/backend/node_modules ./node_modules
-COPY --from=build /app/backend/package*.json ./
-COPY --from=build /app/backend/prisma ./prisma
-COPY --from=build /app/backend/.env* ./
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/.env* ./
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wait_aarch64 /wait
 RUN chmod +x /wait
 

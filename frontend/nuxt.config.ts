@@ -7,9 +7,6 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   ssr: false,
   nitro: { preset: 'static' },
-  // devServer: {
-  //   host: '0.0.0.0',
-  // },
   runtimeConfig: {
     public: {
       baseUrl: process.env.BASE_URL,

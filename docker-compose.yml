@@ -17,8 +17,7 @@ services:
       - workflow-network
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
       args:
         - ENVIRONMENT=production
     image: mikerutenshi/workflow-frontend:latest

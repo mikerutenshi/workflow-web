@@ -1,0 +1,22 @@
+FROM node:20.19.0-alpine AS build
+WORKDIR /app
+
+COPY ./package*.json ./
+
+WORKDIR /app
+RUN npm ci
+COPY . .
+ARG ENVIRONMENT
+RUN npm run build:${ENVIRONMENT}
+
+
+FROM node:20.19.0-alpine
+WORKDIR /app
+COPY --from=build /app/.output ./.output
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/.env* ./
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]

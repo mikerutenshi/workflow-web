@@ -1,22 +1,15 @@
-FROM node:20.19.0-alpine AS build
+FROM node:20.19.0-alpine AS build-stage
 WORKDIR /app
 
-COPY frontend/package*.json ./frontend/
+COPY ./package*.json ./
 
-WORKDIR /app/frontend
+WORKDIR /app
 RUN npm ci
-COPY frontend/. .
+COPY . .
 ARG ENVIRONMENT
 RUN npm run build:${ENVIRONMENT}
 
-
-FROM node:20.19.0-alpine
-WORKDIR /app/frontend
-COPY --from=build /app/frontend/.output ./.output
-COPY --from=build /app/frontend/node_modules ./node_modules
-COPY --from=build /app/frontend/package*.json ./
-COPY --from=build /app/frontend/.env* ./
-
-EXPOSE 3000
-
-CMD ["npm", "run", "start"]
+FROM nginx:1.27.4-alpine AS production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

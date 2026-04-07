@@ -16,8 +16,7 @@ services:
       - workflow-network
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
       args:
         - ENVIRONMENT=staging
     image: mikerutenshi/workflow-frontend:latest
@@ -26,7 +25,7 @@ services:
     depends_on:
       - backend
     ports:
-      - 3005:3000
+      - 3005:80
     networks:
       - workflow-network
   nginx:
