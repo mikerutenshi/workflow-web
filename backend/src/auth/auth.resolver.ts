@@ -2,13 +2,13 @@ import { Role } from '@/models/role.model';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Context, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Request } from 'express';
-import { User } from 'src/models/user.model';
 import { AuthGuard } from '../guards/auth.guard';
 import { AuthService } from './auth.service';
 import { LogInDto } from './dto/logIn.dto';
 import { RoleDto } from './dto/role.dto';
 import { UserCreateDto } from './dto/user-create.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
+import { User } from '@/models/user.model';
 
 @Resolver()
 export class AuthResolver {

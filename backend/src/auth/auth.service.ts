@@ -1,4 +1,3 @@
-import { PrismaService } from 'src/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UserCreateDto } from './dto/user-create.dto';
 import * as bcrypt from 'bcrypt';
@@ -9,6 +8,7 @@ import { RoleDto } from './dto/role.dto';
 import { LogInDto } from './dto/logIn.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
 import dayjs from 'dayjs';
+import { PrismaService } from '@/prisma/prisma.service';
 
 // const userWithRoles = Prisma.validator<Prisma.UserDefaultArgs>()({
 //   include: { role: true },
