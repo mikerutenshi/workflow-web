@@ -1,4 +1,4 @@
-import { TxType } from '@/generated/client';
+import { TxType } from '@/generated/prisma/client';
 
 export class InvTxCreateDto {
   invId: number;

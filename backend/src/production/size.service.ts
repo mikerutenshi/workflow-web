@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Size } from '@/models/size.model';
 import { SizeCreateDto } from './dto/size-create-dto.js';
-import { PrismaClient } from '@/generated/client/index.js';
+import { PrismaClient } from '@/generated/prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()

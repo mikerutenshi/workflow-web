@@ -1,4 +1,9 @@
-import { Prisma, PrismaClient, Progress, TxType } from '@/generated/client';
+import {
+  Prisma,
+  PrismaClient,
+  Progress,
+  TxType,
+} from '@/generated/prisma/client';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PayrollGetDto } from './dto/payroll-get.dto';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()

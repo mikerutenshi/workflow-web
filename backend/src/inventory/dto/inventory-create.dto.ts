@@ -1,4 +1,4 @@
-import { InvType } from '@/generated/client';
+import { InvType } from '@/generated/prisma/client';
 import { Cities } from '@/models/cities.enum';
 import { Provinces } from '@/models/provinces.enum';
 import { Field, InputType } from '@nestjs/graphql';

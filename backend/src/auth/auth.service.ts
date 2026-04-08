@@ -9,7 +9,7 @@ import { LogInDto } from './dto/logIn.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
 import dayjs from 'dayjs';
 import { CustomPrismaService } from 'nestjs-prisma';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 
 @Injectable()
 export class AuthService {

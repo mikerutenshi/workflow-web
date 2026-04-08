@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { User } from '@/generated/client';
+import { User } from '@/generated/prisma/client';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

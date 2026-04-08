@@ -11,7 +11,7 @@ import { InvTrfSimpleDto } from './dto/inv-trf-simple.dto';
 import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvTrfService } from './inv-trf.service';
-import { Progress } from '@/generated/client';
+import { Progress } from '@/generated/prisma/client';
 
 @Resolver(() => InvTrf)
 export class InvTrfResolver {

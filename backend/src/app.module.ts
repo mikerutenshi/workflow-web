@@ -5,7 +5,7 @@ import {
   PrismaClient,
   Progress,
   TxType,
-} from '@/generated/client';
+} from '@/generated/prisma/client';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
@@ -25,6 +25,7 @@ import { ProductModule } from './product/product.module';
 import { ProductionModule } from './production/production.module';
 import { SaleModule } from './sale/sale.module';
 import { DateScalar } from './scalars/date.scalar';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 const ENV = process.env.NODE_ENV || 'development';
 @Module({
@@ -32,10 +33,17 @@ const ENV = process.env.NODE_ENV || 'development';
     ConfigModule.forRoot({
       envFilePath: `.env.${ENV}`,
     }),
-    CustomPrismaModule.forRoot({
+    CustomPrismaModule.forRootAsync({
+      imports: [ConfigModule],
       isGlobal: true,
       name: 'PrismaService',
-      client: new PrismaClient(),
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const adapter = new PrismaPg({
+          connectionString: configService.get('DATABASE_URL'),
+        });
+        return new PrismaClient({ adapter });
+      },
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,

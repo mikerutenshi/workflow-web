@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Gender } from '@/generated/client';
+import { Gender } from '@/generated/prisma/client';
 
 @ObjectType()
 export class Size {

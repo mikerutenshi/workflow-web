@@ -1,4 +1,4 @@
-import { InvType } from '@/generated/client';
+import { InvType } from '@/generated/prisma/client';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()

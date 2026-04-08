@@ -1,9 +1,11 @@
-import { Gender, PrismaClient } from '@/generated/client';
+import { Gender, PrismaClient } from '@/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { hash } from 'bcrypt';
 
-const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
 });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const superuserRole = await prisma.role.upsert({

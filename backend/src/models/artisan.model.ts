@@ -1,4 +1,4 @@
-import { Job } from '@/generated/client';
+import { Job } from '@/generated/prisma/client';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
 

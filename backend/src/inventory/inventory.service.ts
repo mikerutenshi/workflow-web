@@ -3,7 +3,7 @@ import { InventoryCreateDto } from './dto/inventory-create.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { InventoryUpdateDto } from './dto/inventory-update.dto';
 import { InventoryDto } from './dto/inventory.dto';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()

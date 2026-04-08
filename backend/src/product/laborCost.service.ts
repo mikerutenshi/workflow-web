@@ -3,7 +3,7 @@ import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
 import { LaborCost } from '@/models/labor-cost.model';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
 import { LaborCostUpdateDto } from './dto/labor-cost-update.dto';
-import { Job, PrismaClient } from '@/generated/client';
+import { Job, PrismaClient } from '@/generated/prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()

@@ -2,7 +2,7 @@ import { ProductGroup } from '@/models/product-group.model';
 import { Inject, Injectable } from '@nestjs/common';
 import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()

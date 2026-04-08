@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { InvTrfItemSizeCreateDto } from './inv-trf-item-size-create.dto';
-import { Progress } from '@/generated/client';
+import { Progress } from '@/generated/prisma/client';
 
 @InputType()
 export class InvTrfItemCreateDto {

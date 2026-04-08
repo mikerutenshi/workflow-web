@@ -1,4 +1,4 @@
-import { Progress } from '@/generated/client';
+import { Progress } from '@/generated/prisma/client';
 import { InvTx } from '@/models/inv-tx.model';
 import { Field, ObjectType, OmitType } from '@nestjs/graphql';
 

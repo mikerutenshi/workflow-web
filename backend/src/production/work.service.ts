@@ -3,7 +3,7 @@ import { Work } from '@/models/work.model';
 import { Inject, Injectable } from '@nestjs/common';
 import { WorkCreateDto } from './dto/work-create.dto';
 import { WorkUpdateDto } from './dto/work-update.dto';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()

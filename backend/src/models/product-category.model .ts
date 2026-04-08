@@ -1,4 +1,4 @@
-import { Gender } from '@/generated/client';
+import { Gender } from '@/generated/prisma/client';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()

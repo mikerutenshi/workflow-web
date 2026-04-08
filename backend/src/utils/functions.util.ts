@@ -1,4 +1,4 @@
-import { Prisma } from '@/generated/client';
+import { Prisma } from '@/generated/prisma/client';
 import { Operation } from '@/models/operation.enum';
 import dayjs from 'dayjs';
 

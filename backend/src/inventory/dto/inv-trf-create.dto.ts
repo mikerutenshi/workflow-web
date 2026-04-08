@@ -1,4 +1,4 @@
-import { Progress } from '@/generated/client';
+import { Progress } from '@/generated/prisma/client';
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
 import {

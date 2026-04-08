@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Progress } from '@/generated/client';
+import { Prisma, PrismaClient, Progress } from '@/generated/prisma/client';
 import { InvTx } from '@/models/inv-tx.model';
 import { Inject, Injectable } from '@nestjs/common';
 import { InvTxCreateDto } from './dto/inv-tx-create.dto';

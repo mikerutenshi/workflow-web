@@ -4,7 +4,7 @@ import { Product } from '@/models/product.model';
 import { ProductDto } from './dto/product.dto';
 import { ProductUpdateDto } from './dto/product-update.dto';
 import { CustomPrismaService } from 'nestjs-prisma';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 
 @Injectable()
 export class ProductService {

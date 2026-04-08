@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from './base.model';
-import { TxType } from '@/generated/client';
+import { TxType } from '@/generated/prisma/client';
 import { Size } from './size.model';
 
 @ObjectType()

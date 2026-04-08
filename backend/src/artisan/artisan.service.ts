@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ArtisanCreateDto } from './dto/artisan-create.dto';
 import { Artisan } from '@/models/artisan.model';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()

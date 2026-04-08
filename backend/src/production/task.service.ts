@@ -1,7 +1,7 @@
 import { TaskWithArtisan } from '@/models/task-with-artisan.model';
 import { Inject, Injectable } from '@nestjs/common';
 import { TaskUpdateDto } from './dto/task-update.dto';
-import { PrismaClient, Progress, TxType } from '@/generated/client';
+import { PrismaClient, Progress, TxType } from '@/generated/prisma/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTrfService } from '@/inventory/inv-trf.service';
 import { InvTxService } from '@/inventory/inv-tx.service';

@@ -6,7 +6,7 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "../src/generated/client",
+        "include": "../src/generated/prisma/client",
         "outDir": "dist/src",
         "watchAssets": true
       }

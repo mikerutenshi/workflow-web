@@ -1,4 +1,4 @@
-import { PrismaClient, TxType } from '@/generated/client';
+import { PrismaClient, TxType } from '@/generated/prisma/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTxService } from '@/inventory/inv-tx.service';
 import { Operation } from '@/models/operation.enum';

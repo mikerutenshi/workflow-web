@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Gender } from '@/generated/client';
+import { Gender } from '@/generated/prisma/client';
 import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 
 @InputType()

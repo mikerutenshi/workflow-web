@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ColorCreateDto } from './dto/color-create.dto';
 import { Color } from '@/models/color.model';
 import { CustomPrismaService } from 'nestjs-prisma';
-import { PrismaClient } from '@/generated/client';
+import { PrismaClient } from '@/generated/prisma/client';
 
 @Injectable()
 export class ColorService {
