@@ -24,12 +24,22 @@ import { ProductionModule } from './production/production.module';
 import { SaleModule } from './sale/sale.module';
 import { DateScalar } from './scalars/date.scalar';
 
-const ENV = process.env.NODE_ENV || 'development';
+const currentEnv = process.env.NODE_ENV || 'production';
+let envFilePath;
+if (currentEnv == 'production') {
+  envFilePath = '.env';
+} else if (currentEnv == 'staging') {
+  envFilePath = '.env.staging';
+} else if (currentEnv == 'development') {
+  envFilePath = '.env.development';
+} else {
+  envFilePath = '.env';
+}
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${ENV}`,
+      envFilePath,
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
