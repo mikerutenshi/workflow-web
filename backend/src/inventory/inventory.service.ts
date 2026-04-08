@@ -1,20 +1,16 @@
 import { Inventory } from '@/models/inventory.model';
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { InventoryCreateDto } from './dto/inventory-create.dto';
-import { Inject, Injectable } from '@nestjs/common';
 import { InventoryUpdateDto } from './dto/inventory-update.dto';
 import { InventoryDto } from './dto/inventory.dto';
-import { PrismaClient } from '@/generated/prisma/client';
-import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class InventoryService {
-  constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   createInventory(data: InventoryCreateDto): Promise<Inventory> {
-    return this.prisma.client.inventory.create({
+    return this.prisma.inventory.create({
       data: {
         name: data.name,
         address: data.address,
@@ -33,7 +29,7 @@ export class InventoryService {
   }
 
   async getInventories(): Promise<InventoryDto[]> {
-    const inventories = await this.prisma.client.inventory.findMany({
+    const inventories = await this.prisma.inventory.findMany({
       orderBy: { id: 'asc' },
       include: { priceFormula: true },
     });
@@ -53,7 +49,7 @@ export class InventoryService {
   }
 
   async getInventory(id: number): Promise<InventoryDto> {
-    const result = await this.prisma.client.inventory.findUnique({
+    const result = await this.prisma.inventory.findUnique({
       where: { id },
       include: {
         priceFormula: true,
@@ -79,7 +75,7 @@ export class InventoryService {
   }
 
   updateInventory(id: number, data: InventoryUpdateDto): Promise<Inventory> {
-    return this.prisma.client.inventory.update({
+    return this.prisma.inventory.update({
       where: { id },
       data: {
         name: data.name,
@@ -105,7 +101,7 @@ export class InventoryService {
     });
   }
   async deleteInventory(id: number): Promise<Boolean> {
-    const inventory = await this.prisma.client.inventory.delete({
+    const inventory = await this.prisma.inventory.delete({
       where: { id },
     });
 

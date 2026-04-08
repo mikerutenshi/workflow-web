@@ -1,23 +1,20 @@
-import { Prisma, PrismaClient, Progress } from '@/generated/prisma/client';
+import { Prisma, Progress } from '@/generated/prisma/client';
 import { InvProduct } from '@/models/inv-product.model';
+import { PrismaService } from '@/prisma/prisma.service';
 import { calculatePrice } from '@/utils/functions.util';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductDto } from './dto/inv-product.dto';
-import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class InvProductService {
-  constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createInvProduct(data: InvProductCreateDto): Promise<InvProduct> {
     const { invProductSizes, ...rest } = data;
     try {
-      const createdProduct = await this.prisma.client.invToProduct.create({
+      const createdProduct = await this.prisma.invToProduct.create({
         data: {
           ...rest,
           invProductSizes: {
@@ -44,7 +41,7 @@ export class InvProductService {
     }
   }
   async getInvProducts(invId: number): Promise<InvProductDto[]> {
-    const products = await this.prisma.client.invToProduct.findMany({
+    const products = await this.prisma.invToProduct.findMany({
       include: {
         product: {
           include: {
@@ -119,7 +116,7 @@ export class InvProductService {
     data: InvProductUpdateDto,
   ): Promise<InvProduct> {
     const { invProductSizes, ...rest } = data;
-    const invProduct = await this.prisma.client.invToProduct.update({
+    const invProduct = await this.prisma.invToProduct.update({
       where: { invId_productId: { invId, productId } },
       data: {
         ...rest,
@@ -196,7 +193,7 @@ export class InvProductService {
       quantity: number;
     }[],
   ): Promise<Boolean> {
-    return this.prisma.client.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       await this.decrementInvProductOp(invId, productId, invProductSizes, tx);
       return true;
     });
@@ -272,7 +269,7 @@ export class InvProductService {
   }
 
   async deleteInvProduct(invId: number, productId: number): Promise<Boolean> {
-    const invProduct = await this.prisma.client.invToProduct.delete({
+    const invProduct = await this.prisma.invToProduct.delete({
       where: { invId_productId: { invId, productId } },
     });
     if (!invProduct) {

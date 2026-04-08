@@ -1,24 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
+import { Job } from '@/generated/prisma/client';
 import { LaborCost } from '@/models/labor-cost.model';
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
 import { LaborCostUpdateDto } from './dto/labor-cost-update.dto';
-import { Job, PrismaClient } from '@/generated/prisma/client';
-import { CustomPrismaService } from 'nestjs-prisma';
+import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
 
 @Injectable()
 export class LaborCostService {
-  constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async upsertLaborCosts(
     productGroupId: number,
     data: LaborCostUpsertDto[],
   ): Promise<LaborCost[]> {
     try {
-      return this.prisma.client.$transaction(async (tx) => {
+      return this.prisma.$transaction(async (tx) => {
         let upsertCosts: Promise<LaborCost[]> = Promise.resolve([]);
 
         if (data.length == 0) {
@@ -111,7 +108,7 @@ export class LaborCostService {
     ];
 
     try {
-      await this.prisma.client.$transaction(async (tx) => {
+      await this.prisma.$transaction(async (tx) => {
         await Promise.all(
           jobTypes.map(async ({ key, type }) => {
             const cost = data[key];
@@ -177,7 +174,7 @@ export class LaborCostService {
   }
 
   getLaborCosts(): Promise<LaborCostGetDto[]> {
-    return this.prisma.client.productGroup.findMany({
+    return this.prisma.productGroup.findMany({
       include: {
         productCategory: true,
         laborCosts: true,
@@ -187,7 +184,7 @@ export class LaborCostService {
   }
 
   async getLaborCost(id: number): Promise<LaborCostGetDto> {
-    const result = await this.prisma.client.productGroup.findUnique({
+    const result = await this.prisma.productGroup.findUnique({
       where: {
         id,
       },

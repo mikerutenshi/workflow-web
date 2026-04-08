@@ -2,7 +2,6 @@ import {
   Gender,
   InvType,
   Job,
-  PrismaClient,
   Progress,
   TxType,
 } from '@/generated/prisma/client';
@@ -12,7 +11,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule, registerEnumType } from '@nestjs/graphql';
 import { Request } from 'express';
-import { CustomPrismaModule } from 'nestjs-prisma';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -25,25 +23,13 @@ import { ProductModule } from './product/product.module';
 import { ProductionModule } from './production/production.module';
 import { SaleModule } from './sale/sale.module';
 import { DateScalar } from './scalars/date.scalar';
-import { PrismaPg } from '@prisma/adapter-pg';
 
 const ENV = process.env.NODE_ENV || 'development';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.env.${ENV}`,
-    }),
-    CustomPrismaModule.forRootAsync({
-      imports: [ConfigModule],
-      isGlobal: true,
-      name: 'PrismaService',
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const adapter = new PrismaPg({
-          connectionString: configService.get('DATABASE_URL'),
-        });
-        return new PrismaClient({ adapter });
-      },
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,

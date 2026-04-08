@@ -9,6 +9,7 @@ import { ProductGroupService } from './productGroup.service';
 import { LaborCostService } from './laborCost.service';
 import { ColorResolver } from './color.resolver';
 import { ColorService } from './color.service';
+import { PrismaModule } from '@/prisma/prisma.module';
 
 @Module({
   providers: [
@@ -23,5 +24,6 @@ import { ColorService } from './color.service';
     LaborCostResolver,
     LaborCostService,
   ],
+  imports: [PrismaModule],
 })
 export class ProductModule {}

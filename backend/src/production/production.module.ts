@@ -8,6 +8,7 @@ import { TaskResolver } from './task.resolver';
 import { TaskService } from './task.service';
 import { WorkResolver } from './work.resolver';
 import { WorkService } from './work.service';
+import { PrismaModule } from '@/prisma/prisma.module';
 
 @Module({
   providers: [
@@ -20,6 +21,6 @@ import { WorkService } from './work.service';
     PayrollResolver,
     PayrollService,
   ],
-  imports: [InventoryModule],
+  imports: [PrismaModule, InventoryModule],
 })
 export class ProductionModule {}

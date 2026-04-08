@@ -1,18 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ArtisanCreateDto } from './dto/artisan-create.dto';
 import { Artisan } from '@/models/artisan.model';
-import { PrismaClient } from '@/generated/prisma/client';
-import { CustomPrismaService } from 'nestjs-prisma';
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { ArtisanCreateDto } from './dto/artisan-create.dto';
 
 @Injectable()
 export class ArtisanService {
-  constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createArtisan(data: ArtisanCreateDto): Promise<Artisan> {
-    return await this.prisma.client.artisan.create({
+    return await this.prisma.artisan.create({
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -23,7 +19,7 @@ export class ArtisanService {
   }
 
   async updateArtisan(id: number, data: ArtisanCreateDto): Promise<Artisan> {
-    return await this.prisma.client.artisan.update({
+    return await this.prisma.artisan.update({
       where: { id: id },
       data: {
         firstName: data.firstName,
@@ -36,13 +32,13 @@ export class ArtisanService {
   }
 
   async getArtisans(): Promise<Artisan[]> {
-    return await this.prisma.client.artisan.findMany({
+    return await this.prisma.artisan.findMany({
       orderBy: [{ jobs: 'asc' }, { firstName: 'asc' }],
     });
   }
 
   async getArtisan(id: number): Promise<Artisan> {
-    const artisan = await this.prisma.client.artisan.findUnique({
+    const artisan = await this.prisma.artisan.findUnique({
       where: { id },
     });
     if (!artisan) throw new Error(`Artisan with ID ${id} not found.`);
@@ -51,7 +47,7 @@ export class ArtisanService {
   }
 
   async deleteArtisan(id: number): Promise<Boolean> {
-    await this.prisma.client.artisan.delete({
+    await this.prisma.artisan.delete({
       where: {
         id: id,
       },

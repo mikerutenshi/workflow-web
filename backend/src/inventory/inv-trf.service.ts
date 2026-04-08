@@ -1,14 +1,10 @@
-import {
-  Prisma,
-  PrismaClient,
-  Progress,
-  TxType,
-} from '@/generated/prisma/client';
+import { Prisma, Progress, TxType } from '@/generated/prisma/client';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';
+import { PrismaService } from '@/prisma/prisma.service';
 import { generateId } from '@/utils/functions.util';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
 import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
 import { InvTrfItemTrfDto } from './dto/inv-trf-item-trf.dto';
@@ -18,13 +14,11 @@ import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvProductService } from './inv-product.service';
 import { InvTxService } from './inv-tx.service';
-import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class InvTrfService {
   constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
+    private prisma: PrismaService,
     private invProductService: InvProductService,
     private invTxService: InvTxService,
   ) {}
@@ -33,7 +27,7 @@ export class InvTrfService {
     data: InvTrfItemCreateDto,
     tx?: Prisma.TransactionClient,
   ): Promise<InvTrfItem> {
-    const prisma = tx ?? this.prisma.client;
+    const prisma = tx ?? this.prisma;
 
     const { discount, ...rest } = await prisma.invTrfItem.create({
       data: {
@@ -84,7 +78,7 @@ export class InvTrfService {
 
       return result;
     } else {
-      return this.prisma.client.$transaction(async (tx) => {
+      return this.prisma.$transaction(async (tx) => {
         await Promise.all(
           invTrfItemIds.map(async (id) => {
             await tx.invTrfItem.update({
@@ -109,7 +103,7 @@ export class InvTrfService {
 
   updateInvTrf(id: number, data: InvTrfUpdateDto): Promise<InvTrf> {
     const { invTrfItemIds, ...rest } = data;
-    return this.prisma.client.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       const initTrfData = await tx.invTrf.findUniqueOrThrow({
         where: { id },
         include: { invTrfItems: { include: { invTrfItemSizes: true } } },
@@ -250,7 +244,7 @@ export class InvTrfService {
     invId: number,
     productId: number,
   ): Promise<InvTrfItemTrfDto[]> {
-    const result = await this.prisma.client.invTrfItem.findMany({
+    const result = await this.prisma.invTrfItem.findMany({
       include: {
         invTrf: { include: { fromInv: true, toInv: true } },
         invTrfItemSizes: {
@@ -280,7 +274,7 @@ export class InvTrfService {
     toInvId: number,
     progress?: Progress,
   ): Promise<InvTrfItemDto[]> {
-    const result = await this.prisma.client.invTrfItem.findMany({
+    const result = await this.prisma.invTrfItem.findMany({
       where: { fromInvId, toInvId, progress: progress as Progress },
       include: {
         product: {
@@ -310,7 +304,7 @@ export class InvTrfService {
   }
 
   async getInvTrfs(): Promise<InvTrfSimpleDto[]> {
-    const data = await this.prisma.client.invTrf.findMany({
+    const data = await this.prisma.invTrf.findMany({
       include: {
         fromInv: true,
         toInv: true,
@@ -326,7 +320,7 @@ export class InvTrfService {
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<InvTrfDto> {
-    const prisma = tx ?? this.prisma.client;
+    const prisma = tx ?? this.prisma;
     const result = await prisma.invTrf.findUnique({
       where: { id },
       include: {
@@ -372,7 +366,7 @@ export class InvTrfService {
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Boolean> {
-    const prisma = tx ?? this.prisma.client;
+    const prisma = tx ?? this.prisma;
 
     const result = await prisma.invTrf.delete({
       where: { id },
@@ -386,7 +380,7 @@ export class InvTrfService {
   }
 
   async generateInvTrfNo(): Promise<string> {
-    const lastTrf = await this.prisma.client.invTrf.findFirst({
+    const lastTrf = await this.prisma.invTrf.findFirst({
       where: { workId: null },
       orderBy: { createdAt: 'desc' },
     });
@@ -406,7 +400,7 @@ export class InvTrfService {
   }
 
   async deleteInvTrfItem(id: number): Promise<Boolean> {
-    const alreadyInInvTrf = await this.prisma.client.invTrfItem.findMany({
+    const alreadyInInvTrf = await this.prisma.invTrfItem.findMany({
       where: {
         id,
         invTrf: {
@@ -419,7 +413,7 @@ export class InvTrfService {
       throw new Error('Already in an Inventory Transfer');
     }
 
-    const invTrfItem = await this.prisma.client.invTrfItem.delete({
+    const invTrfItem = await this.prisma.invTrfItem.delete({
       where: { id },
     });
 

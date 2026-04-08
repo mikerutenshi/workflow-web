@@ -1,24 +1,23 @@
-import { TaskWithArtisan } from '@/models/task-with-artisan.model';
-import { Inject, Injectable } from '@nestjs/common';
-import { TaskUpdateDto } from './dto/task-update.dto';
-import { PrismaClient, Progress, TxType } from '@/generated/prisma/client';
+import { Progress, TxType } from '@/generated/prisma/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTrfService } from '@/inventory/inv-trf.service';
 import { InvTxService } from '@/inventory/inv-tx.service';
-import { CustomPrismaService } from 'nestjs-prisma';
+import { TaskWithArtisan } from '@/models/task-with-artisan.model';
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { TaskUpdateDto } from './dto/task-update.dto';
 
 @Injectable()
 export class TaskService {
   constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
+    private prisma: PrismaService,
     private invProductService: InvProductService,
     private invTrfService: InvTrfService,
     private invTxService: InvTxService,
   ) {}
 
   updateTasks(tasks: TaskUpdateDto[]): Promise<TaskWithArtisan[]> {
-    return this.prisma.client.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       // Update tasks first
       var userId = +tasks.at(0)!.updatedBy;
       const updatedTasks = await Promise.all(
@@ -188,7 +187,7 @@ export class TaskService {
   }
 
   getTasks(workId: number): Promise<TaskWithArtisan[]> {
-    return this.prisma.client.task.findMany({
+    return this.prisma.task.findMany({
       where: { workId },
       include: { artisan: true },
       orderBy: { type: 'asc' },

@@ -1,25 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { UserCreateDto } from './dto/user-create.dto';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '@/models/user.model';
 import { Role } from '@/models/role.model';
-import { RoleDto } from './dto/role.dto';
-import { LogInDto } from './dto/logIn.dto';
-import { UserUpdateDto } from './dto/user-update.dto';
+import { User } from '@/models/user.model';
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import dayjs from 'dayjs';
-import { CustomPrismaService } from 'nestjs-prisma';
-import { PrismaClient } from '@/generated/prisma/client';
+import { LogInDto } from './dto/logIn.dto';
+import { RoleDto } from './dto/role.dto';
+import { UserCreateDto } from './dto/user-create.dto';
+import { UserUpdateDto } from './dto/user-update.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
+    private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
   createRole(data: RoleDto): Promise<Role> {
-    return this.prisma.client.role.create({
+    return this.prisma.role.create({
       data: {
         name: data.name,
         description: data.description,
@@ -29,7 +27,7 @@ export class AuthService {
   }
 
   async getRoles(): Promise<Role[]> {
-    let roles = await this.prisma.client.role.findMany();
+    let roles = await this.prisma.role.findMany();
     roles.shift();
     return roles;
   }
@@ -37,7 +35,7 @@ export class AuthService {
   async createUser(data: UserCreateDto): Promise<User> {
     const password = await bcrypt.hash(data.password, 12);
 
-    return this.prisma.client.user.create({
+    return this.prisma.user.create({
       data: {
         email: data.email.toLowerCase(),
         password: password,
@@ -54,7 +52,7 @@ export class AuthService {
   }
 
   updateUser(id: number, data: UserUpdateDto): Promise<User> {
-    return this.prisma.client.user.update({
+    return this.prisma.user.update({
       where: { id },
       data: { ...data, approvedAt: dayjs().toDate() },
       include: { role: true },
@@ -62,13 +60,13 @@ export class AuthService {
   }
 
   getUsers(): Promise<User[]> {
-    return this.prisma.client.user.findMany({
+    return this.prisma.user.findMany({
       include: { role: true },
     });
   }
 
   async logIn(data: LogInDto): Promise<{ user: User; accessToken: string }> {
-    const user = await this.prisma.client.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email: data.email.toLowerCase() },
       include: { role: true },
     });
@@ -99,7 +97,7 @@ export class AuthService {
         sub: unknown;
       };
       if (data?.sub && !isNaN(Number(data.sub))) {
-        const user = await this.prisma.client.user.findUnique({
+        const user = await this.prisma.user.findUnique({
           where: { id: Number(data.sub) },
           include: {
             role: true,

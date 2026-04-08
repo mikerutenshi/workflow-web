@@ -1,17 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { PayrollGetDto } from './dto/payroll-get.dto';
-import { PrismaClient } from '@/generated/prisma/client';
-import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class PayrollService {
-  constructor(
-    @Inject('PrismaService')
-    private prisma: CustomPrismaService<PrismaClient>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getPayroll(startDate: Date, endDate: Date): Promise<PayrollGetDto> {
-    const artisans = await this.prisma.client.artisan.findMany({
+    const artisans = await this.prisma.artisan.findMany({
       include: {
         tasks: {
           where: {
@@ -125,7 +121,7 @@ export class PayrollService {
   }
 
   getPayrollSummary() {
-    const result = this.prisma.client.task.groupBy({ by: ['artisanId'] });
+    const result = this.prisma.task.groupBy({ by: ['artisanId'] });
     return result;
   }
 }
