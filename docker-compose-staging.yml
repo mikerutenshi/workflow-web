@@ -7,6 +7,7 @@ services:
     container_name: backend
     restart: always
     environment:
+      NODE_ENV: production
       WAIT_HOSTS: postgres:5432
     depends_on:
       - postgres
@@ -28,6 +29,8 @@ services:
       - 3005:80
     networks:
       - workflow-network
+    environment:
+      NODE_ENV: production
   nginx:
     image: nginx:1.27.4-alpine
     container_name: nginx

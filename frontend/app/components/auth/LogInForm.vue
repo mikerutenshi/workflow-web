@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center" align="center">
       <v-col>
-        <form @submit.prevent="onSubmit" class="d-flex flex-column">
+        <form @submit.prevent="onSubmit">
           <v-card class="translucent-background">
             <v-card-text>
               <v-row v-if="error">
@@ -35,6 +35,16 @@
         </form>
       </v-col>
     </v-row>
+    <v-bottom-sheet>
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          v-bind="activatorProps"
+          :icon="mdiChevronUp"
+          class="position-absolute bottom-0 right-0 ma-4"
+        ></v-btn>
+      </template>
+      <AuthRegisterForm></AuthRegisterForm>
+    </v-bottom-sheet>
   </v-container>
 </template>
 
@@ -51,7 +61,7 @@ import { useMutation } from 'villus';
 import { useAuthStore } from '~/stores/auth';
 import { LogInDocument } from '~/api/generated/types';
 import { AuthSchema } from '~/validation/schema';
-import { mdiEye } from '@mdi/js';
+import { mdiChevronUp, mdiChevronUpCircleOutline, mdiEye } from '@mdi/js';
 
 const { data, isFetching, execute, error } = useMutation(LogInDocument);
 

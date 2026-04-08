@@ -74,10 +74,7 @@
                 hint="At least 8 characters"
                 :error-messages="repeatPassword.errorMessage.value"
               />
-              <v-row>
-                <v-spacer></v-spacer>
-                <NuxtTurnstile v-model="token" />
-              </v-row>
+              <NuxtTurnstile v-model="token" />
             </v-card-text>
             <v-btn type="submit" block :loading="isCreating">{{
               'Register'
