@@ -21,7 +21,7 @@
     "postinstall": "dotenv -e .env.production -- prisma generate",
     "db:generate": "dotenv -e .env.production -- prisma generate",
     "db:generate:development": "dotenv -e .env.development -- prisma generate",
-    "db:migrate": "dotenv -e .env.production -- prisma migrate deploy",
+    "db:migrate": "prisma migrate deploy",
     "db:push": "dotenv -e .env.development -- prisma db push",
     "db:seed": "dotenv -e .env.production -- prisma db seed",
     "db:seed:development": "dotenv -e .env.development -- prisma db seed"
