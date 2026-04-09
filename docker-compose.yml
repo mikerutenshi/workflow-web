@@ -33,6 +33,8 @@ services:
       - workflow-network
     environment:
       NODE_ENV: production
+    volumes:
+      - ./frontend/nginx/conf.d:/etc/nginx/conf.d
   nginx:
     image: nginx:1.27.4-alpine
     platform: linux/arm64
