@@ -19,11 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "postinstall": "prisma generate",
-    "db:generate": "dotenv -e .env.production -- prisma generate",
-    "db:generate:development": "dotenv -e .env.development -- prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:push": "dotenv -e .env.development -- prisma db push",
-    "db:seed": "dotenv -e .env.production -- prisma db seed",
     "db:seed:development": "dotenv -e .env.development -- prisma db seed"
   },
   "dependencies": {
@@ -45,7 +42,6 @@
     "class-validator": "^0.14.4",
     "cookie-parser": "^1.4.7",
     "dayjs": "^1.11.20",
-    "dotenv-cli": "^10.0.0",
     "graphql": "^16.13.2",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
@@ -63,6 +59,7 @@
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
