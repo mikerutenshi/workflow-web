@@ -1,5 +1,5 @@
 <template>
-  <v-container class="h-100 d-flex flex-column">
+  <v-container fluid class="h-100 d-flex flex-column">
     <PayrollTable />
   </v-container>
 </template>
