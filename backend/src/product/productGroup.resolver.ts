@@ -4,6 +4,7 @@ import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
 import { ProductGroupService } from './productGroup.service';
 import { ParseIntPipe } from '@nestjs/common';
+import { ProductGroupUploadDto } from './dto/product-group-upload.dto';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {
@@ -38,5 +39,17 @@ export class ProductGroupResolver {
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
   ): Promise<Boolean> {
     return this.productGroupService.deleteProductGroup(id);
+  }
+
+  @Query(() => Boolean)
+  exportProductGroups(): Promise<Boolean> {
+    return this.productGroupService.exportProductGroups();
+  }
+
+  @Mutation(() => Boolean)
+  importProductGroups(
+    @Args('data') data: ProductGroupUploadDto,
+  ): Promise<Boolean> {
+    return this.productGroupService.importProductGroups(data);
   }
 }

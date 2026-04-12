@@ -519,10 +519,12 @@ type Query {
   getColor(id: ID!): Color!
   getProducts: [ProductDto!]!
   getProduct(id: ID!): ProductDto!
+  exportProducts: Boolean!
   getProductCategories: [ProductCategory!]!
   getProductCategory(id: ID!): ProductCategory!
   getProductGroups: [ProductGroupGetDto!]!
   getProductGroup(id: ID!): ProductGroupGetDto!
+  exportProductGroups: Boolean!
   getLaborCosts: [LaborCostGetDto!]!
   getLaborCost(id: ID!): LaborCostGetDto!
   getArtisans: [Artisan!]!
@@ -565,6 +567,7 @@ type Mutation {
   createProductGroup(data: ProductGroupCreateDto!): ProductGroup!
   updateProductGroup(id: ID!, data: ProductGroupCreateDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!
+  importProductGroups(data: ProductGroupUploadDto!): Boolean!
   upsertLaborCosts(productGroupId: ID!, data: [LaborCostUpsertDto!]!): [LaborCost!]!
   updateLaborCosts(data: LaborCostUpdateDto!): Boolean!
   createArtisan(data: ArtisanCreateDto!): Artisan!
@@ -658,6 +661,14 @@ input ProductGroupCreateDto {
   createdBy: ID!
   updatedBy: ID
 }
+
+input ProductGroupUploadDto {
+  """Csv file"""
+  csvFile: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input LaborCostUpsertDto {
   type: Job!

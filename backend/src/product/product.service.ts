@@ -4,6 +4,10 @@ import { Injectable } from '@nestjs/common';
 import { ProductCreateDto } from './dto/product-create.dto';
 import { ProductUpdateDto } from './dto/product-update.dto';
 import { ProductDto } from './dto/product.dto';
+import * as csv from 'fast-csv';
+import { createWriteStream } from 'fs';
+import { join } from 'path';
+import { mkdir } from 'fs/promises';
 
 @Injectable()
 export class ProductService {
@@ -121,6 +125,29 @@ export class ProductService {
         id: id,
       },
     });
+    return true;
+  }
+
+  async exportProducts(): Promise<Boolean> {
+    const dir = join(process.cwd(), 'tmp');
+    await mkdir(dir, { recursive: true });
+    const filePath = join(dir, `report-${Date.now()}.csv`);
+
+    const writableStream = createWriteStream(filePath);
+
+    const products = await this.prisma.product.findMany();
+
+    await new Promise<void>((resolve, reject) => {
+      const csvStream = csv.format({ headers: true });
+      writableStream.on('finish', resolve);
+      writableStream.on('error', reject);
+      csvStream.on('error', reject);
+      csvStream.pipe(writableStream);
+
+      products.forEach((item) => csvStream.write(item));
+      csvStream.end();
+    });
+
     return true;
   }
 }
