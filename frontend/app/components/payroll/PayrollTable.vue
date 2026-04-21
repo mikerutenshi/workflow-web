@@ -268,7 +268,7 @@ watch(
   () => appBarSTore.isPrintClicked,
   (isClicked) => {
     if (isClicked) {
-      exportPdf();
+      downloadPdf();
       appBarSTore.isPrintClicked = false;
     }
   },
@@ -278,7 +278,7 @@ const { current } = useTheme();
 const primary = current.value.colors.primary;
 console.log(`primary ${primary}`);
 
-function exportPdf() {
+function downloadPdf() {
   appBarSTore.isPrinting = true;
   const img = new Image();
   img.src = ic_borsa;

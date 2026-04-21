@@ -9,7 +9,6 @@ import { mkdir } from 'fs/promises';
 import * as csv from 'fast-csv';
 import { ProductGroupUploadDto } from './dto/product-group-upload.dto';
 import { parse } from 'fast-csv';
-import { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 @Injectable()
 export class ProductGroupService {
@@ -68,10 +67,10 @@ export class ProductGroupService {
     return true;
   }
 
-  async exportProductGroups(): Promise<Boolean> {
+  async downloadProductGroups(): Promise<Boolean> {
     const dir = join(process.cwd(), 'tmp');
     await mkdir(dir, { recursive: true });
-    const filePath = join(dir, `product-groups-${Date.now()}.csv`);
+    const filePath = join(dir, 'product-groups.csv');
 
     const writableStream = createWriteStream(filePath);
 
@@ -91,13 +90,12 @@ export class ProductGroupService {
     return true;
   }
 
-  async importProductGroups(data: ProductGroupUploadDto): Promise<Boolean> {
+  async uploadProductGroupMsrps(data: ProductGroupUploadDto): Promise<Boolean> {
     if (!data.csvFile) {
       throw new Error('No file provided');
     }
     const { createReadStream, filename } = await data.csvFile;
-    console.log(filename);
-    const rows: any[] = [];
+    const rows: ProductGroup[] = [];
 
     await new Promise<void>((resolve, reject) => {
       createReadStream()
@@ -107,7 +105,16 @@ export class ProductGroupService {
         .on('end', () => resolve());
     });
 
-    console.log(filename, rows);
+    rows.map(async (row) => {
+      if (row.msrp) {
+        await this.prisma.productGroup.update({
+          where: { id: Number(row.id) },
+          data: {
+            msrp: Number(row.msrp),
+          },
+        });
+      }
+    });
     return true;
   }
 }

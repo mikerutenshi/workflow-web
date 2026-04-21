@@ -42,14 +42,14 @@ export class ProductGroupResolver {
   }
 
   @Query(() => Boolean)
-  exportProductGroups(): Promise<Boolean> {
-    return this.productGroupService.exportProductGroups();
+  downloadProductGroups(): Promise<Boolean> {
+    return this.productGroupService.downloadProductGroups();
   }
 
   @Mutation(() => Boolean)
-  importProductGroups(
+  uploadProductGroupMsrps(
     @Args('data') data: ProductGroupUploadDto,
   ): Promise<Boolean> {
-    return this.productGroupService.importProductGroups(data);
+    return this.productGroupService.uploadProductGroupMsrps(data);
   }
 }
