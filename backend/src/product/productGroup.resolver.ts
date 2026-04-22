@@ -4,7 +4,7 @@ import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
 import { ProductGroupService } from './productGroup.service';
 import { ParseIntPipe } from '@nestjs/common';
-import { ProductGroupUploadDto } from './dto/product-group-upload.dto';
+import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {
@@ -42,14 +42,12 @@ export class ProductGroupResolver {
   }
 
   @Query(() => Boolean)
-  downloadProductGroups(): Promise<Boolean> {
+  downloadProductGroups(): Promise<string> {
     return this.productGroupService.downloadProductGroups();
   }
 
   @Mutation(() => Boolean)
-  uploadProductGroupMsrps(
-    @Args('data') data: ProductGroupUploadDto,
-  ): Promise<Boolean> {
+  uploadProductGroupMsrps(@Args('data') data: CsvUploadDto): Promise<boolean> {
     return this.productGroupService.uploadProductGroupMsrps(data);
   }
 }

@@ -127,4 +127,28 @@ export class ProductService {
     });
     return true;
   }
+
+  async downloadProducts(): Promise<string> {
+    const dir = join(process.cwd(), 'public', 'downloads');
+    await mkdir(dir, { recursive: true });
+    const fileName = 'products.csv';
+    const filePath = join(dir, fileName);
+
+    const writableStream = createWriteStream(filePath);
+
+    const products = await this.prisma.product.findMany();
+
+    await new Promise<void>((resolve, reject) => {
+      const csvStream = csv.format({ headers: true });
+      writableStream.on('finish', resolve);
+      writableStream.on('error', reject);
+      csvStream.on('error', reject);
+      csvStream.pipe(writableStream);
+
+      products.forEach((item) => csvStream.write(item));
+      csvStream.end();
+    });
+
+    return `/downloads/${fileName}`;
+  }
 }

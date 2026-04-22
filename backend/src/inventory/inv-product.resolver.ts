@@ -5,6 +5,7 @@ import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { ParseIntPipe } from '@nestjs/common';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductDto } from './dto/inv-product.dto';
+import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 
 @Resolver(() => InvProduct)
 export class InvProductResolver {
@@ -39,5 +40,10 @@ export class InvProductResolver {
     @Args('productId', { type: () => ID }, ParseIntPipe) productId: number,
   ): Promise<Boolean> {
     return this.service.deleteInvProduct(invId, productId);
+  }
+
+  @Mutation(() => Boolean)
+  uploadInvProducts(@Args('data') data: CsvUploadDto): Promise<boolean> {
+    return this.service.uploadInvProducts(data);
   }
 }

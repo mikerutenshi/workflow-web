@@ -519,6 +519,7 @@ type Query {
   getColor(id: ID!): Color!
   getProducts: [ProductDto!]!
   getProduct(id: ID!): ProductDto!
+  downloadProducts: String!
   getProductCategories: [ProductCategory!]!
   getProductCategory(id: ID!): ProductCategory!
   getProductGroups: [ProductGroupGetDto!]!
@@ -566,7 +567,7 @@ type Mutation {
   createProductGroup(data: ProductGroupCreateDto!): ProductGroup!
   updateProductGroup(id: ID!, data: ProductGroupCreateDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!
-  uploadProductGroupMsrps(data: ProductGroupUploadDto!): Boolean!
+  uploadProductGroupMsrps(data: CsvUploadDto!): Boolean!
   upsertLaborCosts(productGroupId: ID!, data: [LaborCostUpsertDto!]!): [LaborCost!]!
   updateLaborCosts(data: LaborCostUpdateDto!): Boolean!
   createArtisan(data: ArtisanCreateDto!): Artisan!
@@ -585,6 +586,7 @@ type Mutation {
   createInvProduct(data: InvProductCreateDto!): InvProduct!
   updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
+  uploadInvProducts(data: CsvUploadDto!): Boolean!
   createInvTrf(data: InvTrfCreateDto!): InvTrf!
   updateInvTrf(id: ID!, data: InvTrfUpdateDto!): InvTrf!
   createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!
@@ -661,7 +663,7 @@ input ProductGroupCreateDto {
   updatedBy: ID
 }
 
-input ProductGroupUploadDto {
+input CsvUploadDto {
   """Csv file"""
   csvFile: Upload!
 }

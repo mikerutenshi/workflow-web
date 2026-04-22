@@ -23,6 +23,7 @@ import { ProductModule } from './product/product.module';
 import { ProductionModule } from './production/production.module';
 import { SaleModule } from './sale/sale.module';
 import { DateScalar } from './scalars/date.scalar';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 const currentEnv = process.env.NODE_ENV || 'production';
 let envFilePath;
@@ -66,6 +67,13 @@ if (currentEnv == 'production') {
           return { req, user };
         },
       }),
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'public'),
+      serveRoot: '/',
+      serveStaticOptions: {
+        index: false,
+      },
     }),
   ],
   controllers: [AppController],

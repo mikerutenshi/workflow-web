@@ -7,8 +7,8 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { mkdir } from 'fs/promises';
 import * as csv from 'fast-csv';
-import { ProductGroupUploadDto } from './dto/product-group-upload.dto';
 import { parse } from 'fast-csv';
+import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 
 @Injectable()
 export class ProductGroupService {
@@ -67,10 +67,11 @@ export class ProductGroupService {
     return true;
   }
 
-  async downloadProductGroups(): Promise<Boolean> {
+  async downloadProductGroups(): Promise<string> {
     const dir = join(process.cwd(), 'tmp');
     await mkdir(dir, { recursive: true });
-    const filePath = join(dir, 'product-groups.csv');
+    const fileName = 'product-groups.csv';
+    const filePath = join(dir, fileName);
 
     const writableStream = createWriteStream(filePath);
 
@@ -87,10 +88,10 @@ export class ProductGroupService {
       csvStream.end();
     });
 
-    return true;
+    return `/downloads/${fileName}`;
   }
 
-  async uploadProductGroupMsrps(data: ProductGroupUploadDto): Promise<Boolean> {
+  async uploadProductGroupMsrps(data: CsvUploadDto): Promise<boolean> {
     if (!data.csvFile) {
       throw new Error('No file provided');
     }

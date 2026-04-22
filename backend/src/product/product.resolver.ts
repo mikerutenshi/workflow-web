@@ -52,4 +52,9 @@ export class ProductResolver {
   ): Promise<Boolean> {
     return this.productService.deleteProduct(id);
   }
+
+  @Query(() => String)
+  downloadProducts(): Promise<string> {
+    return this.productService.downloadProducts();
+  }
 }
