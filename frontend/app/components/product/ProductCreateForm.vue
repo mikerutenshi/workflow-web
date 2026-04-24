@@ -3,7 +3,7 @@
     <v-card-text>
       <v-row v-if="errorCreate || errorUpdate || errorDelete" type="error">
         <v-col>
-          <v-alert>
+          <v-alert type="error">
             {{
               extractGraphQlError(errorCreate) ||
               extractGraphQlError(errorUpdate) ||
@@ -70,38 +70,50 @@
         "
       />
 
-      <v-select
-        v-model="selectedColors"
-        :label="$t('label.select_colors')"
-        multiple
-        chips
-        :items="sortedColors"
-        :loading="isFetchingColors"
-        :error-messages="colorIds.errorMessage.value"
-      >
-        <template #item="{ item, props }">
-          <v-list-item v-bind="props" :title="item.name">
-            <template #prepend>
-              <div
-                class="color-box"
-                :style="{ backgroundColor: item.hexCode }"
-              />
+      <v-row>
+        <v-col cols="9">
+          <v-select
+            v-for="(_, index) in colorSelections"
+            v-model="colorSelections[index]"
+            :label="`${$t('label.select_colors')} ${index + 1}`"
+            chips
+            :loading="isFetchingColors"
+            :items="sortedColors"
+            :error-messages="colorIds.errorMessage.value"
+            clearable
+          >
+            <template #item="{ item, props }">
+              <v-list-item v-bind="props" :title="item.name">
+                <template #prepend>
+                  <div
+                    class="color-box"
+                    :style="{ backgroundColor: item.hexCode }"
+                  />
+                </template>
+              </v-list-item>
             </template>
-          </v-list-item>
-        </template>
 
-        <template #chip="{ item, index }">
-          <v-chip @click="remove(index)">
-            <template #prepend>
-              <div
-                :style="{ backgroundColor: item.hexCode }"
-                class="color-box"
-              ></div>
+            <template #chip="{ item, index }">
+              <v-chip v-if="item.id">
+                <template #prepend>
+                  <div
+                    :style="{ backgroundColor: item.hexCode }"
+                    class="color-box"
+                  ></div>
+                </template>
+                <span>{{ item.name }}</span>
+              </v-chip>
             </template>
-            <span>{{ item.name }}</span>
-          </v-chip>
-        </template>
-      </v-select>
+          </v-select>
+        </v-col>
+        <v-col cols="3">
+          <v-btn
+            :icon="mdiPlus"
+            color="primary"
+            @click="colorSelections.push(placeholderColor)"
+          ></v-btn>
+        </v-col>
+      </v-row>
 
       <v-text-field
         :label="$t('label.msrp')"
@@ -159,21 +171,20 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
+import { mdiPencil, mdiPlus } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
+import { useRoute } from 'vue-router';
 import {
-  UpdateProductDocument,
   CreateProductDocument,
+  DeleteProductDocument,
   GetColorsDocument,
   GetProductDocument,
   GetProductGroupsDocument,
+  UpdateProductDocument,
   type Color,
-  DeleteProductDocument,
 } from '~/api/generated/types';
-import { useRoute } from 'vue-router';
 import { CACHE_COLORS } from '~/utils/cache-tags';
-import { mdiPencil, mdiPlus } from '@mdi/js';
 import { ProductSchema } from '~/validation/schema';
-import { Mask, type MaskaDetail, type MaskInputOptions } from 'maska';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -277,11 +288,16 @@ const {
   tags: [CACHE_PRODUCT_GROUPS],
 });
 
-const selectedColors = ref<Color[]>([] as Color[]);
+const placeholderColor = {
+  id: '',
+  name: '',
+  hexCode: '',
+} as Color;
+const colorSelections = ref<Color[]>([placeholderColor]);
 
 const remove = (index: number) => {
   if (index > -1) {
-    selectedColors.value.splice(index, 1);
+    colorSelections.value.splice(index, 1);
   }
 };
 
@@ -311,7 +327,7 @@ if (productId) {
           return matched ? { ...matched } : null;
         })
         .filter((color): color is Color => color !== null);
-      selectedColors.value = colors;
+      colorSelections.value = colors;
     },
     onError: (error) => {
       alert(`Get Product Error -> ${error}`);
@@ -330,10 +346,16 @@ function handleDialogClose() {
   if (productGroupId) productGroupId.setValue(undefined);
 }
 
-watch(selectedColors, (newColors) => {
-  const colorIds = newColors.map((color) => color.id);
-  setFieldValue('colorIds', colorIds);
-});
+watch(
+  () => colorSelections.value,
+  (newColors) => {
+    const colorIds = newColors
+      .filter((color) => color && color.id !== '')
+      .map((color) => color.id);
+    setFieldValue('colorIds', colorIds);
+  },
+  { deep: true, immediate: true },
+);
 
 watch(dialogForm, (newState) => {
   if (!newState) {
@@ -343,7 +365,7 @@ watch(dialogForm, (newState) => {
 watch(msrpUnmasked, (newValue) => {
   msrp.setValue(+newValue);
 });
-// watchEffect(() => {
-//   console.log(JSON.stringify(values));
-// });
+watchEffect(() => {
+  console.log(JSON.stringify(values));
+});
 </script>

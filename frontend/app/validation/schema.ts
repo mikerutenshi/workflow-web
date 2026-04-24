@@ -65,7 +65,7 @@ export const ProductSchema = z.object({
   sku: z
     .string()
     .regex(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/),
-  colorIds: positiveNumberString.array(),
+  colorIds: z.array(positiveNumberString).nonempty(),
   msrp: z.number().min(99900).max(2999900).optional().nullable(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
