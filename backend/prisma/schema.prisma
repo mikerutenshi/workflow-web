@@ -137,7 +137,7 @@ model ColorToProduct {
   colorId           Int
   order             Int           
 
-  @@id([productId, colorId])
+  @@id([productId, colorId, order])
 
   product           Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   color             Color           @relation(fields: [colorId], references: [id])

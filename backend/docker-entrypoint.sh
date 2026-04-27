@@ -2,6 +2,6 @@
 set -e
 
 /wait
-npm run db:migrate
+npm run migrate:deploy
 
 exec "$@"

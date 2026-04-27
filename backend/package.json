@@ -19,9 +19,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "postinstall": "prisma generate",
-    "db:migrate": "prisma migrate deploy",
     "db:push": "dotenv -e .env.development -- prisma db push",
-    "db:seed:development": "dotenv -e .env.development -- prisma db seed"
+    "db:seed": "dotenv -e .env.development -- prisma db seed",
+    "migrate:diff": "dotenv -e .env.development -- prisma migrate diff --from-schema prisma/schema.prisma --to-migrations prisma/migrations --script > down.sql",
+    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev --name add_color_order_comp_key",
+    "migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@apollo/server": "^5.5.0",
