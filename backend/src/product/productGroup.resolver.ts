@@ -41,7 +41,7 @@ export class ProductGroupResolver {
     return this.productGroupService.deleteProductGroup(id);
   }
 
-  @Query(() => Boolean)
+  @Query(() => String)
   downloadProductGroups(): Promise<string> {
     return this.productGroupService.downloadProductGroups();
   }
@@ -49,5 +49,10 @@ export class ProductGroupResolver {
   @Mutation(() => Boolean)
   uploadProductGroupMsrps(@Args('data') data: CsvUploadDto): Promise<boolean> {
     return this.productGroupService.uploadProductGroupMsrps(data);
+  }
+
+  @Mutation(() => Boolean)
+  uploadNewProductGroups(@Args('data') data: CsvUploadDto): Promise<boolean> {
+    return this.productGroupService.uploadNewProductGroups(data);
   }
 }

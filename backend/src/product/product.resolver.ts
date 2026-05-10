@@ -9,6 +9,7 @@ import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
 import { ProductUpdateDto } from './dto/product-update.dto';
+import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -56,5 +57,10 @@ export class ProductResolver {
   @Query(() => String)
   downloadProducts(): Promise<string> {
     return this.productService.downloadProducts();
+  }
+
+  @Mutation(() => Boolean)
+  uploadNewProducts(@Args('data') data: CsvUploadDto): Promise<boolean> {
+    return this.productService.uploadNewProducts(data);
   }
 }

@@ -2,10 +2,18 @@ import { Color } from '@/models/color.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ColorCreateDto } from './dto/color-create.dto';
+import { join } from 'path';
+import { createWriteStream } from 'fs';
+import { mkdir } from 'fs/promises';
+import * as csv from 'fast-csv';
+import { FileService } from '@/file/file.service';
 
 @Injectable()
 export class ColorService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileService: FileService,
+  ) {}
 
   createColor(data: ColorCreateDto): Promise<Color> {
     return this.prisma.color.create({
@@ -52,5 +60,10 @@ export class ColorService {
     if (!color) throw Error(`Delete coloor with ID ${id} failed.`);
 
     return true;
+  }
+
+  async downloadColors(): Promise<string> {
+    const colors = await this.prisma.color.findMany({ orderBy: { id: 'asc' } });
+    return await this.fileService.downloadObjects('colors.csv', colors);
   }
 }

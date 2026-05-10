@@ -517,6 +517,7 @@ type Query {
   me: User!
   getColors: [Color!]!
   getColor(id: ID!): Color!
+  downloadColors: String!
   getProducts: [ProductDto!]!
   getProduct(id: ID!): ProductDto!
   downloadProducts: String!
@@ -524,7 +525,7 @@ type Query {
   getProductCategory(id: ID!): ProductCategory!
   getProductGroups: [ProductGroupGetDto!]!
   getProductGroup(id: ID!): ProductGroupGetDto!
-  downloadProductGroups: Boolean!
+  downloadProductGroups: String!
   getLaborCosts: [LaborCostGetDto!]!
   getLaborCost(id: ID!): LaborCostGetDto!
   getArtisans: [Artisan!]!
@@ -561,6 +562,7 @@ type Mutation {
   createProduct(data: ProductCreateDto!): Product!
   updateProduct(id: ID!, data: ProductUpdateDto!): Product!
   deleteProduct(id: ID!): Boolean!
+  uploadNewProducts(data: CsvUploadDto!): Boolean!
   createProductCategory(data: ProductCategoryCreateDto!): ProductCategory!
   updateProductCategory(id: ID!, data: ProductCategoryCreateDto!): ProductCategory!
   deleteProductCategory(id: ID!): Boolean!
@@ -568,6 +570,7 @@ type Mutation {
   updateProductGroup(id: ID!, data: ProductGroupCreateDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!
   uploadProductGroupMsrps(data: CsvUploadDto!): Boolean!
+  uploadNewProductGroups(data: CsvUploadDto!): Boolean!
   upsertLaborCosts(productGroupId: ID!, data: [LaborCostUpsertDto!]!): [LaborCost!]!
   updateLaborCosts(data: LaborCostUpdateDto!): Boolean!
   createArtisan(data: ArtisanCreateDto!): Artisan!
@@ -650,6 +653,14 @@ input ProductUpdateDto {
   updatedBy: ID
 }
 
+input CsvUploadDto {
+  """Csv file"""
+  csvFile: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 input ProductCategoryCreateDto {
   name: String!
   gender: String!
@@ -662,14 +673,6 @@ input ProductGroupCreateDto {
   createdBy: ID!
   updatedBy: ID
 }
-
-input CsvUploadDto {
-  """Csv file"""
-  csvFile: Upload!
-}
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input LaborCostUpsertDto {
   type: Job!

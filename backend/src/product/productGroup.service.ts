@@ -1,18 +1,18 @@
+import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
+import { FileService } from '@/file/file.service';
 import { ProductGroup } from '@/models/product-group.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import * as csv from 'fast-csv';
 import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
-import { createWriteStream } from 'fs';
-import { join } from 'path';
-import { mkdir } from 'fs/promises';
-import * as csv from 'fast-csv';
-import { parse } from 'fast-csv';
-import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 
 @Injectable()
 export class ProductGroupService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileService: FileService,
+  ) {}
 
   async createProductGroup(data: ProductGroupCreateDto): Promise<ProductGroup> {
     return await this.prisma.productGroup.create({
@@ -68,27 +68,8 @@ export class ProductGroupService {
   }
 
   async downloadProductGroups(): Promise<string> {
-    const dir = join(process.cwd(), 'tmp');
-    await mkdir(dir, { recursive: true });
-    const fileName = 'product-groups.csv';
-    const filePath = join(dir, fileName);
-
-    const writableStream = createWriteStream(filePath);
-
     const groups = await this.prisma.productGroup.findMany();
-
-    await new Promise<void>((resolve, reject) => {
-      const csvStream = csv.format({ headers: true });
-      writableStream.on('finish', resolve);
-      writableStream.on('error', reject);
-      csvStream.on('error', reject);
-      csvStream.pipe(writableStream);
-
-      groups.forEach((item) => csvStream.write(item));
-      csvStream.end();
-    });
-
-    return `/downloads/${fileName}`;
+    return await this.fileService.downloadObjects('product-groups.csv', groups);
   }
 
   async uploadProductGroupMsrps(data: CsvUploadDto): Promise<boolean> {
@@ -100,22 +81,68 @@ export class ProductGroupService {
 
     await new Promise<void>((resolve, reject) => {
       createReadStream()
-        .pipe(parse({ headers: true }))
+        .pipe(csv.parse({ headers: true }))
         .on('error', reject)
         .on('data', (row) => rows.push(row))
         .on('end', () => resolve());
     });
 
-    rows.map(async (row) => {
-      if (row.msrp) {
-        await this.prisma.productGroup.update({
-          where: { id: Number(row.id) },
-          data: {
-            msrp: Number(row.msrp),
-          },
-        });
-      }
-    });
+    await this.prisma.$transaction(
+      rows
+        .filter((row) => row.msrp)
+        .map((row) =>
+          this.prisma.productGroup.update({
+            where: { id: Number(row.id) },
+            data: { msrp: Number(row.msrp) },
+          }),
+        ),
+    );
+
     return true;
+  }
+
+  async uploadNewProductGroups(data: CsvUploadDto): Promise<boolean> {
+    if (!data.csvFile) {
+      throw new Error('No file provided');
+    }
+
+    try {
+      const { createReadStream, filename } = await data.csvFile;
+      const rows: ProductGroupCreateDto[] = [];
+
+      await new Promise<void>((resolve, reject) => {
+        createReadStream()
+          .pipe(csv.parse({ headers: true }))
+          .on('error', reject)
+          .on('data', (row) => {
+            const createdBy = Number(row.createdBy);
+            const productCategoryId = Number(row.productCategoryId);
+
+            if (Number.isNaN(createdBy)) {
+              throw new Error(`Invalid createdBy value: ${row.createdBy}`);
+            }
+            if (Number.isNaN(productCategoryId)) {
+              throw new Error(
+                `Invalid productCategoryId value: ${row.productCategoryId}`,
+              );
+            }
+            rows.push({
+              ...row,
+              productCategoryId,
+              createdBy,
+            });
+          })
+          .on('end', () => resolve());
+      });
+
+      await this.prisma.productGroup.createMany({
+        data: rows,
+        skipDuplicates: true,
+      });
+
+      return true;
+    } catch (error) {
+      throw error;
+    }
   }
 }

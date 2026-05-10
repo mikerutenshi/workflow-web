@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { createWriteStream } from 'fs';
+import { mkdir } from 'fs/promises';
+import { join } from 'path';
 import { Readable } from 'stream';
+import * as csv from 'fast-csv';
+import { CsvUploadDto } from './dto/csv-upload.dto';
 
 @Injectable()
 export class FileService {
@@ -23,5 +28,56 @@ export class FileService {
       });
       readableStream.on('error', reject);
     });
+  }
+
+  async downloadObjects(fileName: string, objects: any[]): Promise<string> {
+    const dir = join(process.cwd(), 'public', 'downloads');
+    await mkdir(dir, { recursive: true });
+    const filePath = join(dir, fileName);
+
+    const writableStream = createWriteStream(filePath);
+
+    await new Promise<void>((resolve, reject) => {
+      const csvStream = csv.format({ headers: true });
+      writableStream.on('finish', resolve);
+      writableStream.on('error', reject);
+      csvStream.on('error', reject);
+      csvStream.pipe(writableStream);
+
+      objects.forEach((item) => csvStream.write(item));
+      csvStream.end();
+    });
+
+    return `/downloads/${fileName}`;
+  }
+
+  async readObjects<T = any, Y = any>(
+    fileInput: CsvUploadDto,
+    onData: (row: T) => Y,
+  ): Promise<Y[]> {
+    if (!fileInput.csvFile) {
+      throw new Error('No file provided');
+    }
+
+    try {
+      const rows: Y[] = [];
+      const { createReadStream } = await fileInput.csvFile;
+
+      return new Promise<Y[]>((resolve, reject) => {
+        createReadStream()
+          .pipe(csv.parse({ headers: true }))
+          .on('error', reject)
+          .on('data', (row) => {
+            try {
+              rows.push(onData(row));
+            } catch (error) {
+              reject(error);
+            }
+          })
+          .on('end', () => resolve(rows));
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }

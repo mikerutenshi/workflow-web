@@ -39,4 +39,9 @@ export class ColorResolver {
   ): Promise<Boolean> {
     return this.colorService.deleteColor(id);
   }
+
+  @Query(() => String)
+  downloadColors(): Promise<string> {
+    return this.colorService.downloadColors();
+  }
 }
