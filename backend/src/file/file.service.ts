@@ -5,6 +5,8 @@ import { join } from 'path';
 import { Readable } from 'stream';
 import * as csv from 'fast-csv';
 import { CsvUploadDto } from './dto/csv-upload.dto';
+import { ClassConstructor, plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class FileService {
@@ -51,33 +53,51 @@ export class FileService {
     return `/downloads/${fileName}`;
   }
 
-  async readObjects<T = any, Y = any>(
+  async readObjects<T, Y>(
     fileInput: CsvUploadDto,
     onData: (row: T) => Y,
+  ): Promise<Y[]>;
+
+  async readObjects<T>(fileInput: CsvUploadDto): Promise<T[]>;
+
+  async readObjects<T = any, Y = T>(
+    fileInput: CsvUploadDto,
+    onData?: (row: T) => Y,
   ): Promise<Y[]> {
     if (!fileInput.csvFile) {
       throw new Error('No file provided');
     }
 
-    try {
-      const rows: Y[] = [];
-      const { createReadStream } = await fileInput.csvFile;
+    const rows: Y[] = [];
+    const { createReadStream } = await fileInput.csvFile;
 
-      return new Promise<Y[]>((resolve, reject) => {
-        createReadStream()
-          .pipe(csv.parse({ headers: true }))
-          .on('error', reject)
-          .on('data', (row) => {
-            try {
-              rows.push(onData(row));
-            } catch (error) {
-              reject(error);
-            }
-          })
-          .on('end', () => resolve(rows));
-      });
-    } catch (error) {
-      throw error;
+    return new Promise<Y[]>((resolve, reject) => {
+      createReadStream()
+        .pipe(csv.parse({ headers: true }))
+        .on('error', reject)
+        .on('data', (row) => {
+          try {
+            const processed = onData ? onData(row) : (row as unknown as Y);
+            rows.push(processed);
+          } catch (error) {
+            reject(error);
+          }
+        })
+        .on('end', () => resolve(rows));
+    });
+  }
+
+  async validateDto<T extends object>(
+    dtoClass: ClassConstructor<T>,
+    plain: any,
+  ) {
+    const instance = plainToClass(dtoClass, plain);
+    const errors = await validate(instance);
+
+    if (errors.length > 0) {
+      throw new Error(`Validation failed: ${JSON.stringify(errors)}`);
     }
+
+    return instance;
   }
 }

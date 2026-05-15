@@ -1,3 +1,5 @@
+import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
+import { FileService } from '@/file/file.service';
 import { Gender, Prisma, Progress } from '@/generated/prisma/client';
 import { InvProduct } from '@/models/inv-product.model';
 import { PrismaService } from '@/prisma/prisma.service';
@@ -5,14 +7,15 @@ import { calculatePrice } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
-import { InvProductDto } from './dto/inv-product.dto';
-import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 import { InvProductUploadDto } from './dto/inv-product-upload.dto';
-import { parse } from 'fast-csv';
+import { InvProductDto } from './dto/inv-product.dto';
 
 @Injectable()
 export class InvProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileService: FileService,
+  ) {}
 
   async createInvProduct(data: InvProductCreateDto): Promise<InvProduct> {
     const { invProductSizes, ...rest } = data;
@@ -284,56 +287,59 @@ export class InvProductService {
     return true;
   }
 
-  async uploadInvProducts(data: CsvUploadDto): Promise<boolean> {
-    try {
-      if (!data.csvFile) {
-        throw new Error('No file provided');
-      }
+  async uploadNewInvProducts(data: CsvUploadDto): Promise<boolean> {
+    const sizes = await this.prisma.size.findMany({
+      where: { gender: Gender.MEN },
+    });
 
-      const { createReadStream } = await data.csvFile;
-      const rows: InvProductUploadDto[] = [];
-
-      await new Promise<void>((resolve, reject) => {
-        createReadStream()
-          .pipe(parse({ headers: true }))
-          .on('error', reject)
-          .on('data', (row) => rows.push(row))
-          .on('end', () => resolve());
-      });
-
-      const sizes = await this.prisma.size.findMany({
-        where: { gender: Gender.MEN },
-      });
+    const rows: InvProductCreateDto[] = await this.fileService.readObjects<
+      InvProductUploadDto,
+      InvProductCreateDto
+    >(data, (row) => {
+      const invProduct: InvProductCreateDto = {
+        invId: row.invId,
+        productId: row.productId,
+        discount: row.discount,
+        invProductSizes: [],
+      };
 
       const nums: string[] = ['38', '39', '40', '41', '42', '43', '44', '45'];
+      nums.forEach((num) => {
+        const col = 'qty' + num;
+        const qty = (row as any)[col];
 
-      for (const row of rows) {
-        const product: InvProductCreateDto = {
-          invId: Number(row.invId),
-          productId: Number(row.productId),
-          discount: row.discount,
-          invProductSizes: [],
-        };
-
-        nums.forEach((num) => {
-          const col = 'qty' + num;
-          const qty = (row as any)[col];
-
-          if (qty && Number(qty) > 0) {
-            const size = sizes.find((size) => size.eu == num);
-            if (size) {
-              product.invProductSizes.push({
-                sizeId: size.id,
-                quantity: Number(qty),
-              });
-            }
+        if (!Number.isNaN(qty) && Number(qty) > 0) {
+          const size = sizes.find((size) => size.eu == num);
+          if (size) {
+            invProduct.invProductSizes.push({
+              sizeId: size.id,
+              quantity: qty,
+            });
           }
-        });
+        }
+      });
 
-        const { invProductSizes, ...rest } = product;
+      return invProduct;
+    });
 
-        await this.prisma.invToProduct.create({
-          data: {
+    await this.prisma.$transaction(async (tx) => {
+      for (const row of rows) {
+        const validateRow = await this.fileService.validateDto(
+          InvProductCreateDto,
+          row,
+        );
+
+        const { invProductSizes, ...rest } = validateRow;
+
+        await tx.invToProduct.upsert({
+          where: {
+            invId_productId: {
+              invId: rest.invId,
+              productId: rest.productId,
+            },
+          },
+          update: {},
+          create: {
             ...rest,
             invProductSizes: {
               create: invProductSizes,
@@ -341,10 +347,8 @@ export class InvProductService {
           },
         });
       }
+    });
 
-      return true;
-    } catch (error) {
-      throw error;
-    }
+    return true;
   }
 }

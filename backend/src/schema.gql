@@ -589,7 +589,7 @@ type Mutation {
   createInvProduct(data: InvProductCreateDto!): InvProduct!
   updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
-  uploadInvProducts(data: CsvUploadDto!): Boolean!
+  uploadNewInvProducts(data: CsvUploadDto!): Boolean!
   createInvTrf(data: InvTrfCreateDto!): InvTrf!
   updateInvTrf(id: ID!, data: InvTrfUpdateDto!): InvTrf!
   createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!

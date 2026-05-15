@@ -169,34 +169,42 @@ export class ProductService {
   }
 
   async uploadNewProducts(data: CsvUploadDto): Promise<boolean> {
-    const rows: ProductCreateDto[] =
-      await this.fileService.readObjects<ProductUploadDto>(data, (row) => {
-        const product: ProductCreateDto = {
-          sku: row.sku,
-          productGroupId: Number(row.productGroupId),
-          createdBy: Number(row.createdBy),
-          colorIds: [],
-        };
-        if (row.colorId1) product.colorIds.push(Number(row.colorId1));
-        if (row.colorId2) product.colorIds.push(Number(row.colorId2));
-        if (row.colorId3) product.colorIds.push(Number(row.colorId3));
-        if (row.colorId4) product.colorIds.push(Number(row.colorId4));
+    const rows: ProductCreateDto[] = await this.fileService.readObjects<
+      ProductUploadDto,
+      ProductCreateDto
+    >(data, (row) => {
+      const product: ProductCreateDto = {
+        sku: row.sku,
+        productGroupId: row.productGroupId,
+        createdBy: row.createdBy,
+        colorIds: [],
+      };
+      if (row.colorId1) product.colorIds.push(row.colorId1);
+      if (row.colorId2) product.colorIds.push(row.colorId2);
+      if (row.colorId3) product.colorIds.push(row.colorId3);
+      if (row.colorId4) product.colorIds.push(row.colorId4);
 
-        return product;
-      });
+      return product;
+    });
 
     await this.prisma.$transaction(async (tx) => {
       for (const row of rows) {
-        const dup = await tx.product.findUnique({ where: { sku: row.sku } });
+        const validateRow = await this.fileService.validateDto(
+          ProductCreateDto,
+          row,
+        );
+        const dup = await tx.product.findUnique({
+          where: { sku: validateRow.sku },
+        });
         if (!dup) {
           let order = 1;
           await tx.product.create({
             data: {
-              sku: row.sku,
-              productGroupId: row.productGroupId,
-              createdBy: row.createdBy,
+              sku: validateRow.sku,
+              productGroupId: validateRow.productGroupId,
+              createdBy: validateRow.createdBy,
               productColors: {
-                create: row.colorIds.map((colorId) => ({
+                create: validateRow.colorIds.map((colorId) => ({
                   color: { connect: { id: colorId } },
                   order: order++,
                 })),

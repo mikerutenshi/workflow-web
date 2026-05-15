@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import * as csv from 'fast-csv';
 import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
+import { ProductGroupUploadMsrpDto } from './dto/product-group-upload-msrp.dto';
 
 @Injectable()
 export class ProductGroupService {
@@ -73,22 +74,17 @@ export class ProductGroupService {
   }
 
   async uploadProductGroupMsrps(data: CsvUploadDto): Promise<boolean> {
-    if (!data.csvFile) {
-      throw new Error('No file provided');
-    }
-    const { createReadStream, filename } = await data.csvFile;
-    const rows: ProductGroup[] = [];
-
-    await new Promise<void>((resolve, reject) => {
-      createReadStream()
-        .pipe(csv.parse({ headers: true }))
-        .on('error', reject)
-        .on('data', (row) => rows.push(row))
-        .on('end', () => resolve());
-    });
+    const rows =
+      await this.fileService.readObjects<ProductGroupUploadMsrpDto>(data);
+    const validateRows = await Promise.all(
+      rows.map(
+        async (row) =>
+          await this.fileService.validateDto(ProductGroupUploadMsrpDto, row),
+      ),
+    );
 
     await this.prisma.$transaction(
-      rows
+      validateRows
         .filter((row) => row.msrp)
         .map((row) =>
           this.prisma.productGroup.update({
@@ -102,47 +98,21 @@ export class ProductGroupService {
   }
 
   async uploadNewProductGroups(data: CsvUploadDto): Promise<boolean> {
-    if (!data.csvFile) {
-      throw new Error('No file provided');
-    }
+    const rows =
+      await this.fileService.readObjects<ProductGroupCreateDto>(data);
 
-    try {
-      const { createReadStream, filename } = await data.csvFile;
-      const rows: ProductGroupCreateDto[] = [];
+    const validateRows = await Promise.all(
+      rows.map(
+        async (row) =>
+          await this.fileService.validateDto(ProductGroupCreateDto, row),
+      ),
+    );
 
-      await new Promise<void>((resolve, reject) => {
-        createReadStream()
-          .pipe(csv.parse({ headers: true }))
-          .on('error', reject)
-          .on('data', (row) => {
-            const createdBy = Number(row.createdBy);
-            const productCategoryId = Number(row.productCategoryId);
+    await this.prisma.productGroup.createMany({
+      data: validateRows,
+      skipDuplicates: true,
+    });
 
-            if (Number.isNaN(createdBy)) {
-              throw new Error(`Invalid createdBy value: ${row.createdBy}`);
-            }
-            if (Number.isNaN(productCategoryId)) {
-              throw new Error(
-                `Invalid productCategoryId value: ${row.productCategoryId}`,
-              );
-            }
-            rows.push({
-              ...row,
-              productCategoryId,
-              createdBy,
-            });
-          })
-          .on('end', () => resolve());
-      });
-
-      await this.prisma.productGroup.createMany({
-        data: rows,
-        skipDuplicates: true,
-      });
-
-      return true;
-    } catch (error) {
-      throw error;
-    }
+    return true;
   }
 }

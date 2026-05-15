@@ -43,7 +43,7 @@ export class InvProductResolver {
   }
 
   @Mutation(() => Boolean)
-  uploadInvProducts(@Args('data') data: CsvUploadDto): Promise<boolean> {
-    return this.service.uploadInvProducts(data);
+  uploadNewInvProducts(@Args('data') data: CsvUploadDto): Promise<boolean> {
+    return this.service.uploadNewInvProducts(data);
   }
 }

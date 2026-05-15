@@ -8,6 +8,7 @@ import { InvTrfResolver } from './inv-trf.resolver';
 import { InvTxService } from './inv-tx.service';
 import { InvTxResolver } from './inv-tx.resolver';
 import { PrismaModule } from '@/prisma/prisma.module';
+import { FileModule } from '@/file/file.module';
 
 @Module({
   providers: [
@@ -21,6 +22,6 @@ import { PrismaModule } from '@/prisma/prisma.module';
     InvTxService,
   ],
   exports: [InvProductService, InvTrfService, InvTxService],
-  imports: [PrismaModule],
+  imports: [PrismaModule, FileModule],
 })
 export class InventoryModule {}
