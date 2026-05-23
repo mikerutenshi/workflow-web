@@ -29,6 +29,10 @@
     </v-col>
   </v-row>
 
+  <v-row class="d-flex justify-end">
+    <h4>{{ `Total: ${totalQty}` }}</h4>
+  </v-row>
+
   <v-row>
     <v-col class="d-flex flex-column">
       <v-data-table
@@ -74,9 +78,11 @@
           {{ formatRupiah(item.price) }}
         </template>
 
-        <template #item.discount="{ item }">{{
-          item.discount
-            ? formatDiscount(convertDecimalToPercent(item.discount))
+        <template #item.discounts="{ item }">{{
+          item.discounts
+            ? item.discounts
+                .map((disc) => formatDiscount(convertDecimalToPercent(disc)))
+                .join(' + ')
             : null
         }}</template>
 
@@ -289,6 +295,18 @@ const invProductsDisplay = computed(() => {
     };
   });
 });
+const totalQty = computed(() => {
+  const data = dataInvProducts.value?.getInvProducts;
+  const total = data?.reduce((sum, item) => {
+    const sizesTotal = item.invProductSizes.reduce(
+      (s, i) => s + (i.quantity ?? 0),
+      0,
+    );
+    return sum + sizesTotal;
+  }, 0);
+
+  return total ?? 0;
+});
 
 const {
   execute: executeFetch,
@@ -318,7 +336,7 @@ const headers: ReadOnlyHeaders = [
     key: 'product.productGroup.productCategory.gender',
   },
   { title: t('label.price'), key: 'price' },
-  { title: t('label.discount'), key: 'discount' },
+  { title: t('label.discount'), key: 'discounts' },
   { title: t('label.sizes'), key: 'invProductSizes', minWidth: '120' },
   {
     title: t('label.pending_trfs'),

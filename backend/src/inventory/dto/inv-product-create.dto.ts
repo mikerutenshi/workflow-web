@@ -1,9 +1,9 @@
-import { Field, ID, InputType, Int } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
 import {
+  IsArray,
   IsDecimal,
   IsInt,
-  IsOptional,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -15,21 +15,21 @@ export class InvProductCreateDto {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(0)
-  invId: number;
+  invId!: number;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(0)
-  productId: number;
+  productId!: number;
 
   @Field(() => [InvProductToSizeCreateDto])
   @Type(() => InvProductToSizeCreateDto)
   @ValidateNested({ each: true })
-  invProductSizes: InvProductToSizeCreateDto[];
+  invProductSizes!: InvProductToSizeCreateDto[];
 
-  @Field(() => String, { nullable: true })
-  @IsDecimal({ decimal_digits: '2' })
-  @IsOptional()
-  discount?: string | null;
+  @Field(() => [String])
+  @IsArray()
+  @IsDecimal({ decimal_digits: '4' }, { each: true })
+  discounts!: string[];
 }

@@ -6,10 +6,10 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class InvProductDto extends InvProduct {
   @Field(() => ProductDto)
-  product: ProductDto;
+  product!: ProductDto;
 
   @Field(() => [InvTrfItem])
-  invTrfItems: InvTrfItem[];
+  invTrfItems!: InvTrfItem[];
 
   @Field(() => Int, { nullable: true })
   price?: number | null;

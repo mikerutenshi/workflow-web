@@ -29,7 +29,7 @@ export class InvTrfService {
   ): Promise<InvTrfItem> {
     const prisma = tx ?? this.prisma;
 
-    const { discount, ...rest } = await prisma.invTrfItem.create({
+    const { discounts, ...rest } = await prisma.invTrfItem.create({
       data: {
         ...data,
         invTrfItemSizes: {
@@ -49,7 +49,7 @@ export class InvTrfService {
       },
     });
 
-    return { ...rest, discount: discount?.toFixed(4) || null };
+    return { ...rest, discounts: discounts.map((disc) => disc.toFixed(4)) };
   }
 
   async createInvTrf(
@@ -141,6 +141,7 @@ export class InvTrfService {
                   sizeId: itemSizes.sizeId,
                   quantity: itemSizes.quantity,
                 })),
+                discounts: item.discounts.map((disc) => disc.toFixed(4)),
               },
               tx,
             );
@@ -193,7 +194,9 @@ export class InvTrfService {
             }
 
             await tx.invToProduct.update({
-              data: { discount: item.discount },
+              data: {
+                discounts: item.discounts.map((disc) => disc.toFixed(4)),
+              },
               where: {
                 invId_productId: {
                   invId: item.toInvId,
@@ -228,6 +231,7 @@ export class InvTrfService {
                     sizeId: itemSizes.sizeId,
                     quantity: itemSizes.quantity,
                   })),
+                  discounts: [],
                 },
                 tx,
               );
@@ -265,7 +269,7 @@ export class InvTrfService {
 
     return result.map((item) => ({
       ...item,
-      discount: item.discount?.toFixed(4) || null,
+      discounts: item.discounts.map((disc) => disc.toFixed(4)),
     }));
   }
 
@@ -299,7 +303,7 @@ export class InvTrfService {
 
     return result.map((item) => ({
       ...item,
-      discount: item.discount?.toFixed(4) || null,
+      discounts: item.discounts.map((disc) => disc.toFixed(4)),
     }));
   }
 
@@ -357,7 +361,7 @@ export class InvTrfService {
       ...result,
       invTrfItems: result.invTrfItems.map((item) => ({
         ...item,
-        discount: item.discount?.toFixed(4) || null,
+        discounts: item.discounts.map((disc) => disc.toFixed(4)),
       })),
     };
   }

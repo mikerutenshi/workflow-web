@@ -84,7 +84,7 @@ query getInvProducts($invId: ID!) {
         quantity
       }
     }
-    discount
+    discounts
     price
   }
 }
@@ -158,7 +158,7 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!, $progress: Progress) {
         msrp
       }
     }
-    discount
+    discounts
     progress
     invTrfItemSizes {
       size {
@@ -238,7 +238,7 @@ query getInvTrf($id: ID!) {
         name
         type
       }
-      discount
+      discounts
       progress
       invTrfItemSizes {
         invTrfItemId

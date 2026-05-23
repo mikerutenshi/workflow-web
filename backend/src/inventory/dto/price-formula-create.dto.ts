@@ -3,9 +3,7 @@ import {
   IsArray,
   IsDecimal,
   IsInt,
-  IsOptional,
-  IsString,
-  ValidateNested,
+  IsOptional
 } from 'class-validator';
 
 @InputType()
@@ -23,5 +21,5 @@ export class PriceFormulaCreateDto {
   @Field(() => [String])
   @IsArray()
   @IsDecimal({ decimal_digits: '4' }, { each: true })
-  discounts: string[];
+  discounts!: string[];
 }

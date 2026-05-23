@@ -19,33 +19,27 @@ export class InvProductService {
 
   async createInvProduct(data: InvProductCreateDto): Promise<InvProduct> {
     const { invProductSizes, ...rest } = data;
-    try {
-      const createdProduct = await this.prisma.invToProduct.create({
-        data: {
-          ...rest,
-          invProductSizes: {
-            create: invProductSizes,
-          },
+    const invProduct = await this.prisma.invToProduct.create({
+      data: {
+        ...rest,
+        invProductSizes: {
+          create: invProductSizes,
         },
-        include: {
-          invProductSizes: {
-            include: { size: true },
-            orderBy: [{ sizeId: 'asc' }],
-          },
+      },
+      include: {
+        invProductSizes: {
+          include: { size: true },
+          orderBy: [{ sizeId: 'asc' }],
         },
-      });
+      },
+    });
 
-      return {
-        ...createdProduct,
-        discount: createdProduct.discount?.toFixed(2),
-      } as InvProduct;
-    } catch (error: any) {
-      if (error.code === 'P2002') {
-        throw new Error('Duplicate entry for Product.');
-      }
-      throw error;
-    }
+    return {
+      ...invProduct,
+      discounts: invProduct.discounts.map((disc) => disc.toFixed(4)),
+    };
   }
+
   async getInvProducts(invId: number): Promise<InvProductDto[]> {
     const products = await this.prisma.invToProduct.findMany({
       include: {
@@ -65,6 +59,8 @@ export class InvProductService {
               include: { size: true },
               orderBy: [{ sizeId: 'asc' }],
             },
+            fromInv: true,
+            toInv: true,
           },
           where: {
             progress: { not: Progress.COMPLETED },
@@ -106,14 +102,18 @@ export class InvProductService {
           };
         })
         .filter((size) => size.quantity > 0),
-      discount: product.discount?.toFixed(2),
+      discounts: product.discounts.map((disc) => disc.toFixed(4)),
+      invTrfItems: product.invTrfItems.map((item) => ({
+        ...item,
+        discounts: item.discounts.map((disc) => disc.toFixed(4)),
+      })),
       price: calculatePrice(
         product.product.productGroup.msrp,
         inventory.priceFormula?.offset,
         inventory.priceFormula?.multiplier,
         inventory.priceFormula?.discounts,
       ),
-    })) as InvProductDto[];
+    }));
   }
 
   async updateInvProduct(
@@ -143,7 +143,7 @@ export class InvProductService {
 
     return {
       ...invProduct,
-      discount: invProduct.discount?.toFixed(2),
+      discounts: invProduct.discounts.map((disc) => disc.toFixed(4)),
     } as InvProduct;
   }
 
@@ -187,7 +187,7 @@ export class InvProductService {
     // console.log(`Result: ${JSON.stringify(result)}`);
     return {
       ...result,
-      discount: result?.discount?.toFixed(2),
+      discounts: result?.discounts.map((disc) => disc.toFixed(4)),
     } as InvProduct;
   }
 
@@ -300,6 +300,7 @@ export class InvProductService {
         invId: row.invId,
         productId: row.productId,
         invProductSizes: [],
+        discounts: [],
       };
 
       const nums: string[] = ['38', '39', '40', '41', '42', '43', '44', '45'];
@@ -312,7 +313,7 @@ export class InvProductService {
           if (size) {
             invProduct.invProductSizes.push({
               sizeId: size.id,
-              quantity: qty,
+              quantity: Number(qty),
             });
           }
         }

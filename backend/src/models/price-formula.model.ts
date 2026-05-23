@@ -3,14 +3,14 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class PriceFormula {
   @Field(() => ID)
-  id: number;
+  id!: number;
 
   @Field(() => String, { nullable: true })
-  multiplier: string | null;
+  multiplier!: string | null;
 
   @Field(() => Number, { nullable: true })
-  offset: number | null;
+  offset!: number | null;
 
   @Field(() => [String])
-  discounts: string[];
+  discounts!: string[];
 }

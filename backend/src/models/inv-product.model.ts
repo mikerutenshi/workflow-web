@@ -4,14 +4,14 @@ import { InvProductToSize } from './inv-product-to-size.model';
 @ObjectType()
 export class InvProduct {
   @Field(() => ID)
-  invId: number;
+  invId!: number;
 
   @Field(() => ID)
-  productId: number;
+  productId!: number;
 
   @Field(() => [InvProductToSize])
-  invProductSizes: InvProductToSize[];
+  invProductSizes!: InvProductToSize[];
 
-  @Field(() => String, { nullable: true })
-  discount?: string | null;
+  @Field(() => [String])
+  discounts!: string[];
 }

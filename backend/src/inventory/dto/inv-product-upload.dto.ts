@@ -1,12 +1,12 @@
 export class InvProductUploadDto {
-  invId: number = 0;
-  productId: number = 0;
-  qty38: number = 0;
-  qty39: number = 0;
-  qty40: number = 0;
-  qty41: number = 0;
-  qty42: number = 0;
-  qty43: number = 0;
-  qty44: number = 0;
-  qty45: number = 0;
+  invId!: number;
+  productId!: number;
+  qty38!: number;
+  qty39!: number;
+  qty40!: number;
+  qty41!: number;
+  qty42!: number;
+  qty43!: number;
+  qty44!: number;
+  qty45!: number;
 }

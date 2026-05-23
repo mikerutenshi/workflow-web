@@ -123,6 +123,7 @@ export class TaskService {
                   sizeId: workSize.sizeId,
                   quantity: workSize.quantity,
                 })),
+                discounts: [],
               },
               tx,
             );

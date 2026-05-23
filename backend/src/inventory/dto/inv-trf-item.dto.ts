@@ -6,7 +6,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class InvTrfItemDto extends InvTrfItem {
   @Field(() => ProductDto)
-  product: ProductDto;
+  product!: ProductDto;
 
   @Field(() => InvTrf, { nullable: true })
   invTrf?: InvTrf | null;
