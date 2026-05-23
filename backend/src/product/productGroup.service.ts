@@ -38,6 +38,9 @@ export class ProductGroupService {
       include: {
         productCategory: true,
       },
+      orderBy: {
+        skuNumeric: 'asc',
+      },
     });
   }
 

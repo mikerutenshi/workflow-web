@@ -9,5 +9,4 @@ export class InvProductUploadDto {
   qty43: number = 0;
   qty44: number = 0;
   qty45: number = 0;
-  discount?: string | null;
 }

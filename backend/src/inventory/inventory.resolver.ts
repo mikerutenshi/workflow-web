@@ -41,4 +41,9 @@ export class InventoryResolver {
   getInventories(): Promise<InventoryDto[]> {
     return this.service.getInventories();
   }
+
+  @Query(() => String)
+  downloadInventories(): Promise<string> {
+    return this.service.downloadInventories();
+  }
 }

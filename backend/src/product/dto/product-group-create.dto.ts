@@ -1,11 +1,22 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 @InputType()
 export class ProductGroupCreateDto {
   @Field()
   @IsNotEmpty()
+  @Matches(/^[0-9]{5}(ST)?$/, {
+    message: 'Format support example: 12345 or 12345ST',
+  })
   skuNumeric: string;
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

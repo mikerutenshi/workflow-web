@@ -299,7 +299,6 @@ export class InvProductService {
       const invProduct: InvProductCreateDto = {
         invId: row.invId,
         productId: row.productId,
-        discount: row.discount,
         invProductSizes: [],
       };
 

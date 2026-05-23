@@ -4,10 +4,14 @@ import { Injectable } from '@nestjs/common';
 import { InventoryCreateDto } from './dto/inventory-create.dto';
 import { InventoryUpdateDto } from './dto/inventory-update.dto';
 import { InventoryDto } from './dto/inventory.dto';
+import { FileService } from '@/file/file.service';
 
 @Injectable()
 export class InventoryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileService: FileService,
+  ) {}
 
   createInventory(data: InventoryCreateDto): Promise<Inventory> {
     return this.prisma.inventory.create({
@@ -108,5 +112,13 @@ export class InventoryService {
     if (!inventory) throw new Error(`Delete inventory with ID ${id} failed.`);
 
     return true;
+  }
+
+  async downloadInventories(): Promise<string> {
+    const inventories = await this.prisma.inventory.findMany();
+    return await this.fileService.downloadObjects(
+      'inventories.csv',
+      inventories,
+    );
   }
 }
