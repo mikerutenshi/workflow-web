@@ -92,8 +92,3 @@ docker compose build
 docker compose push
 docker compose pull
 docker image prune
-
-TODO:
-Temporarily re-disjoint production from InvTrf.
-Create migration files for production.
-Add Notes to major transactions

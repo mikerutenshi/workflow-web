@@ -16,6 +16,14 @@ const positiveNumberString = z
   .refine((val) => !isNaN(Number(val)))
   .refine((num) => Number(num) > 0);
 
+const discounts = z
+  .array(
+    z.string().refine((val) => /^\d+(\.\d{1,4})?$/.test(val), {
+      params: { i18n: 'zodI18n.errors.decimal_number' },
+    }),
+  )
+  .default([]);
+
 export const AuthSchema = z.object({
   email: z.string().email().trim(),
   password: z.string().min(8).trim(),
@@ -163,13 +171,7 @@ export const InventorySchema = z.object({
       })
       .optional()
       .nullable(),
-    discounts: z
-      .array(
-        z.string().regex(/^\d+(\.\d{1,4})?$/, {
-          message: 'Must be a number with up to 4 decimal places',
-        }),
-      )
-      .default([]),
+    discounts: discounts,
   }),
 });
 
@@ -189,18 +191,19 @@ export const InvTrfItemSchema = z.object({
   toInvId: positiveNumberString,
   createdBy: positiveNumberString,
   productId: positiveNumberString,
-  discount: z
-    .string()
-    .regex(/^\d+(\.\d{1,4})?$/, {
-      message: 'Must be a number with up to 4 decimal places',
-    })
-    .optional(),
+  discounts: discounts,
   invTrfItemSizes: z.array(
     z.object({
       sizeId: positiveNumberString,
       quantity: z.number().min(0),
     }),
   ),
+});
+
+export const InvProductUpdateDiscSchema = z.object({
+  invId: positiveNumberString,
+  productId: positiveNumberString,
+  discounts: discounts,
 });
 
 export const SaleItemSchema = z.object({

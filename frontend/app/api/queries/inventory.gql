@@ -100,6 +100,14 @@ mutation updateInvProduct(
   }
 }
 
+mutation updateInvProductDisc($data: InvProductUpdateDiscDto!) {
+  updateInvProductDisc(data: $data) {
+    invId
+    productId
+    discounts
+  }
+}
+
 mutation deleteInvProduct($invId: ID!, $productId: ID!) {
   deleteInvProduct(invId: $invId, productId: $productId)
 }

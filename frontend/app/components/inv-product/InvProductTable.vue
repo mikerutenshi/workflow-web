@@ -174,6 +174,17 @@
               >
                 <v-list-item-title>{{ $t('label.send_to') }}</v-list-item-title>
               </v-list-item>
+              <v-list-item
+                :title="$t('btn.inv_product_edit_disc')"
+                :prepend-icon="mdiPercent"
+                @click="
+                  () => {
+                    const { pendingCount, ...rest } = item;
+                    showUpdateDiscDialog(rest as InvProductDto);
+                  }
+                "
+              >
+              </v-list-item>
             </v-list>
           </v-menu>
         </template>
@@ -188,7 +199,7 @@
         @refresh-table="executeFetch"
       ></InvProductItemTrfTable>
     </template>
-    <template v-if="dialog.content === DialogContent.TxDetail">
+    <template v-else-if="dialog.content === DialogContent.TxDetail">
       <InvTxTable
         :inv-product-dto="itemSelectionObject"
         @refresh-table="executeFetch"
@@ -199,6 +210,12 @@
         :inv-product-dto="itemSelectionObject"
         @close-dialog="closeItemFormDialog"
       ></InvTrfItemForm>
+    </template>
+    <template v-else-if="dialog.content === DialogContent.FormDisc">
+      <InvProductUpdateDiscForm
+        :inv-product-dto="itemSelectionObject"
+        @close-dialog="closeItemFormDialog"
+      ></InvProductUpdateDiscForm>
     </template>
   </ActionEditItemDialog>
 
@@ -241,6 +258,7 @@ import {
   mdiDotsVertical,
   mdiFileDocumentArrowRightOutline,
   mdiMagnify,
+  mdiPercent,
   mdiProgressAlert,
   mdiTransferRight,
   mdiWarehouse,
@@ -254,13 +272,13 @@ import {
   type InvProductDto,
 } from '~/api/generated/types';
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
-import { Role } from '~/utils/constants';
 
 enum DialogContent {
   None = 'NONE',
   TrfDetail = 'TRF_DETAIL',
   TxDetail = 'TX_DETAIL',
   Form = 'FORM',
+  FormDisc = 'FORM_DISC',
 }
 
 const pageNo = ref(1);
@@ -318,6 +336,9 @@ const {
   variables: computed(() => ({ invId: selectInvId.value })),
   tags: [CACHE_INV_PRODUCTS],
   fetchOnMount: false,
+  onData(data) {
+    console.log(JSON.stringify(data.getInvProducts[0]));
+  },
 });
 
 const { t } = useI18n();
@@ -380,6 +401,14 @@ function closeItemFormDialog() {
   dialog.content = DialogContent.None;
   itemSelectionObject.value = null;
   executeFetch();
+}
+function showUpdateDiscDialog(item: InvProductDto) {
+  dialog.isVisible = true;
+  dialog.content = DialogContent.FormDisc;
+  itemSelectionObject.value = item;
+  dialog.title = t('page.inv_product_edit_disc', {
+    item: itemSelectionObject.value.product.sku,
+  });
 }
 
 watchEffect(() => {

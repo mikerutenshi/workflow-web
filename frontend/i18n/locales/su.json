@@ -67,7 +67,8 @@
     "send_to": "Ngirim {product}",
     "item_detail_for": "Rincian Barang pikeun {item}",
     "delete_confirm": "Konfirmasi Mupus",
-    "add_to_cart": "Tambahkeun kana Karanjang"
+    "add_to_cart": "Tambahkeun kana Karanjang",
+    "inv_product_edit_disc": "Ngarobah Diskon pikeun {item}"
   },
   "btn": {
     "products": "Sapatu Anyar",
@@ -86,7 +87,8 @@
     "cancel": "Batal",
     "yes": "Enya",
     "no": "Henteu",
-    "add_product": "Tambah Sapatu"
+    "add_product": "Tambah Sapatu",
+    "inv_product_edit_disc": "Ngarobah Diskon"
   },
   "label": {
     "id": "ID",
@@ -225,7 +227,8 @@
       "invalid_type_received_undefined": "Kolom ieu wajib diisi",
       "invalid_enum_value": "Nilai di luar daptar. Diharapkeun {options}",
       "repeat_password_mismatch": "Sandi anu diulang teu sarua",
-      "date_outside_range": "tanggal kaluar tina rentang anu ditarima"
+      "date_outside_range": "tanggal kaluar tina rentang anu ditarima",
+      "decimal_number": "Harus berupa angka dengan maksimal 4 digit di belakang koma"
     },
     "types": {
       "object": "Jenisna kudu obyék",

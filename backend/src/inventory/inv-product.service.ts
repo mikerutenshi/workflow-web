@@ -9,6 +9,7 @@ import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductUploadDto } from './dto/inv-product-upload.dto';
 import { InvProductDto } from './dto/inv-product.dto';
+import { InvProductUpdateDiscDto } from './dto/inv-product-update-disc.dto';
 
 @Injectable()
 export class InvProductService {
@@ -77,6 +78,20 @@ export class InvProductService {
       where: {
         invId,
       },
+      orderBy: [
+        {
+          product: {
+            productGroup: {
+              skuNumeric: 'asc',
+            },
+          },
+        },
+        {
+          product: {
+            sku: 'asc',
+          },
+        },
+      ],
     });
 
     return products.map(({ inventory, ...product }) => ({
@@ -147,6 +162,28 @@ export class InvProductService {
     } as InvProduct;
   }
 
+  async updateDiscount(data: InvProductUpdateDiscDto): Promise<InvProduct> {
+    const invProduct = await this.prisma.invToProduct.update({
+      where: {
+        invId_productId: { invId: data.invId, productId: data.productId },
+      },
+      data: {
+        discounts: data.discounts,
+      },
+      include: {
+        invProductSizes: {
+          include: { size: true },
+          orderBy: [{ sizeId: 'asc' }],
+        },
+      },
+    });
+
+    return {
+      ...invProduct,
+      discounts: invProduct.discounts.map((disc) => disc.toFixed(4)),
+    } as InvProduct;
+  }
+
   async upsertInvProductOp(
     data: InvProductCreateDto,
     tx: Prisma.TransactionClient,
@@ -184,7 +221,6 @@ export class InvProductService {
         },
       },
     });
-    // console.log(`Result: ${JSON.stringify(result)}`);
     return {
       ...result,
       discounts: result?.discounts.map((disc) => disc.toFixed(4)),

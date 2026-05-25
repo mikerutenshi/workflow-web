@@ -64,10 +64,11 @@
     "setting_colors": "Pengaturan Warna",
     "trf_detail_for": "Rincian Transfer untuk {item}",
     "tx_detail_for": "Rincian Transaksi untuk {item}",
-    "send_to": "Kirim {product}",
+    "send_to": "Transfer {product}",
     "item_detail_for": "Rincian Barang untuk {item}",
     "delete_confirm": "Konfirmasi Penghapusan",
-    "add_to_cart": "Tambahkan ke Keranjang"
+    "add_to_cart": "Tambahkan ke Keranjang",
+    "inv_product_edit_disc": "Ubah Diskon untuk {item}"
   },
   "btn": {
     "products": "Sepatu Baru",
@@ -86,7 +87,8 @@
     "cancel": "Batal",
     "yes": "Iya",
     "no": "Tidak",
-    "add_product": "Tambah Sepatu"
+    "add_product": "Tambah Sepatu",
+    "inv_product_edit_disc": "Ubah Diskon"
   },
   "label": {
     "id": "ID",
@@ -151,8 +153,8 @@
     "to_inv": "Ke Gudang",
     "show_trf_detail": "Lihat Rincian Transfer",
     "show_tx_detail": "Lihat Rincian Transaksi",
-    "send_to": "Kirim Sepatu",
-    "pending_trfs": "Transfer Tertunda",
+    "send_to": "Transfer Sepatu",
+    "pending_trfs": "Akan Ditransfer",
     "show_item_detail": "Lihat Rincian Barang ",
     "delete_confirm": "Apakah anda yakin akan menghapus {item}?",
     "price": "Harga",
@@ -225,7 +227,8 @@
       "invalid_type_received_undefined": "Kolom wajib diisi",
       "invalid_enum_value": "Nilai di luar daftar. Diharapkan {options}",
       "repeat_password_mismatch": "Password yang diulang tidak sama",
-      "date_outside_range": "Tanggal di luar rentang yang diterima"
+      "date_outside_range": "Tanggal di luar rentang yang diterima",
+      "decimal_number": "Harus berupa angka dengan maksimal 4 digit di belakang koma"
     },
     "types": {
       "object": "Tipe harus berupa objek",

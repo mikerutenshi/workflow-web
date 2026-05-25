@@ -67,7 +67,8 @@
     "item_detail_for": "Item Detail for {item}",
     "send_to": "Send {product}",
     "delete_confirm": "Delete Confirmation",
-    "add_to_cart": "Add to Cart"
+    "add_to_cart": "Add to Cart",
+    "inv_product_edit_disc": "Edit Discount for {item}"
   },
   "btn": {
     "products": "New Shoe",
@@ -86,7 +87,8 @@
     "cancel": "Cancel",
     "yes": "Yes",
     "no": "No",
-    "add_product": "Add Shoe"
+    "add_product": "Add Shoe",
+    "inv_product_edit_disc": "Edit Discount"
   },
   "label": {
     "id": "ID",
@@ -225,7 +227,8 @@
       "invalid_type_received_undefined": "Field is required",
       "invalid_enum_value": "Value is outside of list. Expected {options}",
       "repeat_password_mismatch": "Repeated password do not match",
-      "date_outside_range": "Date is out of accepted range"
+      "date_outside_range": "Date is out of accepted range",
+      "decimal_number": "Must be a number with up to 4 decimal places"
     },
     "types": {
       "object": "Type should be object",
