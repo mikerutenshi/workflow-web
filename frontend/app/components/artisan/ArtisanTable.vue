@@ -120,7 +120,7 @@ enum DialogContent {
   Edit = 'EDIT',
   Create = 'CREATE',
 }
-const dialogStore = useDialogStore();
+const dialogStore = useAppBarStore();
 const { isFormDialogOpen } = storeToRefs(dialogStore);
 
 const dialog = reactive({

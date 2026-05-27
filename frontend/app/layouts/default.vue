@@ -15,7 +15,7 @@
         "
         variant="flat"
         class="mr-4"
-        @click="dialogStore.openFormDialog()"
+        @click="appBarStore.openFormDialog()"
       >
         <v-icon left :icon="mdiPlus"></v-icon>
         {{ t(`btn.${String(currentRouteName)}`) }}
@@ -30,6 +30,15 @@
         :loading="appBarStore.isPrinting"
       >
         {{ $t('btn.print') }}</v-btn
+      >
+
+      <v-btn
+        v-if="currentRouteName == 'products' && clearance <= Role.Planner"
+        variant="flat"
+        class="mr-4"
+        @click="appBarStore.openUploadDialog"
+        :prepend-icon="mdiUpload"
+        >Upload</v-btn
       >
     </v-app-bar>
 
@@ -115,6 +124,7 @@ import {
   mdiPrinterPos,
   mdiShoeSneaker,
   mdiTransfer,
+  mdiUpload,
   mdiWarehouse,
 } from '@mdi/js';
 import { useQuery } from 'villus';
@@ -148,7 +158,6 @@ const { data, error } = await useQuery({
 // }
 const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 
-const dialogStore = useDialogStore();
 const appBarStore = useAppBarStore();
 const drawer = ref(false);
 // const createBtnTitles: Record<string, string> = {

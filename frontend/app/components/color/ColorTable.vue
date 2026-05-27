@@ -100,7 +100,7 @@ const pageNo = ref(1);
 const itemsPerPage = ref(25);
 const dialog = ref(false);
 const selectionId = ref<string | null>(null);
-const dialogStore = useDialogStore();
+const dialogStore = useAppBarStore();
 const { isFormDialogOpen: isDialogOpen } = storeToRefs(dialogStore);
 
 function edit(colorId: string) {

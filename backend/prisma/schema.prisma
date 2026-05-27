@@ -100,7 +100,7 @@ model ProductGroup {
   skuNumeric        String          @unique
   productCategoryId Int
   name              String?
-  msrp              Int?             
+  msrp              Int
 
   createdAt         DateTime        @default(now())
   createdBy         Int

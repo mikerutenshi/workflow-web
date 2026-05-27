@@ -1,5 +1,6 @@
-import { createClient, defaultPlugins } from 'villus';
+import { multipart } from '@villus/multipart';
 import { useRequestHeaders } from 'nuxt/app';
+import { createClient, defaultPlugins } from 'villus';
 
 const parseCookieHeader = (value?: string) => {
   return (value || '')
@@ -34,7 +35,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const client = createClient({
     url: baseUrl,
-    use: [addHeadersPlugin(cookie), ...defaultPlugins()],
+    use: [addHeadersPlugin(cookie), multipart(), ...defaultPlugins()],
   });
 
   nuxtApp.vueApp.use(client);

@@ -251,7 +251,7 @@ enum DialogContent {
 }
 
 const { t } = useI18n();
-const dialogStore = useDialogStore();
+const dialogStore = useAppBarStore();
 const { isFormDialogOpen } = storeToRefs(dialogStore);
 
 const authStore = useAuthStore();

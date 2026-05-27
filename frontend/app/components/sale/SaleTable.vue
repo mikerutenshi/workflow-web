@@ -125,7 +125,7 @@ import {
 const { t } = useI18n();
 const adapter = useDate();
 
-const dialogStore = useDialogStore();
+const dialogStore = useAppBarStore();
 const { isFormDialogOpen } = storeToRefs(dialogStore);
 enum DialogContent {
   View = 'VIEW',

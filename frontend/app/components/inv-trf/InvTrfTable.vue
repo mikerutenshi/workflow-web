@@ -166,7 +166,7 @@ const dialogModel = reactive({
   isReadonly: false,
 });
 
-const dialogStore = useDialogStore();
+const dialogStore = useAppBarStore();
 const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
 
 const selectItemObject = shallowRef<InvTrfDto | null>(null);

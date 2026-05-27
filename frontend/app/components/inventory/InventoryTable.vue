@@ -100,7 +100,7 @@ const itemsPerPage = ref(25);
 const dialog = ref(false);
 const selectedInvId = ref<string | null>(null);
 
-const dialogStore = useDialogStore();
+const dialogStore = useAppBarStore();
 const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
 
 function edit(invId: string) {

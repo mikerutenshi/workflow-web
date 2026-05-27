@@ -51,6 +51,10 @@ mutation deleteProductGroup($id: ID!) {
   deleteProductGroup(id: $id)
 }
 
+mutation uploadProductGroupMsrps($data: CsvUploadDto!) {
+  uploadProductGroupMsrps(data: $data)
+}
+
 mutation createColor($data: ColorCreateDto!) {
   createColor(data: $data) {
     ...Color
