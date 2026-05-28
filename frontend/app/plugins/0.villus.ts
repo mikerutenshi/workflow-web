@@ -19,13 +19,13 @@ const addHeadersPlugin =
   (cookie?: string) => (
   ({ opContext }: { opContext: any }) => {
     opContext.credentials = "include";
-    // console.log(`Cookie: ${JSON.stringify(cookie)}}`);
     const cookiesParsed = parseCookieHeader(cookie);
-    // console.log(`Cookies parsed: ${JSON.stringify(cookiesParsed)}}`);
+    opContext.headers['apollo-require-preflight'] = 'true';
+
     if (cookiesParsed.jwt) {
-      // console.log(`add header jwt ${cookiesParsed.jwt}`);
       opContext.headers.Authorization = `Bearer ${cookiesParsed.jwt}`;
     }
+
   });
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -73,7 +73,7 @@ export const ProductSchema = z.object({
   sku: z
     .string()
     .regex(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/),
-  colorIds: z.array(positiveNumberString).nonempty(),
+  colorIds: z.array(positiveNumberString),
   msrp: z.number().min(99900).max(2999900).optional().nullable(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
@@ -224,4 +224,26 @@ export const SaleSchema = z.object({
   saleItems: z.array(SaleItemSchema).nonempty(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
+});
+
+// const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
+const ACCEPTED_FILE_TYPES = [
+  'text/csv',
+  'application/vnd.ms-excel',
+  'text/plain',
+];
+
+export const fileSchema = z.object({
+  csvFile: z
+    .union([z.null(), z.instanceof(File)])
+    .optional()
+    .refine(
+      (file) => file == null || file.size <= MAX_FILE_SIZE,
+      `Max file size is 1MB.`,
+    )
+    .refine(
+      (file) => file == null || ACCEPTED_FILE_TYPES.includes(file.type),
+      'Only CSV files are supported.',
+    ),
 });
