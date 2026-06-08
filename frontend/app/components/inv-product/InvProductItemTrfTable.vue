@@ -139,7 +139,7 @@ const {
   isFetching: isDeleting,
   error: deleteError,
 } = useMutation(DeleteInvTrfItemDocument, {
-  clearCacheTags: [CACHE_INV_TRFS_PER_ITEM, CACHE_INV_PRODUCTS],
+  refetchTags: [CACHE_INV_TRFS_PER_ITEM, CACHE_INV_PRODUCTS],
   onData() {
     snack.message = t('status.deleted');
     snack.isVisible = true;

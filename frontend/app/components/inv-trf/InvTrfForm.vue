@@ -242,7 +242,7 @@ const {
     snack.message = t('status.saved');
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_PRODUCTS, CACHE_INV_TRFS_PER_ITEM],
+  refetchTags: [CACHE_INV_TRFS, CACHE_INV_PRODUCTS, CACHE_INV_TRFS_PER_ITEM],
 });
 const {
   isFetching: isUpdating,
@@ -254,7 +254,7 @@ const {
     snack.message = t('status.saved');
     snack.isVisible = true;
   },
-  clearCacheTags: [
+  refetchTags: [
     CACHE_INV_TRFS,
     CACHE_INV_TRF,
     CACHE_INV_PRODUCTS,
@@ -270,7 +270,7 @@ const {
     snack.message = t('status.deleted');
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
+  refetchTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
 });
 
 const variables = reactive({

@@ -3,6 +3,9 @@ import { type Sale } from '~/models/sale.model';
 
 export const useSaleStore = defineStore('sale-store', {
   state: () => {
-    return { sale: null as Sale | null };
+    return {
+      sale: null as Sale | null,
+      selectedInventoryId: null as string | null,
+    };
   },
 });

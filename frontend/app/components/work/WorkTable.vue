@@ -174,18 +174,13 @@
   <ActionEditItemDialog
     v-model="dialog.isVisible"
     :dialog-title="
-      dialog.content === DialogContent.CreateWork
-        ? $t('page.work_create')
-        : dialog.content === DialogContent.EditWork
-          ? $t('page.work_edit')
-          : dialog.content === DialogContent.EditTask
-            ? $t('page.task_edit')
-            : ''
+      dialog.content === DialogContent.EditWork
+        ? $t('page.work_edit')
+        : dialog.content === DialogContent.EditTask
+          ? $t('page.task_edit')
+          : ''
     "
   >
-    <template v-if="dialog.content === DialogContent.CreateWork">
-      <WorkCreateForm @close-dialog="save"></WorkCreateForm>
-    </template>
     <template v-if="dialog.content === DialogContent.EditWork">
       <WorkCreateForm
         :work-id="currentWorkId"
@@ -247,12 +242,9 @@ enum DialogContent {
   None = 'NONE',
   EditWork = 'EDIT_WORK',
   EditTask = 'EDIT_TASK',
-  CreateWork = 'CREATE_WORK',
 }
 
 const { t } = useI18n();
-const dialogStore = useAppBarStore();
-const { isFormDialogOpen } = storeToRefs(dialogStore);
 
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
@@ -319,7 +311,7 @@ const {
     snack.isVisible = true;
     executeFetch();
   },
-  clearCacheTags: [CACHE_WORKS],
+  refetchTags: [CACHE_WORKS],
 });
 
 const computedWorks = computed(() => {
@@ -416,30 +408,12 @@ function showDeleteDialog(workId: string) {
   confirmDeleteDialog.value = true;
 }
 
-// watch(isFormDialogOpen, (isOpen) => {
-//   if (isOpen) {
-//     dialog.content = DialogContent.CreateWork;
-//     dialog.isVisible = true;
-//   }
-// });
 watch(
   () => dialog.isVisible,
   (isOpen) => {
     if (!isOpen) {
-      dialogStore.closeFormDialog();
       currentWorkId.value = '';
     }
   },
 );
-
-watchEffect(() => {
-  if (isFormDialogOpen.value) {
-    dialog.content = DialogContent.CreateWork;
-    dialog.isVisible = true;
-  }
-});
-// watchEffect(() => {
-//   console.log(`isFormDialogOpen: ${isFormDialogOpen.value}`);
-//   console.log(`Form: ${JSON.stringify(form)}`);
-// });
 </script>

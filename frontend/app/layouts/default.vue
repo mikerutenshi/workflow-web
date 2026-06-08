@@ -103,8 +103,30 @@
     </v-main>
 
     <ActionEditItemDialog :dialog-title="dialogTitle" v-model="dialog.isVisible">
-      <template v-if="dialog.content === DialogContent.Create">
+      <template v-if="dialog.content === DialogContent.CreateWork">
+        <WorkCreateForm @close-dialog="handleDialogClose"></WorkCreateForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.CreateProduct">
         <ProductCreateForm @close-dialog="handleDialogClose"></ProductCreateForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.CreateArtisan">
+        <ArtisanCreateForm @close-dialog="handleDialogClose"></ArtisanCreateForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.CreateInvTrf">
+        <InvTrfForm :inv-trf-id="null" @close-dialog="handleDialogClose"></InvTrfForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.CreateSale">
+        <SaleCreateForm
+          :inventory-id="saleStore.selectedInventoryId"
+          :sale-id="null"
+          @close-dialog="handleDialogClose"
+        ></SaleCreateForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.CreateInventory">
+        <InventoryCreateForm :inv-id="null" @close-dialog="handleDialogClose"></InventoryCreateForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.CreateColor">
+        <ColorCreateForm :color-id="null" @close-dialog="handleDialogClose"></ColorCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.Upload">
         <ProductUploadForm @close-dialog="handleDialogClose"></ProductUploadForm>
@@ -167,14 +189,30 @@ const { data, error } = await useQuery({
 // }
 const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 
-const appBarStore = useAppBarStore();
 const { print: printPayroll, isPrinting: isPayrollPrinting } = usePayrollPrint();
+const saleStore = useSaleStore();
 
 enum DialogContent {
   None = 'NONE',
-  Create = 'CREATE',
+  CreateWork = 'CREATE_WORK',
+  CreateProduct = 'CREATE_PRODUCT',
+  CreateArtisan = 'CREATE_ARTISAN',
+  CreateInvTrf = 'CREATE_INV_TRF',
+  CreateSale = 'CREATE_SALE',
+  CreateInventory = 'CREATE_INVENTORY',
+  CreateColor = 'CREATE_COLOR',
   Upload = 'UPLOAD',
 }
+
+const createRouteToContent: Record<string, DialogContent> = {
+  works: DialogContent.CreateWork,
+  products: DialogContent.CreateProduct,
+  artisans: DialogContent.CreateArtisan,
+  'inv-trfs': DialogContent.CreateInvTrf,
+  sales: DialogContent.CreateSale,
+  'setting-inventories': DialogContent.CreateInventory,
+  'setting-colors': DialogContent.CreateColor,
+};
 
 const dialog = reactive({
   isVisible: false,
@@ -183,8 +221,20 @@ const dialog = reactive({
 
 const dialogTitle = computed(() => {
   switch (dialog.content) {
-    case DialogContent.Create:
+    case DialogContent.CreateWork:
+      return t('page.work_create');
+    case DialogContent.CreateProduct:
       return t('page.product_create');
+    case DialogContent.CreateArtisan:
+      return t('page.artisan_create');
+    case DialogContent.CreateInvTrf:
+      return t('page.inv_trf_create');
+    case DialogContent.CreateSale:
+      return t('page.sale_create');
+    case DialogContent.CreateInventory:
+      return t('page.inventory_create');
+    case DialogContent.CreateColor:
+      return t('page.color_create');
     case DialogContent.Upload:
       return 'Upload';
     default:
@@ -193,12 +243,15 @@ const dialogTitle = computed(() => {
 });
 
 function openCreateDialog() {
-  if (currentRouteName.value === 'products') {
-    dialog.content = DialogContent.Create;
-    dialog.isVisible = true;
-  } else {
-    appBarStore.openFormDialog();
+  const content = createRouteToContent[String(currentRouteName.value)];
+  if (!content) return;
+
+  if (content === DialogContent.CreateSale) {
+    saleStore.sale = null;
   }
+
+  dialog.content = content;
+  dialog.isVisible = true;
 }
 
 function openUploadDialog() {

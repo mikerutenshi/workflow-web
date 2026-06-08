@@ -331,7 +331,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_SALES, CACHE_INV_PRODUCTS],
+  refetchTags: [CACHE_SALES, CACHE_INV_PRODUCTS],
 });
 
 const {
@@ -342,7 +342,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_SALES, CACHE_SALE],
+  refetchTags: [CACHE_SALES, CACHE_SALE],
 });
 
 const {

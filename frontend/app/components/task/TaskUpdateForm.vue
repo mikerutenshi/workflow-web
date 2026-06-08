@@ -129,7 +129,7 @@ const {
   isFetching: isUpdating,
   error,
 } = useMutation(UpdateTasksDocument, {
-  clearCacheTags: [
+  refetchTags: [
     CACHE_WORKS,
     CACHE_TASKS,
     CACHE_INV_PRODUCTS,

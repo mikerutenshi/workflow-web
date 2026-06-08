@@ -100,22 +100,14 @@ const pageNo = ref(1);
 const itemsPerPage = ref(25);
 const dialog = ref(false);
 const selectionId = ref<string | null>(null);
-const dialogStore = useAppBarStore();
-const { isFormDialogOpen: isDialogOpen } = storeToRefs(dialogStore);
 
 function edit(colorId: string) {
   dialog.value = true;
   selectionId.value = colorId;
 }
 
-watch(isDialogOpen, (isOpen) => {
-  if (isOpen) {
-    dialog.value = true;
-  }
-});
 watch(dialog, (isOpen) => {
   if (!isOpen) {
-    dialogStore.closeFormDialog();
     selectionId.value = null;
   }
 });

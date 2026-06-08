@@ -107,7 +107,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_COLORS],
+  refetchTags: [CACHE_COLORS],
 });
 const {
   execute: executeUpdate,
@@ -117,14 +117,14 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_COLORS, CACHE_COLOR],
+  refetchTags: [CACHE_COLORS, CACHE_COLOR],
 });
 const {
   execute: executeDelete,
   isFetching: isDeleting,
   error: deleteError,
 } = useMutation(DeleteColorDocument, {
-  clearCacheTags: [CACHE_COLORS],
+  refetchTags: [CACHE_COLORS],
   onData(data) {
     if (data.deleteColor) {
       snack.message = `${t('status.deleted')}`;

@@ -166,9 +166,6 @@ const dialogModel = reactive({
   isReadonly: false,
 });
 
-const dialogStore = useAppBarStore();
-const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
-
 const selectItemObject = shallowRef<InvTrfDto | null>(null);
 const confirmDeleteDialog = ref(false);
 const snack = reactive({
@@ -197,7 +194,7 @@ const {
     snack.isVisible = true;
     executeFetch();
   },
-  clearCacheTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
+  refetchTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
 });
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
@@ -216,12 +213,6 @@ function showDialog(content: DialogContent, id?: string | undefined) {
   dialogModel.id = id ?? null;
 
   switch (content) {
-    case DialogContent.Create:
-      dialogModel.content = DialogContent.Create;
-      dialogModel.title = t('page.inv_trf_create');
-      dialogModel.isReadonly = false;
-      dialogModel.isVisible = true;
-      break;
     case DialogContent.Edit:
       dialogModel.content = DialogContent.Edit;
       dialogModel.title = t('page.inv_trf_edit');
@@ -245,21 +236,6 @@ function showDeleteDialog(invTrfId: string) {
   dialogModel.id = invTrfId;
   confirmDeleteDialog.value = true;
 }
-
-watch(isCreateDialogOpen, (open) => {
-  if (open) {
-    showDialog(DialogContent.Create);
-  }
-});
-watch(
-  () => [dialogModel.isVisible, dialogModel.content],
-  ([visible, content]) => {
-    if (!visible && content === DialogContent.Create) {
-      executeFetch();
-      dialogStore.closeFormDialog();
-    }
-  },
-);
 
 watchEffect(() => {
   console.log(`selectItemObject: ${JSON.stringify(selectItemObject.value)}`);

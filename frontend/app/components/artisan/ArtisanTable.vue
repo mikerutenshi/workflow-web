@@ -33,18 +33,13 @@
 
   <ActionEditItemDialog
     :dialog-title="
-      dialog.content === DialogContent.Create
-        ? $t('page.artisan_create')
-        : dialog.content === DialogContent.Edit
-          ? $t('page.artisan_edit')
-          : 'Title'
+      dialog.content === DialogContent.Edit
+        ? $t('page.artisan_edit')
+        : 'Title'
     "
     v-model="dialog.isVisible"
   >
-    <template v-if="dialog.content === DialogContent.Create">
-      <ArtisanCreateForm @close-dialog="handleDialogClose"></ArtisanCreateForm>
-    </template>
-    <template v-else-if="dialog.content === DialogContent.Edit">
+    <template v-if="dialog.content === DialogContent.Edit">
       <ArtisanCreateForm
         :artisan-id="selectionId"
         @close-dialog="handleDialogClose"
@@ -118,10 +113,7 @@ const selectionId = ref('');
 enum DialogContent {
   None = 'NONE',
   Edit = 'EDIT',
-  Create = 'CREATE',
 }
-const dialogStore = useAppBarStore();
-const { isFormDialogOpen } = storeToRefs(dialogStore);
 
 const dialog = reactive({
   isVisible: false,
@@ -134,7 +126,6 @@ function showDialog(productId: string) {
 }
 function handleDialogClose() {
   executeFetch();
-  dialogStore.closeFormDialog();
   dialog.isVisible = false;
   selectionId.value = '';
 }
@@ -146,10 +137,4 @@ watch(
     }
   },
 );
-watchEffect(() => {
-  if (isFormDialogOpen.value) {
-    dialog.content = DialogContent.Create;
-    dialog.isVisible = true;
-  }
-});
 </script>

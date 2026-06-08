@@ -232,7 +232,7 @@ const {
   isFetching: isUpdating,
   error,
 } = useMutation(UpdateLaborCostsDocument, {
-  clearCacheTags: [
+  refetchTags: [
     CACHE_PRODUCT_GROUPS,
     CACHE_PRODUCT_GROUP,
     CACHE_TASKS,

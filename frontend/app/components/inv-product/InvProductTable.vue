@@ -196,14 +196,10 @@
     <template v-if="dialog.content === DialogContent.TrfDetail">
       <InvProductItemTrfTable
         :inv-product-dto="itemSelectionObject"
-        @refresh-table="executeFetch"
       ></InvProductItemTrfTable>
     </template>
     <template v-else-if="dialog.content === DialogContent.TxDetail">
-      <InvTxTable
-        :inv-product-dto="itemSelectionObject"
-        @refresh-table="executeFetch"
-      ></InvTxTable>
+      <InvTxTable :inv-product-dto="itemSelectionObject"></InvTxTable>
     </template>
     <template v-else-if="dialog.content === DialogContent.Form">
       <InvTrfItemForm
@@ -400,7 +396,6 @@ function closeItemFormDialog() {
   dialog.isVisible = false;
   dialog.content = DialogContent.None;
   itemSelectionObject.value = null;
-  executeFetch();
 }
 function showUpdateDiscDialog(item: InvProductDto) {
   dialog.isVisible = true;

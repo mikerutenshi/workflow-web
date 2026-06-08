@@ -107,7 +107,7 @@ const {
   onData(data) {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INV_PRODUCTS],
+  refetchTags: [CACHE_INV_PRODUCTS],
 });
 
 const onSubmit = handleSubmit((data) => {

@@ -184,7 +184,7 @@ const {
   isFetching: isCreating,
   error: createError,
 } = useMutation(CreateInvTrfItemDocument, {
-  clearCacheTags: [
+  refetchTags: [
     CACHE_INV_TRFS_PER_ITEM,
     CACHE_INV_PRODUCTS,
     CACHE_INV_TRF_ITEMS,

@@ -125,8 +125,6 @@ import {
 const { t } = useI18n();
 const adapter = useDate();
 
-const dialogStore = useAppBarStore();
-const { isFormDialogOpen } = storeToRefs(dialogStore);
 enum DialogContent {
   View = 'VIEW',
   None = 'NONE',
@@ -199,30 +197,25 @@ const {
     snack.isVisible = true;
     fetchSales();
   },
-  clearCacheTags: [CACHE_SALES, CACHE_INV_PRODUCTS],
+  refetchTags: [CACHE_SALES, CACHE_INV_PRODUCTS],
 });
 
-watch(isFormDialogOpen, (isOpen) => {
-  if (isOpen) {
-    showDialog(DialogContent.Create);
-  }
-});
+const saleStore = useSaleStore();
+
+watch(
+  invId,
+  (id) => {
+    saleStore.selectedInventoryId = id;
+  },
+  { immediate: true },
+);
+
 watch(
   () => [dialog.isVisible, dialog.content],
-  ([visible, content]) => {
+  ([visible]) => {
     if (!visible) fetchSales();
-    if (!visible && content === DialogContent.Create) {
-      // executeFetch();
-      dialogStore.closeFormDialog();
-    }
   },
 );
-const saleStore = useSaleStore();
-// watch(invId, (newValue, oldValue) => {
-//   if (newValue != oldValue) {
-//     saleStore.sale = null;
-//   }
-// });
 watch(
   () => dialog.content,
   (newValue, oldValue) => {
@@ -236,12 +229,6 @@ function showDialog(content: DialogContent, saleId?: string) {
   dialog.saleId = saleId ?? null;
 
   switch (content) {
-    case DialogContent.Create:
-      dialog.content = DialogContent.Create;
-      dialog.title = t('page.sale_create');
-      dialog.isReadonly = false;
-      dialog.isVisible = true;
-      break;
     case DialogContent.Edit:
       dialog.content = DialogContent.Edit;
       dialog.title = t('page.sale_edit');

@@ -234,7 +234,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INVENTORIES],
+  refetchTags: [CACHE_INVENTORIES],
 });
 const {
   isFetching: isUpdating,
@@ -244,14 +244,14 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_INVENTORIES, CACHE_INVENTORY, CACHE_INV_PRODUCTS],
+  refetchTags: [CACHE_INVENTORIES, CACHE_INVENTORY, CACHE_INV_PRODUCTS],
 });
 const {
   execute: executeDelete,
   error: deleteError,
   isFetching: isDeleting,
 } = useMutation(DeleteInventoryDocument, {
-  clearCacheTags: [CACHE_INVENTORIES],
+  refetchTags: [CACHE_INVENTORIES],
   onData(data) {
     if (data.deleteInventory) {
       snack.message = `${t('status.deleted')}`;

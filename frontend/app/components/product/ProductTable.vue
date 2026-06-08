@@ -186,7 +186,7 @@ const extractColors = (productColors: any[]) => {
 
 const deleteProduct = (id: string, index: number) => {
   const { execute } = useMutation(DeleteProductDocument, {
-    clearCacheTags: [CACHE_PRODUCTS],
+    refetchTags: [CACHE_PRODUCTS],
   });
 
   execute({ id })

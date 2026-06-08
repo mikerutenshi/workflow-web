@@ -109,7 +109,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_PRODUCT_CATEGORIES],
+  refetchTags: [CACHE_PRODUCT_CATEGORIES],
 });
 const {
   execute: executeUpdate,
@@ -119,14 +119,14 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_PRODUCT_CATEGORIES, CACHE_PRODUCT_CATEGORY],
+  refetchTags: [CACHE_PRODUCT_CATEGORIES, CACHE_PRODUCT_CATEGORY],
 });
 const {
   execute: executeDelete,
   isFetching: isDeleting,
   error: deleteError,
 } = useMutation(DeleteProductCategoryDocument, {
-  clearCacheTags: [CACHE_PRODUCT_CATEGORIES],
+  refetchTags: [CACHE_PRODUCT_CATEGORIES],
   onData(data) {
     if (data.deleteProductCategory) {
       snack.message = `${t('status.deleted')}`;

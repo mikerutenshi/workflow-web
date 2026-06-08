@@ -100,22 +100,13 @@ const itemsPerPage = ref(25);
 const dialog = ref(false);
 const selectedInvId = ref<string | null>(null);
 
-const dialogStore = useAppBarStore();
-const { isFormDialogOpen: isCreateDialogOpen } = storeToRefs(dialogStore);
-
 function edit(invId: string) {
   dialog.value = true;
   selectedInvId.value = invId;
 }
 
-watch(isCreateDialogOpen, (isOpen) => {
-  if (isOpen) {
-    dialog.value = true;
-  }
-});
 watch(dialog, (isOpen) => {
   if (!isOpen) {
-    dialogStore.closeFormDialog();
     selectedInvId.value = '';
   }
 });

@@ -33,7 +33,7 @@
                     : item.skuNumeric
                 "
                 :subtitle="`
-                    ${item.productCategory.name} | 
+                    ${item.productCategory.name} |
                   ${$t(renderGender(item.productCategory.gender))}
                     `"
               >
@@ -227,7 +227,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_PRODUCTS],
+  refetchTags: [CACHE_PRODUCTS],
 });
 const {
   isFetching: isUpdating,
@@ -237,14 +237,14 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
+  refetchTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
 });
 const {
   execute: executeDelete,
   isFetching: isDeleting,
   error: errorDelete,
 } = useMutation(DeleteProductDocument, {
-  clearCacheTags: [CACHE_PRODUCTS],
+  refetchTags: [CACHE_PRODUCTS],
   onData(data) {
     if (data.deleteProduct) {
       snack.message = `${t('status.deleted')}`;
@@ -342,7 +342,6 @@ function showDialogWithId(id: string) {
 function handleDialogClose() {
   if (dialogForm) dialogForm.value = false;
   selectionId.value = '';
-  executeFetchProductGroups();
   if (productGroupId) productGroupId.setValue(undefined);
 }
 

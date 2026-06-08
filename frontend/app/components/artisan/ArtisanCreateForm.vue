@@ -118,7 +118,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_ARTISANS],
+  refetchTags: [CACHE_ARTISANS],
 });
 const {
   execute: executeUpdate,
@@ -128,12 +128,12 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  clearCacheTags: [CACHE_ARTISANS, CACHE_ARTISAN],
+  refetchTags: [CACHE_ARTISANS, CACHE_ARTISAN],
 });
 const { execute: executeDelete, error: deleteError } = useMutation(
   DeleteArtisanDocument,
   {
-    clearCacheTags: [CACHE_ARTISANS],
+    refetchTags: [CACHE_ARTISANS],
     onData(data) {
       if (data.deleteArtisan) {
         snack.message = `${t('status.deleted')}`;

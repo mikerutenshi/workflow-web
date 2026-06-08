@@ -162,7 +162,7 @@ const {
   isFetching: isCreating,
   error: createError,
 } = useMutation(CreateWorkDocument, {
-  clearCacheTags: [CACHE_WORKS],
+  refetchTags: [CACHE_WORKS],
   onData() {
     snack.message = t('status.saved');
     snack.isVisible = true;
@@ -173,7 +173,7 @@ const {
   isFetching: isUpdating,
   error: updateError,
 } = useMutation(UpdateWorkDocument, {
-  clearCacheTags: [CACHE_WORK, CACHE_WORKS],
+  refetchTags: [CACHE_WORK, CACHE_WORKS],
   onData() {
     snack.message = t('status.saved');
     snack.isVisible = true;
@@ -184,7 +184,7 @@ const {
 //   isFetching: isDeleting,
 //   error: deleteError,
 // } = useMutation(DeleteWorkDocument, {
-//   clearCacheTags: [CACHE_WORKS],
+//   refetchTags: [CACHE_WORKS],
 //   onData(data) {
 //     if (data.deleteWork) {
 //       snack.message = t('status.deleted');
