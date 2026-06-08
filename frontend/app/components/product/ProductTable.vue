@@ -106,24 +106,13 @@
   </v-row>
 
   <ActionEditItemDialog
-    :dialog-title="
-      dialog.content === DialogContent.Create
-        ? $t('page.product_create')
-        : dialog.content === DialogContent.Edit
-          ? $t('page.product_edit')
-          : 'Title'
-    "
+    :dialog-title="$t('page.product_edit')"
     v-model="dialog.isVisible"
   >
-    <template v-if="dialog.content === DialogContent.Create">
-      <ProductCreateForm @close-dialog="handleDialogClose"></ProductCreateForm>
-    </template>
-    <template v-else-if="dialog.content === DialogContent.Edit">
-      <ProductCreateForm
-        :product-id="selectedProductId"
-        @close-dialog="handleDialogClose"
-      ></ProductCreateForm>
-    </template>
+    <ProductCreateForm
+      :product-id="selectedProductId"
+      @close-dialog="handleDialogClose"
+    ></ProductCreateForm>
   </ActionEditItemDialog>
 </template>
 
@@ -173,28 +162,16 @@ const pageNo = ref(1);
 const itemsPerPage = ref(25);
 
 const selectedProductId = ref('');
-enum DialogContent {
-  None = 'NONE',
-  Edit = 'EDIT',
-  Create = 'CREATE',
-}
-const appBarStore = useAppBarStore();
-const { isFormDialogOpen } = storeToRefs(appBarStore);
 
 const dialog = reactive({
   isVisible: false,
-  content: DialogContent.None,
 });
 function showDialog(productId: string) {
   selectedProductId.value = productId;
-  dialog.content = DialogContent.Edit;
   dialog.isVisible = true;
 }
 function handleDialogClose() {
   executeFetch();
-  if (appBarStore.isFormDialogOpen) {
-    appBarStore.closeFormDialog();
-  }
   dialog.isVisible = false;
   selectedProductId.value = '';
 }
@@ -234,10 +211,4 @@ watch(
     }
   },
 );
-watchEffect(() => {
-  if (isFormDialogOpen.value) {
-    dialog.content = DialogContent.Create;
-    dialog.isVisible = true;
-  }
-});
 </script>

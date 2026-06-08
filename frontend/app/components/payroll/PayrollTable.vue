@@ -262,28 +262,21 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import ic_borsa from '@/assets/images/ic_borsa.png';
 
-const appBarSTore = useAppBarStore();
+const { registerPrint, unregisterPrint } = usePayrollPrint();
 
-watch(
-  () => appBarSTore.isPrintClicked,
-  (isClicked) => {
-    if (isClicked) {
-      downloadPdf();
-      appBarSTore.isPrintClicked = false;
-    }
-  },
-);
+onMounted(() => registerPrint(downloadPdf));
+onUnmounted(() => unregisterPrint());
 
 const { current } = useTheme();
 const primary = current.value.colors.primary;
 console.log(`primary ${primary}`);
 
 function downloadPdf() {
-  appBarSTore.isPrinting = true;
-  const img = new Image();
-  img.src = ic_borsa;
+  return new Promise<void>((resolve, reject) => {
+    const img = new Image();
+    img.src = ic_borsa;
 
-  img.onload = function () {
+    img.onload = function () {
     const doc = new jsPDF();
     doc.setLineHeightFactor(1.5);
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -440,12 +433,14 @@ function downloadPdf() {
         },
       );
     }
-    doc.save('summary.pdf');
-    appBarSTore.isPrinting = false;
-  };
+      doc.save('summary.pdf');
+      resolve();
+    };
 
-  img.onerror = function () {
-    console.error('Failed to load the image');
-  };
+    img.onerror = function () {
+      console.error('Failed to load the image');
+      reject(new Error('Failed to load the image'));
+    };
+  });
 }
 </script>

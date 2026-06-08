@@ -15,7 +15,7 @@
         "
         variant="flat"
         class="mr-4"
-        @click="appBarStore.openFormDialog()"
+        @click="openCreateDialog()"
       >
         <v-icon left :icon="mdiPlus"></v-icon>
         {{ t(`btn.${String(currentRouteName)}`) }}
@@ -25,9 +25,9 @@
         v-if="currentRouteName == 'payroll' && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"
-        @click="appBarStore.isPrintClicked = true"
+        @click="printPayroll()"
         :prepend-icon="mdiPrinter"
-        :loading="appBarStore.isPrinting"
+        :loading="isPayrollPrinting"
       >
         {{ $t('btn.print') }}</v-btn
       >
@@ -36,7 +36,7 @@
         v-if="currentRouteName == 'products' && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"
-        @click="isUploadDialogOpen = true"
+        @click="openUploadDialog()"
         :prepend-icon="mdiUpload"
         >Upload</v-btn
       >
@@ -102,11 +102,13 @@
       <slot />
     </v-main>
 
-    <ActionEditItemDialog
-      dialog-title="Upload"
-      v-model="isUploadDialogOpen"
-    >
-      <ProductUploadForm @close-dialog="isUploadDialogOpen = false"></ProductUploadForm>
+    <ActionEditItemDialog :dialog-title="dialogTitle" v-model="dialog.isVisible">
+      <template v-if="dialog.content === DialogContent.Create">
+        <ProductCreateForm @close-dialog="handleDialogClose"></ProductCreateForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.Upload">
+        <ProductUploadForm @close-dialog="handleDialogClose"></ProductUploadForm>
+      </template>
     </ActionEditItemDialog>
   </v-app>
 </template>
@@ -166,7 +168,57 @@ const { data, error } = await useQuery({
 const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 
 const appBarStore = useAppBarStore();
-const isUploadDialogOpen = ref(false);
+const { print: printPayroll, isPrinting: isPayrollPrinting } = usePayrollPrint();
+
+enum DialogContent {
+  None = 'NONE',
+  Create = 'CREATE',
+  Upload = 'UPLOAD',
+}
+
+const dialog = reactive({
+  isVisible: false,
+  content: DialogContent.None,
+});
+
+const dialogTitle = computed(() => {
+  switch (dialog.content) {
+    case DialogContent.Create:
+      return t('page.product_create');
+    case DialogContent.Upload:
+      return 'Upload';
+    default:
+      return '';
+  }
+});
+
+function openCreateDialog() {
+  if (currentRouteName.value === 'products') {
+    dialog.content = DialogContent.Create;
+    dialog.isVisible = true;
+  } else {
+    appBarStore.openFormDialog();
+  }
+}
+
+function openUploadDialog() {
+  dialog.content = DialogContent.Upload;
+  dialog.isVisible = true;
+}
+
+function handleDialogClose() {
+  dialog.isVisible = false;
+  dialog.content = DialogContent.None;
+}
+
+watch(
+  () => dialog.isVisible,
+  (isVisible) => {
+    if (!isVisible) {
+      dialog.content = DialogContent.None;
+    }
+  },
+);
 const drawer = ref(false);
 // const createBtnTitles: Record<string, string> = {
 //   works: 'btn.work',

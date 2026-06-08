@@ -1,6 +1,4 @@
 export const useAppBarStore = defineStore('appbar-store', () => {
-  const isPrintClicked = ref(false);
-  const isPrinting = ref(false);
   const isFormDialogOpen = ref(false);
 
   function openFormDialog() {
@@ -11,8 +9,6 @@ export const useAppBarStore = defineStore('appbar-store', () => {
   }
 
   return {
-    isPrintClicked,
-    isPrinting,
     isFormDialogOpen,
     openFormDialog,
     closeFormDialog,
