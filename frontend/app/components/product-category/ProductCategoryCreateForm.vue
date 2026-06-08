@@ -26,15 +26,11 @@
         <template v-slot:item="{ props, item }">
           <v-list-item
             v-bind="props"
-            :title="
-              item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
-            "
+            :title="item !== '' ? $t(renderGender(item as Gender)) : ''"
           ></v-list-item>
         </template>
         <template v-slot:selection="{ item }">
-          <span>{{
-            item.title !== '' ? $t(renderGender(item.title as Gender)) : ''
-          }}</span>
+          <span>{{ item !== '' ? $t(renderGender(item as Gender)) : '' }}</span>
         </template>
       </v-select>
     </v-card-text>
