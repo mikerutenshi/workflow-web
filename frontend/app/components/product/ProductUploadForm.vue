@@ -43,6 +43,7 @@ const {
   isFetching: isFetchingMsrps,
   error: errorMsrps,
 } = useMutation(UploadProductGroupMsrpsDocument, {
+  clearCacheTags: [CACHE_PRODUCTS],
   onData() {
     snack.isVisible = true;
   },

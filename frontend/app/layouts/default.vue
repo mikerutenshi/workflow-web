@@ -36,7 +36,7 @@
         v-if="currentRouteName == 'products' && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"
-        @click="appBarStore.openUploadDialog"
+        @click="isUploadDialogOpen = true"
         :prepend-icon="mdiUpload"
         >Upload</v-btn
       >
@@ -101,6 +101,13 @@
     <v-main>
       <slot />
     </v-main>
+
+    <ActionEditItemDialog
+      dialog-title="Upload"
+      v-model="isUploadDialogOpen"
+    >
+      <ProductUploadForm @close-dialog="isUploadDialogOpen = false"></ProductUploadForm>
+    </ActionEditItemDialog>
   </v-app>
 </template>
 
@@ -159,6 +166,7 @@ const { data, error } = await useQuery({
 const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 
 const appBarStore = useAppBarStore();
+const isUploadDialogOpen = ref(false);
 const drawer = ref(false);
 // const createBtnTitles: Record<string, string> = {
 //   works: 'btn.work',
@@ -186,207 +194,117 @@ const closeDrawer = () => {
   drawer.value = false;
 };
 
+type NavItemDef = {
+  title: string;
+  route?: string;
+  icon: string;
+  maxClearance: Role;
+  children?: NavItemDef[];
+};
+
+type NavItem = {
+  title: string;
+  route?: string;
+  icon: string;
+  children?: NavItem[];
+};
+
+function filterNav(items: NavItemDef[], clearance: number): NavItem[] {
+  return items
+    .filter((item) => clearance <= item.maxClearance)
+    .map((item) => {
+      const children = item.children
+        ? filterNav(item.children, clearance)
+        : undefined;
+      return {
+        title: item.title,
+        route: item.route,
+        icon: item.icon,
+        ...(children?.length ? { children } : {}),
+      };
+    })
+    .filter((item) => item.route || item.children?.length);
+}
+
 const navItems = computed(() => {
-  if (clearance.value <= Role.Superuser) {
-    return [
-      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
-      {
-        title: t('nav.payroll'),
-        route: localePath('/payroll'),
-        icon: mdiCashMultiple,
-      },
-      {
-        title: t('nav.production_status'),
-        route: localePath('/works'),
-        icon: mdiFactory,
-      },
-      {
-        title: t('nav.inventory'),
-        route: localePath('/inv-products'),
-        icon: mdiWarehouse,
-      },
-      {
-        title: t('nav.inventory_transfers'),
-        route: localePath('/inv-trfs'),
-        icon: mdiTransfer,
-      },
-      {
-        title: t('nav.sales'),
-        route: localePath('/sales'),
-        icon: mdiPrinterPos,
-      },
-      {
-        title: t('nav.setting'),
-        route: localePath('/setting'),
-        icon: mdiCogs,
-        children: [
-          {
-            title: t('nav.products'),
-            route: localePath('/products'),
-            icon: mdiShoeSneaker,
-          },
-          {
-            title: t('nav.labor_costs'),
-            route: localePath('/labor-costs'),
-            icon: mdiCalculator,
-          },
-          {
-            title: t('nav.artisans'),
-            route: localePath('/artisans'),
-            icon: mdiAccountWrench,
-          },
-          {
-            title: t('nav.setting_inventories'),
-            route: localePath('/setting/inventories'),
-            icon: mdiWarehouse,
-          },
-          {
-            title: t('nav.setting_colors'),
-            route: localePath('/setting/colors'),
-            icon: mdiPalette,
-          },
-        ],
-      },
-    ];
-  } else if (clearance.value <= Role.Finance) {
-    return [
-      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
-      {
-        title: t('nav.payroll'),
-        route: localePath('/payroll'),
-        icon: mdiCashMultiple,
-      },
-      {
-        title: t('nav.production_status'),
-        route: localePath('/works'),
-        icon: mdiFactory,
-      },
-      // {
-      //   title: t('nav.inventory'),
-      //   route: localePath('/inv-products'),
-      //   icon: mdiWarehouse,
-      // },
-      // {
-      //   title: t('nav.inventory_transfers'),
-      //   route: localePath('/inv-trfs'),
-      //   icon: mdiTransfer,
-      // },
-      // {
-      //   title: t('nav.sales'),
-      //   route: localePath('/sales'),
-      //   icon: mdiPrinterPos,
-      // },
-      {
-        title: t('nav.setting'),
-        route: localePath('/setting'),
-        icon: mdiCogs,
-        children: [
-          {
-            title: t('nav.products'),
-            route: localePath('/products'),
-            icon: mdiShoeSneaker,
-          },
-          {
-            title: t('nav.labor_costs'),
-            route: localePath('/labor-costs'),
-            icon: mdiCalculator,
-          },
-          {
-            title: t('nav.artisans'),
-            route: localePath('/artisans'),
-            icon: mdiAccountWrench,
-          },
-          // {
-          //   title: t('nav.setting_inventories'),
-          //   route: localePath('/setting/inventories'),
-          //   icon: mdiWarehouse,
-          // },
-          {
-            title: t('nav.setting_colors'),
-            route: localePath('/setting/colors'),
-            icon: mdiPalette,
-          },
-        ],
-      },
-    ];
-  } else if (clearance.value <= Role.Planner) {
-    return [
-      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
-      {
-        title: t('nav.production_status'),
-        route: localePath('/works'),
-        icon: mdiFactory,
-      },
-      // {
-      //   title: t('nav.inventory'),
-      //   route: localePath('/inv-products'),
-      //   icon: mdiWarehouse,
-      // },
-      // {
-      //   title: t('nav.inventory_transfers'),
-      //   route: localePath('/inv-trfs'),
-      //   icon: mdiTransfer,
-      // },
-      {
-        title: t('nav.payroll'),
-        route: localePath('/payroll'),
-        icon: mdiCashMultiple,
-      },
-      {
-        title: t('nav.setting'),
-        route: localePath('/setting'),
-        icon: mdiCogs,
-        children: [
-          {
-            title: t('nav.products'),
-            route: localePath('/products'),
-            icon: mdiShoeSneaker,
-          },
-          {
-            title: t('nav.artisans'),
-            route: localePath('/artisans'),
-            icon: mdiAccountWrench,
-          },
-          // {
-          //   title: t('nav.setting_inventories'),
-          //   route: localePath('/setting/inventories'),
-          //   icon: mdiWarehouse,
-          // },
-          {
-            title: t('nav.setting_colors'),
-            route: localePath('/setting/colors'),
-            icon: mdiPalette,
-          },
-        ],
-      },
-    ];
-  } else if (clearance.value <= Role.Field) {
-    return [
-      { title: t('nav.home'), route: localePath('/'), icon: mdiHome },
-      {
-        title: t('nav.production_status'),
-        route: localePath('/works'),
-        icon: mdiFactory,
-      },
-      {
-        title: t('nav.setting'),
-        route: localePath('/setting'),
-        icon: mdiCogs,
-        children: [
-          {
-            title: t('nav.artisans'),
-            route: localePath('/artisans'),
-            icon: mdiAccountWrench,
-          },
-          {
-            title: t('nav.products'),
-            route: localePath('/products'),
-            icon: mdiShoeSneaker,
-          },
-        ],
-      },
-    ];
-  }
+  const config: NavItemDef[] = [
+    {
+      title: t('nav.home'),
+      route: localePath('/'),
+      icon: mdiHome,
+      maxClearance: Role.Field,
+    },
+    {
+      title: t('nav.payroll'),
+      route: localePath('/payroll'),
+      icon: mdiCashMultiple,
+      maxClearance: Role.Planner,
+    },
+    {
+      title: t('nav.production_status'),
+      route: localePath('/works'),
+      icon: mdiFactory,
+      maxClearance: Role.Field,
+    },
+    {
+      title: t('nav.inventory'),
+      route: localePath('/inv-products'),
+      icon: mdiWarehouse,
+      maxClearance: Role.Superuser,
+    },
+    {
+      title: t('nav.inventory_transfers'),
+      route: localePath('/inv-trfs'),
+      icon: mdiTransfer,
+      maxClearance: Role.Superuser,
+    },
+    {
+      title: t('nav.sales'),
+      route: localePath('/sales'),
+      icon: mdiPrinterPos,
+      maxClearance: Role.Superuser,
+    },
+    {
+      title: t('nav.setting'),
+      route: localePath('/setting'),
+      icon: mdiCogs,
+      maxClearance: Role.Field,
+      children: [
+        {
+          title: t('nav.products'),
+          route: localePath('/products'),
+          icon: mdiShoeSneaker,
+          maxClearance: Role.Field,
+        },
+        {
+          title: t('nav.labor_costs'),
+          route: localePath('/labor-costs'),
+          icon: mdiCalculator,
+          maxClearance: Role.Finance,
+        },
+        {
+          title: t('nav.artisans'),
+          route: localePath('/artisans'),
+          icon: mdiAccountWrench,
+          maxClearance: Role.Field,
+        },
+        {
+          title: t('nav.setting_inventories'),
+          route: localePath('/setting/inventories'),
+          icon: mdiWarehouse,
+          maxClearance: Role.Superuser,
+        },
+        {
+          title: t('nav.setting_colors'),
+          route: localePath('/setting/colors'),
+          icon: mdiPalette,
+          maxClearance: Role.Planner,
+        },
+      ],
+    },
+  ];
+
+  return filterNav(config, clearance.value);
 });
 
 const route = useRoute();

@@ -111,9 +111,7 @@
         ? $t('page.product_create')
         : dialog.content === DialogContent.Edit
           ? $t('page.product_edit')
-          : dialog.content === DialogContent.Upload
-            ? 'Upload'
-            : 'Title'
+          : 'Title'
     "
     v-model="dialog.isVisible"
   >
@@ -125,9 +123,6 @@
         :product-id="selectedProductId"
         @close-dialog="handleDialogClose"
       ></ProductCreateForm>
-    </template>
-    <template v-else-if="dialog.content === DialogContent.Upload">
-      <ProductUploadForm @close-dialog="handleDialogClose"></ProductUploadForm>
     </template>
   </ActionEditItemDialog>
 </template>
@@ -182,10 +177,9 @@ enum DialogContent {
   None = 'NONE',
   Edit = 'EDIT',
   Create = 'CREATE',
-  Upload = 'UPLOAD',
 }
 const appBarStore = useAppBarStore();
-const { isFormDialogOpen, isUploadDialogOpen } = storeToRefs(appBarStore);
+const { isFormDialogOpen } = storeToRefs(appBarStore);
 
 const dialog = reactive({
   isVisible: false,
@@ -200,9 +194,6 @@ function handleDialogClose() {
   executeFetch();
   if (appBarStore.isFormDialogOpen) {
     appBarStore.closeFormDialog();
-  }
-  if (appBarStore.isUploadDialogOpen) {
-    appBarStore.closeUploadDialog();
   }
   dialog.isVisible = false;
   selectedProductId.value = '';
@@ -246,13 +237,6 @@ watch(
 watchEffect(() => {
   if (isFormDialogOpen.value) {
     dialog.content = DialogContent.Create;
-    dialog.isVisible = true;
-  }
-});
-
-watchEffect(() => {
-  if (isUploadDialogOpen.value) {
-    dialog.content = DialogContent.Upload;
     dialog.isVisible = true;
   }
 });
