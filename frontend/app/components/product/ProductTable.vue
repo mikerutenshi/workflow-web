@@ -98,31 +98,27 @@
             color="primary"
             :icon="mdiPencil"
             variant="text"
-            @click="showDialog(item.id)"
+            @click="openEditProductDialog(item.id)"
           ></v-btn>
         </template>
       </v-data-table>
     </v-col>
   </v-row>
 
-  <ActionEditItemDialog
-    :dialog-title="$t('page.product_edit')"
-    v-model="dialog.isVisible"
-  >
+  <ActionEditItemDialog :dialog-title="dialog.title" v-model="dialog.isVisible">
     <ProductCreateForm
-      :product-id="selectedProductId"
+      v-if="dialog.content === DialogContent.Edit"
+      :product-id="dialog.productId"
       @close-dialog="handleDialogClose"
     ></ProductCreateForm>
+    <ProductDownloadWindow
+      v-if="dialog.content === DialogContent.Download"
+    ></ProductDownloadWindow>
   </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
-import {
-  mdiClose,
-  mdiFileDocumentEditOutline,
-  mdiMagnify,
-  mdiPencil,
-} from '@mdi/js';
+import { mdiMagnify, mdiPencil } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import {
@@ -131,6 +127,10 @@ import {
   type ColorToProductWithColor,
 } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
+
+const { registerDownload, unregisterDownload } = useDownloadProducts();
+onMounted(() => registerDownload(openDownloadDialog));
+onUnmounted(() => unregisterDownload());
 
 const {
   data,
@@ -161,19 +161,33 @@ const search = ref('');
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 
-const selectedProductId = ref('');
-
+enum DialogContent {
+  Download = 'DOWNLOAD',
+  None = 'NONE',
+  Edit = 'EDIT',
+}
 const dialog = reactive({
+  productId: '',
   isVisible: false,
+  content: DialogContent.None,
+  title: '',
 });
-function showDialog(productId: string) {
-  selectedProductId.value = productId;
+function openEditProductDialog(productId: string) {
+  dialog.productId = productId;
   dialog.isVisible = true;
+  dialog.content = DialogContent.Edit;
+  dialog.title = t('page.product_edit');
 }
 function handleDialogClose() {
-  executeFetch();
+  dialog.productId = '';
   dialog.isVisible = false;
-  selectedProductId.value = '';
+  dialog.content = DialogContent.None;
+  dialog.title = '';
+}
+function openDownloadDialog() {
+  dialog.isVisible = true;
+  dialog.content = DialogContent.Download;
+  dialog.title = 'Download Products';
 }
 
 const extractColors = (productColors: any[]) => {

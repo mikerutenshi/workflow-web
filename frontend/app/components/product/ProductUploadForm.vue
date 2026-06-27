@@ -9,12 +9,28 @@
         </v-col>
       </v-row>
 
-      <span>Upload Products Msrp</span>
-      <v-file-input
-        accept=".csv"
-        v-model="file"
-        :error-messages="errors['csvFile']"
-      ></v-file-input>
+      <v-row>
+        <v-col>
+          <span>Upload New Products</span>
+          <v-file-input
+            accept=".csv"
+            v-model="fileUploadNew"
+            :disabled="isMsrpUploadActive"
+            :error-messages="errors['csvFile']"
+          ></v-file-input>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <span>Upload Products' MSRP</span>
+          <v-file-input
+            accept=".csv"
+            v-model="fileUploadMsrp"
+            :disabled="isNewUploadActive"
+            :error-messages="errors['csvFile']"
+          ></v-file-input>
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -48,7 +64,10 @@ const {
     snack.isVisible = true;
   },
 });
-const file = ref<File | null>(null);
+const fileUploadMsrp = ref<File | null>(null);
+const fileUploadNew = ref<File | null>(null);
+const isMsrpUploadActive = computed(() => fileUploadMsrp.value != null);
+const isNewUploadActive = computed(() => fileUploadNew.value != null);
 const validationSchema = toTypedSchema(fileSchema);
 const { handleSubmit, errors, setFieldValue, values, setFieldError } = useForm({
   validationSchema,
@@ -69,7 +88,7 @@ const onSubmit = handleSubmit((data) => {
   }
 });
 
-watch(file, (newFile) => {
-  if (newFile) setFieldValue('csvFile', newFile);
+watch([fileUploadMsrp, fileUploadNew], ([msrpFile, newFile]) => {
+  setFieldValue('csvFile', msrpFile ?? newFile ?? null);
 });
 </script>

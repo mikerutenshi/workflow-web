@@ -181,18 +181,16 @@
           : ''
     "
   >
-    <template v-if="dialog.content === DialogContent.EditWork">
-      <WorkCreateForm
-        :work-id="currentWorkId"
-        @close-dialog="save"
-      ></WorkCreateForm>
-    </template>
-    <template v-if="dialog.content === DialogContent.EditTask">
-      <TaskUpdateForm
-        :work-id="currentWorkId"
-        @close-dialog="save"
-      ></TaskUpdateForm>
-    </template>
+    <WorkCreateForm
+      v-if="dialog.content === DialogContent.EditWork"
+      :work-id="currentWorkId"
+      @close-dialog="save"
+    />
+    <TaskUpdateForm
+      v-if="dialog.content === DialogContent.EditTask"
+      :work-id="currentWorkId"
+      @close-dialog="save"
+    />
   </ActionEditItemDialog>
 
   <ActionConfirmDeleteDialog

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar ref="appBar" :elevation="2" app>
-      <template v-slot:prepend>
+      <template #prepend>
         <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
       </template>
 
@@ -32,14 +32,27 @@
         {{ $t('btn.print') }}</v-btn
       >
 
-      <v-btn
-        v-if="currentRouteName == 'products' && clearance <= Role.Planner"
-        variant="flat"
-        class="mr-4"
-        @click="openUploadDialog()"
-        :prepend-icon="mdiUpload"
-        >Upload</v-btn
-      >
+      <v-menu open-on-hover>
+        <template #activator="{ props }">
+          <v-btn
+            v-if="currentRouteName == 'products' && clearance <= Role.Planner"
+            v-bind="props"
+            variant="flat"
+            class="mr-4"
+            :prepend-icon="mdiFileCabinet"
+          >
+            Batch
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="openUploadDialog()"
+            ><v-list-item-title>Upload</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="downloadProducts()"
+            ><v-list-item-title>Download</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app>
@@ -102,18 +115,28 @@
       <slot />
     </v-main>
 
-    <ActionEditItemDialog :dialog-title="dialogTitle" v-model="dialog.isVisible">
+    <ActionEditItemDialog
+      :dialog-title="dialogTitle"
+      v-model="dialog.isVisible"
+    >
       <template v-if="dialog.content === DialogContent.CreateWork">
         <WorkCreateForm @close-dialog="handleDialogClose"></WorkCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateProduct">
-        <ProductCreateForm @close-dialog="handleDialogClose"></ProductCreateForm>
+        <ProductCreateForm
+          @close-dialog="handleDialogClose"
+        ></ProductCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateArtisan">
-        <ArtisanCreateForm @close-dialog="handleDialogClose"></ArtisanCreateForm>
+        <ArtisanCreateForm
+          @close-dialog="handleDialogClose"
+        ></ArtisanCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateInvTrf">
-        <InvTrfForm :inv-trf-id="null" @close-dialog="handleDialogClose"></InvTrfForm>
+        <InvTrfForm
+          :inv-trf-id="null"
+          @close-dialog="handleDialogClose"
+        ></InvTrfForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateSale">
         <SaleCreateForm
@@ -123,13 +146,21 @@
         ></SaleCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateInventory">
-        <InventoryCreateForm :inv-id="null" @close-dialog="handleDialogClose"></InventoryCreateForm>
+        <InventoryCreateForm
+          :inv-id="null"
+          @close-dialog="handleDialogClose"
+        ></InventoryCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateColor">
-        <ColorCreateForm :color-id="null" @close-dialog="handleDialogClose"></ColorCreateForm>
+        <ColorCreateForm
+          :color-id="null"
+          @close-dialog="handleDialogClose"
+        ></ColorCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.Upload">
-        <ProductUploadForm @close-dialog="handleDialogClose"></ProductUploadForm>
+        <ProductUploadForm
+          @close-dialog="handleDialogClose"
+        ></ProductUploadForm>
       </template>
     </ActionEditItemDialog>
   </v-app>
@@ -148,6 +179,7 @@ import {
   mdiCashMultiple,
   mdiCogs,
   mdiFactory,
+  mdiFileCabinet,
   mdiHome,
   mdiPalette,
   mdiPlus,
@@ -189,7 +221,10 @@ const { data, error } = await useQuery({
 // }
 const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
 
-const { print: printPayroll, isPrinting: isPayrollPrinting } = usePayrollPrint();
+const { print: printPayroll, isPrinting: isPayrollPrinting } =
+  usePayrollPrint();
+const { download: downloadProducts, isDownloading: isDownloadingProducts } =
+  useDownloadProducts();
 const saleStore = useSaleStore();
 
 enum DialogContent {

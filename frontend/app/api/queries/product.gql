@@ -55,6 +55,10 @@ mutation uploadProductGroupMsrps($data: CsvUploadDto!) {
   uploadProductGroupMsrps(data: $data)
 }
 
+mutation uploadNewProducts($data: CsvUploadDto!) {
+  uploadNewProducts(data: $data)
+}
+
 mutation createColor($data: ColorCreateDto!) {
   createColor(data: $data) {
     ...Color
@@ -211,4 +215,8 @@ query getLaborCosts {
       ...LaborCost
     }
   }
+}
+
+query downloadProducts {
+  downloadProducts
 }
