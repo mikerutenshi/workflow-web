@@ -25,7 +25,10 @@ const { data, isFetching, error } = useQuery({
   fetchOnMount: true,
   onData(data) {
     const config = useRuntimeConfig();
-    const routerBase = config.public.baseUrl.replace('/graphql', '');
+    const routerBase = config.public.baseUrl.slice(
+      0,
+      config.public.baseUrl.lastIndexOf('/'),
+    );
 
     const url = data?.downloadProducts;
     if (!url) return;
