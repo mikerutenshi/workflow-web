@@ -1,4 +1,8 @@
 -- AlterTable
-ALTER TABLE "public"."ColorToProduct" DROP CONSTRAINT "ColorToProduct_pkey",
-ADD CONSTRAINT "ColorToProduct_pkey" PRIMARY KEY ("productId", "colorId");
+ALTER TABLE "public"."InvToProduct" DROP COLUMN "discounts",
+ADD COLUMN     "discount" DECIMAL(5,4);
+
+-- AlterTable
+ALTER TABLE "public"."InvTrfItem" DROP COLUMN "discounts",
+ADD COLUMN     "discount" DECIMAL(5,4);
 

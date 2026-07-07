@@ -90,8 +90,10 @@
           }}</template>
 
           <template #item.discount="{ item }">{{
-            item.discount
-              ? formatDiscount(convertDecimalToPercent(item.discount))
+            item.discounts
+              ? item.discounts
+                  .map((disc) => formatDiscount(convertDecimalToPercent(disc)))
+                  .join(' + ')
               : null
           }}</template>
 
@@ -123,7 +125,7 @@
             </v-table>
           </template>
         </v-data-table>
-        <span :style="{ color: errorColor }" class="ma-4 text-caption">
+        <span class="ma-4 text-error">
           {{ errors['invTrfItemIds'] }}
         </span>
       </v-card>
@@ -171,7 +173,6 @@ import {
 } from '~/api/generated/types';
 import { InvTrfSchema } from '~/validation/schema';
 
-const errorColor = useTheme().themes.value.light.colors.error;
 const { t } = useI18n();
 const props = defineProps({
   invTrfId: {
@@ -349,7 +350,7 @@ const tableHeaders: ReadOnlyHeaders = [
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
   { title: t('label.dest_price'), key: 'product.productGroup.msrp' },
-  { title: t('label.discount'), key: 'discount' },
+  { title: t('label.discount'), key: 'discounts' },
   { title: t('label.status'), key: 'progress' },
   { title: t('label.sizes'), key: 'invTrfItemSizes', minWidth: '120' },
 ];
