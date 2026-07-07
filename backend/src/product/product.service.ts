@@ -189,22 +189,22 @@ export class ProductService {
 
     await this.prisma.$transaction(async (tx) => {
       for (const row of rows) {
-        const validateRow = await this.fileService.validateDto(
+        const validatedRow = await this.fileService.validateDto(
           ProductCreateDto,
           row,
         );
         const dup = await tx.product.findUnique({
-          where: { sku: validateRow.sku },
+          where: { sku: validatedRow.sku },
         });
         if (!dup) {
           let order = 1;
           await tx.product.create({
             data: {
-              sku: validateRow.sku,
-              productGroupId: validateRow.productGroupId,
-              createdBy: validateRow.createdBy,
+              sku: validatedRow.sku,
+              productGroupId: validatedRow.productGroupId,
+              createdBy: validatedRow.createdBy,
               productColors: {
-                create: validateRow.colorIds.map((colorId) => ({
+                create: validatedRow.colorIds.map((colorId) => ({
                   color: { connect: { id: colorId } },
                   order: order++,
                 })),

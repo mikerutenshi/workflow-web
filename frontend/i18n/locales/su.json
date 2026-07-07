@@ -171,7 +171,9 @@
     "dest_price": "Harga Tujuan",
     "tx_no": "No. Transaksi",
     "tx_date": "Tanggal Transaksi",
-    "type": "Jenis"
+    "type": "Jenis",
+    "created_at": "Dijieun Dina",
+    "updated_at": "Diropea Dina"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

@@ -51,6 +51,10 @@ mutation deleteProductGroup($id: ID!) {
   deleteProductGroup(id: $id)
 }
 
+mutation uploadNewProductGroups($data: CsvUploadDto!) {
+  uploadNewProductGroups(data: $data)
+}
+
 mutation uploadProductGroupMsrps($data: CsvUploadDto!) {
   uploadProductGroupMsrps(data: $data)
 }
@@ -167,6 +171,8 @@ query getProducts {
         ...Color
       }
     }
+    createdAt
+    updatedAt
   }
 }
 
@@ -219,4 +225,8 @@ query getLaborCosts {
 
 query downloadProducts {
   downloadProducts
+}
+
+query downloadProductGroups {
+  downloadProductGroups
 }

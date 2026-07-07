@@ -3,8 +3,6 @@
     :color="color"
     :loading="loading"
     :disabled="loading || disabled"
-    :outlined="outlined"
-    :prepend-icon="mdiTrashCan"
     @click="dialog = true"
   >
     <slot>{{ $t('btn.delete') }}</slot>

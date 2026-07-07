@@ -1,13 +1,5 @@
 <template>
   <form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
-    <v-row v-if="error">
-      <v-col>
-        <v-alert type="error">
-          {{ extractGraphQlError(error) }}
-        </v-alert>
-      </v-col>
-    </v-row>
-
     <v-card-title>
       <v-text-field
         v-model="header.skuNumeric"
@@ -27,9 +19,16 @@
     </v-card-title>
     <v-divider thickness="4"></v-divider>
     <v-card-text>
+      <v-row v-if="error">
+        <v-col>
+          <v-alert type="error">
+            {{ extractGraphQlError(error) }}
+          </v-alert>
+        </v-col>
+      </v-row>
       <v-text-field
         :label="$t('jobs.draw_upper')"
-        v-maska:drawUpperUnmasked.unmasked="options"
+        v-maska="options"
         v-model="priceModel.drawUpper"
         inputmode="number"
         clearable
@@ -37,7 +36,7 @@
       />
       <v-text-field
         :label="$t('jobs.draw_lining')"
-        v-maska:drawLiningUnmasked.unmasked="options"
+        v-maska="options"
         v-model="priceModel.drawLining"
         inputmode="number"
         clearable
@@ -45,7 +44,7 @@
       />
       <v-text-field
         :label="$t('jobs.stitch_upper')"
-        v-maska:stitchUpperUnmasked.unmasked="options"
+        v-maska="options"
         v-model="priceModel.stitchUpper"
         inputmode="number"
         clearable
@@ -53,7 +52,7 @@
       />
       <v-text-field
         :label="$t('jobs.stitch_outsole')"
-        v-maska:stitchOutsoleUnmasked.unmasked="options"
+        v-maska="options"
         v-model="priceModel.stitchOutsole"
         inputmode="number"
         clearable
@@ -61,7 +60,7 @@
       />
       <v-text-field
         :label="$t('jobs.stitch_insole')"
-        v-maska:stitchInsoleUnmasked.unmasked="options"
+        v-maska="options"
         v-model="priceModel.stitchInsole"
         inputmode="number"
         clearable
@@ -69,12 +68,14 @@
       />
       <v-text-field
         :label="$t('jobs.last')"
-        v-maska:lastUnmasked.unmasked="options"
+        v-maska="options"
         v-model="priceModel.last"
         inputmode="number"
         clearable
         :error-messages="last.errorMessage.value"
       />
+      <p>{{ `values: ${JSON.stringify(values)}` }}</p>
+      <p>{{ `priceModel: ${JSON.stringify(priceModel)}` }}</p>
     </v-card-text>
 
     <v-card-actions>
@@ -105,7 +106,7 @@ import {
   UpdateLaborCostsDocument,
   type LaborCostUpsertDto,
 } from '~/api/generated/types';
-import { parseGender } from '~/utils/functions';
+import { cleanRupiahToNumber, parseGender } from '~/utils/functions';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -155,20 +156,20 @@ const priceModel = reactive({
   stitchInsole: '',
   last: '',
 });
-const drawUpperUnmasked = ref('');
-const drawLiningUnmasked = ref('');
-const stitchUpperUnmasked = ref('');
-const stitchOutsoleUnmasked = ref('');
-const stitchInsoleUnmasked = ref('');
-const lastUnmasked = ref('');
-defineExpose({
-  drawUpperUnmasked,
-  drawLiningUnmasked,
-  stitchUpperUnmasked,
-  stitchOutsoleUnmasked,
-  stitchInsoleUnmasked,
-  lastUnmasked,
-});
+// const drawUpperUnmasked = ref('');
+// const drawLiningUnmasked = ref('');
+// const stitchUpperUnmasked = ref('');
+// const stitchOutsoleUnmasked = ref('');
+// const stitchInsoleUnmasked = ref('');
+// const lastUnmasked = ref('');
+// defineExpose({
+//   drawUpperUnmasked,
+//   drawLiningUnmasked,
+//   stitchUpperUnmasked,
+//   stitchOutsoleUnmasked,
+//   stitchInsoleUnmasked,
+//   lastUnmasked,
+// });
 const drawUpper = useField('drawUpper');
 const drawLining = useField('drawLining');
 const stitchUpper = useField('stitchUpper');
@@ -262,24 +263,47 @@ const options: MaskInputOptions = {
   reversed: true,
 };
 
-watch(drawUpperUnmasked, (newValue) => {
-  drawUpper.setValue(+newValue);
-});
-watch(drawLiningUnmasked, (newValue) => {
-  drawLining.setValue(+newValue);
-});
-watch(stitchUpperUnmasked, (newValue) => {
-  stitchUpper.setValue(+newValue);
-});
-watch(stitchOutsoleUnmasked, (newValue) => {
-  stitchOutsole.setValue(+newValue);
-});
-watch(stitchInsoleUnmasked, (newValue) => {
-  stitchInsole.setValue(+newValue);
-});
-watch(lastUnmasked, (newValue) => {
-  last.setValue(+newValue);
-});
+watch(
+  () => priceModel.drawUpper,
+  (newDrawUpper) => {
+    drawUpper.setValue(cleanRupiahToNumber(newDrawUpper));
+  },
+);
+
+watch(
+  () => priceModel.drawLining,
+  (newDrawLining) => {
+    drawLining.setValue(cleanRupiahToNumber(newDrawLining));
+  },
+);
+
+watch(
+  () => priceModel.stitchUpper,
+  (newStitchUpper) => {
+    stitchUpper.setValue(cleanRupiahToNumber(newStitchUpper));
+  },
+);
+
+watch(
+  () => priceModel.stitchOutsole,
+  (newStitchOutsole) => {
+    stitchOutsole.setValue(cleanRupiahToNumber(newStitchOutsole));
+  },
+);
+
+watch(
+  () => priceModel.stitchInsole,
+  (newStitchInsole) => {
+    stitchInsole.setValue(cleanRupiahToNumber(newStitchInsole));
+  },
+);
+
+watch(
+  () => priceModel.last,
+  (newLast) => {
+    last.setValue(cleanRupiahToNumber(newLast));
+  },
+);
 
 // watchEffect(() => {
 //   console.log(`Labor Cost Values : ${JSON.stringify(values)}`);

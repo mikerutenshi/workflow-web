@@ -39,6 +39,15 @@ export function formatRupiah(
 //   return !Number.isNaN(parsed) ? parsed : null;
 // }
 
+export function cleanRupiahToNumber(value: string | null): number | null {
+  if (value === null || value.length == 0) {
+    return null;
+  }
+
+  const cleaned = value.replace(/[^\d]/g, '');
+  return cleaned ? Number(cleaned) : 0;
+}
+
 export function renderGender(gender: Gender): string {
   const title = GENDERS[gender];
   return title ?? 'N/A';
@@ -49,9 +58,9 @@ export function parseGender(title: string): Gender {
   return entry ? (entry[0] as Gender) : Gender.Kids;
 }
 
-export function formatLocalDate(utcDate: string) {
-  return utcDate ? new Date(utcDate).toLocaleDateString() : '-';
-}
+// export function formatLocalDate(utcDate: string) {
+//   return utcDate ? new Date(utcDate).toLocaleDateString() : '-';
+// }
 
 interface VillusError {
   message: string;

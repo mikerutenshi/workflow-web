@@ -171,7 +171,9 @@
     "dest_price": "Destination Price",
     "tx_no": "Transaction No.",
     "tx_date": "Transaction Date",
-    "type": "Type"
+    "type": "Type",
+    "created_at": "Created At",
+    "updated_at": "Updated At"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

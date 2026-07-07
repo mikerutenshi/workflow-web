@@ -28,10 +28,7 @@
             show-swatches
           ></v-color-picker>
         </v-card-text>
-        <span
-          :style="{ color: $vuetify.theme.themes.light.colors.error }"
-          class="ma-4 text-caption"
-        >
+        <span class="ma-4 text-caption text-error">
           {{ hexCode.errorMessage.value }}
         </span>
       </v-card>

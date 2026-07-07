@@ -72,6 +72,12 @@
         <template v-slot:item.productGroup.msrp="{ item }">
           {{ formatRupiah(item.productGroup.msrp) }}
         </template>
+        <template v-slot:item.createdAt="{ item }">
+          {{ adapter.format(item.createdAt, 'fullDateTime24h') }}
+        </template>
+        <template v-slot:item.updatedAt="{ item }">
+          {{ adapter.format(item.updatedAt, 'fullDateTime24h') }}
+        </template>
 
         <template v-slot:item.actions="{ item }">
           <!-- <v-menu variant="outlined">
@@ -111,15 +117,16 @@
       :product-id="dialog.productId"
       @close-dialog="handleDialogClose"
     ></ProductCreateForm>
-    <ProductDownloadWindow
+    <ProductDownloadForm
       v-if="dialog.content === DialogContent.Download"
-    ></ProductDownloadWindow>
+    ></ProductDownloadForm>
   </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
 import { mdiMagnify, mdiPencil } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
+import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import {
   DeleteProductDocument,
@@ -143,6 +150,8 @@ const {
 });
 
 const { t } = useI18n();
+const adapter = useDate();
+
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },
   { title: t('label.sku'), key: 'sku' },
@@ -155,6 +164,8 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.gender'), key: 'productGroup.productCategory.gender' },
   { title: t('label.colors'), key: 'productColors', minWidth: '140' },
   { title: t('label.msrp'), key: 'productGroup.msrp' },
+  { title: t('label.created_at'), key: 'createdAt' },
+  { title: t('label.updated_at'), key: 'updatedAt' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 const search = ref('');

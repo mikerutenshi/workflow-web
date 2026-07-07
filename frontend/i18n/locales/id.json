@@ -171,7 +171,9 @@
     "dest_price": "Harga Tujuan",
     "tx_no": "No. Transaksi",
     "tx_date": "Tanggal Transaksi",
-    "type": "Tipe"
+    "type": "Tipe",
+    "created_at": "Dibuat Pada",
+    "updated_at": "Dirubah Pada"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
