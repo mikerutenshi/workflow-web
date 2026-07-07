@@ -139,7 +139,7 @@ const emit = defineEmits(['close-dialog']);
 
 const onSubmit = handleSubmit(async (data) => {
   const fileIndex = files.value.findIndex((file) => file !== null);
-  console.log(`fileIndex ${fileIndex}`);
+  // console.log(`fileIndex ${fileIndex}`);
 
   if (fileIndex === -1) {
     setFieldError('csvFile', 'No File Provided');
@@ -150,13 +150,13 @@ const onSubmit = handleSubmit(async (data) => {
 
   switch (fileIndex) {
     case 0:
-      await executeNewProductGroups(payload);
+      executeNewProductGroups(payload);
       break;
     case 1:
-      await executeNewProducts(payload);
+      executeNewProducts(payload);
       break;
     case 2:
-      await executeUpdateMsrps(payload);
+      executeUpdateMsrps(payload);
       break;
     default:
       setFieldError('csvFile', 'No File Provided');
@@ -169,7 +169,7 @@ function setFile(value: File | File[] | null, index: number) {
   files.value = files.value.map((_, i) => (i === index ? file : null));
 
   if (file) {
-    console.log(`name: ${file.name}`);
+    // console.log(`name: ${file.name}`);
     isDisableds.value = isDisableds.value.map((_, i) => i !== index);
     setFieldValue('csvFile', file);
   } else {

@@ -35,7 +35,7 @@
       <v-menu open-on-hover>
         <template #activator="{ props }">
           <v-btn
-            v-if="currentRouteName == 'products' && clearance <= Role.Planner"
+            v-if="currentRouteName == 'products' && clearance <= Role.Superuser"
             v-bind="props"
             variant="flat"
             class="mr-4"

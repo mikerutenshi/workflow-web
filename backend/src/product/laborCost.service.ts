@@ -112,6 +112,7 @@ export class LaborCostService {
         await Promise.all(
           jobTypes.map(async ({ key, type }) => {
             const cost = data[key];
+
             if (cost != null && cost !== undefined) {
               const newCost = await tx.laborCost.upsert({
                 where: {
@@ -157,12 +158,29 @@ export class LaborCostService {
                 });
               }
             } else {
-              await tx.laborCost.deleteMany({
+              const laborCost = await tx.laborCost.findFirst({
+                select: { id: true },
                 where: {
                   productGroupId: data.productGroupId,
                   type,
                 },
               });
+              const laborCostId = laborCost?.id;
+
+              if (laborCostId) {
+                await tx.task.deleteMany({
+                  where: {
+                    laborCostId,
+                    artisanId: null,
+                  },
+                });
+
+                await tx.laborCost.delete({
+                  where: {
+                    id: laborCostId,
+                  },
+                });
+              }
             }
           }),
         );

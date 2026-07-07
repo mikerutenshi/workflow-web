@@ -74,8 +74,6 @@
         clearable
         :error-messages="last.errorMessage.value"
       />
-      <p>{{ `values: ${JSON.stringify(values)}` }}</p>
-      <p>{{ `priceModel: ${JSON.stringify(priceModel)}` }}</p>
     </v-card-text>
 
     <v-card-actions>
