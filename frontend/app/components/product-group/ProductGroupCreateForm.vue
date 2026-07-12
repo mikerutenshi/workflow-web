@@ -178,7 +178,7 @@ const {
   onData() {
     snack.isVisible = true;
   },
-  refetchTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP],
+  refetchTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP, CACHE_PRODUCTS],
 });
 const {
   execute: executeFetchProductCategory,
