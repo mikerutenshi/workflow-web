@@ -114,15 +114,6 @@
           ></v-btn>
         </v-col>
       </v-row>
-
-      <!-- <v-text-field
-        :label="$t('label.msrp')"
-        v-maska:msrpUnmasked.unmasked="priceMask"
-        v-model="msrpMasked"
-        inputmode="number"
-        clearable
-        :error-messages="msrp.errorMessage.value"
-      /> -->
     </v-card-text>
 
     <v-card-actions>
@@ -260,7 +251,10 @@ const onSubmit = handleSubmit((data) => {
   if (!productId) {
     executeCreate({ data });
   } else {
-    executeUpdate({ id: productId, data });
+    executeUpdate({
+      id: productId,
+      data: { updatedBy: data.updatedBy!, ...data },
+    });
   }
 });
 

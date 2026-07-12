@@ -60,6 +60,18 @@
         :error-messages="name.errorMessage.value"
         :label="$t('label.product_name')"
       />
+
+      <v-text-field
+        :label="$t('label.msrp')"
+        v-maska="priceMask"
+        @update:model-value="
+          (value) => msrp.setValue(cleanRupiahToNumber(value))
+        "
+        :model-value="msrp.value.value"
+        inputmode="number"
+        clearable
+        :error-messages="msrp.errorMessage.value"
+      />
     </v-card-text>
 
     <v-card-actions>
@@ -146,6 +158,7 @@ const { handleSubmit, setValues, values } = useForm({
 const skuNumeric = useField('skuNumeric');
 const name = useField('name');
 const productCategoryId = useField('productCategoryId');
+const msrp = useField('msrp');
 
 const {
   execute: executeCreate,
@@ -194,7 +207,10 @@ const {
 });
 const onSubmit = handleSubmit((data) => {
   if (productGroupId) {
-    executeUpdate({ id: productGroupId, data });
+    executeUpdate({
+      id: productGroupId,
+      data: { updatedBy: data.updatedBy!, ...data },
+    });
   } else {
     executeCreate({ data });
   }
@@ -210,6 +226,7 @@ if (productGroupId) {
         skuNumeric: pg.skuNumeric,
         name: pg.name,
         productCategoryId: pg.productCategory.id,
+        msrp: pg.msrp,
         updatedBy: userId,
       });
     },

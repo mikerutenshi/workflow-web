@@ -4,11 +4,14 @@ import { BaseModel } from './base.model';
 @ObjectType()
 export class ProductGroup extends BaseModel {
   @Field()
-  skuNumeric: string;
+  skuNumeric!: string;
+
   @Field(() => String, { nullable: true })
-  name: string | null;
+  name!: string | null;
+
   @Field(() => ID)
-  productCategoryId: number;
+  productCategoryId!: number;
+
   @Field(() => Number, { nullable: true })
-  msrp?: number | null;
+  msrp!: number | null;
 }

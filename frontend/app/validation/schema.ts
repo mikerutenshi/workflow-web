@@ -74,9 +74,8 @@ export const ProductSchema = z.object({
     .string()
     .regex(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/),
   colorIds: z.array(positiveNumberString),
-  // msrp: z.number().min(99900).max(2999900).optional().nullable(),
   createdBy: positiveNumberString,
-  updatedBy: positiveNumberString.optional().nullable(),
+  updatedBy: positiveNumberString.optional(),
 });
 
 export const ColorSchema = z.object({
@@ -93,8 +92,9 @@ export const ProductGroupSchema = z.object({
   skuNumeric: z.string().max(7).min(5),
   productCategoryId: positiveNumberString,
   name: z.string().min(1).trim().optional().nullable(),
+  msrp: z.number().min(100000).max(3000000).optional().nullable(),
   createdBy: positiveNumberString,
-  updatedBy: positiveNumberString.optional().nullable(),
+  updatedBy: positiveNumberString.optional(),
 });
 
 export const WorkSchema = z.object({

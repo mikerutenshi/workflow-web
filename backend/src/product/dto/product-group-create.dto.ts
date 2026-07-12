@@ -6,8 +6,8 @@ import {
   IsOptional,
   IsString,
   Matches,
+  Max,
   Min,
-  MinLength,
 } from 'class-validator';
 
 @InputType()
@@ -17,25 +17,29 @@ export class ProductGroupCreateDto {
   @Matches(/^[0-9]{5}(ST)?$/, {
     message: 'Format support example: 12345 or 12345ST',
   })
-  skuNumeric: string;
+  skuNumeric!: string;
+
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  productCategoryId: number;
+  productCategoryId!: number;
+
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
-  name: string | null;
+  name!: string | null;
+
+  @Field(() => Number, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  @Min(100000)
+  @Max(3000000)
+  msrp?: number | null;
+
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  createdBy: number;
-  @Field(() => ID, { nullable: true })
-  @IsOptional()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  updatedBy: number | undefined;
+  createdBy!: number;
 }

@@ -224,6 +224,9 @@
       "too_big": {
         "string": {
           "inclusive": "At most {maximum} characters"
+        },
+        "number": {
+          "inclusive": "Maximum value is {maximum}"
         }
       },
       "invalid_type": "Wrong input type",

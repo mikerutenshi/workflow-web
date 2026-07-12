@@ -568,7 +568,7 @@ type Mutation {
   updateProductCategory(id: ID!, data: ProductCategoryCreateDto!): ProductCategory!
   deleteProductCategory(id: ID!): Boolean!
   createProductGroup(data: ProductGroupCreateDto!): ProductGroup!
-  updateProductGroup(id: ID!, data: ProductGroupCreateDto!): ProductGroup!
+  updateProductGroup(id: ID!, data: ProductGroupUpdateDto!): ProductGroup!
   deleteProductGroup(id: ID!): Boolean!
   uploadProductGroupMsrps(data: CsvUploadDto!): Boolean!
   uploadNewProductGroups(data: CsvUploadDto!): Boolean!
@@ -650,7 +650,7 @@ input ProductUpdateDto {
   productGroupId: ID
   createdBy: ID
   colorIds: [ID!]
-  updatedBy: ID
+  updatedBy: ID!
 }
 
 input CsvUploadDto {
@@ -670,8 +670,17 @@ input ProductGroupCreateDto {
   skuNumeric: String!
   productCategoryId: ID!
   name: String
+  msrp: Float
   createdBy: ID!
-  updatedBy: ID
+}
+
+input ProductGroupUpdateDto {
+  skuNumeric: String
+  productCategoryId: ID
+  name: String
+  msrp: Float
+  createdBy: ID
+  updatedBy: ID!
 }
 
 input LaborCostUpsertDto {

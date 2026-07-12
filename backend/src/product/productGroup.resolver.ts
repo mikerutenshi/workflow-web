@@ -5,6 +5,7 @@ import { ProductGroupGetDto } from './dto/product-group-get.dto';
 import { ProductGroupService } from './productGroup.service';
 import { ParseIntPipe } from '@nestjs/common';
 import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
+import { ProductGroupUpdateDto } from './dto/product-group-update.dto';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {
@@ -19,7 +20,7 @@ export class ProductGroupResolver {
   @Mutation(() => ProductGroup)
   updateProductGroup(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Args('data') data: ProductGroupCreateDto,
+    @Args('data') data: ProductGroupUpdateDto,
   ): Promise<ProductGroup> {
     return this.productGroupService.updateProductGroup(id, data);
   }

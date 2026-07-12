@@ -224,6 +224,9 @@
       "too_big": {
         "string": {
           "inclusive": "Paling {maximum} aksara"
+        },
+        "number": {
+          "inclusive": "Nilai maximum nyaeta {maximum}"
         }
       },
       "invalid_type": "Jenis input salah",

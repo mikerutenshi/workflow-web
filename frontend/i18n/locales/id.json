@@ -224,6 +224,9 @@
       "too_big": {
         "string": {
           "inclusive": "Maksimal {maximum} karakter"
+        },
+        "number": {
+          "inclusive": "Nilai maximum adalah {maximum}"
         }
       },
       "invalid_type": "Jenis input salah",

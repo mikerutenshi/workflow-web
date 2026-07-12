@@ -42,7 +42,7 @@ mutation createProductGroup($data: ProductGroupCreateDto!) {
     productCategoryId
   }
 }
-mutation updateProductGroup($id: ID!, $data: ProductGroupCreateDto!) {
+mutation updateProductGroup($id: ID!, $data: ProductGroupUpdateDto!) {
   updateProductGroup(id: $id, data: $data) {
     id
   }
@@ -147,6 +147,7 @@ query getProductGroup($id: ID!) {
     productCategory {
       ...ProductCategory
     }
+    msrp
     createdBy
     updatedBy
   }

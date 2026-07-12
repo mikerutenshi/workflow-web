@@ -30,11 +30,4 @@ export class ProductCreateDto {
   @IsInt({ each: true })
   @Min(1, { each: true })
   colorIds!: number[];
-
-  // @Field(() => Number, { nullable: true })
-  // @IsInt()
-  // @IsOptional()
-  // @Min(99900)
-  // @Max(2999900)
-  // msrp?: number;
 }

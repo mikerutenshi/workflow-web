@@ -7,6 +7,7 @@ import * as csv from 'fast-csv';
 import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
 import { ProductGroupUploadMsrpDto } from './dto/product-group-upload-msrp.dto';
+import { ProductGroupUpdateDto } from './dto/product-group-update.dto';
 
 @Injectable()
 export class ProductGroupService {
@@ -21,6 +22,7 @@ export class ProductGroupService {
         skuNumeric: data.skuNumeric,
         productCategoryId: data.productCategoryId,
         name: data.name,
+        msrp: data.msrp,
         createdBy: data.createdBy,
       },
     });
@@ -28,7 +30,7 @@ export class ProductGroupService {
 
   updateProductGroup(
     id: number,
-    data: ProductGroupCreateDto,
+    data: ProductGroupUpdateDto,
   ): Promise<ProductGroup> {
     return this.prisma.productGroup.update({ where: { id }, data });
   }
