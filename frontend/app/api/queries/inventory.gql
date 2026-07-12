@@ -112,6 +112,10 @@ mutation deleteInvProduct($invId: ID!, $productId: ID!) {
   deleteInvProduct(invId: $invId, productId: $productId)
 }
 
+mutation uploadNewInvProducts($data: CsvUploadDto!) {
+  uploadNewInvProducts(data: $data)
+}
+
 query getInvTrfItemTrfs($invId: ID!, $productId: ID!) {
   getInvTrfItemTrfs(invId: $invId, productId: $productId) {
     id

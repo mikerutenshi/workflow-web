@@ -188,29 +188,45 @@ export class ProductService {
     });
 
     await this.prisma.$transaction(async (tx) => {
-      for (const row of rows) {
-        const validatedRow = await this.fileService.validateDto(
-          ProductCreateDto,
-          row,
-        );
-        const dup = await tx.product.findUnique({
-          where: { sku: validatedRow.sku },
-        });
-        if (!dup) {
-          let order = 1;
-          await tx.product.create({
-            data: {
-              sku: validatedRow.sku,
-              productGroupId: validatedRow.productGroupId,
-              createdBy: validatedRow.createdBy,
-              productColors: {
-                create: validatedRow.colorIds.map((colorId) => ({
-                  color: { connect: { id: colorId } },
-                  order: order++,
-                })),
-              },
-            },
+      for (const [index, row] of rows.entries()) {
+        try {
+          const validatedRow = await this.fileService.validateDto(
+            ProductCreateDto,
+            row,
+          );
+          const dup = await tx.product.findUnique({
+            where: { sku: validatedRow.sku },
           });
+          if (!dup) {
+            let order = 1;
+            await tx.product.create({
+              data: {
+                sku: validatedRow.sku,
+                productGroupId: validatedRow.productGroupId,
+                createdBy: validatedRow.createdBy,
+                productColors: {
+                  create: validatedRow.colorIds.map((colorId) => ({
+                    color: { connect: { id: colorId } },
+                    order: order++,
+                  })),
+                },
+              },
+            });
+          }
+        } catch (err) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : typeof err === 'string'
+                ? err
+                : JSON.stringify(err);
+          console.error(`Error processing CSV row ${index + 1}:`, {
+            row,
+            error: err,
+          });
+          throw new Error(
+            `Error processing CSV row ${index + 1}: ${message ?? 'Unknown error'}`,
+          );
         }
       }
     });

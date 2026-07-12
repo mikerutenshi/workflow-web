@@ -53,6 +53,27 @@
           </v-list-item>
         </v-list>
       </v-menu>
+
+      <v-menu open-on-hover>
+        <template #activator="{ props }">
+          <v-btn
+            v-if="
+              currentRouteName == 'inv-products' && clearance <= Role.Superuser
+            "
+            v-bind="props"
+            variant="flat"
+            class="mr-4"
+            :prepend-icon="mdiFileCabinet"
+          >
+            Batch
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="openInvUploadDialog()">
+            <v-list-item-title>Upload</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app>
@@ -157,10 +178,15 @@
           @close-dialog="handleDialogClose"
         ></ColorCreateForm>
       </template>
-      <template v-else-if="dialog.content === DialogContent.Upload">
+      <template v-else-if="dialog.content === DialogContent.UploadProducts">
         <ProductUploadForm
           @close-dialog="handleDialogClose"
         ></ProductUploadForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.UploadInvProducts">
+        <InvProductUploadForm
+          @close-dialog="handleDialogClose"
+        ></InvProductUploadForm>
       </template>
     </ActionEditItemDialog>
   </v-app>
@@ -236,7 +262,8 @@ enum DialogContent {
   CreateSale = 'CREATE_SALE',
   CreateInventory = 'CREATE_INVENTORY',
   CreateColor = 'CREATE_COLOR',
-  Upload = 'UPLOAD',
+  UploadProducts = 'UPLOAD_PRODUCTS',
+  UploadInvProducts = 'UPLOAD_INV_PRODUCTS',
 }
 
 const createRouteToContent: Record<string, DialogContent> = {
@@ -270,7 +297,9 @@ const dialogTitle = computed(() => {
       return t('page.inventory_create');
     case DialogContent.CreateColor:
       return t('page.color_create');
-    case DialogContent.Upload:
+    case DialogContent.UploadProducts:
+      return 'Upload';
+    case DialogContent.UploadInvProducts:
       return 'Upload';
     default:
       return '';
@@ -290,7 +319,12 @@ function openCreateDialog() {
 }
 
 function openUploadDialog() {
-  dialog.content = DialogContent.Upload;
+  dialog.content = DialogContent.UploadProducts;
+  dialog.isVisible = true;
+}
+
+function openInvUploadDialog() {
+  dialog.content = DialogContent.UploadInvProducts;
   dialog.isVisible = true;
 }
 

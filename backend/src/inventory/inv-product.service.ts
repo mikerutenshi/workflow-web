@@ -10,6 +10,7 @@ import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductUploadDto } from './dto/inv-product-upload.dto';
 import { InvProductDto } from './dto/inv-product.dto';
 import { InvProductUpdateDiscDto } from './dto/inv-product-update-disc.dto';
+import { Decimal } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class InvProductService {
@@ -68,10 +69,8 @@ export class InvProductService {
           },
         },
         inventory: {
-          select: {
-            priceFormula: {
-              select: { offset: true, multiplier: true, discounts: true },
-            },
+          include: {
+            priceFormula: true,
           },
         },
       },
@@ -124,6 +123,11 @@ export class InvProductService {
       })),
       price: calculatePrice(
         product.product.productGroup.msrp,
+        product.product.productGroup.skuNumeric,
+        product.product.sku,
+        product.product.productGroup.productCategoryId,
+        inventory.type,
+        product.discounts.includes(new Prisma.Decimal(0.5)),
         inventory.priceFormula?.offset,
         inventory.priceFormula?.multiplier,
         inventory.priceFormula?.discounts,
@@ -340,6 +344,20 @@ export class InvProductService {
       };
 
       const nums: string[] = ['38', '39', '40', '41', '42', '43', '44', '45'];
+      const requiredColumns = [
+        'invId',
+        'productId',
+        ...nums.map((num) => `qty${num}`),
+      ];
+
+      requiredColumns.forEach((column) => {
+        if (!(column in row)) {
+          throw new Error(
+            `CSV upload missing expected column '${column}'. Please ensure headers correspond.`,
+          );
+        }
+      });
+
       nums.forEach((num) => {
         const col = 'qty' + num;
         const qty = (row as any)[col];
