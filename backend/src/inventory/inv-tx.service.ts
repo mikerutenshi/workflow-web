@@ -49,6 +49,9 @@ export class InvTxService {
         invId,
         productId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return txs.map((t) => ({
       ...t,

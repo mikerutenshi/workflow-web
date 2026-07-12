@@ -3,7 +3,7 @@ import { FileService } from '@/file/file.service';
 import { Gender, Prisma, Progress } from '@/generated/prisma/client';
 import { InvProduct } from '@/models/inv-product.model';
 import { PrismaService } from '@/prisma/prisma.service';
-import { calculatePrice } from '@/utils/functions.util';
+import { computePrice } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
@@ -121,13 +121,13 @@ export class InvProductService {
         ...item,
         discounts: item.discounts.map((disc) => disc.toFixed(4)),
       })),
-      price: calculatePrice(
+      price: computePrice(
         product.product.productGroup.msrp,
         product.product.productGroup.skuNumeric,
         product.product.sku,
         product.product.productGroup.productCategoryId,
         inventory.type,
-        product.discounts.includes(new Prisma.Decimal(0.5)),
+        product.discounts,
         inventory.priceFormula?.offset,
         inventory.priceFormula?.multiplier,
         inventory.priceFormula?.discounts,

@@ -30,13 +30,13 @@ export function generateId(op: Operation, lastId: string | undefined): string {
   }
 }
 
-export function calculatePrice(
+export function computePrice(
   base: number | null,
   skuNumeric: string,
   sku: string,
   productCategoryId: number,
   invType: InvType,
-  isHalfPrice: boolean,
+  productDiscs: Prisma.Decimal[],
   offset?: number | null,
   multiplier?: Prisma.Decimal | null,
   discounts?: Prisma.Decimal[] | null,
@@ -69,7 +69,7 @@ export function calculatePrice(
   const finalOffset = offset ? priceTierOffset + offset : priceTierOffset;
   let finalMultiplier = multiplier ? multiplier : new Prisma.Decimal(1);
 
-  if (isHalfPrice) {
+  if (productDiscs.some((disc) => disc.equals(new Prisma.Decimal(0.5)))) {
     finalMultiplier = finalMultiplier.add(0.15);
   }
 

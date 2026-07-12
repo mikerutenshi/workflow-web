@@ -33,8 +33,8 @@
         <v-col>
           <h4>Create New Products</h4>
           <p>
-            Columns: sku, productCategoryId, productGroupId, colorId1, colorId2,
-            colorId3, colorId4, createdBy
+            Columns: sku, productGroupId, colorId1, colorId2, colorId3,
+            colorId4, createdBy
           </p>
           <v-file-input
             accept=".csv"

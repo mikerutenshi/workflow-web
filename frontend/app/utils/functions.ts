@@ -125,7 +125,7 @@ export const percentageMask: MaskInputOptions = {
 };
 
 export function formatDiscount(numeric: string) {
-  return `${numeric} %`;
+  return `${numeric}%`;
 }
 
 export function convertPercentToDecimal(numerator: string): string {
@@ -152,6 +152,16 @@ export function calculatePrice(
   });
 
   result = Math.ceil(result / 10000) * 10000 - 100;
+
+  return result;
+}
+
+export function computeDiscounted(initialPrice: number, discounts: string[]) {
+  let result = initialPrice;
+
+  discounts?.forEach((disc) => {
+    result = result - new Decimal(disc).times(result).toNumber();
+  });
 
   return result;
 }

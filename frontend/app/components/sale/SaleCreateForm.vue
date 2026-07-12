@@ -70,6 +70,16 @@
               {{ formatRupiah(item.subtotal) }}
             </template>
 
+            <template #item.discounts="{ item }">{{
+              item.discounts
+                ? item.discounts
+                    .map((disc) =>
+                      formatDiscount(convertDecimalToPercent(disc)),
+                    )
+                    .join(' + ')
+                : null
+            }}</template>
+
             <template v-slot:item.saleItemSizes="{ item }">
               <v-table density="compact">
                 <tbody>
@@ -237,7 +247,7 @@ const table = reactive({
       key: 'product.productGroup.productCategory.gender',
     },
     { title: t('label.price'), key: 'price' },
-    { title: t('label.discount'), key: 'discount' },
+    { title: t('label.discount'), key: 'discounts' },
     {
       title: t('label.sizes'),
       key: 'saleItemSizes',
@@ -294,7 +304,10 @@ const {
       }))
       .map((product) => ({
         ...product,
-        subtotal: product.price ? product.totalQty * product.price : 0,
+        subtotal: product.price
+          ? product.totalQty *
+            computeDiscounted(product.price, product.discounts)
+          : 0,
       }));
 
     if (saleStore.sale) {
