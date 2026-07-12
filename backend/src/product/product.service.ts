@@ -34,12 +34,12 @@ export class ProductService {
         },
       });
 
-      await tx.productGroup.update({
-        where: { id: data.productGroupId },
-        data: {
-          msrp: data.msrp,
-        },
-      });
+      // await tx.productGroup.update({
+      //   where: { id: data.productGroupId },
+      //   data: {
+      //     msrp: data.msrp,
+      //   },
+      // });
 
       return product;
     });
@@ -64,12 +64,12 @@ export class ProductService {
         },
       });
 
-      await tx.productGroup.update({
-        where: { id: data.productGroupId },
-        data: {
-          msrp: data.msrp,
-        },
-      });
+      // await tx.productGroup.update({
+      //   where: { id: data.productGroupId },
+      //   data: {
+      //     msrp: data.msrp,
+      //   },
+      // });
 
       return product;
     });

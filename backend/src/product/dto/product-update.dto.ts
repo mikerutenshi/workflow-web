@@ -9,5 +9,5 @@ export class ProductUpdateDto extends PartialType(ProductCreateDto) {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  updatedBy: number;
+  updatedBy!: number;
 }

@@ -8,19 +8,19 @@ export class ProductCreateDto {
   @Matches(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/, {
     message: 'Format support example: A12345-D.Brown/White',
   })
-  sku: string;
+  sku!: string;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  productGroupId: number;
+  productGroupId!: number;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  createdBy: number;
+  createdBy!: number;
 
   @Field(() => [ID])
   @Transform(({ value }) =>
@@ -29,12 +29,12 @@ export class ProductCreateDto {
   @IsArray()
   @IsInt({ each: true })
   @Min(1, { each: true })
-  colorIds: number[];
+  colorIds!: number[];
 
-  @Field(() => Number, { nullable: true })
-  @IsInt()
-  @IsOptional()
-  @Min(99900)
-  @Max(2999900)
-  msrp?: number;
+  // @Field(() => Number, { nullable: true })
+  // @IsInt()
+  // @IsOptional()
+  // @Min(99900)
+  // @Max(2999900)
+  // msrp?: number;
 }

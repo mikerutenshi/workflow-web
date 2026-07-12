@@ -643,7 +643,6 @@ input ProductCreateDto {
   productGroupId: ID!
   createdBy: ID!
   colorIds: [ID!]!
-  msrp: Float
 }
 
 input ProductUpdateDto {
@@ -651,7 +650,6 @@ input ProductUpdateDto {
   productGroupId: ID
   createdBy: ID
   colorIds: [ID!]
-  msrp: Float
   updatedBy: ID
 }
 
