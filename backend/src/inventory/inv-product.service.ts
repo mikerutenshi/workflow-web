@@ -10,6 +10,7 @@ import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductUploadDto } from './dto/inv-product-upload.dto';
 import { InvProductDto } from './dto/inv-product.dto';
 import { InvProductUpdateDiscDto } from './dto/inv-product-update-disc.dto';
+import { InvProductUploadDiscDto } from './dto/inv-product-upload-disc.dto';
 import { Decimal } from '@prisma/client/runtime/client';
 
 @Injectable()
@@ -402,6 +403,46 @@ export class InvProductService {
         });
       }
     });
+
+    return true;
+  }
+
+  async uploadInvProductDiscounts(data: CsvUploadDto): Promise<boolean> {
+    const rows = await this.fileService.readObjects<
+      InvProductUploadDiscDto,
+      InvProductUpdateDiscDto
+    >(data, (row) => {
+      const discounts = row.discounts
+        ? row.discounts
+            .split(';')
+            .map((disc) => disc.trim())
+            .filter((disc) => disc !== '')
+        : [];
+
+      return {
+        invId: row.invId,
+        productId: row.productId,
+        discounts,
+      };
+    });
+
+    const validateRows = await Promise.all(
+      rows.map(
+        async (row) =>
+          await this.fileService.validateDto(InvProductUpdateDiscDto, row),
+      ),
+    );
+
+    await this.prisma.$transaction(
+      validateRows.map((row) =>
+        this.prisma.invToProduct.update({
+          where: {
+            invId_productId: { invId: row.invId, productId: row.productId },
+          },
+          data: { discounts: row.discounts },
+        }),
+      ),
+    );
 
     return true;
   }

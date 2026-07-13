@@ -116,6 +116,10 @@ mutation uploadNewInvProducts($data: CsvUploadDto!) {
   uploadNewInvProducts(data: $data)
 }
 
+mutation uploadInvProductDiscounts($data: CsvUploadDto!) {
+  uploadInvProductDiscounts(data: $data)
+}
+
 query getInvTrfItemTrfs($invId: ID!, $productId: ID!) {
   getInvTrfItemTrfs(invId: $invId, productId: $productId) {
     id

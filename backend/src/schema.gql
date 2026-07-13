@@ -591,6 +591,7 @@ type Mutation {
   updateInvProduct(invId: ID!, productId: ID!, data: InvProductUpdateDto!): InvProduct!
   deleteInvProduct(invId: ID!, productId: ID!): Boolean!
   uploadNewInvProducts(data: CsvUploadDto!): Boolean!
+  uploadInvProductDiscounts(data: CsvUploadDto!): Boolean!
   updateInvProductDisc(data: InvProductUpdateDiscDto!): InvProduct!
   createInvTrf(data: InvTrfCreateDto!): InvTrf!
   updateInvTrf(id: ID!, data: InvTrfUpdateDto!): InvTrf!

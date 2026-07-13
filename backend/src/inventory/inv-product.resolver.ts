@@ -48,6 +48,11 @@ export class InvProductResolver {
     return this.service.uploadNewInvProducts(data);
   }
 
+  @Mutation(() => Boolean)
+  uploadInvProductDiscounts(@Args('data') data: CsvUploadDto): Promise<boolean> {
+    return this.service.uploadInvProductDiscounts(data);
+  }
+
   @Mutation(() => InvProduct)
   updateInvProductDisc(
     @Args('data') data: InvProductUpdateDiscDto,

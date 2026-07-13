@@ -2,7 +2,7 @@ import { ProductGroup } from '@/models/product-group.model';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
-import { ProductGroupService } from './productGroup.service';
+import { ProductGroupService } from './product-group.service';
 import { ParseIntPipe } from '@nestjs/common';
 import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 import { ProductGroupUpdateDto } from './dto/product-group-update.dto';
