@@ -22,23 +22,42 @@
       </v-autocomplete>
 
       <v-text-field
+        v-if="toInvId.value.value"
         :label="$t('label.price')"
         v-maska="priceMask"
         v-model="displayModel.price"
         readonly
       />
 
-      <v-text-field
-        label="Discount"
-        v-maska="percentageMask"
-        clearable
-        :model-value="displayModel.discount"
-        @update:model-value="
-          (value) => (displayModel.discount = discMask.unmasked(value))
-        "
-        inputmode="numeric"
-        :error-messages="errors.discount"
-      />
+      <v-row v-if="toInvId.value.value">
+        <v-col cols="9">
+          <v-text-field
+            v-for="(_, index) in displayModel.discounts"
+            :label="`${$t('label.discount')} ${index + 1}`"
+            v-maska="percentageMask"
+            :key="index"
+            clearable
+            :model-value="displayModel.discounts[index]"
+            @update:model-value="
+              (value) =>
+                (displayModel.discounts[index] = discMask.unmasked(value))
+            "
+            @click:clear="
+              if (discounts.fields.value.length > 1)
+                displayModel.discounts.pop();
+            "
+            inputmode="numeric"
+            :error-messages="errors['discounts']"
+          />
+        </v-col>
+        <v-col cols="3" class="d-flex justify-end align-center">
+          <v-btn
+            :icon="mdiPlus"
+            color="primary"
+            @click="displayModel.discounts.push('')"
+          ></v-btn>
+        </v-col>
+      </v-row>
 
       <v-card class="mb-4" variant="outlined">
         <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
@@ -51,13 +70,14 @@
             hide-default-footer
           >
             <template #item.quantity="{ item, index }">
-              <v-text-field
-                v-model.number="item.quantity"
+              <v-number-input
+                v-model="item.quantity"
                 :label="$t('label.quantity')"
-                type="number"
                 :error-messages="
                   (errors as any)[`invTrfItemSizes[${index}].quantity`]
                 "
+                :min="0"
+                :max="clonedSizeQties[index]?.quantity"
               />
             </template>
           </v-data-table>
@@ -82,12 +102,13 @@
 </template>
 
 <script setup lang="ts">
+import { mdiPlus } from '@mdi/js';
 import { Mask } from 'maska';
 import { useMutation, useQuery } from 'villus';
 import {
   CreateInvTrfItemDocument,
   GetInventoriesDocument,
-  type Inventory,
+  GetInvProductPriceDocument,
   type InventoryDto,
   type InvProductDto,
 } from '~/api/generated/types';
@@ -139,16 +160,6 @@ const sizeQuantities = reactive<
     };
   }),
 );
-const displayModel = reactive({
-  price: invProduct?.price,
-  discount: '',
-  sizeAndQties: invProduct!.invProductSizes.map((item) => ({
-    id: item.size.id,
-    title: item.size.eu,
-    quantity: item.quantity,
-  })),
-});
-const discMask = new Mask(percentageMask);
 const priceModel = ref(invProduct?.price);
 
 const authStore = useAuthStore();
@@ -163,7 +174,9 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
     createdBy: userId,
   },
 });
-const toInvId = useField('toInvId');
+const toInvId = useField<string>('toInvId');
+const productId = useField<string>('productId');
+const discounts = useFieldArray<string>('discounts');
 const { fields, push, remove, replace } = useFieldArray('invTrfItemSizes');
 
 const { isFetching: isFetchingInventories, error: errorInventories } = useQuery(
@@ -195,6 +208,42 @@ const {
   },
 });
 
+const priceVariables = reactive({
+  invId: '',
+  productId: productId.value.value,
+  discounts: <string[]>[],
+  // discounts: computed(() => discounts.fields.value.map((f) => f.value)),
+});
+const {
+  execute: executeGetPrice,
+  isFetching: isFetchingPrice,
+  error: errorPrice,
+  data: dataPrice,
+} = useQuery({
+  query: GetInvProductPriceDocument,
+  variables: priceVariables,
+  cachePolicy: 'network-only',
+  fetchOnMount: false,
+});
+
+const displayModel = reactive({
+  price: computed(() => dataPrice.value?.getInvProductPrice),
+  discounts:
+    props.invProductDto?.discounts && props.invProductDto.discounts.length > 0
+      ? props.invProductDto.discounts.map((disc) =>
+          convertDecimalToPercent(disc),
+        )
+      : [''],
+  sizeAndQties: invProduct!.invProductSizes.map((item) => ({
+    id: item.size.id,
+    title: item.size.eu,
+    quantity: item.quantity,
+  })),
+});
+const { cloned: clonedSizeQties } = useCloned(displayModel.sizeAndQties);
+const discMask = new Mask(percentageMask);
+// const discsDisplay = ref(['']);
+
 const onSubmit = handleSubmit((data) => {
   executeCreate({ data });
 });
@@ -202,20 +251,6 @@ const onSubmit = handleSubmit((data) => {
 watch(
   () => displayModel.sizeAndQties,
   (newValues) => {
-    newValues.forEach((newItem) => {
-      if (newItem.quantity <= 0) {
-        newItem.quantity = 0;
-      }
-      const originalItem = invProduct!.invProductSizes.find(
-        (item) => item.size.id === newItem.id,
-      );
-
-      if (originalItem) {
-        if (newItem.quantity > originalItem.quantity) {
-          newItem.quantity = originalItem.quantity;
-        }
-      }
-    });
     replace(
       newValues
         .filter((item) => item.quantity > 0)
@@ -229,12 +264,7 @@ watch(
   },
   { immediate: true, deep: true },
 );
-watch(
-  () => displayModel.discount,
-  (newDisc) => {
-    setFieldValue('discount', convertPercentToDecimal(newDisc));
-  },
-);
+
 watchEffect(() => {
   const selectedInv = availInventories.value.find(
     (inv) => inv.id === toInvId.value.value,
@@ -249,10 +279,28 @@ watchEffect(() => {
   console.log(`InvPrice: ${invPrice}`);
 });
 
-// watchEffect(() => {
-//   console.log(`Display Model: ${JSON.stringify(displayModel)}`);
-//   console.log(`toInv: ${toInvId.value.value}`);
-//   console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
-//   console.log(`Form Values: ${JSON.stringify(values)}`);
-// });
+watchDebounced(
+  displayModel.discounts,
+  (newArray) => {
+    const decimals = newArray
+      .filter((item) => item !== '')
+      .map((item) => convertPercentToDecimal(item));
+    setFieldValue('discounts', decimals);
+  },
+  { debounce: 500, immediate: true },
+);
+
+watchEffect(() => {
+  if (toInvId.value.value) {
+    priceVariables.invId = toInvId.value.value;
+    priceVariables.discounts = discounts.fields.value.map((f) => f.value);
+  }
+});
+
+watchEffect(() => {
+  // console.log(`Display Model: ${JSON.stringify(displayModel)}`);
+  // console.log(`toInv: ${toInvId.value.value}`);
+  // console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
+  console.log(`Form Values: ${JSON.stringify(values)}`);
+});
 </script>

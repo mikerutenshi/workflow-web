@@ -49,7 +49,9 @@ export class InvProductResolver {
   }
 
   @Mutation(() => Boolean)
-  uploadInvProductDiscounts(@Args('data') data: CsvUploadDto): Promise<boolean> {
+  uploadInvProductDiscounts(
+    @Args('data') data: CsvUploadDto,
+  ): Promise<boolean> {
     return this.service.uploadInvProductDiscounts(data);
   }
 
@@ -58,5 +60,14 @@ export class InvProductResolver {
     @Args('data') data: InvProductUpdateDiscDto,
   ): Promise<InvProduct> {
     return this.service.updateDiscount(data);
+  }
+
+  @Query(() => Number)
+  getInvProductPrice(
+    @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
+    @Args('productId', { type: () => ID }, ParseIntPipe) productId: number,
+    @Args('discounts', { type: () => [String] }) discounts: string[],
+  ): Promise<number> {
+    return this.service.computeInvProductPrice(invId, productId, discounts);
   }
 }

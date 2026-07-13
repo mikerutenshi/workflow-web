@@ -8,10 +8,10 @@ export class InvTrfItemSizeCreateDto {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(0)
-  sizeId: number;
+  sizeId!: number;
 
   @Field()
   @IsInt()
   @Min(0)
-  quantity: number;
+  quantity!: number;
 }

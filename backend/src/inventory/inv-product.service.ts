@@ -6,12 +6,11 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { computePrice } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
+import { InvProductUpdateDiscDto } from './dto/inv-product-update-disc.dto';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
+import { InvProductUploadDiscDto } from './dto/inv-product-upload-disc.dto';
 import { InvProductUploadDto } from './dto/inv-product-upload.dto';
 import { InvProductDto } from './dto/inv-product.dto';
-import { InvProductUpdateDiscDto } from './dto/inv-product-update-disc.dto';
-import { InvProductUploadDiscDto } from './dto/inv-product-upload-disc.dto';
-import { Decimal } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class InvProductService {
@@ -445,5 +444,45 @@ export class InvProductService {
     );
 
     return true;
+  }
+
+  async computeInvProductPrice(
+    invId: number,
+    productId: number,
+    discounts: string[],
+  ): Promise<number> {
+    const priceFormula = await this.prisma.priceFormula.findUnique({
+      where: { invId },
+      include: { inventory: { select: { type: true } } },
+    });
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      select: {
+        sku: true,
+        productGroup: {
+          select: { productCategoryId: true, msrp: true, skuNumeric: true },
+        },
+      },
+    });
+
+    if (priceFormula && product) {
+      const result = computePrice(
+        product.productGroup.msrp,
+        product.productGroup.skuNumeric,
+        product.sku,
+        product.productGroup.productCategoryId,
+        priceFormula.inventory.type,
+        discounts.map((disc) => Prisma.Decimal(disc)),
+        priceFormula.offset,
+        priceFormula.multiplier,
+        priceFormula.discounts,
+      );
+
+      if (!result) throw Error('Price computation failed');
+
+      return result;
+    } else {
+      throw Error('Product or Inventory not found');
+    }
   }
 }

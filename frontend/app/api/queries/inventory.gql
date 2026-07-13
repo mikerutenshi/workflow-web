@@ -61,7 +61,6 @@ query getInvProducts($invId: ID!) {
         productCategory {
           ...ProductCategory
         }
-        msrp
       }
       productColors {
         color {
@@ -168,11 +167,6 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!, $progress: Progress) {
     product {
       id
       sku
-      productGroup {
-        id
-        skuNumeric
-        msrp
-      }
     }
     discounts
     progress
@@ -238,11 +232,6 @@ query getInvTrf($id: ID!) {
       product {
         id
         sku
-        productGroup {
-          id
-          skuNumeric
-          msrp
-        }
       }
       fromInv {
         id
@@ -313,4 +302,12 @@ query getInvTxs($invId: ID!, $productId: ID!) {
     txDate
     progress
   }
+}
+
+query getInvProductPrice($invId: ID!, $productId: ID!, $discounts: [String!]!) {
+  getInvProductPrice(
+    invId: $invId
+    productId: $productId
+    discounts: $discounts
+  )
 }

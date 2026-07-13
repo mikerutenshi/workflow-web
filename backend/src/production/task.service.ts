@@ -97,6 +97,7 @@ export class TaskService {
                   sizeId: workSize.sizeId,
                   quantity: workSize.quantity,
                 })),
+                discounts: [],
                 progress: Progress.COMPLETED,
                 createdBy: userId,
               },
