@@ -8,4 +8,13 @@ export const useSaleStore = defineStore('sale-store', {
       selectedInventoryId: null as string | null,
     };
   },
+  actions: {
+    removeItemByProductId(productId: string) {
+      if (this.sale) {
+        this.sale.saleItems = this.sale?.saleItems.filter(
+          (item) => item.productId != productId,
+        );
+      }
+    },
+  },
 });

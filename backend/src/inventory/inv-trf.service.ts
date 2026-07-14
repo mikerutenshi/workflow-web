@@ -3,7 +3,7 @@ import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';
 import { PrismaService } from '@/prisma/prisma.service';
-import { generateId } from '@/utils/functions.util';
+import { computePrice, generateId } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
 import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
@@ -292,7 +292,7 @@ export class InvTrfService {
           },
         },
         fromInv: true,
-        toInv: true,
+        toInv: { include: { priceFormula: true } },
         invTrfItemSizes: {
           include: { size: true },
           orderBy: { sizeId: 'asc' },
@@ -304,6 +304,17 @@ export class InvTrfService {
     return result.map((item) => ({
       ...item,
       discounts: item.discounts.map((disc) => disc.toFixed(4)),
+      price: computePrice(
+        item.product.productGroup.msrp,
+        item.product.productGroup.skuNumeric,
+        item.product.sku,
+        item.product.productGroup.productCategoryId,
+        item.toInv.type,
+        item.discounts,
+        item.toInv.priceFormula?.offset,
+        item.toInv.priceFormula?.multiplier,
+        item.toInv.priceFormula?.discounts,
+      ),
     }));
   }
 
@@ -333,7 +344,7 @@ export class InvTrfService {
         invTrfItems: {
           include: {
             fromInv: true,
-            toInv: true,
+            toInv: { include: { priceFormula: true } },
             product: {
               include: {
                 productGroup: {
@@ -362,6 +373,17 @@ export class InvTrfService {
       invTrfItems: result.invTrfItems.map((item) => ({
         ...item,
         discounts: item.discounts.map((disc) => disc.toFixed(4)),
+        price: computePrice(
+          item.product.productGroup.msrp,
+          item.product.productGroup.skuNumeric,
+          item.product.sku,
+          item.product.productGroup.productCategoryId,
+          item.toInv.type,
+          item.discounts,
+          item.toInv.priceFormula?.offset,
+          item.toInv.priceFormula?.multiplier,
+          item.toInv.priceFormula?.discounts,
+        ),
       })),
     };
   }

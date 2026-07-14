@@ -22,10 +22,11 @@
             hide-default-footer
           >
             <template #item.sellQty="{ item, index }">
-              <v-text-field
-                v-model.number="item.sellQty"
+              <v-number-input
+                v-model="item.sellQty"
                 :label="$t('label.quantity')"
-                type="number"
+                :min="0"
+                :max="item.availQty"
                 :error-messages="
                   (errors as any)[`saleItemSizes[${index}].quantity`]
                 "
@@ -36,12 +37,12 @@
                 <td></td>
                 <td>Total</td>
                 <td>
-                  <v-text-field
-                    v-model.number="totalQty.value.value"
+                  <v-number-input
+                    v-model="totalQty.value.value"
                     label="Total"
-                    type="number"
                     :error-messages="totalQty.errorMessage.value"
                     readonly
+                    control-variant="hidden"
                     color="primary"
                   />
                 </td>
@@ -142,14 +143,6 @@ watch(
 watch(
   () => table.items,
   (newItems) => {
-    newItems.forEach((item) => {
-      if (item.sellQty > item.availQty) {
-        item.sellQty = item.availQty;
-      } else if (item.sellQty < 0) {
-        item.sellQty = 0;
-      }
-    });
-
     replace(
       newItems.map((item) => ({
         sizeId: item.sizeId,

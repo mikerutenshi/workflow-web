@@ -89,7 +89,7 @@
             $t(`progress.${item.progress}`)
           }}</template>
 
-          <template #item.discount="{ item }">{{
+          <template #item.discounts="{ item }">{{
             item.discounts
               ? item.discounts
                   .map((disc) => formatDiscount(convertDecimalToPercent(disc)))
@@ -97,8 +97,8 @@
               : null
           }}</template>
 
-          <template #item.product.productGroup.msrp="{ item }">{{
-            formatRupiah(destPricePipe(item.product.productGroup.msrp))
+          <template #item.price="{ item }">{{
+            formatRupiah(item.price)
           }}</template>
 
           <template v-slot:item.invTrfItemSizes="{ item }">
@@ -349,7 +349,7 @@ const tableHeaders: ReadOnlyHeaders = [
   { title: t('label.sku'), key: 'product.sku' },
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
-  { title: t('label.dest_price'), key: 'product.productGroup.msrp' },
+  { title: t('label.dest_price'), key: 'price' },
   { title: t('label.discount'), key: 'discounts' },
   { title: t('label.status'), key: 'progress' },
   { title: t('label.sizes'), key: 'invTrfItemSizes', minWidth: '120' },
@@ -375,20 +375,6 @@ const onSubmit = handleSubmit((data) => {
 const deleteInvTrf = (id: string) => {
   executeDelete({ id });
 };
-
-function destPricePipe(msrp: number | null | undefined): number {
-  if (computeToInv.value) {
-    const invPrice = calculatePrice(
-      msrp ?? 0,
-      computeToInv.value.priceFormula?.offset,
-      computeToInv.value?.priceFormula?.multiplier,
-      computeToInv.value?.priceFormula?.discounts,
-    );
-    return invPrice ?? 0;
-  } else {
-    return 0;
-  }
-}
 
 watch(itemIdSelections, (newValues) => {
   console.log(`item id selections: ${JSON.stringify(newValues)}`);

@@ -59,10 +59,10 @@
             hide-default-footer
           >
             <template #item.quantity="{ item, index }">
-              <v-text-field
-                v-model.number="item.quantity"
+              <v-number-input
+                v-model="item.quantity"
                 :label="$t('label.quantity')"
-                type="number"
+                :min="1"
                 :error-messages="
                   (errors as any)[`workSizes[${index}].quantity`]
                 "

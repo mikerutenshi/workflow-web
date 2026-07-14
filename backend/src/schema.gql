@@ -263,8 +263,9 @@ type InvTrfItemDto {
   discounts: [String!]!
   fromInv: Inventory
   toInv: Inventory!
-  product: ProductDto!
+  product: Product!
   invTrf: InvTrf
+  price: Int
 }
 
 type Work {

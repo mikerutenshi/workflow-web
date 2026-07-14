@@ -168,6 +168,7 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!, $progress: Progress) {
       id
       sku
     }
+    price
     discounts
     progress
     invTrfItemSizes {
@@ -243,6 +244,7 @@ query getInvTrf($id: ID!) {
         name
         type
       }
+      price
       discounts
       progress
       invTrfItemSizes {

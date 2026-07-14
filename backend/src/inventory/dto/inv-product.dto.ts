@@ -12,5 +12,5 @@ export class InvProductDto extends InvProduct {
   invTrfItems!: InvTrfItem[];
 
   @Field(() => Int, { nullable: true })
-  price?: number | null;
+  price!: number | null;
 }

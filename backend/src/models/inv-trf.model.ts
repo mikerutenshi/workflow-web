@@ -5,13 +5,13 @@ import { BaseModel } from './base.model';
 @ObjectType()
 export class InvTrf extends BaseModel {
   @Field()
-  trfNo: string;
+  trfNo!: string;
   @Field(() => ID, { nullable: true })
-  fromInvId: number | null;
+  fromInvId!: number | null;
   @Field(() => ID)
-  toInvId: number;
+  toInvId!: number;
   @Field(() => Date)
-  trfDate: Date;
+  trfDate!: Date;
   @Field(() => Progress)
-  progress: Progress;
+  progress!: Progress;
 }

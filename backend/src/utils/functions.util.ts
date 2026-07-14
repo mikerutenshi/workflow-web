@@ -36,12 +36,12 @@ export function computePrice(
   sku: string,
   productCategoryId: number,
   invType: InvType,
-  productDiscs: Prisma.Decimal[],
+  productDiscounts: Prisma.Decimal[],
   offset?: number | null,
   multiplier?: Prisma.Decimal | null,
   discounts?: Prisma.Decimal[] | null,
-): number | undefined {
-  if (!base) return undefined;
+): number | null {
+  if (!base) return null;
 
   const idx = sku.indexOf(skuNumeric);
   const leather = idx >= 0 ? sku.slice(0, idx).toUpperCase() : '';
@@ -69,7 +69,7 @@ export function computePrice(
   const finalOffset = offset ? priceTierOffset + offset : priceTierOffset;
   let finalMultiplier = multiplier ? multiplier : new Prisma.Decimal(1);
 
-  if (productDiscs.some((disc) => disc.equals(new Prisma.Decimal(0.5)))) {
+  if (productDiscounts.some((disc) => disc.equals(new Prisma.Decimal(0.5)))) {
     finalMultiplier = finalMultiplier.add(0.15);
   }
 

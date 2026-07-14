@@ -125,7 +125,7 @@
               <v-btn
                 :icon="mdiTrashCan"
                 variant="text"
-                @click="deleteCartItem(item.productId)"
+                @click="removeCartItem(item.productId)"
               >
               </v-btn>
             </template>
@@ -477,8 +477,8 @@ function closeDialog() {
   dialog.isVisible = false;
   fetchInvProducts();
 }
-function deleteCartItem(productId: string) {
-  const result = displayItemSizesMap.value.delete(productId);
-  console.log(`Result => ${result}`);
+function removeCartItem(productId: string) {
+  displayItemSizesMap.value.delete(productId);
+  saleStore.removeItemByProductId(productId);
 }
 </script>
