@@ -124,15 +124,17 @@ function createPdf(invTrfModel: InvTrfType) {
       0,
     );
     totalQty = totalQty + sum;
-    let price = item.product.productGroup.msrp;
-    let disc = item.discount ? parseFloat(item.discount) : 0;
-    let subTotal = price ? price * (1 - disc) * sum : 0;
+    let price = item.price;
+    let subTotal = price ? computeDiscounted(price, item.discounts) * sum : 0;
     totalPrice = totalPrice + subTotal;
     return [
       item.product.sku || '',
       formatRupiah(price) || '',
-      item.discount
-        ? formatDiscount(convertDecimalToPercent(item.discount))
+
+      item.discounts
+        ? item.discounts
+            .map((disc) => formatDiscount(convertDecimalToPercent(disc)))
+            .join(' + ')
         : '',
       String(
         item.invTrfItemSizes.find((subitem) => subitem.size.eu === '38')

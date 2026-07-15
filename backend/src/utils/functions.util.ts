@@ -75,12 +75,12 @@ export function computePrice(
 
   var result = finalMultiplier.times(base + finalOffset).toNumber();
 
-  if (sku == 'K01903-D.Brown') {
-    console.log(`base: ${base}`);
-    console.log(`pricetieroffset: ${priceTierOffset}`);
-    console.log(`finalOffset: ${finalOffset}`);
-    //todo if discount is 50% multiplier = 185
-  }
+  // if (sku == 'K01903-D.Brown') {
+  //   console.log(`base: ${base}`);
+  //   console.log(`pricetieroffset: ${priceTierOffset}`);
+  //   console.log(`finalOffset: ${finalOffset}`);
+  //todo if discount is 50% multiplier = 185
+  // }
 
   discounts?.forEach((disc) => {
     result = result - disc.times(result).toNumber();

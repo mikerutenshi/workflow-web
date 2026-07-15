@@ -157,8 +157,8 @@ export function createTaskSchema(
 }
 
 export const InventorySchema = z.object({
-  name: z.string().min(3).max(100).trim(),
-  address: z.string().min(5).max(255).trim(),
+  name: z.string().min(3).max(50).trim(),
+  address: z.string().min(5).max(50).trim(),
   city: z.enum([...Cities.map((c) => c.title)] as [string, ...string[]]),
   province: z.enum([...Provinces.map((c) => c.title)] as [string, ...string[]]),
   type: z.nativeEnum(InvType),
