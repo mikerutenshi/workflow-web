@@ -1,15 +1,11 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
-      <v-row
-        v-if="errorNewInvProducts || errorUpdateDiscounts"
-      >
+      <v-row v-if="errorNewInvProducts || errorUpdateDiscounts">
         <v-col>
           <v-alert type="error">
             {{
-              extractGraphQlError(
-                errorNewInvProducts || errorUpdateDiscounts,
-              )
+              extractGraphQlError(errorNewInvProducts || errorUpdateDiscounts)
             }}
           </v-alert>
         </v-col>
@@ -20,7 +16,7 @@
           <h4>Create New Inventory Products</h4>
           <p>
             Columns: invId, productId, qty38, qty39, qty40, qty41, qty42, qty43,
-            qty44, qty45
+            qty44, qty45, discounts
           </p>
           <v-file-input
             accept=".csv"

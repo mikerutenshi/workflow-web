@@ -344,12 +344,13 @@ export class InvProductService {
       };
 
       const nums: string[] = ['38', '39', '40', '41', '42', '43', '44', '45'];
+
       const requiredColumns = [
         'invId',
         'productId',
         ...nums.map((num) => `qty${num}`),
+        'discounts',
       ];
-
       requiredColumns.forEach((column) => {
         if (!(column in row)) {
           throw new Error(
@@ -372,6 +373,11 @@ export class InvProductService {
           }
         }
       });
+
+      invProduct.discounts = row.discounts
+        .split(';')
+        .map((disc) => disc.trim())
+        .filter((disc) => disc !== '');
 
       return invProduct;
     });

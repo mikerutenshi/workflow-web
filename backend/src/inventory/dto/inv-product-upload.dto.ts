@@ -9,4 +9,5 @@ export class InvProductUploadDto {
   qty43!: number;
   qty44!: number;
   qty45!: number;
+  discounts!: string;
 }
