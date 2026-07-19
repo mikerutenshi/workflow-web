@@ -1,12 +1,12 @@
 <template>
+  <!-- <v-row v-if="deleteError || errorTransfer">
+    <v-col>
+      <v-alert type="error">
+        {{ extractGraphQlError(deleteError || errorTransfer) }}
+      </v-alert>
+    </v-col>
+  </v-row> -->
   <v-row class="flex-grow-0">
-    <v-row v-if="deleteError">
-      <v-col>
-        <v-alert type="error">
-          {{ extractGraphQlError(deleteError) }}
-        </v-alert>
-      </v-col>
-    </v-row>
     <v-col>
       <ActionPickDate
         v-model="dates"
@@ -115,14 +115,10 @@
       <span>{{ $t(`progress.${item.displayProgress}`) }}</span>
     </template>
 
-    <!-- <template v-slot:item.actions="{ item }">
-          <v-btn
-            color="primary"
-            :icon="mdiPencil"
-            variant="text"
-            @click="edit(item.id)"
-          ></v-btn>
-        </template> -->
+    <template v-slot:item.invTrf="{ item }">
+      <v-icon :icon="mdiCheck" v-if="item.invTrf" class="mr-2" />
+      <span v-if="item.invTrf">{{ item.invTrf?.trfNo }}</span>
+    </template>
 
     <template v-slot:item.actions="{ item }">
       <template v-if="clearanceLevel <= Role.Planner">
@@ -139,20 +135,27 @@
           <v-list>
             <v-list-item
               :prepend-icon="mdiPencil"
-              @click="showEditWorkDialog(item.id)"
+              @click="showEditWorkDialog(item)"
             >
               <v-list-item-title>{{ $t('page.work_edit') }}</v-list-item-title>
             </v-list-item>
             <v-list-item
               :prepend-icon="mdiPencil"
-              @click="showEditTaskDialog(item.id)"
+              @click="showEditTaskDialog(item)"
             >
               <v-list-item-title>{{ $t('page.task_edit') }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item
+              :prepend-icon="mdiTransferRight"
+              @click="showTransferDialog(item)"
+            >
+              <v-list-item-title>Send to Inventory</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
               :prepend-icon="mdiTrashCan"
-              @click="showDeleteDialog(item.id)"
+              @click="showDeleteDialog(item)"
               class="text-error"
             >
               <v-list-item-title>{{ t('btn.delete') }}</v-list-item-title>
@@ -165,7 +168,7 @@
           color="primary"
           :icon="mdiPencil"
           variant="text"
-          @click="showEditTaskDialog(item.id)"
+          @click="showEditTaskDialog(item)"
         ></v-btn>
       </template>
     </template>
@@ -183,27 +186,28 @@
   >
     <WorkCreateForm
       v-if="dialog.content === DialogContent.EditWork"
-      :work-id="currentWorkId"
+      :work-id="selectedObject?.id"
       @close-dialog="save"
     />
     <TaskUpdateForm
       v-if="dialog.content === DialogContent.EditTask"
-      :work-id="currentWorkId"
+      :work-id="selectedObject?.id"
       @close-dialog="save"
     />
   </ActionEditItemDialog>
 
-  <ActionConfirmDeleteDialog
-    v-model="confirmDeleteDialog"
-    @confirm="if (currentWorkId) executeDelete({ id: currentWorkId });"
-    :loading="isDeleting"
-  ></ActionConfirmDeleteDialog>
+  <ActionConfirmActionDialog
+    v-model="confirmActionDialog"
+    @confirm="performExecute(confirmAction)"
+    :loading="isDeleting || isTransfering"
+    :action-type="confirmAction"
+  ></ActionConfirmActionDialog>
 
   <ActionShowSnack
     v-model="snack.isVisible"
     :message="snack.message"
     :color="snack.color"
-    @on-confirm="confirmDeleteDialog = false"
+    @on-confirm="confirmActionDialog = false"
   ></ActionShowSnack>
 </template>
 
@@ -216,12 +220,14 @@
 
 <script setup lang="ts">
 import {
+  mdiCheck,
   mdiDotsVertical,
   mdiMagnify,
   mdiPencil,
   mdiTimerSand,
   mdiTimerSandComplete,
   mdiTimerSandEmpty,
+  mdiTransferRight,
   mdiTrashCan,
 } from '@mdi/js';
 import dayjs from 'dayjs';
@@ -229,9 +235,12 @@ import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import {
+  AddToInventoryDocument,
   DeleteWorkDocument,
   GetWorksDocument,
   Progress,
+  type AddToInventoryDto,
+  type GetWorksQuery,
 } from '~/api/generated/types';
 import { CACHE_WORKS } from '~/utils/cache-tags';
 
@@ -246,6 +255,7 @@ const { t } = useI18n();
 
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
+const userId = authStore.user?.id || '';
 
 // Add 34px to height to adjust the footer position
 const pageNo = ref(1);
@@ -300,14 +310,36 @@ const {
 });
 
 const {
+  execute: executeTransfer,
+  isFetching: isTransfering,
+  error: errorTransfer,
+} = useMutation(AddToInventoryDocument, {
+  onData(data) {
+    snack.message = `Added to Inventory ${JSON.stringify(data)} `;
+    snack.color = SnackColor.Success;
+    snack.isVisible = true;
+  },
+  onError(err) {
+    snack.message = extractGraphQlError(err);
+    snack.color = SnackColor.Error;
+    snack.isVisible = true;
+  },
+});
+
+const {
   execute: executeDelete,
   error: deleteError,
   isFetching: isDeleting,
 } = useMutation(DeleteWorkDocument, {
   onData(data) {
     snack.message = t('status.deleted');
+    snack.color = SnackColor.Success;
     snack.isVisible = true;
-    executeFetch();
+  },
+  onError(err) {
+    snack.message = extractGraphQlError(err);
+    snack.color = SnackColor.Error;
+    snack.isVisible = true;
   },
   refetchTags: [CACHE_WORKS],
 });
@@ -338,14 +370,15 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.date'), key: 'date' },
   { title: t('label.order_no'), key: 'orderNo' },
   { title: t('label.sku'), key: 'product.sku' },
-  { title: t('label.sizes'), key: 'sizes', minWidth: '120' },
+  { title: t('label.sizes'), key: 'sizes' },
   { title: t('label.status'), key: 'progress' },
-  { title: t('label.tasks'), key: 'tasks', minWidth: '300' },
-  { title: t('label.note'), key: 'note' },
+  { title: t('label.tasks'), key: 'tasks' },
+  { title: t('label.note'), key: 'note', maxWidth: '120' },
+  { title: 'Added to Inventory', key: 'invTrf', maxWidth: '120' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
-const confirmDeleteDialog = ref(false);
+const confirmActionDialog = ref(false);
 const snack = reactive({
   isVisible: false,
   message: t('status.deleted'),
@@ -367,50 +400,75 @@ function manageDates(newDates: string[] | string) {
   executeFetch();
 }
 
-const currentWorkId = ref('');
 const dialog = reactive({
   isVisible: false,
   content: DialogContent.None,
 });
 
-function openDialog() {
-  dialog.isVisible = true;
+type WorkData = GetWorksQuery['getWorks'][number];
+const selectedObject = ref<WorkData | null>(null);
+enum ActionType {
+  DELETE = 'DELETE',
+  TRANSFER = 'TRANSFER',
 }
+const confirmAction = ref(ActionType.DELETE);
 
-function closeDialog() {
-  dialog.isVisible = false;
-}
-
-function edit(workId: string) {
-  dialog.isVisible = true;
-  currentWorkId.value = workId;
-}
 function save() {
   dialog.isVisible = false;
-  currentWorkId.value = '';
-  executeFetch();
+  selectedObject.value = null;
 }
-function showEditWorkDialog(workId: string) {
-  currentWorkId.value = workId;
+function showEditWorkDialog(selection: WorkData) {
+  selectedObject.value = selection;
   dialog.content = DialogContent.EditWork;
   dialog.isVisible = true;
 }
-function showEditTaskDialog(workId: string) {
-  currentWorkId.value = workId;
+function showEditTaskDialog(selection: WorkData) {
+  selectedObject.value = selection;
   dialog.content = DialogContent.EditTask;
   dialog.isVisible = true;
 }
 
-function showDeleteDialog(workId: string) {
-  currentWorkId.value = workId;
-  confirmDeleteDialog.value = true;
+function showDeleteDialog(selection: WorkData) {
+  selectedObject.value = selection;
+  confirmActionDialog.value = true;
+  confirmAction.value = ActionType.DELETE;
+}
+
+function showTransferDialog(selection: WorkData) {
+  selectedObject.value = selection;
+  confirmActionDialog.value = true;
+  confirmAction.value = ActionType.TRANSFER;
+}
+
+function performExecute(action: ActionType) {
+  if (action === ActionType.DELETE) {
+    if (selectedObject.value) {
+      executeDelete({ id: selectedObject.value.id });
+    }
+  } else if (action === ActionType.TRANSFER) {
+    if (selectedObject.value) {
+      const data: AddToInventoryDto = {
+        productId: selectedObject.value.productId,
+        progress: selectedObject.value.progress,
+        workSizes: selectedObject.value.workSizes.map((item) => ({
+          id: item.size.id,
+          quantity: item.quantity,
+        })),
+        createdBy: userId,
+        workId: selectedObject.value.id,
+      };
+
+      console.log(`Data: ${JSON.stringify(data)}`);
+      executeTransfer({ data });
+    }
+  }
 }
 
 watch(
   () => dialog.isVisible,
   (isOpen) => {
     if (!isOpen) {
-      currentWorkId.value = '';
+      selectedObject.value = null;
     }
   },
 );

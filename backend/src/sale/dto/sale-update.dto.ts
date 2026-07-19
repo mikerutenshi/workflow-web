@@ -10,11 +10,11 @@ export class SaleUpdateDto extends PartialType(SaleCreateDto) {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  updatedBy: number;
+  updatedBy!: number;
 
   @Field(() => [SaleItemCreateDto])
   @Type(() => SaleItemCreateDto)
   @ValidateNested({ each: true })
   @ArrayNotEmpty()
-  saleItems: SaleItemCreateDto[];
+  saleItems!: SaleItemCreateDto[];
 }

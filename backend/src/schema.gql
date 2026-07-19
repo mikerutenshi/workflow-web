@@ -454,7 +454,7 @@ type PayrollGetDto {
   artisans: [ArtisanWithTasks!]!
 }
 
-type TaskWithArtisan {
+type TaskAndArtisanDto {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -467,7 +467,7 @@ type TaskWithArtisan {
   artisan: Artisan
 }
 
-type WorkWithTasks {
+type WorkAndTasksDto {
   id: ID!
   createdBy: ID!
   updatedBy: ID
@@ -479,8 +479,9 @@ type WorkWithTasks {
   progress: Progress!
   note: String
   workSizes: [SizeToWork!]!
-  tasks: [TaskWithArtisan!]!
+  tasks: [TaskAndArtisanDto!]!
   product: Product!
+  invTrf: InvTrf
 }
 
 type SaleItemToSize {
@@ -531,11 +532,11 @@ type Query {
   getLaborCost(id: ID!): LaborCostGetDto!
   getArtisans: [Artisan!]!
   getArtisan(id: ID!): Artisan!
-  getWork(id: ID!): WorkWithTasks!
-  getWorks(startDate: Date!, endDate: Date!): [WorkWithTasks!]!
+  getWork(id: ID!): WorkAndTasksDto!
+  getWorks(startDate: Date!, endDate: Date!): [WorkAndTasksDto!]!
   getSize(id: ID!): Size!
   getSizes: [Size!]!
-  getTasks(workId: ID!): [TaskWithArtisan!]!
+  getTasks(workId: ID!): [TaskAndArtisanDto!]!
   getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
   getInventory(id: ID!): InventoryDto!
   getInventories: [InventoryDto!]!
@@ -585,7 +586,8 @@ type Mutation {
   createSize(data: SizeCreateDto!): Size!
   updateSize(id: ID!, data: SizeCreateDto!): Size!
   deleteSize(id: ID!): Boolean!
-  updateTasks(data: [TaskUpdateDto!]!): [TaskWithArtisan!]!
+  updateTasks(data: [TaskUpdateDto!]!): [TaskAndArtisanDto!]!
+  addToInventory(data: AddToInventoryDto!): Boolean!
   createInventory(data: InventoryCreateDto!): Inventory!
   deleteInventory(id: ID!): Boolean!
   updateInventory(id: ID!, data: InventoryUpdateDto!): Inventory!
@@ -729,12 +731,12 @@ input SizeToWorkCreateDto {
 }
 
 input WorkUpdateDto {
-  date: Date!
-  orderNo: String!
-  productId: ID!
+  date: Date
+  orderNo: String
+  productId: ID
   workSizes: [SizeToWorkCreateDto!]!
   note: String
-  createdBy: ID!
+  createdBy: ID
   updatedBy: ID!
 }
 
@@ -751,6 +753,14 @@ input TaskUpdateDto {
   doneAt: Date
   id: ID!
   updatedBy: ID!
+}
+
+input AddToInventoryDto {
+  productId: ID!
+  progress: Progress!
+  workSizes: [SizeToWorkCreateDto!]!
+  createdBy: ID!
+  workId: ID!
 }
 
 input InventoryCreateDto {

@@ -93,10 +93,10 @@
     ></SaleCreateForm>
   </ActionEditItemDialog>
 
-  <ActionConfirmDeleteDialog
+  <ActionConfirmActionDialog
     v-model="confirmDeleteDialog"
     @confirm="if (dialog.saleId) executeDelete({ id: dialog.saleId });"
-  ></ActionConfirmDeleteDialog>
+  ></ActionConfirmActionDialog>
   <ActionShowSnack
     v-model="snack.isVisible"
     :message="snack.message"

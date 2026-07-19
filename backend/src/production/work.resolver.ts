@@ -4,7 +4,7 @@ import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { WorkCreateDto } from './dto/work-create.dto';
 import { WorkService } from './work.service';
 import { WorkUpdateDto } from './dto/work-update.dto';
-import { WorkWithTasks } from '@/models/work-with-tasks.model';
+import { WorkAndTasksDto } from '@/production/dto/work-and-tasks.dto';
 
 @Resolver(() => Work)
 export class WorkResolver {
@@ -30,18 +30,18 @@ export class WorkResolver {
     return this.workService.deleteWork(id);
   }
 
-  @Query(() => WorkWithTasks)
+  @Query(() => WorkAndTasksDto)
   getWork(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<WorkWithTasks> {
+  ): Promise<WorkAndTasksDto> {
     return this.workService.getWork(id);
   }
 
-  @Query(() => [WorkWithTasks])
+  @Query(() => [WorkAndTasksDto])
   getWorks(
     @Args('startDate', { type: () => Date }) startDate: Date,
     @Args('endDate', { type: () => Date }) endDate: Date,
-  ): Promise<WorkWithTasks[]> {
+  ): Promise<WorkAndTasksDto[]> {
     return this.workService.getWorks(startDate, endDate);
   }
 }

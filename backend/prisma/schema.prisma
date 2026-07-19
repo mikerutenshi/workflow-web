@@ -125,9 +125,9 @@ model Product {
 
   productColors       ColorToProduct[]
   works               Work[]
-  productInvs         InvToProduct[]
+  invProducts         InvToProduct[]
   // productsale         ProductToSale[]
-  InvTrfItem          InvTrfItem[]
+  invTrfItems         InvTrfItem[]
 
   productGroup        ProductGroup    @relation(fields: [productGroupId], references: [id])
 }

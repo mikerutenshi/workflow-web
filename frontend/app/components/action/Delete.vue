@@ -7,11 +7,11 @@
   >
     <slot>{{ $t('btn.delete') }}</slot>
   </v-btn>
-  <ActionConfirmDeleteDialog
+  <ActionConfirmActionDialog
     v-model="dialog"
     :item-title="itemTitle"
     @confirm="emit('click')"
-  ></ActionConfirmDeleteDialog>
+  ></ActionConfirmActionDialog>
 </template>
 
 <script setup lang="ts">

@@ -116,11 +116,11 @@
     ></InvTrfForm>
   </ActionEditItemDialog>
 
-  <ActionConfirmDeleteDialog
+  <ActionConfirmActionDialog
     v-model="confirmDeleteDialog"
     @confirm="if (dialogModel.id) executeDelete({ id: dialogModel.id });"
     :loading="isDeleting"
-  ></ActionConfirmDeleteDialog>
+  ></ActionConfirmActionDialog>
 
   <ActionShowSnack
     v-model="snack.isVisible"

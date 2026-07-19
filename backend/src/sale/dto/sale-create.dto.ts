@@ -15,20 +15,20 @@ export class SaleCreateDto {
   @Matches(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/, {
     message: 'Format support example: SAL-251015-0001',
   })
-  saleNo: string;
+  saleNo!: string;
 
   @Field(() => Date)
   @IsDate()
-  date: Date;
+  date!: Date;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  createdBy: number;
+  createdBy!: number;
 
   @Field(() => [SaleItemCreateDto])
   @Type(() => SaleItemCreateDto)
   @ValidateNested({ each: true })
   @ArrayNotEmpty()
-  saleItems: SaleItemCreateDto[];
+  saleItems!: SaleItemCreateDto[];
 }

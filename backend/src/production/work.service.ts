@@ -1,4 +1,4 @@
-import { WorkWithTasks } from '@/models/work-with-tasks.model';
+import { WorkAndTasksDto } from '@/production/dto/work-and-tasks.dto';
 import { Work } from '@/models/work.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
@@ -14,12 +14,14 @@ export class WorkService {
       const createdWork = await tx.work.create({
         data: {
           ...data,
-          workSizes: {
-            create: data.workSizes.map((size) => ({
-              size: { connect: { id: size.id } },
-              quantity: size.quantity,
-            })),
-          },
+          workSizes: data.workSizes
+            ? {
+                create: data.workSizes.map((size) => ({
+                  size: { connect: { id: size.id } },
+                  quantity: size.quantity,
+                })),
+              }
+            : undefined,
         },
       });
 
@@ -68,7 +70,7 @@ export class WorkService {
     });
   }
 
-  async getWork(id: number): Promise<WorkWithTasks> {
+  async getWork(id: number): Promise<WorkAndTasksDto> {
     const work = await this.prisma.work.findUnique({
       where: { id },
       include: {
@@ -88,7 +90,7 @@ export class WorkService {
     return work;
   }
 
-  getWorks(startDate: Date, endDate: Date): Promise<WorkWithTasks[]> {
+  getWorks(startDate: Date, endDate: Date): Promise<WorkAndTasksDto[]> {
     return this.prisma.work.findMany({
       include: {
         workSizes: {
@@ -97,6 +99,7 @@ export class WorkService {
         },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: true,
+        invTrf: true,
       },
       where: {
         date: {

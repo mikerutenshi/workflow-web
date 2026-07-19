@@ -7,7 +7,7 @@ fragment Size on Size {
   gender
 }
 
-fragment TaskWithArtisan on TaskWithArtisan {
+fragment TaskAndArtisan on TaskAndArtisanDto {
   id
   createdBy
   createdAt
@@ -26,7 +26,7 @@ fragment TaskWithArtisan on TaskWithArtisan {
   doneAt
 }
 
-fragment WorkWithTasks on WorkWithTasks {
+fragment WorkAndTasks on WorkAndTasksDto {
   id
   date
   orderNo
@@ -38,20 +38,23 @@ fragment WorkWithTasks on WorkWithTasks {
     quantity
   }
   tasks {
-    ...TaskWithArtisan
+    ...TaskAndArtisan
   }
   product {
     sku
   }
   progress
   note
+  invTrf {
+    trfNo
+  }
   createdBy
   updatedBy
   createdAt
   updatedAt
 }
 
-fragment Work on WorkWithTasks {
+fragment Work on WorkAndTasksDto {
   id
   date
   orderNo
@@ -116,7 +119,7 @@ mutation deleteWork($id: ID!) {
 
 query getWorks($startDate: Date!, $endDate: Date!) {
   getWorks(startDate: $startDate, endDate: $endDate) {
-    ...WorkWithTasks
+    ...WorkAndTasks
   }
 }
 
@@ -128,7 +131,7 @@ query getWork($id: ID!) {
 
 query getTasks($workId: ID!) {
   getTasks(workId: $workId) {
-    ...TaskWithArtisan
+    ...TaskAndArtisan
   }
 }
 
@@ -136,6 +139,10 @@ mutation updateTasks($data: [TaskUpdateDto!]!) {
   updateTasks(data: $data) {
     id
   }
+}
+
+mutation addToInventory($data: AddToInventoryDto!) {
+  addToInventory(data: $data)
 }
 
 query getPayroll($startDate: Date!, $endDate: Date!) {

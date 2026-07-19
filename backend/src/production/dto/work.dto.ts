@@ -5,5 +5,5 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class WorkDto extends Work {
   @Field(() => [SizeToWork])
-  workSizes: SizeToWork[];
+  workSizes!: SizeToWork[];
 }
