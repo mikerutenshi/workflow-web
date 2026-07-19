@@ -147,6 +147,7 @@
             </v-list-item>
 
             <v-list-item
+              v-if="!item.invTrf"
               :prepend-icon="mdiTransferRight"
               @click="showTransferDialog(item)"
             >
@@ -315,7 +316,7 @@ const {
   error: errorTransfer,
 } = useMutation(AddToInventoryDocument, {
   onData(data) {
-    snack.message = `Added to Inventory ${JSON.stringify(data)} `;
+    snack.message = t('status.saved');
     snack.color = SnackColor.Success;
     snack.isVisible = true;
   },
@@ -324,6 +325,7 @@ const {
     snack.color = SnackColor.Error;
     snack.isVisible = true;
   },
+  refetchTags: [CACHE_WORKS],
 });
 
 const {

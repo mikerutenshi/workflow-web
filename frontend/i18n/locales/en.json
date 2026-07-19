@@ -67,6 +67,7 @@
     "item_detail_for": "Item Detail for {item}",
     "send_to": "Send {product}",
     "delete_confirm": "Delete Confirmation",
+    "transfer_confirm": "Transfer Confirmation",
     "add_to_cart": "Add to Cart",
     "inv_product_edit_disc": "Edit Discount for {item}"
   },
@@ -89,7 +90,8 @@
     "yes": "Yes",
     "no": "No",
     "add_product": "Add Shoe",
-    "inv_product_edit_disc": "Edit Discount"
+    "inv_product_edit_disc": "Edit Discount",
+    "add_to_inventory": "Add to Inventory"
   },
   "label": {
     "id": "ID",
@@ -157,7 +159,8 @@
     "send_to": "Send Shoes",
     "pending_trfs": "Pending Transfers",
     "show_item_detail": "Show Item Detail",
-    "delete_confirm": "Are you sure you want to delete {item}?",
+    "delete_confirm": "Are you sure you want to delete? Cannot be undone",
+    "transfer_confirm": "Are you sure you want to transfer? Cannot be undone",
     "price": "Price",
     "discount": "Discount",
     "store_price_formula": "Store Wide Price Formula",

@@ -67,6 +67,7 @@
     "send_to": "Ngirim {product}",
     "item_detail_for": "Rincian Barang pikeun {item}",
     "delete_confirm": "Konfirmasi Mupus",
+    "transfer_confirm": "Konfirmasi Mindahkeun",
     "add_to_cart": "Tambahkeun kana Karanjang",
     "inv_product_edit_disc": "Ngarobah Diskon pikeun {item}"
   },
@@ -89,7 +90,8 @@
     "yes": "Enya",
     "no": "Henteu",
     "add_product": "Tambah Sapatu",
-    "inv_product_edit_disc": "Ngarobah Diskon"
+    "inv_product_edit_disc": "Ngarobah Diskon",
+    "add_to_inventory": "Tambahkeun kana Inventaris"
   },
   "label": {
     "id": "ID",
@@ -157,7 +159,8 @@
     "send_to": "Kirim Sapatu",
     "pending_trfs": "Transfer anu Tertunda",
     "show_item_detail": "Nempo Rincian Barang",
-    "delete_confirm": "Naha anjeun yakin rék mupus {item}?",
+    "delete_confirm": "Naha anjeun yakin rék mupus? Teu tiasa dibolaykeun",
+    "transfer_confirm": "Anjeun yakin hoyong mindahkeun? Teu tiasa dibolaykeun",
     "price": "Harga",
     "discount": "Diskon",
     "store_price_formula": "Rumus Harga pikeun Toko Ieu",

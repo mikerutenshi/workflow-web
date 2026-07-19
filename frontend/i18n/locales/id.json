@@ -67,6 +67,7 @@
     "send_to": "Transfer {product}",
     "item_detail_for": "Rincian Barang untuk {item}",
     "delete_confirm": "Konfirmasi Penghapusan",
+    "transfer_confirm": "Konfirmasi Transfer",
     "add_to_cart": "Tambahkan ke Keranjang",
     "inv_product_edit_disc": "Ubah Diskon untuk {item}"
   },
@@ -89,7 +90,8 @@
     "yes": "Iya",
     "no": "Tidak",
     "add_product": "Tambah Sepatu",
-    "inv_product_edit_disc": "Ubah Diskon"
+    "inv_product_edit_disc": "Ubah Diskon",
+    "add_to_inventory": "Tambah ke Inventaris"
   },
   "label": {
     "id": "ID",
@@ -157,7 +159,8 @@
     "send_to": "Transfer Sepatu",
     "pending_trfs": "Akan Ditransfer",
     "show_item_detail": "Lihat Rincian Barang ",
-    "delete_confirm": "Apakah anda yakin akan menghapus {item}?",
+    "delete_confirm": "Apakah anda yakin akan menghapus? Tidak dapat dibatalkan",
+    "transfer_confirm": "Apakah anda yakin akan transfer. Tidak dapat dibatalkan",
     "price": "Harga",
     "discount": "Diskon",
     "store_price_formula": "Rumus Harga untuk Toko Ini",

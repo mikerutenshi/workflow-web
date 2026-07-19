@@ -1,13 +1,18 @@
 <template>
   <v-dialog v-model="dialog">
     <v-card class="mx-auto">
-      <!-- <v-card-title>{{ $t('page.delete_confirm') }}</v-card-title> -->
-      <v-card-title>{{
-        actionType === 'DELETE' ? 'delete' : 'transfer'
-      }}</v-card-title>
+      <v-card-title
+        :class="actionType === 'DELETE' ? 'bg-error' : 'bg-primary'"
+        >{{
+          actionType === 'DELETE'
+            ? $t('page.delete_confirm')
+            : $t('page.transfer_confirm')
+        }}</v-card-title
+      >
       <v-card-text>{{
-        // $t('label.delete_confirm', { item: itemName })
-        actionType === 'DELETE' ? 'sure delete' : 'sure transfer'
+        actionType === 'DELETE'
+          ? $t('label.delete_confirm')
+          : $t('label.transfer_confirm')
       }}</v-card-text>
       <v-card-actions>
         <v-btn :loading="loading" @click="handleConfirm">{{
