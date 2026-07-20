@@ -176,7 +176,8 @@
     "tx_date": "Tanggal Transaksi",
     "type": "Tipe",
     "created_at": "Dibuat Pada",
-    "updated_at": "Dirubah Pada"
+    "updated_at": "Dirubah Pada",
+    "added_to_inventory": "Sudah di Inventaris"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",

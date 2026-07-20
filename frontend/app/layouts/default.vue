@@ -372,7 +372,7 @@ type NavItemDef = {
   title: string;
   route?: string;
   icon: string;
-  maxClearance: Role;
+  clearances: number[];
   children?: NavItemDef[];
 };
 
@@ -385,7 +385,7 @@ type NavItem = {
 
 function filterNav(items: NavItemDef[], clearance: number): NavItem[] {
   return items
-    .filter((item) => clearance <= item.maxClearance)
+    .filter((item) => item.clearances.includes(clearance))
     .map((item) => {
       const children = item.children
         ? filterNav(item.children, clearance)
@@ -406,73 +406,73 @@ const navItems = computed(() => {
       title: t('nav.home'),
       route: localePath('/'),
       icon: mdiHome,
-      maxClearance: Role.Field,
+      clearances: [0, 1, 2, 3, 4, 5, 6, 7, 8],
     },
     {
       title: t('nav.payroll'),
       route: localePath('/payroll'),
       icon: mdiCashMultiple,
-      maxClearance: Role.Planner,
+      clearances: [Role.Superuser, Role.Finance, Role.Planner],
     },
     {
       title: t('nav.production_status'),
       route: localePath('/works'),
       icon: mdiFactory,
-      maxClearance: Role.Field,
+      clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Field],
     },
     {
       title: t('nav.inventory'),
       route: localePath('/inv-products'),
       icon: mdiWarehouse,
-      maxClearance: Role.Superuser,
+      clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
     },
     {
       title: t('nav.inventory_transfers'),
       route: localePath('/inv-trfs'),
       icon: mdiTransfer,
-      maxClearance: Role.Superuser,
+      clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
     },
     {
       title: t('nav.sales'),
       route: localePath('/sales'),
       icon: mdiPrinterPos,
-      maxClearance: Role.Superuser,
+      clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
     },
     {
       title: t('nav.setting'),
       route: localePath('/setting'),
       icon: mdiCogs,
-      maxClearance: Role.Field,
+      clearances: [1, 2, 3, 4, 5, 6],
       children: [
         {
           title: t('nav.products'),
           route: localePath('/products'),
           icon: mdiShoeSneaker,
-          maxClearance: Role.Field,
+          clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Field],
         },
         {
           title: t('nav.labor_costs'),
           route: localePath('/labor-costs'),
           icon: mdiCalculator,
-          maxClearance: Role.Finance,
+          clearances: [Role.Superuser, Role.Finance],
         },
         {
           title: t('nav.artisans'),
           route: localePath('/artisans'),
           icon: mdiAccountWrench,
-          maxClearance: Role.Field,
+          clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Field],
         },
         {
           title: t('nav.setting_inventories'),
           route: localePath('/setting/inventories'),
           icon: mdiWarehouse,
-          maxClearance: Role.Superuser,
+          clearances: [Role.Superuser, Role.Finance, Role.Planner],
         },
         {
           title: t('nav.setting_colors'),
           route: localePath('/setting/colors'),
           icon: mdiPalette,
-          maxClearance: Role.Planner,
+          clearances: [Role.Superuser, Role.Finance, Role.Planner],
         },
       ],
     },

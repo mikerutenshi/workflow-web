@@ -176,7 +176,8 @@
     "tx_date": "Transaction Date",
     "type": "Type",
     "created_at": "Created At",
-    "updated_at": "Updated At"
+    "updated_at": "Updated At",
+    "added_to_inventory": "Added to Inventory"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

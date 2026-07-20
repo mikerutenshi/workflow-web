@@ -151,7 +151,9 @@
               :prepend-icon="mdiTransferRight"
               @click="showTransferDialog(item)"
             >
-              <v-list-item-title>Send to Inventory</v-list-item-title>
+              <v-list-item-title>{{
+                t('btn.add_to_inventory')
+              }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item
@@ -164,7 +166,7 @@
           </v-list>
         </v-menu>
       </template>
-      <template v-else>
+      <template v-else-if="clearanceLevel > Role.Planner && !item.invTrf">
         <v-btn
           color="primary"
           :icon="mdiPencil"
@@ -376,7 +378,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.status'), key: 'progress' },
   { title: t('label.tasks'), key: 'tasks' },
   { title: t('label.note'), key: 'note', maxWidth: '120' },
-  { title: 'Added to Inventory', key: 'invTrf', maxWidth: '120' },
+  { title: t('label.added_to_inventory'), key: 'invTrf', maxWidth: '120' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 

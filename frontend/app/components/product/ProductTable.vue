@@ -101,6 +101,7 @@
             <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
           </NuxtLink> -->
           <v-btn
+            v-if="clearanceLevel <= Role.Planner"
             color="primary"
             :icon="mdiPencil"
             variant="text"
@@ -151,6 +152,9 @@ const {
 
 const { t } = useI18n();
 const adapter = useDate();
+
+const authStore = useAuthStore();
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
 
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },
