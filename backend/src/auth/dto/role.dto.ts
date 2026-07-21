@@ -12,14 +12,14 @@ import {
 export class RoleDto {
   @Field()
   @IsAlpha()
-  name: string;
+  name!: string;
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
-  description: string | null;
+  description!: string | null;
   @Field()
   @IsInt()
   @Min(0)
-  @Max(5)
-  cleareanceLevel: number;
+  @Max(10)
+  clearanceLevel!: number;
 }

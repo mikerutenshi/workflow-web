@@ -610,7 +610,7 @@ type Mutation {
 input RoleDto {
   name: String!
   description: String
-  cleareanceLevel: Float!
+  clearanceLevel: Float!
 }
 
 input UserCreateDto {

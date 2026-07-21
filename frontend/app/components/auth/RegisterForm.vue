@@ -5,7 +5,7 @@
         <v-card class="" v-if="!isRegistered">
           <form @submit.prevent="onSubmit" class="d-flex flex-column">
             <v-card-title>
-              {{ 'Register a New User' }}
+              {{ $t('page.register_new_user') }}
             </v-card-title>
             <v-card-text>
               <v-row v-if="createError || rolesError">
@@ -16,7 +16,7 @@
                 </v-col>
               </v-row>
               <v-select
-                label="Request Role"
+                :label="$t('auth.request_role')"
                 :items="rolesData?.getRoles"
                 item-title="name"
                 item-value="id"
@@ -43,14 +43,14 @@
                 <v-col>
                   <v-text-field
                     v-model="firstName.value.value"
-                    label="First Name"
+                    :label="$t('label.first_name')"
                     :error-messages="firstName.errorMessage.value"
                   />
                 </v-col>
                 <v-col>
                   <v-text-field
                     v-model="lastName.value.value"
-                    label="Last Name"
+                    :label="$t('label.last_name')"
                     :error-messages="lastName.errorMessage.value"
                   />
                 </v-col>
@@ -66,7 +66,7 @@
                 :error-messages="password.errorMessage.value"
               />
               <v-text-field
-                label="Repeat password"
+                :label="$t('auth.repeat_password')"
                 v-model="repeatPassword.value.value"
                 :append-icon="show2 ? mdiEye : mdiEyeOff"
                 @click:append="show2 = !show2"
@@ -77,21 +77,21 @@
               <NuxtTurnstile v-model="token" />
             </v-card-text>
             <v-btn type="submit" block :loading="isCreating">{{
-              'Register'
+              $t('btn.register')
             }}</v-btn>
           </form>
         </v-card>
         <v-card v-else-if="isRegistered && createdData">
-          <v-card-title>{{ 'Registration Successful' }}</v-card-title>
+          <v-card-title>{{ $t('page.register_success') }}</v-card-title>
           <v-card-text>
             <v-row>
               <p>
-                Please wait for your account to be activated before logging in
+                {{ $t('label.wait_for_activation') }}
               </p>
             </v-row>
             <v-row>
               <v-col>
-                <p>Position:</p>
+                <p>{{ $t('label.role') }}</p>
               </v-col>
               <v-col>
                 <p>{{ createdData?.createUser.role.name }}</p>
@@ -107,7 +107,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <p>Name:</p>
+                <p>{{ $t('label.name') }}</p>
               </v-col>
               <v-col>
                 <p>

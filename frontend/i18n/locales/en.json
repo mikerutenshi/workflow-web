@@ -9,9 +9,11 @@
   },
   "auth": {
     "password": "Password",
+    "repeat_password": "Repeat Password",
     "login": "Log In",
     "logout": "Log Out",
-    "role": "Role: {role_name}"
+    "role_name": "Role: {name}",
+    "request_role": "Request Role"
   },
   "nav": {
     "home": "Home",
@@ -69,16 +71,18 @@
     "delete_confirm": "Delete Confirmation",
     "transfer_confirm": "Transfer Confirmation",
     "add_to_cart": "Add to Cart",
-    "inv_product_edit_disc": "Edit Discount for {item}"
+    "inv_product_edit_disc": "Edit Discount for {item}",
+    "register_new_user": "Register as a New User",
+    "register_success": "Registration Successful"
   },
   "btn": {
-    "products": "New Shoe",
+    "setting-products": "New Shoe",
     "setting-colors": "New Color",
+    "setting-artisans": "New Artisan",
+    "setting-inventories": "New Warehouse",
     "product_group": "New Shoe Group",
     "product_category": "New Shoe Category",
-    "artisans": "New Artisan",
     "works": "New Task",
-    "setting-inventories": "New Warehouse",
     "inv-trfs": "New Inventory Transfer",
     "sales": "New Sale",
     "print": "Print",
@@ -91,7 +95,8 @@
     "no": "No",
     "add_product": "Add Shoe",
     "inv_product_edit_disc": "Edit Discount",
-    "add_to_inventory": "Add to Inventory"
+    "add_to_inventory": "Add to Inventory",
+    "register": "Register"
   },
   "label": {
     "id": "ID",
@@ -177,7 +182,9 @@
     "type": "Type",
     "created_at": "Created At",
     "updated_at": "Updated At",
-    "added_to_inventory": "Added to Inventory"
+    "added_to_inventory": "Added to Inventory",
+    "role": "Role",
+    "wait_for_activation": "Please wait for your account to be activated before logging in"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

@@ -71,6 +71,8 @@ model User {
   updatedAt         DateTime        @updatedAt
   approvedAt        DateTime?  
 
+  userInventories   InvToUser[]
+
   role              Role            @relation(fields: [roleId], references: [id])
   creator           User?           @relation("CreatedBy", fields: [createdBy], references: [id])
   createdUsers      User[]          @relation("CreatedBy")
@@ -251,6 +253,7 @@ model Inventory {
 
   invProducts       InvToProduct[]
   priceFormula      PriceFormula?
+  invUsers          InvToUser[]
 
   fromTrfs          InvTrf[] @relation( "FromInventory")
   toTrfs            InvTrf[] @relation( "ToInventory")
@@ -425,6 +428,15 @@ model SaleItemToSize {
 
   saleItem          SaleItem        @relation(fields: [saleItemId], references: [id], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
+}
+
+model InvToUser {
+  @@id([invId, userId])
+  invId             Int
+  userId            Int
+
+  inventory         Inventory       @relation(fields: [invId], references: [id])
+  user              User            @relation(fields: [userId], references: [id])
 }
 
 // model Client {

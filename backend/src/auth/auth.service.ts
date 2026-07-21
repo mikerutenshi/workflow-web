@@ -21,7 +21,7 @@ export class AuthService {
       data: {
         name: data.name,
         description: data.description,
-        clearanceLevel: data.cleareanceLevel,
+        clearanceLevel: data.clearanceLevel,
       },
     });
   }

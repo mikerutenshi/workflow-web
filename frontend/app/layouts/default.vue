@@ -35,7 +35,10 @@
       <v-menu open-on-hover>
         <template #activator="{ props }">
           <v-btn
-            v-if="currentRouteName == 'products' && clearance <= Role.Superuser"
+            v-if="
+              currentRouteName == 'setting/products' &&
+              clearance <= Role.Superuser
+            "
             v-bind="props"
             variant="flat"
             class="mr-4"
@@ -268,10 +271,10 @@ enum DialogContent {
 
 const createRouteToContent: Record<string, DialogContent> = {
   works: DialogContent.CreateWork,
-  products: DialogContent.CreateProduct,
-  artisans: DialogContent.CreateArtisan,
   'inv-trfs': DialogContent.CreateInvTrf,
   sales: DialogContent.CreateSale,
+  'setting-products': DialogContent.CreateProduct,
+  'setting-artisans': DialogContent.CreateArtisan,
   'setting-inventories': DialogContent.CreateInventory,
   'setting-colors': DialogContent.CreateColor,
 };
@@ -353,10 +356,10 @@ const drawer = ref(false);
 // };
 const createBtnTitles = [
   'works',
-  'products',
-  'artisans',
   'inv-trfs',
   'sales',
+  'setting-products',
+  'setting-artisans',
   'setting-inventories',
   'setting-colors',
 ];
@@ -442,23 +445,23 @@ const navItems = computed(() => {
       title: t('nav.setting'),
       route: localePath('/setting'),
       icon: mdiCogs,
-      clearances: [1, 2, 3, 4, 5, 6],
+      clearances: [0, 1, 2, 3, 4, 5, 6],
       children: [
         {
           title: t('nav.products'),
-          route: localePath('/products'),
+          route: localePath('/setting/products'),
           icon: mdiShoeSneaker,
           clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Field],
         },
         {
           title: t('nav.labor_costs'),
-          route: localePath('/labor-costs'),
+          route: localePath('/setting/labor-costs'),
           icon: mdiCalculator,
           clearances: [Role.Superuser, Role.Finance],
         },
         {
           title: t('nav.artisans'),
-          route: localePath('/artisans'),
+          route: localePath('/setting/artisans'),
           icon: mdiAccountWrench,
           clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Field],
         },

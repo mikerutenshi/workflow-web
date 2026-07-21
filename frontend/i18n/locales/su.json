@@ -9,9 +9,11 @@
   },
   "auth": {
     "password": "Sandi",
+    "repeat_password": "Uihan Deui Sandi",
     "login": "Lebet",
     "logout": "Kaluar",
-    "role": "Peran: {role_name}"
+    "role_name": "Peran: {name}",
+    "request_role": "Menta Peran"
   },
   "nav": {
     "home": "Imah",
@@ -69,16 +71,18 @@
     "delete_confirm": "Konfirmasi Mupus",
     "transfer_confirm": "Konfirmasi Mindahkeun",
     "add_to_cart": "Tambahkeun kana Karanjang",
-    "inv_product_edit_disc": "Ngarobah Diskon pikeun {item}"
+    "inv_product_edit_disc": "Ngarobah Diskon pikeun {item}",
+    "register_new_user": "Ngadaptar Salaku Pamaké Anyar",
+    "register_success": "Pendaptaran Sukses"
   },
   "btn": {
-    "products": "Sapatu Anyar",
+    "setting-products": "Sapatu Anyar",
     "setting-colors": "Warna Anyar",
+    "setting-artisans": "Pangrajin Anyar",
+    "setting-inventories": "Gudang Anyar",
     "product_group": "Kelompok Sapatu Anyar",
     "product_category": "Kategori Sapatu Anyar",
-    "artisans": "Pangrajin Anyar",
     "works": "Pagawéan Anyar",
-    "setting-inventories": "Gudang Anyar",
     "inv-trfs": "Transfer Inventaris Baru",
     "sales": "Jualan Anyar",
     "print": "Citak",
@@ -91,7 +95,8 @@
     "no": "Henteu",
     "add_product": "Tambah Sapatu",
     "inv_product_edit_disc": "Ngarobah Diskon",
-    "add_to_inventory": "Tambahkeun kana Inventaris"
+    "add_to_inventory": "Tambahkeun kana Inventaris",
+    "register": "Daptar"
   },
   "label": {
     "id": "ID",
@@ -177,7 +182,9 @@
     "type": "Jenis",
     "created_at": "Dijieun Dina",
     "updated_at": "Diropea Dina",
-    "added_to_inventory": "Dina Inventaris"
+    "added_to_inventory": "Dina Inventaris",
+    "role": "Peran",
+    "wait_for_activation": "Mangga antosan dugi akun anjeun diaktipkeun sateuacan lebet"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

@@ -19,7 +19,7 @@
                 >
                 <v-list-item>
                   {{
-                    $t('auth.role', { role_name: authStore.user.role.name })
+                    $t('auth.role_name', { name: authStore.user.role.name })
                   }}</v-list-item
                 >
               </v-list>

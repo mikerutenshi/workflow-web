@@ -9,9 +9,11 @@
   },
   "auth": {
     "password": "Kata Sandi",
+    "repeat_password": "Ulangi Kata Sandi",
     "login": "Masuk",
     "logout": "Keluar",
-    "role": "Peran: {role_name}"
+    "role_name": "Peran: {name}",
+    "request_role": "Minta Peran"
   },
   "nav": {
     "home": "Rumah",
@@ -69,16 +71,18 @@
     "delete_confirm": "Konfirmasi Penghapusan",
     "transfer_confirm": "Konfirmasi Transfer",
     "add_to_cart": "Tambahkan ke Keranjang",
-    "inv_product_edit_disc": "Ubah Diskon untuk {item}"
+    "inv_product_edit_disc": "Ubah Diskon untuk {item}",
+    "register_new_user": "Daftar Sebagai Pengguna Baru",
+    "register_success": "Pendaftaran Berhasil"
   },
   "btn": {
-    "products": "Sepatu Baru",
+    "setting-products": "Sepatu Baru",
     "setting-colors": "Warna Baru",
+    "setting-artisans": "Perajin Baru",
+    "setting-inventories": "Gudang Baru",
     "product_group": "Kelompok Sepatu Baru",
     "product_category": "Kategori Sepatu Baru",
-    "artisans": "Perajin Baru",
     "works": "Pekerjaan Baru",
-    "setting-inventories": "Gudang Baru",
     "inv-trfs": "Transfer Inventaris Baru",
     "sales": "Penjualan Baru",
     "print": "Cetak",
@@ -91,7 +95,8 @@
     "no": "Tidak",
     "add_product": "Tambah Sepatu",
     "inv_product_edit_disc": "Ubah Diskon",
-    "add_to_inventory": "Tambah ke Inventaris"
+    "add_to_inventory": "Tambah ke Inventaris",
+    "register": "Daftar"
   },
   "label": {
     "id": "ID",
@@ -177,7 +182,9 @@
     "type": "Tipe",
     "created_at": "Dibuat Pada",
     "updated_at": "Dirubah Pada",
-    "added_to_inventory": "Sudah di Inventaris"
+    "added_to_inventory": "Sudah di Inventaris",
+    "role": "Peran",
+    "wait_for_activation": "Harap tunggu hingga akun Anda diaktifkan sebelum masuk."
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
