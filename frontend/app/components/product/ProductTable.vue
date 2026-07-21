@@ -7,52 +7,49 @@
     </v-col>
   </v-row>
 
-  <v-row class="flex-grow-0">
-    <v-col>
+  <v-data-table
+    :headers="headers"
+    :items="data?.getProducts"
+    :search="search"
+    :loading="isFetching"
+    item-value="id"
+    hover
+    fixed-header
+    :height="`calc(100vh - 215px)`"
+    :page="pageNo"
+    :items-per-page="itemsPerPage"
+  >
+    <template #top>
       <v-text-field
         v-model="search"
         :label="$t('label.search')"
         :prepend-inner-icon="mdiMagnify"
         hide-details
+        density="compact"
+        class="mx-4 my-2"
         single-line
       ></v-text-field>
-    </v-col>
-  </v-row>
+    </template>
 
-  <v-row>
-    <v-col class="d-flex flex-column">
-      <v-data-table
-        :headers="headers"
-        :items="data?.getProducts"
-        :search="search"
-        :loading="isFetching"
-        item-value="id"
-        class="flex-grow-1"
-        hover
-        fixed-header
-        :height="`calc(100vh - 240px)`"
-        :page="pageNo"
-        :items-per-page="itemsPerPage"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+    <template #loading>
+      <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+    </template>
+
+    <template v-slot:item.productColors="{ item }">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <template v-for="color in item.productColors">
+          <v-chip class="d-flex align-center">
+            <div
+              class="color-box"
+              :style="{ backgroundColor: color.color.hexCode }"
+            />
+            <span>{{ color.color.name }}</span>
+          </v-chip>
         </template>
+      </div>
+    </template>
 
-        <template v-slot:item.productColors="{ item }">
-          <div style="display: flex; flex-wrap: wrap; gap: 8px">
-            <template v-for="color in item.productColors">
-              <v-chip class="d-flex align-center">
-                <div
-                  class="color-box"
-                  :style="{ backgroundColor: color.color.hexCode }"
-                />
-                <span>{{ color.color.name }}</span>
-              </v-chip>
-            </template>
-          </div>
-        </template>
-
-        <!-- <template v-slot:item.productColors="{ item }">
+    <!-- <template v-slot:item.productColors="{ item }">
           <v-list density="compact">
             <v-list-item v-for="color in item.productColors">
               <template #prepend>
@@ -65,22 +62,22 @@
             </v-list-item>
           </v-list>
         </template> -->
-        <template v-slot:item.productGroup.productCategory.gender="{ item }">
-          {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
-        </template>
+    <template v-slot:item.productGroup.productCategory.gender="{ item }">
+      {{ $t(renderGender(item.productGroup.productCategory.gender)) }}
+    </template>
 
-        <template v-slot:item.productGroup.msrp="{ item }">
-          {{ formatRupiah(item.productGroup.msrp) }}
-        </template>
-        <template v-slot:item.createdAt="{ item }">
-          {{ adapter.format(item.createdAt, 'fullDateTime24h') }}
-        </template>
-        <template v-slot:item.updatedAt="{ item }">
-          {{ adapter.format(item.updatedAt, 'fullDateTime24h') }}
-        </template>
+    <template v-slot:item.productGroup.msrp="{ item }">
+      {{ formatRupiah(item.productGroup.msrp) }}
+    </template>
+    <template v-slot:item.createdAt="{ item }">
+      {{ adapter.format(item.createdAt, 'fullDateTime24h') }}
+    </template>
+    <template v-slot:item.updatedAt="{ item }">
+      {{ adapter.format(item.updatedAt, 'fullDateTime24h') }}
+    </template>
 
-        <template v-slot:item.actions="{ item }">
-          <!-- <v-menu variant="outlined">
+    <template v-slot:item.actions="{ item }">
+      <!-- <v-menu variant="outlined">
             <template v-slot:activator="{ props }">
               <v-btn icon v-bind="props" variant="text">
                 <v-icon>mdi-dots-vertical</v-icon>
@@ -100,17 +97,15 @@
           <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
             <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
           </NuxtLink> -->
-          <v-btn
-            v-if="clearanceLevel <= Role.Planner"
-            color="primary"
-            :icon="mdiPencil"
-            variant="text"
-            @click="openEditProductDialog(item.id)"
-          ></v-btn>
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
+      <v-btn
+        v-if="clearanceLevel <= Role.Planner"
+        color="primary"
+        :icon="mdiPencil"
+        variant="text"
+        @click="openEditProductDialog(item.id)"
+      ></v-btn>
+    </template>
+  </v-data-table>
 
   <ActionEditItemDialog :dialog-title="dialog.title" v-model="dialog.isVisible">
     <ProductCreateForm

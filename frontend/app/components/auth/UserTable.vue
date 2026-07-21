@@ -1,27 +1,29 @@
 <template>
-  <div v-if="data">
-    <v-data-table
-      :headers="headers"
-      :items="data.getUsers"
-      item-key="id"
-      :search="search"
-    >
-      <template v-slot:item.createdAt="{ item }: { item: any }">
-        {{ formatToLocalDate(item.createdAt) }}
-      </template>
-      <template v-slot:top>
-        <v-text-field
-          v-model="search"
-          label="Cari"
-          class="ma-4"
-          :prepend-inner-icon="mdiMagnify"
-          density="compact"
-          variant="outlined"
-        ></v-text-field>
-      </template>
-    </v-data-table>
-  </div>
-  <div v-else>Loading...</div>
+  <v-data-table
+    :headers="headers"
+    fixed-header
+    hover
+    :items="data?.getUsers"
+    item-key="id"
+    :search="search"
+    :height="`calc(100vh - 215px)`"
+  >
+    <template v-slot:item.createdAt="{ item }: { item: any }">
+      {{ formatToLocalDate(item.createdAt) }}
+    </template>
+
+    <template #top>
+      <v-text-field
+        v-model="search"
+        :label="$t('label.search')"
+        :prepend-inner-icon="mdiMagnify"
+        single-line
+        hide-details
+        density="compact"
+        class="mx-4 my-2"
+      ></v-text-field>
+    </template>
+  </v-data-table>
 </template>
 
 <script setup lang="ts">
@@ -39,10 +41,10 @@ const search = ref('');
 const headers = ref([
   { title: 'ID', key: 'id' },
   { title: 'Email', key: 'email' },
+  { title: 'Role', key: 'role.name' },
   { title: 'First Name', key: 'firstName' },
   { title: 'Last Name', key: 'lastName' },
   { title: 'Created At', key: 'createdAt' },
-  { title: 'Role', key: 'role.name' }, // Access nested property
 ]);
 
 function formatToLocalDate(isoString: string) {

@@ -477,6 +477,12 @@ const navItems = computed(() => {
           icon: mdiPalette,
           clearances: [Role.Superuser, Role.Finance, Role.Planner],
         },
+        {
+          title: t('nav.setting_users'),
+          route: localePath('/setting/users'),
+          icon: mdiPalette,
+          clearances: [Role.Superuser],
+        },
       ],
     },
   ];

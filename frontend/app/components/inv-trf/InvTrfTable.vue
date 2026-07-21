@@ -7,18 +7,6 @@
     </v-col>
   </v-row>
 
-  <v-row class="flex-grow-0">
-    <v-col>
-      <v-text-field
-        v-model="search"
-        :label="$t('label.search')"
-        :prepend-inner-icon="mdiMagnify"
-        hide-details
-        single-line
-      ></v-text-field>
-    </v-col>
-  </v-row>
-
   <v-row>
     <v-col class="d-flex flex-column">
       <v-data-table
@@ -28,11 +16,22 @@
         :loading="isFetchingInvTrfs"
         item-value="id"
         fixed-header
-        :height="`calc(100vh - 240px)`"
+        :height="`calc(100vh - 215px)`"
         hover
         :page="pageNo"
         :items-per-page="itemsPerPage"
       >
+        <template #top>
+          <v-text-field
+            v-model="search"
+            :label="$t('label.search')"
+            :prepend-inner-icon="mdiMagnify"
+            hide-details
+            density="compact"
+            single-line
+            class="mx-4 my-2"
+          ></v-text-field>
+        </template>
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>

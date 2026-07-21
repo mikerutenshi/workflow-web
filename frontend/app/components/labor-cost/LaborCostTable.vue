@@ -7,98 +7,92 @@
     </v-col>
   </v-row>
 
-  <v-row class="flex-grow-0">
-    <v-col>
+  <v-data-table
+    :headers="headers"
+    :items="data?.getLaborCosts"
+    :search="search"
+    :loading="isFetching"
+    item-value="id"
+    fixed-header
+    :height="`calc(100vh - 215px)`"
+    hover
+    :page="pageNo"
+    :items-per-page="itemsPerPage"
+  >
+    <template #top>
       <v-text-field
         v-model="search"
         :label="$t('label.search')"
         :prepend-inner-icon="mdiMagnify"
-        hide-details
         single-line
+        hide-details
+        density="compact"
+        class="mx-4 my-2"
       ></v-text-field>
-    </v-col>
-  </v-row>
+    </template>
+    <template #loading>
+      <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+    </template>
 
-  <v-row>
-    <v-col class="d-flex flex-column">
-      <v-data-table
-        :headers="headers"
-        :items="data?.getLaborCosts"
-        :search="search"
-        :loading="isFetching"
-        item-value="id"
-        class="flex-grow-1"
-        fixed-header
-        :height="`calc(100vh - 240px)`"
-        hover
-        :page="pageNo"
-        :items-per-page="itemsPerPage"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-        </template>
+    <template v-slot:item.productCategory.gender="{ item }">
+      {{ $t(renderGender(item.productCategory.gender)) }}
+    </template>
 
-        <template v-slot:item.productCategory.gender="{ item }">
-          {{ $t(renderGender(item.productCategory.gender)) }}
-        </template>
+    <template v-slot:item.drawUpper="{ item }">
+      {{
+        formatRupiah(
+          item.laborCosts?.find((found) => found?.type === JOB.DRAW_UPPER)
+            ?.cost,
+        ) ?? ''
+      }}
+    </template>
 
-        <template v-slot:item.drawUpper="{ item }">
-          {{
-            formatRupiah(
-              item.laborCosts?.find((found) => found?.type === JOB.DRAW_UPPER)
-                ?.cost,
-            ) ?? ''
-          }}
-        </template>
+    <template v-slot:item.drawLining="{ item }">
+      {{
+        formatRupiah(
+          item.laborCosts?.find((found) => found?.type === JOB.DRAW_LINING)
+            ?.cost,
+        ) ?? ''
+      }}
+    </template>
 
-        <template v-slot:item.drawLining="{ item }">
-          {{
-            formatRupiah(
-              item.laborCosts?.find((found) => found?.type === JOB.DRAW_LINING)
-                ?.cost,
-            ) ?? ''
-          }}
-        </template>
+    <template v-slot:item.stitchUpper="{ item }">
+      {{
+        formatRupiah(
+          item.laborCosts?.find((found) => found?.type === JOB.STITCH_UPPER)
+            ?.cost,
+        ) ?? ''
+      }}
+    </template>
 
-        <template v-slot:item.stitchUpper="{ item }">
-          {{
-            formatRupiah(
-              item.laborCosts?.find((found) => found?.type === JOB.STITCH_UPPER)
-                ?.cost,
-            ) ?? ''
-          }}
-        </template>
+    <template v-slot:item.stitchOutsole="{ item }">
+      {{
+        formatRupiah(
+          item.laborCosts?.find((found) => found?.type === JOB.STITCH_OUTSOLE)
+            ?.cost,
+        ) ?? ''
+      }}
+    </template>
 
-        <template v-slot:item.stitchOutsole="{ item }">
-          {{
-            formatRupiah(
-              item.laborCosts?.find(
-                (found) => found?.type === JOB.STITCH_OUTSOLE,
-              )?.cost,
-            ) ?? ''
-          }}
-        </template>
+    <template v-slot:item.stitchInsole="{ item }">
+      {{
+        formatRupiah(
+          item.laborCosts?.find((found) => found?.type === JOB.STITCH_INSOLE)
+            ?.cost,
+        ) ?? ''
+      }}
+    </template>
 
-        <template v-slot:item.stitchInsole="{ item }">
-          {{
-            formatRupiah(
-              item.laborCosts?.find(
-                (found) => found?.type === JOB.STITCH_INSOLE,
-              )?.cost,
-            ) ?? ''
-          }}
-        </template>
+    <template v-slot:item.last="{ item }">
+      {{
+        formatRupiah(
+          item.laborCosts?.find((found) => found?.type === JOB.LAST)?.cost,
+        ) ?? ''
+      }}
+    </template>
 
-        <template v-slot:item.last="{ item }">
-          {{
-            formatRupiah(
-              item.laborCosts?.find((found) => found?.type === JOB.LAST)?.cost,
-            ) ?? ''
-          }}
-        </template>
-
-        <template v-slot:item.actions="{ item, index }">
-          <!-- <v-menu variant="outlined">
+    <template v-slot:item.actions="{ item, index }">
+      <!-- <v-menu variant="outlined">
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props" variant="text">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -112,21 +106,19 @@
             </v-list-item>
           </v-list>
         </v-menu> -->
-          <!-- <NuxtLink :to="$localePath(`/labor-costs/update/${item.id}`)"> -->
-          <v-btn
-            color="primary"
-            :icon="mdiPencil"
-            variant="text"
-            @click="
-              productGroupId = item.id;
-              dialog = true;
-            "
-          ></v-btn>
-          <!-- </NuxtLink> -->
-        </template>
-      </v-data-table>
-    </v-col>
-  </v-row>
+      <!-- <NuxtLink :to="$localePath(`/labor-costs/update/${item.id}`)"> -->
+      <v-btn
+        color="primary"
+        :icon="mdiPencil"
+        variant="text"
+        @click="
+          productGroupId = item.id;
+          dialog = true;
+        "
+      ></v-btn>
+      <!-- </NuxtLink> -->
+    </template>
+  </v-data-table>
 
   <ActionEditItemDialog
     :dialog-title="$t('page.labor_cost_update')"

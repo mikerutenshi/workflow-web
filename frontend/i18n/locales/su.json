@@ -27,7 +27,8 @@
     "sales": "Jualan",
     "setting": "Setélan",
     "setting_inventories": "Gudang",
-    "setting_colors": "Warna"
+    "setting_colors": "Warna",
+    "setting_users": "Pamaké"
   },
   "page": {
     "artisan_create": "Nyieun Pangrajin Anyar",
@@ -56,6 +57,11 @@
     "inventory_edit": "Ngarobah Gudang",
     "inventory_create": "Nyieun Gudang Anyar",
     "setting_inventories": "Setélan Gudang",
+    "setting_colors": "Setelan Warna",
+    "setting_products": "Setelan Sapatu",
+    "setting_labor_costs": "Setelan Ongkos Kuli",
+    "setting_artisans": "Setelan Pangrajin",
+    "setting_users": "Setelan Pamaké",
     "inventory_transfers": "Mindahkeun Inventaris",
     "inv_trf_create": "Nyieun Mindahkeun Inventaris Anyar",
     "inv_trf_edit": "Ngarobah Mindahkeun Inventaris",
@@ -63,7 +69,6 @@
     "sales": "Jualan",
     "sale_create": "Nyieun Jualan Anyar",
     "sale_edit": "Ngarobah Jualan",
-    "setting_colors": "Setélan Warna",
     "trf_detail_for": "Rincian Transfer pikeun {item}",
     "tx_detail_for": "Rincian Transaksi pikeun {item}",
     "send_to": "Ngirim {product}",

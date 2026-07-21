@@ -7,32 +7,6 @@
     </v-col>
   </v-row>
 
-  <v-row class="flex-grow-0">
-    <v-col>
-      <v-select
-        :label="$t('label.select_inventories')"
-        :prepend-inner-icon="mdiWarehouse"
-        :items="dataInventories?.getInventories"
-        v-model="selectInvId"
-        item-title="name"
-        item-value="id"
-      ></v-select>
-    </v-col>
-    <v-col>
-      <v-text-field
-        v-model="search"
-        :label="$t('label.search')"
-        :prepend-inner-icon="mdiMagnify"
-        hide-details
-        single-line
-      ></v-text-field>
-    </v-col>
-  </v-row>
-
-  <v-row class="d-flex justify-end">
-    <h4>{{ `Total: ${totalQty}` }}</h4>
-  </v-row>
-
   <v-row>
     <v-col class="d-flex flex-column">
       <v-data-table
@@ -41,13 +15,41 @@
         :search="search"
         :loading="isFetchingInvProducts"
         item-value="id"
-        class="flex-grow-1"
         fixed-header
-        :height="`calc(100vh - 262px)`"
+        :height="`calc(100vh - 235px)`"
         hover
         :page="pageNo"
         :items-per-page="itemsPerPage"
       >
+        <template #top>
+          <v-row class="mx-4 my-2">
+            <v-col cols="5">
+              <v-select
+                :label="$t('label.select_inventories')"
+                :prepend-inner-icon="mdiWarehouse"
+                :items="dataInventories?.getInventories"
+                v-model="selectInvId"
+                item-title="name"
+                item-value="id"
+                hide-details
+                density="compact"
+              ></v-select>
+            </v-col>
+            <v-col cols="5">
+              <v-text-field
+                v-model="search"
+                :label="$t('label.search')"
+                :prepend-inner-icon="mdiMagnify"
+                hide-details
+                single-line
+                density="compact"
+              ></v-text-field>
+            </v-col>
+            <v-col class="d-flex justify-center" cols="2">
+              <h4>{{ `Total: ${totalQty}` }}</h4>
+            </v-col>
+          </v-row>
+        </template>
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>

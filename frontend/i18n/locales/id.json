@@ -27,7 +27,8 @@
     "sales": "Penjualan",
     "setting": "Pengaturan",
     "setting_inventories": "Gudang",
-    "setting_colors": "Warna"
+    "setting_colors": "Warna",
+    "setting_users": "Pengguna"
   },
   "page": {
     "artisan_create": "Buat Perajin Baru",
@@ -56,6 +57,11 @@
     "inventory_edit": "Ubah Gudang",
     "inventory_create": "Buat Gudang Baru",
     "setting_inventories": "Pengaturan Gudang",
+    "setting_colors": "Pengaturan Warna",
+    "setting_products": "Pengaturan Sepatu",
+    "setting_labor_costs": "Pengaturan Biaya Tenaga Kerja",
+    "setting_artisans": "Pengaturan Perajin",
+    "setting_users": "Pengaturan Pengguna",
     "inventory_transfers": "Transfer Inventaris",
     "inv_trf_create": "Buat Transfer Inventaris Baru",
     "inv_trf_edit": "Ubah Transfer Inventaris",
@@ -63,7 +69,6 @@
     "sales": "Penjualan",
     "sale_create": "Buat Penjualan Baru",
     "sale_edit": "Ubah Penjualan",
-    "setting_colors": "Pengaturan Warna",
     "trf_detail_for": "Rincian Transfer untuk {item}",
     "tx_detail_for": "Rincian Transaksi untuk {item}",
     "send_to": "Transfer {product}",

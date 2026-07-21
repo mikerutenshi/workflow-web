@@ -6,28 +6,6 @@
       </v-alert>
     </v-col>
   </v-row>
-  <v-row class="flex-grow-0">
-    <v-col>
-      <v-select
-        :label="$t('label.select_inventories')"
-        :prepend-inner-icon="mdiWarehouse"
-        :items="dataInventories?.getInventories"
-        v-model="invId"
-        item-title="name"
-        item-value="id"
-        :loading="isFetchingInventories"
-      ></v-select>
-    </v-col>
-    <v-col>
-      <v-text-field
-        v-model="table.search"
-        :label="$t('label.search')"
-        :prepend-inner-icon="mdiMagnify"
-        hide-details
-        single-line
-      ></v-text-field>
-    </v-col>
-  </v-row>
 
   <v-row>
     <v-col class="d-flex flex-column">
@@ -37,13 +15,39 @@
         :search="table.search"
         :loading="isFetchingSales"
         item-value="id"
-        class="flex-grow-1"
         fixed-header
-        :height="`calc(100vh - 262px)`"
+        :height="`calc(100vh - 215px)`"
         hover
         :page="table.page"
         :items-per-page="table.itemsPerPage"
       >
+        <template #top>
+          <v-row class="mx-4 my-2">
+            <v-col>
+              <v-select
+                :label="$t('label.select_inventories')"
+                :prepend-inner-icon="mdiWarehouse"
+                :items="dataInventories?.getInventories"
+                v-model="invId"
+                item-title="name"
+                item-value="id"
+                :loading="isFetchingInventories"
+                density="compact"
+                hide-details
+              ></v-select>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="table.search"
+                :label="$t('label.search')"
+                :prepend-inner-icon="mdiMagnify"
+                hide-details
+                density="compact"
+                single-line
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </template>
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>

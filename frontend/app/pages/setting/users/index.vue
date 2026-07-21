@@ -1,6 +1,6 @@
 <template>
   <v-container :fluid="mobile" class="h-100 d-flex flex-column">
-    <LaborCostTable />
+    <AuthUserTable />
   </v-container>
 </template>
 
@@ -9,6 +9,6 @@ import { useDisplay } from 'vuetify';
 
 const { mobile } = useDisplay();
 definePageMeta({
-  title: 'page.setting_labor_costs',
+  title: 'page.setting_users',
 });
 </script>

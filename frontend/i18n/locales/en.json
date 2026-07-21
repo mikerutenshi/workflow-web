@@ -27,7 +27,8 @@
     "sales": "Sales",
     "setting": "Setting",
     "setting_inventories": "Warehouses",
-    "setting_colors": "Colors"
+    "setting_colors": "Colors",
+    "setting_users": "Users"
   },
   "page": {
     "artisan_create": "Create a New Artisan",
@@ -55,7 +56,12 @@
     "inventory": "Inventory",
     "inventory_edit": "Edit a Warehouse",
     "inventory_create": "Create a New Warehouse",
-    "setting_inventories": "Warehouse Setting",
+    "setting_inventories": "Warehouses Setting",
+    "setting_colors": "Colors Setting",
+    "setting_products": "Sjoes Setting",
+    "setting_labor_costs": "Labor Costs Setting",
+    "setting_artisans": "Artisans Setting",
+    "setting_users": "Users Setting",
     "inventory_transfers": "Inventory Transfers",
     "inv_trf_create": "Create a New Inventory Transfer",
     "inv_trf_edit": "Edit an Inventory Transfer",
@@ -63,7 +69,6 @@
     "sales": "Sales",
     "sale_create": "Create a New Sale",
     "sale_edit": "Edit a Sale",
-    "setting_colors": "Color Setting",
     "trf_detail_for": "Transfer Detail for {item}",
     "tx_detail_for": "Transaction Detail for {item}",
     "item_detail_for": "Item Detail for {item}",

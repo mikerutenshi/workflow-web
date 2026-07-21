@@ -9,6 +9,8 @@
         :label="label"
         :error-messages="errorMessages"
         :rules="rules"
+        :hide-details="hideDetails"
+        :density="density"
       ></v-text-field>
     </template>
     <v-date-picker
@@ -24,6 +26,7 @@
 <script setup lang="ts">
 import { mdiCalendar } from '@mdi/js';
 import dayjs, { Dayjs } from 'dayjs';
+import type { PropType } from 'vue';
 import { useDate } from 'vuetify';
 
 const adapter = useDate();
@@ -54,6 +57,14 @@ const props = defineProps({
   readonly: {
     type: Boolean,
     default: false,
+  },
+  hideDetails: {
+    type: Boolean,
+    default: false,
+  },
+  density: {
+    type: String as PropType<'default' | 'compact' | 'comfortable'>,
+    default: 'default',
   },
 });
 

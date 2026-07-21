@@ -9,6 +9,6 @@ import { useDisplay } from 'vuetify';
 
 const { mobile } = useDisplay();
 definePageMeta({
-  title: 'page.artisans',
+  title: 'page.setting_artisans',
 });
 </script>

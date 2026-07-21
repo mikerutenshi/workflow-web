@@ -6,7 +6,7 @@
     class="flex-grow-1"
     item-value="id"
     fixed-header
-    :height="`calc(100vh - 240px)`"
+    :height="`calc(100vh - 225px)`"
     hover
     :page="pageNo"
     :items-per-page="itemsPerPage"
@@ -33,9 +33,7 @@
 
   <ActionEditItemDialog
     :dialog-title="
-      dialog.content === DialogContent.Edit
-        ? $t('page.artisan_edit')
-        : 'Title'
+      dialog.content === DialogContent.Edit ? $t('page.artisan_edit') : 'Title'
     "
     v-model="dialog.isVisible"
   >
