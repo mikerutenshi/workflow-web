@@ -88,7 +88,7 @@ const { fields, push, remove, replace } = useFieldArray('saleItemSizes');
 
 const props = defineProps({
   inventoryId: {
-    type: [String, null] as PropType<string | null>,
+    type: [String, null] as PropType<String | null>,
     required: true,
   },
   isReadonly: {

@@ -13,26 +13,31 @@ import {
 export class UserCreateDto {
   @Field()
   @IsEmail()
-  email: string;
+  email!: string;
+
   @Field()
   @MinLength(8)
-  password: string;
+  password!: string;
+
   @Field()
   @Matches(/^[A-Za-z]+(\s[A-Za-z]+)*$/)
-  firstName: string;
+  firstName!: string;
+
   @Field(() => String, { nullable: true })
   @IsOptional()
   @Matches(/^[A-Za-z]+(\s[A-Za-z]+)*$/)
-  lastName: string | undefined;
+  lastName?: string;
+
   @Field(() => ID, { nullable: true })
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  createdBy: number | null;
+  createdBy!: number | null;
+
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  roleId: number;
+  roleId!: number;
 }

@@ -43,7 +43,7 @@ const props = defineProps({
   },
   actionType: {
     type: String as PropType<'DELETE' | 'TRANSFER'>,
-    default: 'delete',
+    default: 'DELETE',
     validator: (value: string) => ['DELETE', 'TRANSFER'].includes(value),
   },
 });

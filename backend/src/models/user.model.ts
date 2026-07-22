@@ -1,31 +1,45 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Role } from './role.model';
+import { Inventory } from './inventory.model';
 
 @ObjectType()
 export class User {
   @Field(() => ID)
-  id: number;
+  id!: number;
+
   @Field()
-  email: string;
+  email!: string;
+
   @Field()
-  firstName: string;
+  firstName!: string;
+
   @Field(() => String, { nullable: true })
-  lastName: string | null;
+  lastName!: string | null;
+
   @Field()
-  isActive: boolean;
+  isActive!: boolean;
+
   @Field(() => Role)
-  role: Role;
+  role!: Role;
+
+  @Field(() => [Inventory])
+  userInventories!: Inventory[];
 
   @Field(() => Date, { nullable: true })
-  approvedAt: Date | null;
+  approvedAt!: Date | null;
+
   @Field(() => ID, { nullable: true })
-  approvedBy: number | null;
+  approvedBy!: number | null;
+
   @Field(() => Date)
-  createdAt: Date;
+  createdAt!: Date;
+
   @Field(() => ID, { nullable: true })
-  createdBy: number | null;
+  createdBy!: number | null;
+
   @Field(() => Date)
-  updatedAt: Date;
+  updatedAt!: Date;
+
   @Field(() => ID, { nullable: true })
-  updatedBy: number | null;
+  updatedBy!: number | null;
 }

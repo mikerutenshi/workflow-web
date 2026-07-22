@@ -203,6 +203,7 @@
 
 <script setup lang="ts">
 import {
+  mdiAccount,
   mdiAccountWrench,
   mdiCalculator,
   mdiCashMultiple,
@@ -216,7 +217,6 @@ import {
   mdiPrinterPos,
   mdiShoeSneaker,
   mdiTransfer,
-  mdiUpload,
   mdiWarehouse,
 } from '@mdi/js';
 import { useQuery } from 'villus';
@@ -480,7 +480,7 @@ const navItems = computed(() => {
         {
           title: t('nav.setting_users'),
           route: localePath('/setting/users'),
-          icon: mdiPalette,
+          icon: mdiAccount,
           clearances: [Role.Superuser],
         },
       ],

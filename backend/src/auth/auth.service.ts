@@ -35,7 +35,7 @@ export class AuthService {
   async createUser(data: UserCreateDto): Promise<User> {
     const password = await bcrypt.hash(data.password, 12);
 
-    return this.prisma.user.create({
+    const result = await this.prisma.user.create({
       data: {
         email: data.email.toLowerCase(),
         password: password,
@@ -47,48 +47,82 @@ export class AuthService {
       },
       include: {
         role: true,
+        userInventories: {
+          include: { inventory: true },
+        },
       },
     });
+
+    return {
+      ...result,
+      userInventories: result.userInventories.map((member) => member.inventory),
+    };
   }
 
-  updateUser(id: number, data: UserUpdateDto): Promise<User> {
-    return this.prisma.user.update({
+  async updateUser(id: number, data: UserUpdateDto): Promise<User> {
+    if (data.isActive) {
+      data.approvedAt = dayjs().toDate();
+    }
+
+    const result = await this.prisma.user.update({
       where: { id },
-      data: { ...data, approvedAt: dayjs().toDate() },
-      include: { role: true },
+      data,
+      include: {
+        role: true,
+        userInventories: { include: { inventory: true } },
+      },
     });
+
+    return {
+      ...result,
+      userInventories: result.userInventories.map((member) => member.inventory),
+    };
   }
 
-  getUsers(): Promise<User[]> {
-    return this.prisma.user.findMany({
-      include: { role: true },
+  async getUsers(): Promise<User[]> {
+    const results = await this.prisma.user.findMany({
+      include: {
+        role: true,
+        userInventories: { include: { inventory: true } },
+      },
     });
+
+    return results.map((result) => ({
+      ...result,
+      userInventories: result.userInventories.map((member) => member.inventory),
+    }));
   }
 
   async logIn(data: LogInDto): Promise<{ user: User; accessToken: string }> {
-    const user = await this.prisma.user.findUnique({
+    const result = await this.prisma.user.findUnique({
       where: { email: data.email.toLowerCase() },
-      include: { role: true },
+      include: {
+        role: true,
+        userInventories: { include: { inventory: true } },
+      },
     });
 
-    if (user) {
-      const isPasswordCorrect = await bcrypt.compare(
-        data.password,
-        user.password,
-      );
+    if (!result) throw new Error('User with this email not found');
 
-      if (isPasswordCorrect && user.isActive) {
-        const accessToken = this.jwtService.sign({ sub: user.id });
+    const user = {
+      ...result,
+      userInventories: result.userInventories.map((member) => member.inventory),
+    };
 
-        return { user, accessToken };
-      } else if (!user.isActive) {
-        throw new Error('User is inactive');
-      } else {
-        throw new Error('Incorrect password');
-      }
+    const isPasswordCorrect = await bcrypt.compare(
+      data.password,
+      user.password,
+    );
+
+    if (isPasswordCorrect && user.isActive) {
+      const accessToken = this.jwtService.sign({ sub: user.id });
+
+      return { user, accessToken };
+    } else if (!user.isActive) {
+      throw new Error('User is inactive');
+    } else {
+      throw new Error('Incorrect password');
     }
-
-    throw new Error('User with this email not found');
   }
 
   async me(accessToken: string): Promise<User | null> {
@@ -101,9 +135,21 @@ export class AuthService {
           where: { id: Number(data.sub) },
           include: {
             role: true,
+            userInventories: {
+              include: {
+                inventory: true,
+              },
+            },
           },
         });
-        return user;
+
+        if (!user) throw new Error('User not found');
+        return {
+          ...user,
+          userInventories: user.userInventories.map(
+            (member) => member.inventory,
+          ),
+        };
       }
     }
     return null;

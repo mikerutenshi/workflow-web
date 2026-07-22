@@ -66,7 +66,7 @@ import { Mask } from 'maska';
 const { t } = useI18n();
 const props = defineProps({
   invProductDto: {
-    type: Object as PropType<InvProductDto | null>,
+    type: [Object, null] as PropType<InvProductDto | null>,
     required: true,
   },
 });

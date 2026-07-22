@@ -23,11 +23,24 @@
         class="mx-4 my-2"
       ></v-text-field>
     </template>
+
+    <template #item.actions="{ item }">
+      <v-btn
+        color="primary"
+        :icon="mdiPencil"
+        variant="text"
+        @click="openEditUserDialog(item.id)"
+      ></v-btn>
+    </template>
   </v-data-table>
+
+  <ActionEditItemDialog v-model="dialog.isVisible" :dialog-title="dialog.title">
+    <AuthUserUpdateForm :user-id="dialog.userId"></AuthUserUpdateForm>
+  </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify } from '@mdi/js';
+import { mdiMagnify, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import { ref } from 'vue';
 import { GetUsersDocument } from '~/api/generated/types';
@@ -44,8 +57,17 @@ const headers = ref([
   { title: 'Role', key: 'role.name' },
   { title: 'First Name', key: 'firstName' },
   { title: 'Last Name', key: 'lastName' },
+  { title: 'Is Active', key: 'isActive' },
+  { title: 'Inventories', key: 'userInventories.name' },
   { title: 'Created At', key: 'createdAt' },
+  { title: '', key: 'actions', sortable: false, align: 'end' },
 ]);
+
+const dialog = reactive({
+  isVisible: false,
+  title: '',
+  userId: null as String | null,
+});
 
 function formatToLocalDate(isoString: string) {
   const date = new Date(isoString); // Parse ISO string into a Date object
@@ -58,4 +80,17 @@ function formatToLocalDate(isoString: string) {
     hour12: false, // Use 12-hour format
   }).format(date);
 }
+
+function openEditUserDialog(userId: string) {
+  dialog.userId = userId;
+  dialog.title = 'Edit User';
+  dialog.isVisible = true;
+}
+
+watchEffect(() => {
+  if (!dialog.isVisible) {
+    dialog.userId = null;
+    dialog.title = '';
+  }
+});
 </script>

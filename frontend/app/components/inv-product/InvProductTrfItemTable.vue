@@ -74,7 +74,7 @@ const pageNo = ref(1);
 const itemsPerPage = ref(10);
 const props = defineProps({
   invTrfDto: {
-    type: Object as PropType<InvTrfDto | null>,
+    type: [Object, null] as PropType<InvTrfDto | null>,
     required: true,
   },
 });

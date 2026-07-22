@@ -80,7 +80,7 @@ const itemsPerPage = ref(10);
 const search = ref('');
 const props = defineProps({
   invProductDto: {
-    type: Object as PropType<InvProductDto | null>,
+    type: [Object, null] as PropType<InvProductDto | null>,
     required: true,
   },
 });

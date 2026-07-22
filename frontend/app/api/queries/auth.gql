@@ -8,6 +8,11 @@ fragment AuthUser on User {
     name
     clearanceLevel
   }
+  userInventories {
+    id
+    name
+  }
+  isActive
 }
 mutation createUser($data: UserCreateDto!) {
   createUser(data: $data) {
@@ -24,6 +29,12 @@ mutation logIn($data: LogInDto!) {
 mutation logOut {
   logOut {
     ...AuthUser
+  }
+}
+
+mutation updateUser($id: ID!, $data: UserUpdateDto!) {
+  updateUser(id: $id, data: $data) {
+    id
   }
 }
 

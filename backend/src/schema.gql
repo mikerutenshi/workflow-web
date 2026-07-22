@@ -29,21 +29,6 @@ type Role {
   clearanceLevel: Float!
 }
 
-type User {
-  id: ID!
-  email: String!
-  firstName: String!
-  lastName: String
-  isActive: Boolean!
-  role: Role!
-  approvedAt: Date
-  approvedBy: ID
-  createdAt: Date!
-  createdBy: ID
-  updatedAt: Date!
-  updatedBy: ID
-}
-
 type Inventory {
   id: ID!
   name: String!
@@ -58,6 +43,22 @@ enum InvType {
   STORAGE
   CONSIGNMENT
   STOREFRONT
+}
+
+type User {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String
+  isActive: Boolean!
+  role: Role!
+  userInventories: [Inventory!]!
+  approvedAt: Date
+  approvedBy: ID
+  createdAt: Date!
+  createdBy: ID
+  updatedAt: Date!
+  updatedBy: ID
 }
 
 type PriceFormula {
@@ -631,6 +632,8 @@ input UserUpdateDto {
   roleId: ID
   isActive: Boolean!
   approvedBy: ID!
+  approvedAt: Date
+  invIds: ID!
 }
 
 input LogInDto {
