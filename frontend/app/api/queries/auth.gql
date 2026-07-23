@@ -4,7 +4,9 @@ fragment AuthUser on User {
   firstName
   lastName
   createdAt
+  updatedAt
   role {
+    id
     name
     clearanceLevel
   }

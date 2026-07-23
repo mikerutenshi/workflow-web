@@ -247,3 +247,11 @@ export const fileSchema = z.object({
       'Only CSV files are supported.',
     ),
 });
+
+export const UserSchema = z.object({
+  roleId: positiveNumberString,
+  isActive: z.boolean(),
+  invIds: z.array(positiveNumberString),
+  updatedBy: positiveNumberString.optional().nullable(),
+  approvedBy: positiveNumberString.optional().nullable(),
+});

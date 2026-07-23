@@ -6,22 +6,16 @@ import { UserCreateDto } from './user-create.dto';
 export class UserUpdateDto extends PartialType(UserCreateDto) {
   @Field()
   @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
+  isActive!: boolean;
 
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
   @IsOptional()
   approvedBy?: number;
 
-  @Field(() => Date, { nullable: true })
-  @IsOptional()
-  approvedAt?: Date;
-
-  @Field(() => ID)
+  @Field(() => [ID])
   @Transform(({ value }) => value.map((member: any) => parseInt(member, 10)))
   @Min(1, { each: true })
-  @IsOptional()
-  invIds?: number[];
+  invIds!: number[];
 }

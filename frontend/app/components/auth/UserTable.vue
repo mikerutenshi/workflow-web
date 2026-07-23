@@ -29,22 +29,39 @@
         color="primary"
         :icon="mdiPencil"
         variant="text"
-        @click="openEditUserDialog(item.id)"
+        @click="openEditUserDialog(item)"
       ></v-btn>
+    </template>
+    <template #item.isActive="{ item }">
+      <v-icon :icon="item.isActive ? mdiHeart : mdiGraveStone"></v-icon>
     </template>
   </v-data-table>
 
   <ActionEditItemDialog v-model="dialog.isVisible" :dialog-title="dialog.title">
-    <AuthUserUpdateForm :user-id="dialog.userId"></AuthUserUpdateForm>
+    <AuthUserUpdateForm :user="dialog.user"></AuthUserUpdateForm>
   </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify, mdiPencil } from '@mdi/js';
+import {
+  mdiCheck,
+  mdiCross,
+  mdiGraveStone,
+  mdiHeart,
+  mdiHeartFlash,
+  mdiHeartPulse,
+  mdiMagnify,
+  mdiPencil,
+} from '@mdi/js';
 import { useQuery } from 'villus';
 import { ref } from 'vue';
-import { GetUsersDocument } from '~/api/generated/types';
+import {
+  GetUsersDocument,
+  type GetUsersQuery,
+  type User,
+} from '~/api/generated/types';
 
+type UserData = GetUsersQuery['getUsers'][number];
 const { data } = useQuery({
   query: GetUsersDocument,
 });
@@ -57,16 +74,16 @@ const headers = ref([
   { title: 'Role', key: 'role.name' },
   { title: 'First Name', key: 'firstName' },
   { title: 'Last Name', key: 'lastName' },
-  { title: 'Is Active', key: 'isActive' },
-  { title: 'Inventories', key: 'userInventories.name' },
+  { title: 'Activation', key: 'isActive' },
+  { title: 'Inventories', key: 'userInventories' },
   { title: 'Created At', key: 'createdAt' },
-  { title: '', key: 'actions', sortable: false, align: 'end' },
+  { title: '', key: 'actions', sortable: false, align: 'end' } as const,
 ]);
 
 const dialog = reactive({
   isVisible: false,
   title: '',
-  userId: null as String | null,
+  user: null as UserData | null,
 });
 
 function formatToLocalDate(isoString: string) {
@@ -81,15 +98,15 @@ function formatToLocalDate(isoString: string) {
   }).format(date);
 }
 
-function openEditUserDialog(userId: string) {
-  dialog.userId = userId;
+function openEditUserDialog(user: UserData) {
+  dialog.user = user;
   dialog.title = 'Edit User';
   dialog.isVisible = true;
 }
 
 watchEffect(() => {
   if (!dialog.isVisible) {
-    dialog.userId = null;
+    dialog.user = null;
     dialog.title = '';
   }
 });

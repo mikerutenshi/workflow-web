@@ -60,23 +60,33 @@ export class AuthService {
   }
 
   async updateUser(id: number, data: UserUpdateDto): Promise<User> {
-    if (data.isActive) {
-      data.approvedAt = dayjs().toDate();
-    }
+    return await this.prisma.$transaction(async (tx) => {
+      data.invIds.map(async (invId) => {
+        await tx.invToUser.create({ data: { userId: id, invId } });
+      });
 
-    const result = await this.prisma.user.update({
-      where: { id },
-      data,
-      include: {
-        role: true,
-        userInventories: { include: { inventory: true } },
-      },
+      const result = await this.prisma.user.update({
+        where: { id },
+        data: {
+          email: data.email,
+          roleId: data.roleId,
+          isActive: data.isActive,
+          approvedBy: data.approvedBy,
+          approvedAt: data.isActive ? dayjs().toDate() : null,
+        },
+        include: {
+          role: true,
+          userInventories: { include: { inventory: true } },
+        },
+      });
+
+      return {
+        ...result,
+        userInventories: result.userInventories.map(
+          (member) => member.inventory,
+        ),
+      };
     });
-
-    return {
-      ...result,
-      userInventories: result.userInventories.map((member) => member.inventory),
-    };
   }
 
   async getUsers(): Promise<User[]> {
