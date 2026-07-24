@@ -1,8 +1,9 @@
--- AlterTable
-ALTER TABLE "public"."InvToProduct" DROP COLUMN "discounts",
-ADD COLUMN     "discount" DECIMAL(5,4);
+-- DropForeignKey
+ALTER TABLE "public"."InvToUser" DROP CONSTRAINT "InvToUser_invId_fkey";
 
--- AlterTable
-ALTER TABLE "public"."InvTrfItem" DROP COLUMN "discounts",
-ADD COLUMN     "discount" DECIMAL(5,4);
+-- DropForeignKey
+ALTER TABLE "public"."InvToUser" DROP CONSTRAINT "InvToUser_userId_fkey";
+
+-- DropTable
+DROP TABLE "public"."InvToUser";
 

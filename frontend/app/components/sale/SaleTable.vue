@@ -1,8 +1,8 @@
 <template>
-  <v-row v-if="errorSales || errorInventories" class="flex-grow-0">
+  <v-row v-if="errorSales" class="flex-grow-0">
     <v-col>
       <v-alert type="error">
-        {{ extractGraphQlError(errorSales || errorInventories) }}
+        {{ extractGraphQlError(errorSales) }}
       </v-alert>
     </v-col>
   </v-row>
@@ -27,11 +27,10 @@
               <v-select
                 :label="$t('label.select_inventories')"
                 :prepend-inner-icon="mdiWarehouse"
-                :items="dataInventories?.getInventories"
+                :items="authStore.user?.userInventories"
                 v-model="invId"
                 item-title="name"
                 item-value="id"
-                :loading="isFetchingInventories"
                 density="compact"
                 hide-details
               ></v-select>
@@ -128,6 +127,7 @@ import {
 
 const { t } = useI18n();
 const adapter = useDate();
+const authStore = useAuthStore();
 
 enum DialogContent {
   View = 'VIEW',
@@ -144,7 +144,9 @@ const dialog = reactive({
   isReadonly: false,
 });
 const confirmDeleteDialog = ref(false);
-const invId = ref<string | null>(null);
+const invId = ref<string | null>(
+  authStore.user?.userInventories.at(0)?.id ?? null,
+);
 const table = reactive({
   search: '',
   page: 1,
@@ -161,23 +163,23 @@ const snack = reactive({
   color: SnackColor.Success,
 });
 
-const {
-  data: dataInventories,
-  isFetching: isFetchingInventories,
-  error: errorInventories,
-} = useQuery({
-  query: GetInventoriesDocument,
-  tags: [CACHE_INVENTORIES],
-  onData(data) {
-    let firstItem = data.getInventories.at(0);
-    if (firstItem) {
-      invId.value = firstItem.id;
-    }
-  },
+// const {
+//   data: dataInventories,
+//   isFetching: isFetchingInventories,
+//   error: errorInventories,
+// } = useQuery({
+//   query: GetInventoriesDocument,
+//   tags: [CACHE_INVENTORIES],
+//   onData(data) {
+//     let firstItem = data.getInventories.at(0);
+//     if (firstItem) {
+//       invId.value = firstItem.id;
+//     }
+//   },
+// });
+const salesVariables = ref({
+  invId: null as string | null,
 });
-const salesVariables = computed(() => ({
-  invId: invId.value,
-}));
 const {
   execute: fetchSales,
   data: salesData,
@@ -227,6 +229,13 @@ watch(
       saleStore.sale = null;
     }
   },
+);
+watch(
+  invId,
+  (newInvId) => {
+    salesVariables.value.invId = newInvId;
+  },
+  { immediate: true },
 );
 
 function showDialog(content: DialogContent, saleId?: string) {

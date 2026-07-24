@@ -84,7 +84,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
-Important commands:
+Important commands before pushing to production:
 npm run migrate:diff
 npx dotenv -e .env.development -- npx prisma migrate dev --name ${name}
 psql -U postgres -d ${db_name} -f "C:\Users\Michael\Web Projects\workflow-web\${backup_name}.sql"
