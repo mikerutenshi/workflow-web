@@ -61,9 +61,12 @@ export class AuthService {
 
   async updateUser(id: number, data: UserUpdateDto): Promise<User> {
     return await this.prisma.$transaction(async (tx) => {
-      data.invIds.map(async (invId) => {
-        await tx.invToUser.create({ data: { userId: id, invId } });
-      });
+      await tx.invToUser.deleteMany({ where: { userId: id } });
+      await Promise.all(
+        data.invIds.map(async (invId) => {
+          await tx.invToUser.create({ data: { userId: id, invId } });
+        }),
+      );
 
       const result = await this.prisma.user.update({
         where: { id },
@@ -95,6 +98,7 @@ export class AuthService {
         role: true,
         userInventories: { include: { inventory: true } },
       },
+      orderBy: { id: 'asc' },
     });
 
     return results.map((result) => ({

@@ -24,6 +24,12 @@
       ></v-text-field>
     </template>
 
+    <template #item.userInventories="{ item }">
+      <v-chip v-for="inventory in item.userInventories">
+        {{ inventory.name }}
+      </v-chip>
+    </template>
+
     <template #item.actions="{ item }">
       <v-btn
         color="primary"
@@ -38,32 +44,23 @@
   </v-data-table>
 
   <ActionEditItemDialog v-model="dialog.isVisible" :dialog-title="dialog.title">
-    <AuthUserUpdateForm :user="dialog.user"></AuthUserUpdateForm>
+    <AuthUserUpdateForm
+      :user="dialog.user"
+      @close-dialog="dialog.isVisible = false"
+    ></AuthUserUpdateForm>
   </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
-import {
-  mdiCheck,
-  mdiCross,
-  mdiGraveStone,
-  mdiHeart,
-  mdiHeartFlash,
-  mdiHeartPulse,
-  mdiMagnify,
-  mdiPencil,
-} from '@mdi/js';
+import { mdiGraveStone, mdiHeart, mdiMagnify, mdiPencil } from '@mdi/js';
 import { useQuery } from 'villus';
 import { ref } from 'vue';
-import {
-  GetUsersDocument,
-  type GetUsersQuery,
-  type User,
-} from '~/api/generated/types';
+import { GetUsersDocument, type GetUsersQuery } from '~/api/generated/types';
 
 type UserData = GetUsersQuery['getUsers'][number];
 const { data } = useQuery({
   query: GetUsersDocument,
+  tags: [CACHE_USERS],
 });
 
 const search = ref('');

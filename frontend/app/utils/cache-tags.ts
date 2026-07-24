@@ -27,3 +27,4 @@ export const CACHE_SALES = 'CACHE_SALES';
 export const CACHE_SALE = 'CACHE_SALE';
 export const CACHE_ME = 'CACHE_ME';
 export const CACHE_ROLES = 'CACHE_ROLES';
+export const CACHE_USERS = 'CACHE_USERS';

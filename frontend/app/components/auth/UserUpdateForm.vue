@@ -34,13 +34,16 @@
 
       <v-select
         v-model="inventories"
-        :items="dataInventories?.getInventories"
         return-object
+        :items="
+          dataInventories?.getInventories.map((i) => ({
+            value: i.id,
+            title: i.name,
+          }))
+        "
         label="Inventories"
         multiple
         chips
-        item-title="name"
-        item-value="id"
         :error-messages="errors[`invIds`]"
         clearable
       ></v-select>
@@ -50,6 +53,13 @@
       <ActionConfirm>{{ 'Save' }}</ActionConfirm>
     </v-card-actions>
   </form>
+
+  <ActionShowSnack
+    v-model="snack.isVisible"
+    :message="snack.message"
+    :color="snack.color"
+    @on-confirm="emit('close-dialog')"
+  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -61,17 +71,22 @@ import {
   GetRolesDocument,
   UpdateUserDocument,
   type GetUsersQuery,
-  type Inventory,
-  type InventoryDto,
 } from '~/api/generated/types';
 import { UserSchema } from '~/validation/schema';
 
+const { t } = useI18n();
 type UserData = GetUsersQuery['getUsers'][number];
 const props = defineProps({
   user: {
     type: [Object, null] as PropType<UserData | null>,
     required: true,
   },
+});
+const emit = defineEmits(['close-dialog']);
+const snack = reactive({
+  isVisible: false,
+  message: t('status.saved'),
+  color: SnackColor.Success,
 });
 
 const { data: dataRoles } = useQuery({ query: GetRolesDocument });
@@ -80,11 +95,9 @@ const { execute: executeUpdate, error: errorUpdate } = useMutation(
   UpdateUserDocument,
   {
     onData(data) {
-      console.log(`Success ${data.updateUser.id}`);
+      snack.isVisible = true;
     },
-    onError(err) {
-      console.error(`Error ${err.message}`);
-    },
+    refetchTags: [CACHE_USERS],
   },
 );
 
@@ -100,13 +113,18 @@ const { handleSubmit, errors, values } = useForm({
 const roleId = useField('roleId');
 const isActive = useField('isActive');
 const invIds = useFieldArray('invIds');
-const inventories: Ref<InventoryDto[]> = ref([]);
+const inventories: Ref<{ value: string; title: string }[]> = ref(
+  props.user?.userInventories.map((inventory) => ({
+    value: inventory.id,
+    title: inventory.name,
+  })) ?? [],
+);
 const onSubmit = handleSubmit((values) => {
   if (props.user) executeUpdate({ id: props.user.id, data: values });
 });
 
 watch(inventories, (newInventories) => {
-  invIds.replace(newInventories.map((inventory) => inventory.id));
+  invIds.replace(newInventories.map((inventory) => inventory.value));
 });
 watchEffect(() => {
   console.log(`Values -> ${JSON.stringify(values)}`);

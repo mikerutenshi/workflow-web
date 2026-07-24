@@ -1,8 +1,8 @@
 <template>
-  <v-row v-if="errorInvProducts || errorInventories" class="flex-grow-0">
+  <v-row v-if="errorInvProducts" class="flex-grow-0">
     <v-col>
       <v-alert type="error">
-        {{ extractGraphQlError(errorInvProducts || errorInventories) }}
+        {{ extractGraphQlError(errorInvProducts) }}
       </v-alert>
     </v-col>
   </v-row>
@@ -27,7 +27,7 @@
               <v-select
                 :label="$t('label.select_inventories')"
                 :prepend-inner-icon="mdiWarehouse"
-                :items="dataInventories?.getInventories"
+                :items="authStore.user?.userInventories"
                 v-model="selectInvId"
                 item-title="name"
                 item-value="id"
@@ -282,22 +282,23 @@ enum DialogContent {
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 
-const {
-  data: dataInventories,
-  isFetching: isFetchingInventories,
-  error: errorInventories,
-} = useQuery({
-  query: GetInventoriesDocument,
-  tags: [CACHE_INVENTORIES],
-  onData(data) {
-    let firstItem = data.getInventories.at(0);
-    if (firstItem) {
-      selectInvId.value = firstItem.id;
-    }
-  },
-});
+// const {
+//   data: dataInventories,
+//   isFetching: isFetchingInventories,
+//   error: errorInventories,
+// } = useQuery({
+//   query: GetInventoriesDocument,
+//   tags: [CACHE_INVENTORIES],
+//   onData(data) {
+//     let firstItem = data.getInventories.at(0);
+//     if (firstItem) {
+//       selectInvId.value = firstItem.id;
+//     }
+//   },
+// });
 
-const selectInvId = ref('');
+const authStore = useAuthStore();
+const selectInvId = ref(authStore.user?.userInventories.at(0)?.id ?? '');
 const itemSelectionObject = shallowRef<InvProductDto | null>(null);
 const invProductsDisplay = computed(() => {
   return dataInvProducts.value?.getInvProducts.map((product) => {
