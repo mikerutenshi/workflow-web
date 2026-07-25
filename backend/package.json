@@ -23,7 +23,7 @@
     "db:push:reset": "dotenv -e .env.development -- prisma db push --force-reset",
     "db:seed": "dotenv -e .env.development -- prisma db seed",
     "migrate:diff": "dotenv -e .env.development -- prisma migrate diff --from-schema prisma/schema.prisma --to-migrations prisma/migrations --script > down.sql",
-    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev --name add_color_order_comp_key",
+    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev --name ${name}",
     "migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
