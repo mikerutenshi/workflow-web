@@ -11,7 +11,9 @@
         v-if="
           currentRouteName &&
           createBtnTitles.includes(String(currentRouteName)) &&
-          clearance <= Role.Planner
+          [Role.Superuser, Role.Sales, Role.Planner, Role.Finance].includes(
+            clearance,
+          )
         "
         variant="flat"
         class="mr-4"

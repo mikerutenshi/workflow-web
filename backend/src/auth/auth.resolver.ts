@@ -25,7 +25,6 @@ export class AuthResolver {
     return this.authService.getRoles();
   }
 
-  @UseGuards(AuthGuard)
   @Mutation(() => User)
   createUser(@Args('data') data: UserCreateDto): Promise<User> {
     return this.authService.createUser(data);

@@ -34,7 +34,7 @@ export class InventoryService {
 
   async getInventories(): Promise<InventoryDto[]> {
     const inventories = await this.prisma.inventory.findMany({
-      orderBy: { id: 'asc' },
+      orderBy: { name: 'asc' },
       include: { priceFormula: true },
     });
 
