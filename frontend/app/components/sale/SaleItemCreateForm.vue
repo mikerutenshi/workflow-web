@@ -96,7 +96,7 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 const table = reactive({
   headers: [
     { title: t('label.size'), key: 'eu', sortable: false },
@@ -179,7 +179,7 @@ const onSubmit = handleSubmit((data) => {
       totalQty: data.totalQty,
     });
   }
-  emit('close-dialog');
+  emit('form-submit');
 });
 
 // watchEffect(() => {

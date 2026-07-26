@@ -125,13 +125,6 @@
       }}</ActionConfirm>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -176,12 +169,7 @@ const submitBtnTitle = computed(() =>
   invId ? t('btn.update') : t('btn.create'),
 );
 
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
+const emit = defineEmits(['form-submit']);
 const priceFormulaModel = reactive({
   offset: '',
   multiplier: '',
@@ -226,13 +214,15 @@ if (invId) {
   });
 }
 
+const snack = useSnackbarStore();
 const {
   isFetching: isCreating,
   execute: executeCreate,
   error: createError,
 } = useMutation(CreateInventoryDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_INVENTORIES],
 });
@@ -242,7 +232,8 @@ const {
   error: updateError,
 } = useMutation(UpdateInventoryDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_INVENTORIES, CACHE_INVENTORY, CACHE_INV_PRODUCTS],
 });
@@ -253,13 +244,8 @@ const {
 } = useMutation(DeleteInventoryDocument, {
   refetchTags: [CACHE_INVENTORIES],
   onData(data) {
-    if (data.deleteInventory) {
-      snack.message = `${t('status.deleted')}`;
-    } else {
-      snack.color = SnackColor.Error;
-      snack.message = `${t('status.failed')}`;
-    }
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.deleted'), SnackColor.Success);
   },
 });
 
@@ -291,8 +277,4 @@ watch(
   },
   { deep: true },
 );
-// watchEffect(() => {
-//   console.log(`Values: ${JSON.stringify(values)}`);
-//   console.log(`Model: ${JSON.stringify(priceFormulaModel)}`);
-// });
 </script>

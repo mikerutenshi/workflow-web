@@ -145,32 +145,22 @@
   <ActionEditItemDialog :dialogTitle="dialog.title" v-model="dialog.isVisible">
     <SaleItemCreateForm
       :inventory-id="inventoryId"
-      @close-dialog="closeDialog"
+      @form-submit="closeDialog"
     ></SaleItemCreateForm>
   </ActionEditItemDialog>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
-import { mdiPencil, mdiPlus, mdiTrashCan } from '@mdi/js';
+import { mdiPlus, mdiTrashCan } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
-import { useTheme } from 'vuetify';
 import {
   CreateSaleDocument,
   GenerateSaleNoDocument,
   GetInvProductsDocument,
   GetSaleDocument,
-  Progress,
   UpdateSaleDocument,
   type GetInvProductsQuery,
-  type InvProductDto,
 } from '~/api/generated/types';
 import type { SaleItem } from '~/models/sale.model';
 import type { ItemSize } from '~/models/size.model';
@@ -191,7 +181,7 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 const submitBtnTitle = computed(() =>
   props.saleId ? t('btn.update') : t('btn.create'),
 );
@@ -224,11 +214,6 @@ if (!saleStore.sale && props.inventoryId) {
   };
 }
 
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
 const sizeHeaders = ref([
   { title: t('label.size'), key: 'size.eu', sortable: false },
   { title: t('label.quantity'), key: 'sellingQuantity', sortable: false },
@@ -318,11 +303,6 @@ const {
           saleItemSizes: product.saleItemSizes,
         });
       });
-      // saleStore.sale.saleItems = displayInvProducts.value.map((product) => ({
-      //   productId: product.productId,
-      //   totalQty: product.totalQty,
-      //   saleItemSizes: product.saleItemSizes,
-      // }));
     }
   },
 });
@@ -336,13 +316,15 @@ const { isFetching: isFetchingSaleNo, execute: fetchSaleNo } = useQuery({
   fetchOnMount: false,
 });
 
+const snack = useSnackbarStore();
 const {
   isFetching: isCreating,
   execute: createSale,
   error: errorCreate,
 } = useMutation(CreateSaleDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_SALES, CACHE_INV_PRODUCTS],
 });
@@ -353,7 +335,8 @@ const {
   error: errorUpdate,
 } = useMutation(UpdateSaleDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_SALES, CACHE_SALE],
 });
@@ -437,13 +420,6 @@ watch(
   },
 );
 
-// watch(
-//   () => displayItemSizesMap.value,
-//   (newMap) => {
-//     fetchInvProducts();
-//   },
-// );
-
 watch(
   () => saleStore.sale?.saleItems,
   (newItems) => {
@@ -469,9 +445,6 @@ watchEffect(() => {
     })),
   );
 });
-// watchEffect(() => {
-//   console.log(`SaleCreateFormValues -> ${JSON.stringify(values)}`);
-// });
 
 function closeDialog() {
   dialog.isVisible = false;

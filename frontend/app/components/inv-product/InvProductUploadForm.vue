@@ -50,13 +50,6 @@
       >
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -68,8 +61,9 @@ import {
 import { fileSchema } from '~/validation/schema';
 
 const { t } = useI18n();
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 
+const snack = useSnackbarStore();
 const {
   execute: executeNewInvProducts,
   isFetching: isFetchingNewInvProducts,
@@ -77,7 +71,8 @@ const {
 } = useMutation(UploadNewInvProductsDocument, {
   refetchTags: [CACHE_INV_PRODUCTS],
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 
@@ -88,7 +83,8 @@ const {
 } = useMutation(UploadInvProductDiscountsDocument, {
   refetchTags: [CACHE_INV_PRODUCTS],
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 
@@ -97,12 +93,6 @@ const isDisableds = ref([false, false]);
 const validationSchema = toTypedSchema(fileSchema);
 const { handleSubmit, errors, setFieldValue, setFieldError } = useForm({
   validationSchema,
-});
-
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
 });
 
 const onSubmit = handleSubmit((data) => {

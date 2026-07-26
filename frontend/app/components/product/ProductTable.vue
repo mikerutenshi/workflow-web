@@ -111,7 +111,7 @@
     <ProductCreateForm
       v-if="dialog.content === DialogContent.Edit"
       :product-id="dialog.productId"
-      @close-dialog="handleDialogClose"
+      @form-submit="handleDialogClose"
     ></ProductCreateForm>
     <ProductDownloadForm
       v-if="dialog.content === DialogContent.Download"

@@ -92,4 +92,6 @@ npm run build
 docker compose build
 docker compose push
 docker compose pull
+
+sudo systemctl start backup-database
 docker image prune

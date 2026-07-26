@@ -53,13 +53,6 @@
       <ActionConfirm>{{ 'Save' }}</ActionConfirm>
     </v-card-actions>
   </form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -82,20 +75,17 @@ const props = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
-
+const emit = defineEmits(['form-submit']);
 const { data: dataRoles } = useQuery({ query: GetRolesDocument });
 const { data: dataInventories } = useQuery({ query: GetInventoriesDocument });
+
+const snack = useSnackbarStore();
 const { execute: executeUpdate, error: errorUpdate } = useMutation(
   UpdateUserDocument,
   {
     onData(data) {
-      snack.isVisible = true;
+      emit('form-submit');
+      snack.show(t('status.saved'), SnackColor.Success);
     },
     refetchTags: [CACHE_USERS],
   },
@@ -126,7 +116,7 @@ const onSubmit = handleSubmit((values) => {
 watch(inventories, (newInventories) => {
   invIds.replace(newInventories.map((inventory) => inventory.value));
 });
-watchEffect(() => {
-  console.log(`Values -> ${JSON.stringify(values)}`);
-});
+// watchEffect(() => {
+//   console.log(`Values -> ${JSON.stringify(values)}`);
+// });
 </script>

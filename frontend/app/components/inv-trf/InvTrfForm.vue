@@ -146,30 +146,22 @@
       </template>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
 import { mdiTransferRight } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
-import { useTheme } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
 import {
   CreateInvTrfDocument,
-  UpdateInvTrfDocument,
   DeleteInvTrfDocument,
-  GetInventoriesDocument,
-  GetInvTrfItemsDocument,
-  GetInvTrfDocument,
-  Progress,
   GenerateInvTrfNoDocument,
+  GetInventoriesDocument,
+  GetInvTrfDocument,
+  GetInvTrfItemsDocument,
+  Progress,
+  UpdateInvTrfDocument,
 } from '~/api/generated/types';
 import { InvTrfSchema } from '~/validation/schema';
 
@@ -185,12 +177,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
+const emit = defineEmits(['form-submit']);
 const submitBtnTitle = computed(() =>
   props.invTrfId ? t('btn.update') : t('btn.create'),
 );
@@ -232,16 +219,15 @@ const { isFetching: isFetchingTrfNo, execute: fetchInvTrfNo } = useQuery({
   },
   fetchOnMount: false,
 });
+const snack = useSnackbarStore();
 const {
   isFetching: isCreating,
   execute: executeCreate,
   error: createError,
 } = useMutation(CreateInvTrfDocument, {
   onData(data) {
-    const id = data.createInvTrf.id;
-    console.log(`Created Id: ${id}`);
-    snack.message = t('status.saved');
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_INV_TRFS, CACHE_INV_PRODUCTS, CACHE_INV_TRFS_PER_ITEM],
 });
@@ -251,9 +237,8 @@ const {
   error: updateError,
 } = useMutation(UpdateInvTrfDocument, {
   onData(data) {
-    const id = data.updateInvTrf.id;
-    snack.message = t('status.saved');
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [
     CACHE_INV_TRFS,
@@ -268,8 +253,8 @@ const {
   isFetching: isDeleting,
 } = useMutation(DeleteInvTrfDocument, {
   onData(data) {
-    snack.message = t('status.deleted');
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.deleted'), SnackColor.Success);
   },
   refetchTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
 });

@@ -126,7 +126,7 @@
   >
     <LaborCostUpdateForm
       :product-group-id="productGroupId"
-      @close-dialog="
+      @form-submit="
         dialog = false;
         execute();
       "

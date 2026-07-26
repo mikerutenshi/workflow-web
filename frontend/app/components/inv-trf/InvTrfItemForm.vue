@@ -92,13 +92,6 @@
       }}</ActionConfirm>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -123,27 +116,7 @@ const props = defineProps({
 });
 const availInventories = shallowRef<InventoryDto[]>([]);
 const invProduct = props.invProductDto;
-// const availProductSizes = invProduct?.invProductSizes.map((item) => {
-//   const pendingQty = invProduct!.invTrfItems.reduce(
-//     (sum, i) =>
-//       sum +
-//       i.invTrfItemSizes.reduce(
-//         (s, i) => (i.size.id === item.size.id ? s + i.quantity : s),
-//         0,
-//       ),
-//     0,
-//   );
-//   return {
-//     ...item,
-//     quantity: item.quantity - pendingQty,
-//   };
-// });
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
+const emit = defineEmits(['form-submit']);
 
 const tableHeaders = ref([
   { title: t('label.size'), key: 'title', sortable: false },
@@ -192,6 +165,7 @@ const { isFetching: isFetchingInventories, error: errorInventories } = useQuery(
     },
   },
 );
+const snack = useSnackbarStore();
 const {
   execute: executeCreate,
   isFetching: isCreating,
@@ -203,8 +177,8 @@ const {
     CACHE_INV_TRF_ITEMS,
   ],
   onData() {
-    snack.message = t('status.saved');
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 
@@ -212,7 +186,6 @@ const priceVariables = reactive({
   invId: '',
   productId: productId.value.value,
   discounts: <string[]>[],
-  // discounts: computed(() => discounts.fields.value.map((f) => f.value)),
 });
 const {
   execute: executeGetPrice,
@@ -297,10 +270,10 @@ watchEffect(() => {
   }
 });
 
-watchEffect(() => {
-  // console.log(`Display Model: ${JSON.stringify(displayModel)}`);
-  // console.log(`toInv: ${toInvId.value.value}`);
-  // console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
-  console.log(`Form Values: ${JSON.stringify(values)}`);
-});
+// watchEffect(() => {
+// console.log(`Display Model: ${JSON.stringify(displayModel)}`);
+// console.log(`toInv: ${toInvId.value.value}`);
+// console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
+// console.log(`Form Values: ${JSON.stringify(values)}`);
+// });
 </script>

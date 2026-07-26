@@ -133,6 +133,7 @@
         </template>
       </v-list>
       <template #append>
+        <h3 v-if="isDev" class="text-center bg-purple">Development</h3>
         <ActionLogOut></ActionLogOut>
       </template>
     </v-navigation-drawer>
@@ -146,55 +147,57 @@
       v-model="dialog.isVisible"
     >
       <template v-if="dialog.content === DialogContent.CreateWork">
-        <WorkCreateForm @close-dialog="handleDialogClose"></WorkCreateForm>
+        <WorkCreateForm @form-submit="handleDialogClose"></WorkCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateProduct">
-        <ProductCreateForm
-          @close-dialog="handleDialogClose"
-        ></ProductCreateForm>
+        <ProductCreateForm @form-submit="handleDialogClose"></ProductCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateArtisan">
-        <ArtisanCreateForm
-          @close-dialog="handleDialogClose"
-        ></ArtisanCreateForm>
+        <ArtisanCreateForm @form-submit="handleDialogClose"></ArtisanCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateInvTrf">
         <InvTrfForm
           :inv-trf-id="null"
-          @close-dialog="handleDialogClose"
+          @form-submit="handleDialogClose"
         ></InvTrfForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateSale">
         <SaleCreateForm
           :inventory-id="saleStore.selectedInventoryId"
           :sale-id="null"
-          @close-dialog="handleDialogClose"
+          @form-submit="handleDialogClose"
         ></SaleCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateInventory">
         <InventoryCreateForm
           :inv-id="null"
-          @close-dialog="handleDialogClose"
+          @form-submit="handleDialogClose"
         ></InventoryCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateColor">
         <ColorCreateForm
           :color-id="null"
-          @close-dialog="handleDialogClose"
+          @form-submit="handleDialogClose"
         ></ColorCreateForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.UploadProducts">
-        <ProductUploadForm
-          @close-dialog="handleDialogClose"
-        ></ProductUploadForm>
+        <ProductUploadForm @form-submit="handleDialogClose"></ProductUploadForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.UploadInvProducts">
         <InvProductUploadForm
-          @close-dialog="handleDialogClose"
+          @form-submit="handleDialogClose"
         ></InvProductUploadForm>
       </template>
     </ActionEditItemDialog>
   </v-app>
+
+  <v-snackbar
+    v-model="snackbarStore.isVisible"
+    :color="snackbarStore.color"
+    :timeout="snackbarStore.timeout"
+    :text="snackbarStore.message"
+  >
+  </v-snackbar>
 </template>
 
 <style scoped lang="sass">
@@ -226,7 +229,10 @@ import { useRoute } from 'vue-router';
 import { MeDocument } from '~/api/generated/types';
 import { Role } from '~/utils/constants';
 
+const isDev = import.meta.dev;
+
 const authStore = useAuthStore();
+const snackbarStore = useSnackbarStore();
 const { t } = useI18n();
 const localePath = useLocalePath();
 
@@ -471,7 +477,7 @@ const navItems = computed(() => {
           title: t('nav.setting_inventories'),
           route: localePath('/setting/inventories'),
           icon: mdiWarehouse,
-          clearances: [Role.Superuser, Role.Finance, Role.Planner],
+          clearances: [Role.Superuser, Role.Finance],
         },
         {
           title: t('nav.setting_colors'),

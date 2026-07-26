@@ -83,17 +83,10 @@
       <ActionConfirm :loading="isUpdating">{{ submitBtnTitle }}</ActionConfirm>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snackbar"
-    :message="$t('status.saved')"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '#imports';
-import { createTaskSchema } from '~/validation/schema';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import {
@@ -104,26 +97,24 @@ import {
   UpdateTasksDocument,
   type TaskUpdateDto,
 } from '~/api/generated/types';
-import { ParseStatus } from 'zod';
+import { createTaskSchema } from '~/validation/schema';
 
 const props = defineProps({
   workId: {
     type: String,
   },
 });
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 
 const route = useRoute();
 const workId = ref((route.params.id as string) || props.workId);
 const authStore = useAuthStore();
+const snack = useSnackbarStore();
 const userId = authStore.user?.id || '';
 const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   query: GetArtisansDocument,
   tags: [CACHE_ARTISANS],
 });
-const localePath = useLocalePath();
-
-const snackbar = ref(false);
 const {
   execute: executeUpdate,
   isFetching: isUpdating,
@@ -137,9 +128,8 @@ const {
     CACHE_INV_TRFS_PER_ITEM,
   ],
   onData: async () => {
-    snackbar.value = true;
-    // if (route.params.id) await navigateTo(localePath('/works'));
-    // else if (props.workId) emit('close-dialog');
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 
@@ -167,11 +157,6 @@ const form = computed<TaskUpdateDto[]>(() => {
     doneAt: item.doneAt === '' ? null : item.doneAt,
     updatedBy: userId,
   }));
-
-  // console.log(
-  //   'Computed `form` recalculated based on displayForm:',
-  //   JSON.stringify(result)
-  // );
   return result;
 });
 
@@ -268,32 +253,6 @@ if (workId.value) {
     },
   });
 }
-
-// const watchUpper = computed(() => {
-//   return displayForm.find((t) => t.type == Job.DrawUpper);
-// });
-
-// watch(
-//   () => watchUpper.value?.artisan,
-//   (newArtisan) => {
-//     const findLining = displayForm.find((t) => t.type == Job.DrawLining);
-//     if (findLining) {
-//       if (newArtisan) {
-//         findLining.artisan = {
-//           id: newArtisan.id,
-//           firstName: newArtisan.firstName,
-//           lastName: newArtisan.lastName,
-//           jobs: newArtisan.jobs,
-//           createdBy: newArtisan.createdBy,
-//           updatedBy: newArtisan.updatedBy,
-//           fullName: `${newArtisan.firstName} ${newArtisan.lastName ?? ''}`,
-//         };
-//       } else {
-//         findLining.artisan = null;
-//       }
-//     }
-//   }
-// );
 
 watch(
   () => displayForm,

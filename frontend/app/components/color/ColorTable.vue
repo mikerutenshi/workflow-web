@@ -66,7 +66,7 @@
   >
     <ColorCreateForm
       :color-id="selectionId"
-      @close-dialog="
+      @form-submit="
         dialog = false;
         execute();
       "

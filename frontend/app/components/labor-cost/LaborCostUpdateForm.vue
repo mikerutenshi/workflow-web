@@ -83,28 +83,21 @@
       }}</ActionConfirm>
     </v-card-actions>
   </form>
-
-  <ActionShowSnack
-    v-model="snackbar"
-    :message="snackbarMsg"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { LaborCostSchema } from '~/validation/schema';
-import { Mask, type MaskaDetail, type MaskInputOptions } from 'maska';
+import { type MaskInputOptions } from 'maska';
 import { useMutation, useQuery } from 'villus';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import {
   Gender,
   GetLaborCostDocument,
   Job,
   UpdateLaborCostsDocument,
-  type LaborCostUpsertDto,
 } from '~/api/generated/types';
 import { cleanRupiahToNumber, parseGender } from '~/utils/functions';
+import { LaborCostSchema } from '~/validation/schema';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -112,9 +105,7 @@ const props = defineProps({
     type: String,
   },
 });
-const emit = defineEmits(['close-dialog']);
-const snackbar = ref(false);
-const snackbarMsg = ref(t('status.saved'));
+const emit = defineEmits(['form-submit']);
 
 const route = useRoute();
 const productGroupId =
@@ -127,7 +118,6 @@ const header = reactive({
   productCategory: '',
   gender: 'KIDS' as Gender,
 });
-// const form = reactive([] as LaborCostUpsertDto[]);
 const computeGender = computed({
   get() {
     return t(renderGender(header.gender));
@@ -154,20 +144,6 @@ const priceModel = reactive({
   stitchInsole: '',
   last: '',
 });
-// const drawUpperUnmasked = ref('');
-// const drawLiningUnmasked = ref('');
-// const stitchUpperUnmasked = ref('');
-// const stitchOutsoleUnmasked = ref('');
-// const stitchInsoleUnmasked = ref('');
-// const lastUnmasked = ref('');
-// defineExpose({
-//   drawUpperUnmasked,
-//   drawLiningUnmasked,
-//   stitchUpperUnmasked,
-//   stitchOutsoleUnmasked,
-//   stitchInsoleUnmasked,
-//   lastUnmasked,
-// });
 const drawUpper = useField('drawUpper');
 const drawLining = useField('drawLining');
 const stitchUpper = useField('stitchUpper');
@@ -225,7 +201,7 @@ const onSubmit = handleSubmit((values) => {
   execute({ data: values });
 });
 
-const router = useRouter();
+const snack = useSnackbarStore();
 const {
   execute,
   isFetching: isUpdating,
@@ -239,21 +215,10 @@ const {
     CACHE_PAYROLL,
   ],
   onData() {
-    snackbar.value = true;
-    // router.back();
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
-
-// const optionsBackup: MaskInputOptions = {
-//   mask: '9,99#',
-//   tokens: {
-//     9: { pattern: /[0-9]/, repeated: true },
-//   },
-//   reversed: true,
-//   postProcess: (val) => (val ? `IDR${val}` : ''),
-//   onMaska: (detail: MaskaDetail) => {},
-// };
-// const mask = new Mask(optionsBackup);
 
 const options: MaskInputOptions = {
   number: { locale: 'us' },
@@ -302,10 +267,6 @@ watch(
     last.setValue(cleanRupiahToNumber(newLast));
   },
 );
-
-// watchEffect(() => {
-//   console.log(`Labor Cost Values : ${JSON.stringify(values)}`);
-// });
 
 function findCost(type: Job, array: any[]): number {
   return array.find((find) => find?.type === type);

@@ -50,19 +50,11 @@
       }}</ActionConfirm>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
-import { ProductCategorySchema } from '~/validation/schema';
 import { useMutation, useQuery } from 'villus';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import {
   CreatePrdouctCategoryDocument,
   DeleteProductCategoryDocument,
@@ -70,6 +62,7 @@ import {
   GetProductCategoryDocument,
   UpdateProductCategoryDocument,
 } from '~/api/generated/types';
+import { ProductCategorySchema } from '~/validation/schema';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -80,30 +73,22 @@ const props = defineProps({
 });
 const productCategoryId =
   (route.params.id as string) || props.productCategoryId;
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
-
-const router = useRouter();
-// const form = reactive({
-//   name: '',
-//   gender: '',
-// });
+const emit = defineEmits(['form-submit']);
 const validationSchema = toTypedSchema(ProductCategorySchema);
 const { handleSubmit, setValues, values } = useForm({ validationSchema });
 const name = useField('name');
 const gender = useField<'MEN' | 'WOMEN' | 'KIDS'>('gender');
 const genders = ref(['MEN', 'WOMEN', 'KIDS']);
+
+const snack = useSnackbarStore();
 const {
   execute: executeCreate,
   error: createError,
   isFetching: isCreating,
 } = useMutation(CreatePrdouctCategoryDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_CATEGORIES],
 });
@@ -113,7 +98,8 @@ const {
   isFetching: isUpdating,
 } = useMutation(UpdateProductCategoryDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_CATEGORIES, CACHE_PRODUCT_CATEGORY],
 });
@@ -124,13 +110,8 @@ const {
 } = useMutation(DeleteProductCategoryDocument, {
   refetchTags: [CACHE_PRODUCT_CATEGORIES],
   onData(data) {
-    if (data.deleteProductCategory) {
-      snack.message = `${t('status.deleted')}`;
-    } else {
-      snack.color = SnackColor.Error;
-      snack.message = `${t('status.failed')}`;
-    }
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.deleted'), SnackColor.Success);
   },
 });
 const onSubmit = handleSubmit((data) => {
@@ -140,10 +121,6 @@ const onSubmit = handleSubmit((data) => {
     executeCreate({ data });
   }
 });
-
-// const goPrevious = () => {
-//   router.go(-1);
-// };
 
 if (productCategoryId) {
   useQuery({
@@ -162,7 +139,4 @@ if (productCategoryId) {
     tags: [CACHE_PRODUCT_CATEGORY],
   });
 }
-// watchEffect(() => {
-//   console.log(JSON.stringify(values));
-// });
 </script>

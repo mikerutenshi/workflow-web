@@ -40,20 +40,6 @@
           {{ adapter.format(item.trfDate, 'fullDateTime12h') }}
         </template>
 
-        <!-- <template v-slot:item.invTrfItems="{ item }">
-            {{
-              item.invTrfItems.reduce(
-                (sum, itemSize) =>
-                  sum +
-                  itemSize.invTrfItemSizes.reduce(
-                    (innerSum, size) => innerSum + size.quantity,
-                    0,
-                  ),
-                0,
-              )
-            }}
-          </template> -->
-
         <template #item.progress="{ item }">{{
           $t(`progress.${item.progress}`)
         }}</template>
@@ -70,14 +56,6 @@
               </v-btn>
             </template>
             <v-list>
-              <!-- <v-list-item
-                  :prepend-icon="mdiFileDocumentArrowRightOutline"
-                  @click="showItemDialog(item as InvTrfDto)"
-                >
-                  <v-list-item-title>{{
-                    $t('label.show_item_detail')
-                  }}</v-list-item-title>
-                </v-list-item> -->
               <v-list-item
                 :prepend-icon="mdiPencil"
                 @click="showDialog(DialogContent.Edit, item.id)"
@@ -109,7 +87,7 @@
     v-model="dialogModel.isVisible"
   >
     <InvTrfForm
-      @close-dialog="closeDialog"
+      @form-submit="closeDialog"
       :inv-trf-id="dialogModel.id"
       :is-readonly="dialogModel.isReadonly"
     ></InvTrfForm>
@@ -120,13 +98,6 @@
     @confirm="if (dialogModel.id) executeDelete({ id: dialogModel.id });"
     :loading="isDeleting"
   ></ActionConfirmActionDialog>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="confirmDeleteDialog = false"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -167,12 +138,6 @@ const dialogModel = reactive({
 
 const selectItemObject = shallowRef<InvTrfDto | null>(null);
 const confirmDeleteDialog = ref(false);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.deleted'),
-  color: SnackColor.Success,
-});
-
 const {
   execute: executeFetch,
   data: invTrfsData,
@@ -183,14 +148,14 @@ const {
   tags: [CACHE_INV_TRFS],
 });
 
+const snack = useSnackbarStore();
 const {
   execute: executeDelete,
   error: deleteError,
   isFetching: isDeleting,
 } = useMutation(DeleteInvTrfDocument, {
   onData(data) {
-    snack.message = t('status.deleted');
-    snack.isVisible = true;
+    snack.show(t('status.saved'), SnackColor.Success);
     executeFetch();
   },
   refetchTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
@@ -204,7 +169,6 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.from_inv'), key: 'fromInv.name' },
   { title: t('label.to_inv'), key: 'toInv.name' },
   { title: t('label.status'), key: 'progress' },
-  // { title: t('label.quantity'), key: 'invTrfItems' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 
@@ -235,8 +199,4 @@ function showDeleteDialog(invTrfId: string) {
   dialogModel.id = invTrfId;
   confirmDeleteDialog.value = true;
 }
-
-watchEffect(() => {
-  console.log(`selectItemObject: ${JSON.stringify(selectItemObject.value)}`);
-});
 </script>

@@ -90,12 +90,6 @@
       }}</ActionConfirm>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -120,7 +114,7 @@ const props = defineProps({
     type: String,
   },
 });
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 
 const route = useRoute();
 const workId = ref((route.params.id as string) || props.workId);
@@ -149,12 +143,6 @@ const submitBtnTitle = computed(() =>
   workId.value ? t('btn.update') : t('btn.create'),
 );
 
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
-
 const rules = [(v: string) => v?.length <= 255 || 'Max 255 characters'];
 
 const {
@@ -164,8 +152,8 @@ const {
 } = useMutation(CreateWorkDocument, {
   refetchTags: [CACHE_WORKS],
   onData() {
-    snack.message = t('status.saved');
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 const {
@@ -175,25 +163,12 @@ const {
 } = useMutation(UpdateWorkDocument, {
   refetchTags: [CACHE_WORK, CACHE_WORKS],
   onData() {
-    snack.message = t('status.saved');
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
-// const {
-//   execute: executeDelete,
-//   isFetching: isDeleting,
-//   error: deleteError,
-// } = useMutation(DeleteWorkDocument, {
-//   refetchTags: [CACHE_WORKS],
-//   onData(data) {
-//     if (data.deleteWork) {
-//       snack.message = t('status.deleted');
-//       snack.isVisible = true;
-//     }
-//   },
-// });
-
 const authStore = useAuthStore();
+const snack = useSnackbarStore();
 const userId = authStore.user?.id || '';
 
 const validationSchema = toTypedSchema(WorkSchema);
@@ -314,21 +289,4 @@ watch(sizeQuantities, (newItems) => {
     })),
   );
 });
-
-// watchEffect(() => {
-//   sizesTable.splice(
-//     0,
-//     sizesTable.length,
-//     ...sizes.value.map((size) => {
-//       const existing = sizesTable.find((item) => item.id === size.id);
-//       return {
-//         id: size.id,
-//         title: size.eu,
-//         quantity: existing ? existing.quantity : 0,
-//       };
-//     })
-//   );
-
-// console.log(`Form -> ${JSON.stringify(values)}`);
-// });
 </script>

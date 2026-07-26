@@ -43,13 +43,6 @@
       <ActionConfirm :loading="isUpdating">{{ t('btn.update') }}</ActionConfirm>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -70,7 +63,7 @@ const props = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 
 const validateDiscountSchema = toTypedSchema(InvProductUpdateDiscSchema);
 const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
@@ -93,19 +86,16 @@ if (props.invProductDto) {
 }
 const discounts = useFieldArray('discounts');
 const discMask = new Mask(percentageMask);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
 
+const snack = useSnackbarStore();
 const {
   isFetching: isUpdating,
   execute: executeUpdate,
   error: updateError,
 } = useMutation(UpdateInvProductDiscDocument, {
   onData(data) {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_INV_PRODUCTS],
 });

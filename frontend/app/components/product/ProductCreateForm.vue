@@ -132,13 +132,6 @@
     </v-card-actions>
   </v-form>
 
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
-
   <ActionEditItemDialog
     :dialogTitle="
       selectionId
@@ -148,7 +141,7 @@
     v-model="dialogForm"
   >
     <ProductGroupCreateForm
-      @close-dialog="handleDialogClose"
+      @form-submit="handleDialogClose"
       :product-group-id="selectionId"
     ></ProductGroupCreateForm>
   </ActionEditItemDialog>
@@ -188,12 +181,7 @@ const props = defineProps({
   },
 });
 const productId = (route.params.id as string) || props.productId;
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
+const emit = defineEmits(['form-submit']);
 const dialogForm = ref(false);
 const selectionId = ref('');
 
@@ -210,13 +198,15 @@ const sku = useField('sku');
 // const msrpMasked = ref('');
 // defineExpose({ msrpUnmasked });
 
+const snack = useSnackbarStore();
 const {
   isFetching: isCreating,
   execute: executeCreate,
   error: errorCreate,
 } = useMutation(CreateProductDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCTS],
 });
@@ -226,7 +216,8 @@ const {
   error: errorUpdate,
 } = useMutation(UpdateProductDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCTS, CACHE_PRODUCT],
 });
@@ -238,12 +229,9 @@ const {
   refetchTags: [CACHE_PRODUCTS],
   onData(data) {
     if (data.deleteProduct) {
-      snack.message = `${t('status.deleted')}`;
-    } else {
-      snack.color = SnackColor.Error;
-      snack.message = `${t('status.failed')}`;
+      emit('form-submit');
+      snack.show(t('status.deleted'), SnackColor.Success);
     }
-    snack.isVisible = true;
   },
 });
 

@@ -122,12 +122,6 @@
       </v-col>
     </v-row>
   </v-container>
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="isRegistered = true"
-  ></ActionShowSnack>
 </template>
 
 <style scoped lang="sass">
@@ -147,11 +141,6 @@ import { RegisterSchema } from '~/validation/schema';
 
 const token = ref('');
 const { t } = useI18n();
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
 const {
   data: rolesData,
   isFetching: isFetchingRoles,
@@ -161,6 +150,8 @@ const {
   query: GetRolesDocument,
   tags: [CACHE_ROLES],
 });
+
+const snack = useSnackbarStore();
 const {
   data: createdData,
   isFetching: isCreating,
@@ -168,7 +159,7 @@ const {
   error: createError,
 } = useMutation(CreateUserDocument, {
   onData(data) {
-    snack.isVisible = true;
+    snack.show(t('status.saved'), SnackColor.Success);
     isRegistered.value = true;
   },
 });

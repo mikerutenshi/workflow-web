@@ -92,7 +92,7 @@
     <SaleCreateForm
       :inventory-id="invId"
       :sale-id="dialog.saleId"
-      @close-dialog="dialog.isVisible = false"
+      @form-submit="dialog.isVisible = false"
     ></SaleCreateForm>
   </ActionEditItemDialog>
 
@@ -100,17 +100,10 @@
     v-model="confirmDeleteDialog"
     @confirm="if (dialog.saleId) executeDelete({ id: dialog.saleId });"
   ></ActionConfirmActionDialog>
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="confirmDeleteDialog = false"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
 import {
-  mdiDelete,
   mdiDotsVertical,
   mdiMagnify,
   mdiPencil,
@@ -119,11 +112,7 @@ import {
 } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
-import {
-  DeleteSaleDocument,
-  GetInventoriesDocument,
-  GetSalesDocument,
-} from '~/api/generated/types';
+import { DeleteSaleDocument, GetSalesDocument } from '~/api/generated/types';
 
 const { t } = useI18n();
 const adapter = useDate();
@@ -157,26 +146,6 @@ const table = reactive({
     { title: '', key: 'actions', sortable: false, align: 'end' },
   ] as const,
 });
-const snack = reactive({
-  isVisible: false,
-  message: t('status.deleted'),
-  color: SnackColor.Success,
-});
-
-// const {
-//   data: dataInventories,
-//   isFetching: isFetchingInventories,
-//   error: errorInventories,
-// } = useQuery({
-//   query: GetInventoriesDocument,
-//   tags: [CACHE_INVENTORIES],
-//   onData(data) {
-//     let firstItem = data.getInventories.at(0);
-//     if (firstItem) {
-//       invId.value = firstItem.id;
-//     }
-//   },
-// });
 const salesVariables = ref({
   invId: null as string | null,
 });
@@ -193,14 +162,14 @@ const {
   paused: ({ invId }) => !invId,
 });
 
+const snack = useSnackbarStore();
 const {
   execute: executeDelete,
   error: errorDelete,
   isFetching: isDeleting,
 } = useMutation(DeleteSaleDocument, {
   onData(data) {
-    snack.message = t('status.deleted');
-    snack.isVisible = true;
+    snack.show(t('status.saved'), SnackColor.Success);
     fetchSales();
   },
   refetchTags: [CACHE_SALES, CACHE_INV_PRODUCTS],

@@ -72,13 +72,6 @@
       >
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -91,6 +84,7 @@ import {
 import { fileSchema } from '~/validation/schema';
 
 const { t } = useI18n();
+const snack = useSnackbarStore();
 const {
   execute: executeNewProductGroups,
   isFetching: isFetchingNewProductGroups,
@@ -98,7 +92,8 @@ const {
 } = useMutation(UploadNewProductGroupsDocument, {
   refetchTags: [CACHE_PRODUCTS],
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 
@@ -109,7 +104,8 @@ const {
 } = useMutation(UploadNewProductsDocument, {
   refetchTags: [CACHE_PRODUCTS],
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 
@@ -120,7 +116,8 @@ const {
 } = useMutation(UploadProductGroupMsrpsDocument, {
   refetchTags: [CACHE_PRODUCTS],
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
 });
 const files = ref<Array<File | null>>([null, null, null]);
@@ -130,16 +127,10 @@ const { handleSubmit, errors, setFieldValue, values, setFieldError } = useForm({
   validationSchema,
 });
 
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 
 const onSubmit = handleSubmit(async (data) => {
   const fileIndex = files.value.findIndex((file) => file !== null);
-  // console.log(`fileIndex ${fileIndex}`);
 
   if (fileIndex === -1) {
     setFieldError('csvFile', 'No File Provided');
@@ -169,7 +160,6 @@ function setFile(value: File | File[] | null, index: number) {
   files.value = files.value.map((_, i) => (i === index ? file : null));
 
   if (file) {
-    // console.log(`name: ${file.name}`);
     isDisableds.value = isDisableds.value.map((_, i) => i !== index);
     setFieldValue('csvFile', file);
   } else {

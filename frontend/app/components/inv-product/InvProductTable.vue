@@ -206,49 +206,16 @@
     <template v-else-if="dialog.content === DialogContent.Form">
       <InvTrfItemForm
         :inv-product-dto="itemSelectionObject"
-        @close-dialog="closeItemFormDialog"
+        @form-submit="closeItemFormDialog"
       ></InvTrfItemForm>
     </template>
     <template v-else-if="dialog.content === DialogContent.FormDisc">
       <InvProductUpdateDiscForm
         :inv-product-dto="itemSelectionObject"
-        @close-dialog="closeItemFormDialog"
+        @form-submit="closeItemFormDialog"
       ></InvProductUpdateDiscForm>
     </template>
   </ActionEditItemDialog>
-
-  <!-- <v-dialog v-model="dialog.isVisible" max-width="1200px">
-      <v-card>
-        <v-toolbar>
-          <v-toolbar-title>{{
-            dialog.content === DialogContent.ItemDetail
-              ? $t('page.trf_detail_for', {
-                  item: itemSelectionObject?.product.sku || 'Item',
-                })
-              : dialog.content === DialogContent.Form
-                ? $t('page.send_to', {
-                    product: itemSelectionObject?.product.sku,
-                  })
-                : ''
-          }}</v-toolbar-title>
-        </v-toolbar>
-
-        <v-container class="d-flex flex-column">
-          <template v-if="dialog.content === DialogContent.ItemDetail">
-            <InvProductItemTrfTable
-              :inv-product-dto="itemSelectionObject"
-              @refresh-table="executeFetch"
-            ></InvProductItemTrfTable>
-          </template>
-          <template v-else-if="dialog.content === DialogContent.Form">
-            <InvProductTrfItemForm
-              :inv-product-dto="itemSelectionObject"
-              @close-dialog="closeItemFormDialog"
-            ></InvProductTrfItemForm>
-          </template>
-        </v-container>
-      </v-card>
-    </v-dialog> -->
 </template>
 
 <script setup lang="ts">
@@ -281,21 +248,6 @@ enum DialogContent {
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
-
-// const {
-//   data: dataInventories,
-//   isFetching: isFetchingInventories,
-//   error: errorInventories,
-// } = useQuery({
-//   query: GetInventoriesDocument,
-//   tags: [CACHE_INVENTORIES],
-//   onData(data) {
-//     let firstItem = data.getInventories.at(0);
-//     if (firstItem) {
-//       selectInvId.value = firstItem.id;
-//     }
-//   },
-// });
 
 const authStore = useAuthStore();
 const selectInvId = ref(authStore.user?.userInventories.at(0)?.id ?? '');

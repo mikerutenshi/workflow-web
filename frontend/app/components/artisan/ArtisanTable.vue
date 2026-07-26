@@ -19,9 +19,6 @@
       {{ item.jobs.map((job) => $t(renderJob(job))).join(', ') }}
     </template>
     <template v-slot:item.actions="{ item }">
-      <!-- <NuxtLink :to="$localePath(`/artisans/update/${item.id}`)">
-        <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
-      </NuxtLink> -->
       <v-btn
         color="primary"
         :icon="mdiPencil"
@@ -40,43 +37,10 @@
     <template v-if="dialog.content === DialogContent.Edit">
       <ArtisanCreateForm
         :artisan-id="selectionId"
-        @close-dialog="handleDialogClose"
+        @form-submit="handleDialogClose"
       ></ArtisanCreateForm>
     </template>
   </ActionEditItemDialog>
-
-  <!-- <v-dialog
-    v-model="dialog.isVisible"
-    fullscreen
-    transition="dialog-bottom-transition"
-  >
-    <v-card>
-      <v-toolbar>
-        <v-btn :icon="mdiClose" @click="dialog.isVisible = false"></v-btn>
-        <v-toolbar-title>{{
-          dialog.content === DialogContent.Create
-            ? $t('page.artisan_create')
-            : dialog.content === DialogContent.Edit
-              ? $t('page.artisan_edit')
-              : 'Title'
-        }}</v-toolbar-title>
-      </v-toolbar>
-
-      <v-container class="h-100 d-flex flex-column">
-        <template v-if="dialog.content === DialogContent.Create">
-          <ArtisanCreateForm
-            @close-dialog="handleDialogClose"
-          ></ArtisanCreateForm>
-        </template>
-        <template v-else-if="dialog.content === DialogContent.Edit">
-          <ArtisanCreateForm
-            :artisan-id="selectionId"
-            @close-dialog="handleDialogClose"
-          ></ArtisanCreateForm>
-        </template>
-      </v-container>
-    </v-card>
-  </v-dialog> -->
 </template>
 
 <script setup lang="ts">
@@ -123,9 +87,9 @@ function showDialog(productId: string) {
   dialog.isVisible = true;
 }
 function handleDialogClose() {
-  executeFetch();
   dialog.isVisible = false;
   selectionId.value = '';
+  executeFetch();
 }
 watch(
   () => dialog.isVisible,

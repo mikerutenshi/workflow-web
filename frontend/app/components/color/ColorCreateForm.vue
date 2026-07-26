@@ -49,13 +49,6 @@
       }}</ActionConfirm>
     </v-card-actions>
   </v-form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -69,20 +62,11 @@ import {
 import { ColorSchema } from '~/validation/schema';
 
 const { t } = useI18n();
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
-const emit = defineEmits(['close-dialog']);
+const emit = defineEmits(['form-submit']);
 const props = defineProps<{
   colorId?: string | null;
 }>();
 const colorId = props.colorId;
-// const form = reactive({
-//   name: '',
-//   hexCode: '',
-// });
 const validationSchema = toTypedSchema(ColorSchema);
 const { handleSubmit, values, setValues } = useForm({
   validationSchema,
@@ -96,13 +80,15 @@ const mode = ref<'hex' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hexa' | undefined>(
   'hex',
 );
 
+const snack = useSnackbarStore();
 const {
   execute: executeCreate,
   error: createError,
   isFetching: isCreating,
 } = useMutation(CreateColorDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_COLORS],
 });
@@ -112,7 +98,8 @@ const {
   isFetching: isUpdating,
 } = useMutation(UpdateColorDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_COLORS, CACHE_COLOR],
 });
@@ -124,12 +111,8 @@ const {
   refetchTags: [CACHE_COLORS],
   onData(data) {
     if (data.deleteColor) {
-      snack.message = `${t('status.deleted')}`;
-      snack.isVisible = true;
-    } else {
-      snack.color = SnackColor.Error;
-      snack.message = `${t('status.failed')}`;
-      snack.isVisible = true;
+      emit('form-submit');
+      snack.show(t('status.deleted'), SnackColor.Success);
     }
   },
 });

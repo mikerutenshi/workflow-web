@@ -51,13 +51,6 @@
       }}</ActionConfirm>
     </v-card-actions>
   </form>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
@@ -79,12 +72,7 @@ const props = defineProps({
     type: String,
   },
 });
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
+const emit = defineEmits(['form-submit']);
 const artisanId = (route.params.id as string) || props.artisanId;
 const authStore = useAuthStore();
 const userId = authStore.user?.id ?? '';
@@ -95,11 +83,7 @@ const jobOptions = computed(() =>
   })),
 );
 const validationSchema = toTypedSchema(ArtisanSchema);
-const {
-  handleSubmit,
-  // values: formValues,
-  setValues,
-} = useForm({
+const { handleSubmit, setValues } = useForm({
   validationSchema,
   initialValues: {
     createdBy: userId,
@@ -110,13 +94,15 @@ const lastName = useField('lastName');
 const jobs = useField<Job[]>('jobs');
 
 const localePath = useLocalePath();
+const snack = useSnackbarStore();
 const {
   execute: executeCreate,
   isFetching: isCreating,
   error: createError,
 } = useMutation(CreateArtisanDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_ARTISANS],
 });
@@ -126,7 +112,8 @@ const {
   error: updateError,
 } = useMutation(UpdateArtisanDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_ARTISANS, CACHE_ARTISAN],
 });
@@ -135,13 +122,8 @@ const { execute: executeDelete, error: deleteError } = useMutation(
   {
     refetchTags: [CACHE_ARTISANS],
     onData(data) {
-      if (data.deleteArtisan) {
-        snack.message = `${t('status.deleted')}`;
-      } else {
-        snack.color = SnackColor.Error;
-        snack.message = `${t('status.failed')}`;
-      }
-      snack.isVisible = true;
+      emit('form-submit');
+      snack.show(t('status.deleted'), SnackColor.Success);
     },
   },
 );

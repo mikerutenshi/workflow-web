@@ -90,13 +90,6 @@
     </v-card-actions>
   </v-form>
 
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="emit('close-dialog')"
-  ></ActionShowSnack>
-
   <ActionEditItemDialog
     :dialogTitle="
       selectionId
@@ -106,14 +99,17 @@
     v-model="dialogForm"
   >
     <ProductCategoryCreateForm
-      @close-dialog="handleDialogClose"
+      @form-submit="handleDialogClose"
       :product-category-id="selectionId"
     ></ProductCategoryCreateForm>
   </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth';
+import { mdiPencil, mdiPlus } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
+import { useRoute } from 'vue-router';
 import {
   CreateProductGroupDocument,
   DeleteProductGroupDocument,
@@ -121,10 +117,6 @@ import {
   GetProductGroupDocument,
   UpdateProductGroupDocument,
 } from '~/api/generated/types';
-import { useAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router';
-import { useRoute } from 'vue-router';
-import { mdiPencil, mdiPlus } from '@mdi/js';
 import { ProductGroupSchema } from '~/validation/schema';
 
 const { t } = useI18n();
@@ -135,17 +127,11 @@ const props = defineProps({
   },
 });
 const productGroupId = (route.params.id as string) || props.productGroupId;
-const emit = defineEmits(['close-dialog']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
+const emit = defineEmits(['form-submit']);
 const dialogForm = ref(false);
 const selectionId = ref('');
 
 const authStore = useAuthStore();
-const router = useRouter();
 const userId = authStore.user?.id ?? '';
 
 const validationSchema = toTypedSchema(ProductGroupSchema);
@@ -160,13 +146,15 @@ const name = useField('name');
 const productCategoryId = useField('productCategoryId');
 const msrp = useField('msrp');
 
+const snack = useSnackbarStore();
 const {
   execute: executeCreate,
   error: createError,
   isFetching: isCreating,
 } = useMutation(CreateProductGroupDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_GROUPS],
 });
@@ -176,7 +164,8 @@ const {
   isFetching: isUpdating,
 } = useMutation(UpdateProductGroupDocument, {
   onData() {
-    snack.isVisible = true;
+    emit('form-submit');
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP, CACHE_PRODUCTS],
 });
@@ -197,12 +186,9 @@ const {
   refetchTags: [CACHE_PRODUCT_GROUPS],
   onData(data) {
     if (data.deleteProductGroup) {
-      snack.message = `${t('status.deleted')}`;
-    } else {
-      snack.color = SnackColor.Error;
-      snack.message = `${t('status.failed')}`;
+      emit('form-submit');
+      snack.show(t('status.deleted'), SnackColor.Success);
     }
-    snack.isVisible = true;
   },
 });
 const onSubmit = handleSubmit((data) => {
@@ -247,12 +233,4 @@ function handleDialogClose() {
   executeFetchProductCategory();
   if (productCategoryId) productCategoryId.setValue(undefined);
 }
-
-// function goPrevious() {
-//   router.go(-1);
-// }
-
-// watchEffect(() => {
-//   console.log(JSON.stringify(values));
-// });
 </script>

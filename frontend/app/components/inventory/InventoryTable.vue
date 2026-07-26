@@ -60,7 +60,7 @@
   >
     <InventoryCreateForm
       :inv-id="selectedInvId"
-      @close-dialog="
+      @form-submit="
         dialog = false;
         execute();
       "

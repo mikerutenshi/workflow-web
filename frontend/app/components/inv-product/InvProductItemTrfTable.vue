@@ -7,18 +7,6 @@
     </v-col>
   </v-row>
 
-  <!-- <v-row class="flex-grow-0">
-    <v-col>
-      <v-text-field
-        v-model="search"
-        :label="$t('label.search')"
-        :prepend-inner-icon="mdiMagnify"
-        hide-details
-        single-line
-      ></v-text-field>
-    </v-col>
-  </v-row> -->
-
   <v-card-text>
     <v-data-table
       :headers="headers"
@@ -82,17 +70,10 @@
       </template>
     </v-data-table>
   </v-card-text>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="snack.isVisible = false"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
-import { mdiDeleteOutline, mdiFileDocumentRemoveOutline } from '@mdi/js';
+import { mdiDeleteOutline } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -115,12 +96,6 @@ const props = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(['refresh-table']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
 const invId = props.invProductDto?.invId;
 const productId = props.invProductDto?.productId;
 
@@ -134,6 +109,8 @@ const {
   query: GetInvTrfItemTrfsDocument,
   tags: [CACHE_INV_TRFS_PER_ITEM],
 });
+
+const snack = useSnackbarStore();
 const {
   execute: executeDelete,
   isFetching: isDeleting,
@@ -141,10 +118,8 @@ const {
 } = useMutation(DeleteInvTrfItemDocument, {
   refetchTags: [CACHE_INV_TRFS_PER_ITEM, CACHE_INV_PRODUCTS],
   onData() {
-    snack.message = t('status.deleted');
-    snack.isVisible = true;
+    snack.show(t('status.deleted'), SnackColor.Success);
     executeFetch();
-    emit('refresh-table');
   },
 });
 

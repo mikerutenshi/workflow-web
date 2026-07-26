@@ -53,24 +53,12 @@
       <template v-slot:item.actions="{ item }"> </template>
     </v-data-table>
   </v-card-text>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="snack.isVisible = false"
-  ></ActionShowSnack>
 </template>
 
 <script setup lang="ts">
-import { mdiDeleteOutline } from '@mdi/js';
 import { useQuery } from 'villus';
 import { useDate } from 'vuetify';
-import {
-  GetInvTxsDocument,
-  Progress,
-  type InvProductDto,
-} from '~/api/generated/types';
+import { GetInvTxsDocument, type InvProductDto } from '~/api/generated/types';
 
 const { t } = useI18n();
 const adapter = useDate();
@@ -85,11 +73,6 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['refresh-table']);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.saved'),
-  color: SnackColor.Success,
-});
 const invId = props.invProductDto?.invId;
 const productId = props.invProductDto?.productId;
 

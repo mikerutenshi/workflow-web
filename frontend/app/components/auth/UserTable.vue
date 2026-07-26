@@ -46,7 +46,7 @@
   <ActionEditItemDialog v-model="dialog.isVisible" :dialog-title="dialog.title">
     <AuthUserUpdateForm
       :user="dialog.user"
-      @close-dialog="dialog.isVisible = false"
+      @form-submit="dialog.isVisible = false"
     ></AuthUserUpdateForm>
   </ActionEditItemDialog>
 </template>

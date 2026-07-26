@@ -1,12 +1,4 @@
 <template>
-  <!-- <v-row v-if="deleteError || errorTransfer">
-    <v-col>
-      <v-alert type="error">
-        {{ extractGraphQlError(deleteError || errorTransfer) }}
-      </v-alert>
-    </v-col>
-  </v-row> -->
-
   <v-data-table
     :headers="headers"
     :items="computedWorks"
@@ -50,16 +42,6 @@
       {{ adapter.format(item.date, 'normalDateWithWeekday') }}
     </template>
     <template v-slot:item.sizes="{ item }">
-      <!-- <v-chip-group direction="vertical">
-            <v-chip
-              v-for="size in item.sizes"
-              variant="outlined"
-              disabled
-              class="d-flex justify-center"
-            >
-              {{ `${size.size.eu} | ${size.quantity}` }}
-            </v-chip>
-          </v-chip-group> -->
       <v-table density="compact">
         <tbody>
           <tr v-for="size in item.workSizes" :key="size.size.id">
@@ -194,12 +176,12 @@
     <WorkCreateForm
       v-if="dialog.content === DialogContent.EditWork"
       :work-id="selectedObject?.id"
-      @close-dialog="save"
+      @form-submit="cleanup"
     />
     <TaskUpdateForm
       v-if="dialog.content === DialogContent.EditTask"
       :work-id="selectedObject?.id"
-      @close-dialog="save"
+      @form-submit="cleanup"
     />
   </ActionEditItemDialog>
 
@@ -209,13 +191,6 @@
     :loading="isDeleting || isTransfering"
     :action-type="confirmAction"
   ></ActionConfirmActionDialog>
-
-  <ActionShowSnack
-    v-model="snack.isVisible"
-    :message="snack.message"
-    :color="snack.color"
-    @on-confirm="confirmActionDialog = false"
-  ></ActionShowSnack>
 </template>
 
 <style scoped lang="sass">
@@ -261,10 +236,10 @@ enum DialogContent {
 const { t } = useI18n();
 
 const authStore = useAuthStore();
+const snack = useSnackbarStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
 const userId = authStore.user?.id || '';
 
-// Add 34px to height to adjust the footer position
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 
@@ -296,7 +271,6 @@ while (currentDate.isBefore(findEnd)) {
   dates.value.push(currentDate.format('YYYY-MM-DD'));
   currentDate = currentDate.add(1, 'day');
 }
-// console.log(`Dates: ${dates.value}`);
 
 const form = reactive({
   startDate: findStart.toISOString(),
@@ -322,14 +296,10 @@ const {
   error: errorTransfer,
 } = useMutation(AddToInventoryDocument, {
   onData(data) {
-    snack.message = t('status.saved');
-    snack.color = SnackColor.Success;
-    snack.isVisible = true;
+    snack.show(t('status.saved'), SnackColor.Success);
   },
   onError(err) {
-    snack.message = extractGraphQlError(err);
-    snack.color = SnackColor.Error;
-    snack.isVisible = true;
+    snack.show(extractGraphQlError(err), SnackColor.Error);
   },
   refetchTags: [CACHE_WORKS],
 });
@@ -340,14 +310,10 @@ const {
   isFetching: isDeleting,
 } = useMutation(DeleteWorkDocument, {
   onData(data) {
-    snack.message = t('status.deleted');
-    snack.color = SnackColor.Success;
-    snack.isVisible = true;
+    snack.show(t('status.deleted'), SnackColor.Success);
   },
   onError(err) {
-    snack.message = extractGraphQlError(err);
-    snack.color = SnackColor.Error;
-    snack.isVisible = true;
+    snack.show(extractGraphQlError(err), SnackColor.Error);
   },
   refetchTags: [CACHE_WORKS],
 });
@@ -387,12 +353,6 @@ const headers: ReadOnlyHeaders = [
 ];
 
 const confirmActionDialog = ref(false);
-const snack = reactive({
-  isVisible: false,
-  message: t('status.deleted'),
-  color: SnackColor.Success,
-});
-
 function manageDates(newDates: string[] | string) {
   form.startDate = newDates[0] ?? '';
   form.endDate = newDates[newDates.length - 1] ?? '';
@@ -421,7 +381,7 @@ enum ActionType {
 }
 const confirmAction = ref(ActionType.DELETE);
 
-function save() {
+function cleanup() {
   dialog.isVisible = false;
   selectedObject.value = null;
 }
