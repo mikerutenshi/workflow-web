@@ -10,12 +10,12 @@ RUN npm run build
 
 FROM node:20.19.0-alpine AS base
 WORKDIR /app
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/dist ./
+COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
-COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/.env* ./
-COPY --from=build /app/prisma.config.ts ./
+COPY --from=build /app/prisma.config.js ./
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wait_aarch64 /wait
 RUN chmod +x /wait
 

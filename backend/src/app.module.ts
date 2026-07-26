@@ -24,6 +24,7 @@ import { ProductionModule } from './production/production.module';
 import { SaleModule } from './sale/sale.module';
 import { DateScalar } from './scalars/date.scalar';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 
 const currentEnv = process.env.NODE_ENV || 'production';
 let envFilePath;
@@ -56,7 +57,10 @@ if (currentEnv == 'production') {
       inject: [AuthService, ConfigService],
       useFactory: (authService: AuthService, configService: ConfigService) => ({
         playground: false,
-        plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        plugins:
+          currentEnv == 'development'
+            ? [ApolloServerPluginLandingPageLocalDefault()]
+            : [ApolloServerPluginLandingPageDisabled()],
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         cors: {
           origin: [configService.get('CORS_ORIGIN') || ''],

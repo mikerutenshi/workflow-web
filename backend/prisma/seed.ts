@@ -1,4 +1,4 @@
-import { Gender, PrismaClient } from '@/generated/prisma/client';
+import { Gender, PrismaClient } from '../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { hash } from 'bcrypt';
 
@@ -6,6 +6,18 @@ const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
 const prisma = new PrismaClient({ adapter });
+
+async function addSalesRole() {
+  const salesRole = await prisma.role.upsert({
+    where: { name: 'Sales' },
+    update: {},
+    create: {
+      name: 'Sales',
+      description: 'Sell products',
+      clearanceLevel: 8,
+    },
+  });
+}
 
 async function main() {
   const superuserRole = await prisma.role.upsert({
@@ -232,7 +244,7 @@ async function main() {
   console.log('Seeding is complete');
 }
 
-main()
+addSalesRole()
   .then(async () => {
     await prisma.$disconnect();
   })
