@@ -77,26 +77,6 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <!-- <v-menu variant="outlined">
-            <template v-slot:activator="{ props }">
-              <v-btn icon v-bind="props" variant="text">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item>
-                <NuxtLink :to="`/products/update/${item.id}`">
-                  <v-list-item-title>Edit</v-list-item-title>
-                </NuxtLink>
-              </v-list-item>
-              <v-list-item @click="deleteProduct(item.id, index)">
-                <v-list-item-title>Delete</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-          <NuxtLink :to="$localePath(`/products/update/${item.id}`)">
-            <v-btn color="primary" :icon="mdiPencil" variant="text"></v-btn>
-          </NuxtLink> -->
       <v-btn
         v-if="clearanceLevel <= Role.Planner"
         color="primary"
@@ -149,7 +129,7 @@ const { t } = useI18n();
 const adapter = useDate();
 
 const authStore = useAuthStore();
-const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },

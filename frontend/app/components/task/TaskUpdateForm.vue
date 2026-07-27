@@ -169,7 +169,7 @@ const validationSchema = toTypedSchema(
   createTaskSchema(
     dayjs().subtract(1, 'day').toISOString(),
     dayjs().add(1, 'day').toISOString(),
-    (authStore.user?.role.clearanceLevel ?? 6) <= Role.Finance,
+    (authStore.user?.role.clearanceLevel ?? 99) <= Role.Finance,
   ),
 );
 const minDate = ref('');

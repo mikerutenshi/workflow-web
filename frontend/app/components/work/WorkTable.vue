@@ -237,7 +237,7 @@ const { t } = useI18n();
 
 const authStore = useAuthStore();
 const snack = useSnackbarStore();
-const clearanceLevel = authStore.user?.role.clearanceLevel ?? 6;
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 const userId = authStore.user?.id || '';
 
 const pageNo = ref(1);

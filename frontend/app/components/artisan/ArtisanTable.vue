@@ -20,6 +20,7 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-btn
+        v-if="clearanceLevel <= Role.Finance"
         color="primary"
         :icon="mdiPencil"
         variant="text"
@@ -52,6 +53,8 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
+const authStore = useAuthStore();
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 
 const {
   data,

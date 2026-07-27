@@ -151,7 +151,7 @@ const {
   tags: [CACHE_ROLES],
 });
 
-const snack = useSnackbarStore();
+// const snack = useSnackbarStore();
 const {
   data: createdData,
   isFetching: isCreating,
@@ -159,7 +159,7 @@ const {
   error: createError,
 } = useMutation(CreateUserDocument, {
   onData(data) {
-    snack.show(t('status.saved'), SnackColor.Success);
+    // snack.show(t('status.saved'), SnackColor.Success);
     isRegistered.value = true;
   },
 });

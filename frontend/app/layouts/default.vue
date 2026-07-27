@@ -10,10 +10,7 @@
       <v-btn
         v-if="
           currentRouteName &&
-          createBtnTitles.includes(String(currentRouteName)) &&
-          [Role.Superuser, Role.Sales, Role.Planner, Role.Finance].includes(
-            clearance,
-          )
+          showCreateBtn(currentRouteName.toString(), clearance)
         "
         variant="flat"
         class="mr-4"
@@ -38,7 +35,7 @@
         <template #activator="{ props }">
           <v-btn
             v-if="
-              currentRouteName == 'setting/products' &&
+              currentRouteName == 'setting-products' &&
               clearance <= Role.Superuser
             "
             v-bind="props"
@@ -256,7 +253,7 @@ const { data, error } = await useQuery({
 //   console.log(`Error => ${JSON.stringify(error.value)}`);
 //   navigateTo(localePath('/login'));
 // }
-const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 6);
+const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 99);
 
 const { print: printPayroll, isPrinting: isPayrollPrinting } =
   usePayrollPrint();
@@ -353,24 +350,43 @@ watch(
   },
 );
 const drawer = ref(false);
-// const createBtnTitles: Record<string, string> = {
-//   works: 'btn.work',
-//   products: 'btn.product',
-//   artisans: 'btn.artisan',
-//   'inv-trfs': 'btn.inv_trf',
-//   sales: 'btn.sale',
-//   'setting-inventories': 'btn.inventory',
-//   'setting-colors': 'btn.color',
-// };
-const createBtnTitles = [
-  'works',
-  'inv-trfs',
-  'sales',
-  'setting-products',
-  'setting-artisans',
-  'setting-inventories',
-  'setting-colors',
+
+const createBtns = [
+  {
+    routeName: 'works',
+    clearances: [Role.Superuser, Role.Finance, Role.Planner],
+  },
+  {
+    routeName: 'inv-trfs',
+    clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
+  },
+  {
+    routeName: 'sales',
+    clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
+  },
+  {
+    routeName: 'setting-products',
+    clearances: [Role.Superuser, Role.Finance, Role.Planner],
+  },
+  {
+    routeName: 'setting-artisans',
+    clearances: [Role.Superuser, Role.Finance],
+  },
+  {
+    routeName: 'setting-inventories',
+    clearances: [Role.Superuser, Role.Finance],
+  },
+  {
+    routeName: 'setting-colors',
+    clearances: [Role.Superuser, Role.Finance, Role.Planner],
+  },
 ];
+function showCreateBtn(routeName: string, clearanceLevel: number) {
+  return createBtns.some(
+    (btn) =>
+      routeName === btn.routeName && btn.clearances.includes(clearanceLevel),
+  );
+}
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
