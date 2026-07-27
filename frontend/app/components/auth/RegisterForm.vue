@@ -8,10 +8,14 @@
               {{ $t('page.register_new_user') }}
             </v-card-title>
             <v-card-text>
-              <v-row v-if="createError || rolesError">
+              <v-row v-if="createError || rolesError || errorIsHuman">
                 <v-col>
                   <v-alert type="error">
-                    {{ extractGraphQlError(createError || rolesError) }}
+                    {{
+                      extractGraphQlError(
+                        createError || rolesError || errorIsHuman,
+                      )
+                    }}
                   </v-alert>
                 </v-col>
               </v-row>
@@ -76,7 +80,7 @@
               />
               <NuxtTurnstile v-model="token" />
             </v-card-text>
-            <v-btn type="submit" block :loading="isCreating">{{
+            <v-btn type="submit" block :loading="isCreating || isVerifying">{{
               $t('btn.register')
             }}</v-btn>
           </form>
@@ -135,7 +139,11 @@
 <script setup lang="ts">
 import { mdiEye, mdiEyeOff } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
-import { CreateUserDocument, GetRolesDocument } from '~/api/generated/types';
+import {
+  CreateUserDocument,
+  GetRolesDocument,
+  VerifyHumanDocument,
+} from '~/api/generated/types';
 import { CACHE_ROLES } from '~/utils/cache-tags';
 import { RegisterSchema } from '~/validation/schema';
 
@@ -164,6 +172,12 @@ const {
   },
 });
 
+const {
+  execute: executeIsHuman,
+  error: errorIsHuman,
+  isFetching: isVerifying,
+} = useMutation(VerifyHumanDocument);
+
 const validationSchema = toTypedSchema(RegisterSchema);
 const { handleSubmit, values } = useForm({
   validationSchema,
@@ -177,12 +191,10 @@ const repeatPassword = useField('repeatPassword');
 
 const onSubmit = handleSubmit(async (values) => {
   const { repeatPassword, ...rest } = values;
-  const turnstile = await $fetch('/api/validateTurnstile', {
-    method: 'POST',
-    body: { token: token.value },
-  });
-
-  if (turnstile.success) executeCreate({ data: rest });
+  const isHuman = await executeIsHuman({ token: token.value });
+  if (isHuman.data?.verifyHuman) {
+    executeCreate({ data: rest });
+  }
 });
 
 const show1 = ref(false);
@@ -192,6 +204,10 @@ const isRegistered = ref(false);
 watchEffect(() => {
   if (email.value.value !== null && email.value.value !== undefined) {
     email.value.value = String(email.value.value).toLowerCase();
+  }
+
+  if (token) {
+    console.log(`token = ${token.value}`);
   }
 });
 // watchEffect(() => {

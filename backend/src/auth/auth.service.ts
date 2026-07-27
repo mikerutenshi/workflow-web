@@ -9,12 +9,18 @@ import { LogInDto } from './dto/logIn.dto';
 import { RoleDto } from './dto/role.dto';
 import { UserCreateDto } from './dto/user-create.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
+import { HttpService } from '@nestjs/axios';
+import { catchError, firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private httpService: HttpService,
+    private configService: ConfigService,
   ) {}
   createRole(data: RoleDto): Promise<Role> {
     return this.prisma.role.create({
@@ -167,5 +173,32 @@ export class AuthService {
       }
     }
     return null;
+  }
+
+  async verityfHuman(token: string): Promise<boolean> {
+    const payload = {
+      secret: this.configService.get('NUXT_TURNSTILE_SECRET_KEY'),
+      response: token,
+    };
+    const { data } = await firstValueFrom(
+      this.httpService
+        .post(
+          'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+          payload,
+        )
+        .pipe(
+          catchError((error: AxiosError) => {
+            console.log(`Error = ${JSON.stringify(error)}`);
+            throw error.response?.data;
+          }),
+        ),
+    );
+
+    if (data.success) {
+      return true;
+    } else {
+      if (data['error-codes']) throw Error(data['error-codes']);
+      else return false;
+    }
   }
 }

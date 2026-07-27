@@ -2,3 +2,6 @@
 *backup.sql
 backup*.sql
 *.dump
+.env
+.env.*
+.vscode

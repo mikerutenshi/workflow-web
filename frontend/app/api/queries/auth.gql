@@ -40,6 +40,10 @@ mutation updateUser($id: ID!, $data: UserUpdateDto!) {
   }
 }
 
+mutation verifyHuman($token: String!) {
+  verifyHuman(token: $token)
+}
+
 query me {
   me {
     ...AuthUser

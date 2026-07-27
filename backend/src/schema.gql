@@ -561,6 +561,7 @@ type Mutation {
   updateUser(id: ID!, data: UserUpdateDto!): User!
   logIn(data: LogInDto!): User!
   logOut: User!
+  verifyHuman(token: String!): Boolean!
   createColor(data: ColorCreateDto!): Color!
   updateColor(id: ID!, data: ColorCreateDto!): Color!
   deleteColor(id: ID!): Boolean!
