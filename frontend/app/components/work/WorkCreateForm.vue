@@ -250,8 +250,6 @@ if (workId.value) {
 watch(
   productId.value,
   (newId, oldId) => {
-    console.log(`NewId: ${newId}`);
-    console.log(`OldId: ${oldId}`);
     if (newId && oldId === undefined) {
       isSizesDisabled.value = false;
     } else if ((newId && oldId) || (newId && oldId == null)) {

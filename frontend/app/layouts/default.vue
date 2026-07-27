@@ -238,21 +238,10 @@ const { data, error } = await useQuery({
   tags: [CACHE_ME],
   onData(data) {
     authStore.user = data.me;
-    console.log(`Me => ${JSON.stringify(data.me)}`);
   },
-  onError(err) {
-    console.log(`Error => ${JSON.stringify(err)}`);
-    // navigateTo(localePath('/login'));
-  },
+  onError(err) {},
 });
 
-// if (!error.value) {
-//   authStore.user = data.value!.me;
-//   console.log(`Me => ${JSON.stringify(data.value?.me)}`);
-// } else {
-//   console.log(`Error => ${JSON.stringify(error.value)}`);
-//   navigateTo(localePath('/login'));
-// }
 const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 99);
 
 const { print: printPayroll, isPrinting: isPayrollPrinting } =

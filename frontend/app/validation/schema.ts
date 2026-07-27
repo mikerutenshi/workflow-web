@@ -117,7 +117,6 @@ export function createTaskSchema(
   maxDate: string,
   isCleared: boolean,
 ) {
-  console.log(`Schema: ${minDate}, ${maxDate}, ${isCleared}`);
   if (isCleared) {
     return z.object({
       tasks: z

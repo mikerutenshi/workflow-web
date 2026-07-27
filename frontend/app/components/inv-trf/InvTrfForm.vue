@@ -346,7 +346,6 @@ const search = ref('');
 const itemIdSelections = ref<string[]>([]);
 
 const onSubmit = handleSubmit((data) => {
-  console.log(`data: ${JSON.stringify(data)}`);
   if (!props.invTrfId) {
     executeCreate({ data });
   } else {
@@ -362,18 +361,13 @@ const deleteInvTrf = (id: string) => {
 };
 
 watch(itemIdSelections, (newValues) => {
-  console.log(`item id selections: ${JSON.stringify(newValues)}`);
   replace(newValues);
 });
 
 watchEffect(() => {
   if (fromInvId.value.value && toInvId.value.value) {
-    console.log('Triggered');
-    // if (!props.invTrfId) {
     variables.fromInvId = fromInvId.value.value as string;
     variables.toInvId = toInvId.value.value as string;
-    // }
   }
-  console.log(`form values: ${JSON.stringify(values)}`);
 });
 </script>

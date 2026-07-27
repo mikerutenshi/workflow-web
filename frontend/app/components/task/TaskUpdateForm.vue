@@ -283,8 +283,4 @@ watch(form, (newValues) => {
     })),
   );
 });
-
-// watchEffect(() => {
-//   console.log(`Tasks Table -> ${JSON.stringify(values)}`);
-// });
 </script>

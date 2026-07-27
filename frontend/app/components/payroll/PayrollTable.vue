@@ -254,14 +254,6 @@ function manageDates(newDates: string[] | string) {
   execute();
 }
 
-// watch(
-//   form,
-//   (newForm) => {
-//     console.log(`Payroll Form: ${JSON.stringify(newForm)}`);
-//   },
-//   { deep: true, immediate: true }
-// );
-
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import ic_borsa from '@/assets/images/ic_borsa.png';
@@ -273,7 +265,6 @@ onUnmounted(() => unregisterPrint());
 
 const { current } = useTheme();
 const primary = current.value.colors.primary;
-console.log(`primary ${primary}`);
 
 function downloadPdf() {
   return new Promise<void>((resolve, reject) => {

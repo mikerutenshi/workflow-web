@@ -88,8 +88,4 @@ watch(data, async (loginData) => {
     await navigateTo(localePath('/'));
   }
 });
-
-// watchEffect(() => {
-//   console.log(`Login Form => ${JSON.stringify(values)}`);
-// });
 </script>

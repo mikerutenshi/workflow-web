@@ -343,10 +343,4 @@ watch(dialogForm, (newState) => {
     handleDialogClose();
   }
 });
-// watch(msrpUnmasked, (newValue) => {
-//   msrp.setValue(+newValue);
-// });
-watchEffect(() => {
-  console.log(JSON.stringify(values));
-});
 </script>

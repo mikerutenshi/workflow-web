@@ -205,13 +205,5 @@ watchEffect(() => {
   if (email.value.value !== null && email.value.value !== undefined) {
     email.value.value = String(email.value.value).toLowerCase();
   }
-
-  if (token) {
-    console.log(`token = ${token.value}`);
-  }
 });
-// watchEffect(() => {
-//   console.log(`Token => ${JSON.stringify(token.value)}`);
-//   console.log(`Form => ${JSON.stringify(values)}`);
-// });
 </script>

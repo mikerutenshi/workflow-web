@@ -106,7 +106,6 @@ const table = reactive({
   items: [] as SizeItem[],
 });
 const saleStore = useSaleStore();
-console.log(`SaleStore => ${JSON.stringify(saleStore.sale)}`);
 
 const {
   execute: executeFetch,
@@ -118,15 +117,11 @@ const {
   variables: { invId: props.inventoryId ?? '' },
   paused: ({ invId }) => !invId,
   tags: [CACHE_INV_PRODUCTS],
-  // onData(data) {
-  //   console.log('My Data' + JSON.stringify(data.getInvProducts));
-  // },
 });
 
 watch(
   () => productId.value.value,
   (newId) => {
-    console.log(`SelectId = ${newId}`);
     table.items = [];
     dataInvProducts.value?.getInvProducts
       .find((product) => newId === product.productId)
@@ -181,9 +176,4 @@ const onSubmit = handleSubmit((data) => {
   }
   emit('form-submit');
 });
-
-// watchEffect(() => {
-//   console.log(`Table => ${JSON.stringify(table.items)}`);
-//   console.log(`Values => ${JSON.stringify(values)}`);
-// });
 </script>

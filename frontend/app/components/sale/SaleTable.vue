@@ -230,9 +230,4 @@ function deleteItem(saleId: string) {
   dialog.saleId = saleId;
   confirmDeleteDialog.value = true;
 }
-
-// watchEffect(() => {
-//   console.log(`Sales Data => ${JSON.stringify(salesData.value?.getSales)}`);
-//   console.log(`InvId => ${invId.value}`);
-// });
 </script>

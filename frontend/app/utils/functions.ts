@@ -101,7 +101,6 @@ export const priceOffsetMask: MaskInputOptions = {
 
     if (val && val !== '-') {
       const numericVal = val.replace(/[^\d.-]/g, '');
-      console.log(`numericval: ${numericVal}`);
       const num = parseInt(numericVal);
       const sign = num >= 0 ? '+' : '-';
       const valUnsigned = val.replace('-', '');

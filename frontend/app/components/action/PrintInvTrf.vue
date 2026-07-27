@@ -49,7 +49,6 @@ const {
 });
 
 function handleClick() {
-  // console.log('InvTrfModel: ' + JSON.stringify(invTrfModel));
   if (dataInvTrf.value) createPdf(dataInvTrf.value?.getInvTrf);
 }
 

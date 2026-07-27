@@ -104,7 +104,6 @@ enum Option {
 const download = async () => {
   if (selections.value.includes(Option.Product)) {
     const res = await fetch(fullUrlProducts.value);
-    console.log(fullUrlProducts);
     if (!res.ok) throw new Error(`Download failed: ${res.status}`);
 
     const blob = await res.blob();
@@ -123,7 +122,6 @@ const download = async () => {
 
   if (selections.value.includes(Option.ProductGroup)) {
     const res = await fetch(fullUrlProductGroups.value);
-    console.log(fullUrlProductGroups);
     if (!res.ok) throw new Error(`Download failed: ${res.status}`);
 
     const blob = await res.blob();

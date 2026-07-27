@@ -287,9 +287,6 @@ const {
   variables: computed(() => ({ invId: selectInvId.value })),
   tags: [CACHE_INV_PRODUCTS],
   fetchOnMount: false,
-  onData(data) {
-    console.log(JSON.stringify(data.getInvProducts[0]));
-  },
 });
 
 const { t } = useI18n();

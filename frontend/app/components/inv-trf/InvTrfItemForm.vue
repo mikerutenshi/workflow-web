@@ -249,7 +249,6 @@ watchEffect(() => {
     selectedInv?.priceFormula?.discounts,
   );
   displayModel.price = invPrice;
-  console.log(`InvPrice: ${invPrice}`);
 });
 
 watchDebounced(
@@ -269,11 +268,4 @@ watchEffect(() => {
     priceVariables.discounts = discounts.fields.value.map((f) => f.value);
   }
 });
-
-// watchEffect(() => {
-// console.log(`Display Model: ${JSON.stringify(displayModel)}`);
-// console.log(`toInv: ${toInvId.value.value}`);
-// console.log(`Inventories: ${JSON.stringify(availInventories.value)}`);
-// console.log(`Form Values: ${JSON.stringify(values)}`);
-// });
 </script>

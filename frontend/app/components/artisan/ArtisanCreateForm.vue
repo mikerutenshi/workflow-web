@@ -168,8 +168,4 @@ const onSubmit = handleSubmit((values) => {
     executeCreate({ data: { ...values, jobs: values.jobs as Job[] } });
   }
 });
-
-// watchEffect(() => {
-//   console.log(JSON.stringify(formValues));
-// });
 </script>

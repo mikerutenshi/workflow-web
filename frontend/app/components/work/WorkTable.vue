@@ -426,7 +426,6 @@ function performExecute(action: ActionType) {
         workId: selectedObject.value.id,
       };
 
-      console.log(`Data: ${JSON.stringify(data)}`);
       executeTransfer({ data });
     }
   }
