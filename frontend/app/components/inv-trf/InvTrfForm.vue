@@ -18,7 +18,7 @@
         :label="$t('label.trf_no')"
         :error-messages="trfNo.errorMessage.value"
         v-model="trfNo.value.value"
-        :readonly="props.isReadonly"
+        readonly
       />
 
       <v-row>

@@ -17,6 +17,7 @@
         :label="$t('label.sale_no')"
         :error-messages="saleNo.errorMessage.value"
         v-model="saleNo.value.value"
+        readonly
       />
 
       <v-col class="d-flex align-center justify-end">

@@ -48,7 +48,10 @@ export class InvProductService {
         product: {
           include: {
             productGroup: { include: { productCategory: true } },
-            productColors: { include: { color: true } },
+            productColors: {
+              include: { color: true },
+              orderBy: { order: 'asc' },
+            },
           },
         },
         invProductSizes: {

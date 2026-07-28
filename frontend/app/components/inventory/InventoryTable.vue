@@ -38,6 +38,7 @@
 
         <template v-slot:item.actions="{ item }">
           <v-btn
+            v-if="clearanceLevel <= Role.Finance"
             color="primary"
             :icon="mdiPencil"
             variant="text"
@@ -69,14 +70,14 @@
 </template>
 
 <script setup lang="ts">
-import { mdiFileDocumentEditOutline, mdiMagnify, mdiPencil } from '@mdi/js';
-import { useMutation, useQuery } from 'villus';
+import { mdiMagnify, mdiPencil } from '@mdi/js';
+import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
-import {
-  DeleteInventoryDocument,
-  GetInventoriesDocument,
-} from '~/api/generated/types';
+import { GetInventoriesDocument } from '~/api/generated/types';
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
+
+const authStore = useAuthStore();
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 
 const { execute, data, isFetching, error } = useQuery({
   query: GetInventoriesDocument,
@@ -85,7 +86,8 @@ const { execute, data, isFetching, error } = useQuery({
 
 const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  { title: t('label.sku'), key: 'name' },
+  ...(clearanceLevel === 0 ? [{ title: t('label.id'), key: 'id' }] : []),
+  { title: t('label.name'), key: 'name' },
   { title: t('label.address'), key: 'address' },
   { title: t('label.city'), key: 'city' },
   { title: t('label.province'), key: 'province' },

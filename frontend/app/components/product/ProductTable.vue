@@ -132,7 +132,7 @@ const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 
 const headers: ReadOnlyHeaders = [
-  // { title: t('label.id'), key: 'id' },
+  ...(clearanceLevel === 0 ? [{ title: t('label.id'), key: 'id' }] : []),
   { title: t('label.sku'), key: 'sku' },
   { title: t('label.product_group'), key: 'productGroup.skuNumeric' },
   { title: t('label.name'), key: 'productGroup.name' },

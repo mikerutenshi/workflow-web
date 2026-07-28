@@ -467,6 +467,12 @@ const navItems = computed(() => {
           clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Field],
         },
         {
+          title: t('nav.setting_colors'),
+          route: localePath('/setting/colors'),
+          icon: mdiPalette,
+          clearances: [Role.Superuser, Role.Finance, Role.Planner],
+        },
+        {
           title: t('nav.labor_costs'),
           route: localePath('/setting/labor-costs'),
           icon: mdiCalculator,
@@ -482,12 +488,6 @@ const navItems = computed(() => {
           title: t('nav.setting_inventories'),
           route: localePath('/setting/inventories'),
           icon: mdiWarehouse,
-          clearances: [Role.Superuser, Role.Finance],
-        },
-        {
-          title: t('nav.setting_colors'),
-          route: localePath('/setting/colors'),
-          icon: mdiPalette,
           clearances: [Role.Superuser, Role.Finance, Role.Planner],
         },
         {

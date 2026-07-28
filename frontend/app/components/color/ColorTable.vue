@@ -86,9 +86,11 @@ const { execute, data, isFetching, error } = useQuery({
   tags: [CACHE_COLORS],
 });
 
+const authStore = useAuthStore();
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 const { t } = useI18n();
 const headers: ReadOnlyHeaders = [
-  // { title: t('label.id'), key: 'id' },
+  ...(clearanceLevel === 0 ? [{ title: t('label.id'), key: 'id' }] : []),
   { title: t('label.name'), key: 'name' },
   { title: t('label.colors'), key: 'hexCode', minWidth: '140' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
