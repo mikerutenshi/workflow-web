@@ -19,6 +19,7 @@
         :error-messages="trfNo.errorMessage.value"
         v-model="trfNo.value.value"
         readonly
+        :loading="isFetchingTrfNo"
       />
 
       <v-row>
@@ -211,9 +212,15 @@ const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,
   tags: [CACHE_INVENTORIES],
 });
-const { isFetching: isFetchingTrfNo, execute: fetchInvTrfNo } = useQuery({
+
+const getTrfNoParam = computed(() => ({
+  date: trfDate.value.value,
+}));
+const variablesTrfNo = computed(() => getTrfNoParam.value);
+const { isFetching: isFetchingTrfNo, execute: generateInvTrfNo } = useQuery({
   query: GenerateInvTrfNoDocument,
   cachePolicy: 'network-only',
+  variables: variablesTrfNo,
   onData(data) {
     trfNo.setValue(data.generateInvTrfNo);
   },
@@ -326,7 +333,7 @@ if (props.invTrfId) {
   fetchTransfer();
   setFieldValue('updatedBy', userId);
 } else {
-  fetchInvTrfNo();
+  generateInvTrfNo();
 }
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];

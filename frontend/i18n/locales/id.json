@@ -112,6 +112,7 @@
     "size": "Ukuran",
     "sizes": "Ukuran {'|'} Jumlah",
     "quantity": "Jumlah",
+    "quantity_available": "Jumlah Tersedia",
     "tasks": "Tugas",
     "task": "Tugas",
     "artisan": "Perajin",
@@ -187,7 +188,7 @@
     "type": "Tipe",
     "created_at": "Dibuat Pada",
     "updated_at": "Dirubah Pada",
-    "added_to_inventory": "Sudah di Inventaris",
+    "is_in_inventory": "Ada di Inventaris",
     "role": "Peran",
     "wait_for_activation": "Harap tunggu hingga akun Anda diaktifkan sebelum masuk."
   },

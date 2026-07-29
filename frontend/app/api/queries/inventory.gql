@@ -284,8 +284,8 @@ mutation deleteInvTrfItem($id: ID!) {
   deleteInvTrfItem(id: $id)
 }
 
-query generateInvTrfNo {
-  generateInvTrfNo
+query generateInvTrfNo($date: Date!) {
+  generateInvTrfNo(date: $date)
 }
 
 query getInvTxs($invId: ID!, $productId: ID!) {

@@ -6,6 +6,8 @@ import { Sale } from '@/models/sale.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { generateId } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
+import dayjs from 'dayjs';
+
 import { SaleCreateDto } from './dto/sale-create.dto';
 import { SaleUpdateDto } from './dto/sale-update.dto';
 
@@ -231,12 +233,21 @@ export class SaleService {
     return sale;
   }
 
-  async generateSaleNo(): Promise<string> {
+  async generateSaleNo(date: Date): Promise<string> {
+    const startOfDay = dayjs(date).startOf('day').toDate();
+    const endOfDay = dayjs(date).endOf('day').toDate();
+
     const lastSale = await this.prisma.sale.findFirst({
       orderBy: { createdAt: 'desc' },
+      where: {
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
     });
     const lastSaleNo = lastSale?.saleNo;
 
-    return generateId(Operation.Sale, lastSaleNo);
+    return generateId(Operation.Sale, lastSaleNo, date);
   }
 }

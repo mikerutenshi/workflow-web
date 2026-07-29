@@ -548,11 +548,11 @@ type Query {
   getInvTrfItems(fromInvId: ID!, toInvId: ID!, progress: Progress): [InvTrfItemDto!]!
   getInvTrfs: [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
-  generateInvTrfNo: String!
+  generateInvTrfNo(date: Date!): String!
   getInvTxs(invId: ID!, productId: ID!): [InvTxDto!]!
   getSales(invId: ID): [Sale!]!
   getSale(id: ID!): Sale!
-  generateSaleNo: String!
+  generateSaleNo(date: Date!): String!
 }
 
 type Mutation {

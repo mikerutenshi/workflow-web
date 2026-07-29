@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AddToInventoryDto } from './dto/add-to=inventory.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class TaskService {
@@ -99,6 +100,7 @@ export class TaskService {
         throw new Error('Already transferred');
       }
 
+      const currentDate = dayjs().toISOString();
       const trfNo = await this.invTrfService.generateInvTrfPrdNoOp(tx);
 
       const invTrfItem = await this.invTrfService.createInvTrfItem(

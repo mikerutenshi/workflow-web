@@ -14,6 +14,7 @@ import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvProductService } from './inv-product.service';
 import { InvTxService } from './inv-tx.service';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class InvTrfService {
@@ -405,19 +406,37 @@ export class InvTrfService {
     return true;
   }
 
-  async generateInvTrfNo(): Promise<string> {
+  async generateInvTrfNo(date: Date): Promise<string> {
+    const startOfDay = dayjs(date).startOf('day').toDate();
+    const endOfDay = dayjs(date).endOf('day').toDate();
+
     const lastTrf = await this.prisma.invTrf.findFirst({
-      where: { workId: null },
+      where: {
+        workId: null,
+        trfDate: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
     const lastTrfNo = lastTrf?.trfNo;
 
-    return generateId(Operation.Transfer, lastTrfNo);
+    return generateId(Operation.Transfer, lastTrfNo, date);
   }
 
   async generateInvTrfPrdNoOp(tx: Prisma.TransactionClient): Promise<string> {
+    const startOfDay = dayjs().startOf('day').toDate();
+    const endOfDay = dayjs().endOf('day').toDate();
+
     const lastInvPrd = await tx.invTrf.findFirst({
-      where: { workId: { not: null } },
+      where: {
+        workId: { not: null },
+        trfDate: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
     const lastNo = lastInvPrd?.trfNo;

@@ -112,6 +112,7 @@
     "size": "Size",
     "sizes": "Size {'|'} Quantity",
     "quantity": "Quantity",
+    "quantity_available": "Available Quantity",
     "tasks": "Tasks",
     "task": "Task",
     "artisan": "Artisan",
@@ -187,7 +188,7 @@
     "type": "Type",
     "created_at": "Created At",
     "updated_at": "Updated At",
-    "added_to_inventory": "Added to Inventory",
+    "is_in_inventory": "Is in Inventory",
     "role": "Role",
     "wait_for_activation": "Please wait for your account to be activated before logging in"
   },

@@ -112,6 +112,7 @@
     "size": "Ukuran",
     "sizes": "Ukuran {'|'} Jumlah",
     "quantity": "Jumlah",
+    "quantity_available": "Jumlah nu Sayogi",
     "tasks": "Tugas",
     "task": "Tugas",
     "artisan": "Pangrajin",
@@ -187,7 +188,7 @@
     "type": "Jenis",
     "created_at": "Dijieun Dina",
     "updated_at": "Diropea Dina",
-    "added_to_inventory": "Dina Inventaris",
+    "is_in_inventory": "Dina Inventaris",
     "role": "Peran",
     "wait_for_activation": "Mangga antosan dugi akun anjeun diaktipkeun sateuacan lebet"
   },

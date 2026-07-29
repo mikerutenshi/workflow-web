@@ -2,8 +2,12 @@ import { InvType, Prisma } from '@/generated/prisma/client';
 import { Operation } from '@/models/operation.enum';
 import dayjs from 'dayjs';
 
-export function generateId(op: Operation, lastId: string | undefined): string {
-  const today = dayjs();
+export function generateId(
+  op: Operation,
+  lastId?: string,
+  currentDate?: Date,
+): string {
+  const today = dayjs(currentDate);
   const format = 'YYMMDD';
 
   if (!lastId) {
@@ -17,11 +21,12 @@ export function generateId(op: Operation, lastId: string | undefined): string {
     if (lastOp === op) {
       const lastDateObject = dayjs(lastDate, 'YYMMDD');
 
-      if (lastDateObject.isBefore(today, 'month')) {
-        return `${op}-${today.format(format)}-0001`;
-      } else {
-        return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
-      }
+      // if (lastDateObject.isBefore(today, 'month')) {
+      //   return `${op}-${today.format(format)}-0001`;
+      // } else {
+      //   return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
+      // }
+      return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
     } else {
       throw Error('Operations do not match');
     }

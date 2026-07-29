@@ -42,8 +42,10 @@ export class SaleResolver {
   }
 
   @Query(() => String)
-  generateSaleNo(): Promise<String> {
-    return this.service.generateSaleNo();
+  generateSaleNo(
+    @Args('date', { type: () => Date }) date: Date,
+  ): Promise<String> {
+    return this.service.generateSaleNo(date);
   }
 
   @Mutation(() => Boolean)

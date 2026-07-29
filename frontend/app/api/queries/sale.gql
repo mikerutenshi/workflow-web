@@ -37,8 +37,8 @@ query getSale($id: ID!) {
   }
 }
 
-query generateSaleNo {
-  generateSaleNo
+query generateSaleNo($date: Date!) {
+  generateSaleNo(date: $date)
 }
 
 mutation deleteSale($id: ID!) {

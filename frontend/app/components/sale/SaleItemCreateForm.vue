@@ -100,8 +100,8 @@ const emit = defineEmits(['form-submit']);
 const table = reactive({
   headers: [
     { title: t('label.size'), key: 'eu', sortable: false },
-    { title: t('label.quantity'), key: 'availQty', sortable: false },
-    { title: 'Selling Qty', key: 'sellQty', sortable: false },
+    { title: t('label.quantity_available'), key: 'availQty', sortable: false },
+    { title: t('label.quantity'), key: 'sellQty', sortable: false },
   ] as const,
   items: [] as SizeItem[],
 });

@@ -102,8 +102,14 @@
     </template>
 
     <template v-slot:item.invTrf="{ item }">
-      <v-icon :icon="mdiCheck" v-if="item.invTrf" class="mr-2" />
-      <span v-if="item.invTrf">{{ item.invTrf?.trfNo }}</span>
+      <template v-if="item.invTrf">
+        <span>{{
+          `${$t('btn.yes')}, ${t('label.trf_no')}: ${item.invTrf?.trfNo}`
+        }}</span>
+      </template>
+      <template v-else>
+        <span>{{ `${$t('btn.no')}` }}</span>
+      </template>
     </template>
 
     <template v-slot:item.actions="{ item }">
@@ -120,6 +126,7 @@
           </template>
           <v-list>
             <v-list-item
+              v-if="!item.invTrf"
               :prepend-icon="mdiPencil"
               @click="showEditWorkDialog(item)"
             >
@@ -143,6 +150,7 @@
             </v-list-item>
 
             <v-list-item
+              v-if="!item.invTrf"
               :prepend-icon="mdiTrashCan"
               @click="showDeleteDialog(item)"
               class="text-error"
@@ -348,7 +356,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.status'), key: 'progress' },
   { title: t('label.tasks'), key: 'tasks' },
   { title: t('label.note'), key: 'note', maxWidth: '120' },
-  { title: t('label.added_to_inventory'), key: 'invTrf', maxWidth: '120' },
+  { title: t('label.is_in_inventory'), key: 'invTrf', maxWidth: '120' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];
 

@@ -67,8 +67,10 @@ export class InvTrfResolver {
   }
 
   @Query(() => String)
-  generateInvTrfNo(): Promise<string> {
-    return this.service.generateInvTrfNo();
+  generateInvTrfNo(
+    @Args('date', { type: () => Date }) date: Date,
+  ): Promise<string> {
+    return this.service.generateInvTrfNo(date);
   }
 
   // @UseGuards(RoleGuard)

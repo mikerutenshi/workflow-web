@@ -18,6 +18,7 @@
         :error-messages="saleNo.errorMessage.value"
         v-model="saleNo.value.value"
         readonly
+        :loading="isFetchingSaleNo"
       />
 
       <v-col class="d-flex align-center justify-end">
@@ -308,9 +309,14 @@ const {
   },
 });
 
+const getSaleNoParam = computed(() => ({
+  date: date.value.value,
+}));
+const variables = computed(() => getSaleNoParam.value);
 const { isFetching: isFetchingSaleNo, execute: fetchSaleNo } = useQuery({
   query: GenerateSaleNoDocument,
   cachePolicy: 'network-only',
+  variables,
   onData(data) {
     saleNo.setValue(data.generateSaleNo);
   },
