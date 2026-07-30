@@ -75,9 +75,14 @@
       <v-textarea
         v-model="note.value.value"
         :label="$t('label.note')"
+        :error-messages="note.errorMessage.value"
         counter
         clearable
-        :rules="rules"
+        :rules="[
+          (v?: string) =>
+            (v ?? '').length <= 255 ||
+            $t('zodI18n.errors.too_big.string.inclusive', { maximum: 255 }),
+        ]"
         rows="3"
       >
       </v-textarea>
@@ -142,8 +147,6 @@ const router = useRouter();
 const submitBtnTitle = computed(() =>
   workId.value ? t('btn.update') : t('btn.create'),
 );
-
-const rules = [(v: string) => v?.length <= 255 || 'Max 255 characters'];
 
 const {
   execute: executeCreate,
@@ -286,5 +289,9 @@ watch(sizeQuantities, (newItems) => {
       quantity: newItem.quantity,
     })),
   );
+});
+
+watchEffect(() => {
+  console.log(`values ${JSON.stringify(values)}`);
 });
 </script>

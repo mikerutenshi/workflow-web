@@ -190,7 +190,9 @@
     "updated_at": "Updated At",
     "is_in_inventory": "Is in Inventory",
     "role": "Role",
-    "wait_for_activation": "Please wait for your account to be activated before logging in"
+    "wait_for_activation": "Please wait for your account to be activated before logging in",
+    "profit_margins": "Profit Margins",
+    "inv_trf_slip": "Inventory Transfer Slip"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",

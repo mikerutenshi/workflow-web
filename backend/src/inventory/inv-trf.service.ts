@@ -314,7 +314,6 @@ export class InvTrfService {
         item.discounts,
         item.toInv.priceFormula?.offset,
         item.toInv.priceFormula?.multiplier,
-        item.toInv.priceFormula?.discounts,
       ),
     }));
   }
@@ -341,11 +340,11 @@ export class InvTrfService {
       where: { id },
       include: {
         fromInv: true,
-        toInv: true,
+        toInv: { include: { priceFormula: true } },
         invTrfItems: {
           include: {
             fromInv: true,
-            toInv: { include: { priceFormula: true } },
+            toInv: true,
             product: {
               include: {
                 productGroup: {
@@ -369,8 +368,22 @@ export class InvTrfService {
       throw new Error(`Inventory Transfer with ID ${id} not found.`);
     }
 
+    const priceFormula = result.toInv.priceFormula
+      ? {
+          ...result.toInv.priceFormula,
+          multiplier: result.toInv.priceFormula.multiplier?.toFixed(4) ?? null,
+          profitMargins: result.toInv.priceFormula.profitMargins.map((margin) =>
+            margin.toFixed(4),
+          ),
+        }
+      : null;
+
     return {
       ...result,
+      toInv: {
+        ...result.toInv,
+        priceFormula,
+      },
       invTrfItems: result.invTrfItems.map((item) => ({
         ...item,
         discounts: item.discounts.map((disc) => disc.toFixed(4)),
@@ -381,9 +394,8 @@ export class InvTrfService {
           item.product.productGroup.productCategoryId,
           item.toInv.type,
           item.discounts,
-          item.toInv.priceFormula?.offset,
-          item.toInv.priceFormula?.multiplier,
-          item.toInv.priceFormula?.discounts,
+          result.toInv.priceFormula?.offset,
+          result.toInv.priceFormula?.multiplier,
         ),
       })),
     };
@@ -418,7 +430,7 @@ export class InvTrfService {
           lte: endOfDay,
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { trfNo: 'desc' },
     });
     const lastTrfNo = lastTrf?.trfNo;
 
@@ -437,7 +449,7 @@ export class InvTrfService {
           lte: endOfDay,
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { trfNo: 'desc' },
     });
     const lastNo = lastInvPrd?.trfNo;
 

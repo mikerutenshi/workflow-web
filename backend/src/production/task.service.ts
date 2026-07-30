@@ -121,12 +121,14 @@ export class TaskService {
       const invTrf = await this.invTrfService.createInvTrf(
         {
           trfNo,
+          trfDate: dayjs().toDate(),
           fromInvId: null,
           toInvId: factory.id,
           progress: Progress.COMPLETED,
           invTrfItemIds: [invTrfItem.id],
           workId: addToInventory.workId,
           createdBy: addToInventory.createdBy,
+          note: 'Automatically generated from production',
         },
         tx,
       );

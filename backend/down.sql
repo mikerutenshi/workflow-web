@@ -1,9 +1,6 @@
--- DropForeignKey
-ALTER TABLE "public"."InvToUser" DROP CONSTRAINT "InvToUser_invId_fkey";
+-- AlterTable
+ALTER TABLE "public"."InvTrf" DROP COLUMN "note";
 
--- DropForeignKey
-ALTER TABLE "public"."InvToUser" DROP CONSTRAINT "InvToUser_userId_fkey";
-
--- DropTable
-DROP TABLE "public"."InvToUser";
+-- AlterTable
+ALTER TABLE "public"."Sale" DROP COLUMN "note";
 

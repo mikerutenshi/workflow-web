@@ -133,7 +133,6 @@ export class InvProductService {
         product.discounts,
         inventory.priceFormula?.offset,
         inventory.priceFormula?.multiplier,
-        inventory.priceFormula?.discounts,
       ),
     }));
   }
@@ -484,7 +483,6 @@ export class InvProductService {
         discounts.map((disc) => Prisma.Decimal(disc)),
         priceFormula.offset,
         priceFormula.multiplier,
-        priceFormula.discounts,
       );
 
       if (!result) throw Error('Price computation failed');

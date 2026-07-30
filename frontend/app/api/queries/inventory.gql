@@ -9,7 +9,7 @@ fragment InventoryFragment on InventoryDto {
     id
     offset
     multiplier
-    discounts
+    profitMargins
   }
 }
 
@@ -225,9 +225,13 @@ query getInvTrf($id: ID!) {
       city
       province
       type
+      priceFormula {
+        profitMargins
+      }
     }
     trfDate
     progress
+    note
     invTrfItems {
       id
       product {

@@ -6,7 +6,9 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
+  IsString,
   Matches,
+  MaxLength,
   Min,
 } from 'class-validator';
 
@@ -16,26 +18,26 @@ export class InvTrfCreateDto {
   @Matches(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/, {
     message: 'Format support example: TRF-251015-0001',
   })
-  trfNo: string;
+  trfNo!: string;
 
   @Field(() => ID, { nullable: true })
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  fromInvId: number | null;
+  fromInvId!: number | null;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  toInvId: number;
+  toInvId!: number;
 
   @Field(() => Date)
   @IsDate()
-  trfDate?: Date;
+  trfDate!: Date;
 
   @Field(() => Progress)
   @IsEnum(Progress)
   @IsOptional()
-  progress?: Progress;
+  progress!: Progress;
 
   @Field(() => [ID])
   @Transform(({ value }) => {
@@ -46,7 +48,7 @@ export class InvTrfCreateDto {
   })
   @IsInt({ each: true })
   @Min(1, { each: true })
-  invTrfItemIds: number[];
+  invTrfItemIds!: number[];
 
   @Field(() => ID, { nullable: true })
   @Transform(({ value }) => parseInt(value, 10))
@@ -54,8 +56,14 @@ export class InvTrfCreateDto {
   @IsOptional()
   workId?: number;
 
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @MaxLength(255)
+  @IsOptional()
+  note!: string | null;
+
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  createdBy: number;
+  createdBy!: number;
 }

@@ -238,7 +238,7 @@ export class SaleService {
     const endOfDay = dayjs(date).endOf('day').toDate();
 
     const lastSale = await this.prisma.sale.findFirst({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { saleNo: 'desc' },
       where: {
         date: {
           gte: startOfDay,

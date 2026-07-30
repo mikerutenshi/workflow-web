@@ -238,19 +238,6 @@ watch(
   { immediate: true, deep: true },
 );
 
-watchEffect(() => {
-  const selectedInv = availInventories.value.find(
-    (inv) => inv.id === toInvId.value.value,
-  );
-  const invPrice = calculatePrice(
-    invProduct?.product.productGroup.msrp ?? 0,
-    selectedInv?.priceFormula?.offset,
-    selectedInv?.priceFormula?.multiplier,
-    selectedInv?.priceFormula?.discounts,
-  );
-  displayModel.price = invPrice;
-});
-
 watchDebounced(
   displayModel.discounts,
   (newArray) => {

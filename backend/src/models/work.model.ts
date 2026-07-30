@@ -6,13 +6,13 @@ import { Progress } from '@/generated/prisma/client';
 @ObjectType()
 export class Work extends BaseModel {
   @Field(() => Date)
-  date: Date;
+  date!: Date;
   @Field()
-  orderNo: string;
+  orderNo!: string;
   @Field(() => ID)
-  productId: number;
+  productId!: number;
   @Field(() => Progress)
-  progress: Progress;
+  progress!: Progress;
   @Field(() => String, { nullable: true })
   note?: string | null;
 }

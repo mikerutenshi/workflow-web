@@ -318,6 +318,7 @@ model InvTrf {
   invTrfItems       InvTrfItem[]
   progress          Progress        @default(PENDING)
   workId            Int?            @unique           
+  note              String?          
 
   fromInv           Inventory?      @relation("FromInventory", fields: [fromInvId], references: [id])
   toInv             Inventory       @relation("ToInventory", fields: [toInvId], references: [id])
@@ -387,7 +388,7 @@ model PriceFormula {
   id                Int             @id @default(autoincrement())
   multiplier        Decimal?        @db.Decimal(3,2)
   offset            Int?
-  discounts         Decimal[]       @db.Decimal(5,4)
+  profitMargins     Decimal[]       @db.Decimal(5,4)
   invId             Int             @unique
 
   inventory         Inventory       @relation(fields: [invId], references: [id], onDelete: Cascade)
@@ -398,6 +399,7 @@ model Sale {
   saleNo            String          @unique
   date              DateTime
   saleItems         SaleItem[]
+  note              String?          
 
   createdBy         Int
   updatedBy         Int?

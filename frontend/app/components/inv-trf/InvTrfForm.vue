@@ -68,6 +68,7 @@
       <v-card
         v-if="fromInvId.value.value && toInvId.value.value"
         variant="outlined"
+        class="mb-4"
       >
         <v-card-title>{{ $t('card.products_to_trf') }}</v-card-title>
         <v-data-table
@@ -130,6 +131,22 @@
           {{ errors['invTrfItemIds'] }}
         </span>
       </v-card>
+
+      <v-textarea
+        v-model="note.value.value"
+        :label="$t('label.note')"
+        :error-messages="note.errorMessage.value"
+        counter
+        :clearable="!props.isReadonly"
+        :rules="[
+          (v?: string) =>
+            (v ?? '').length <= 255 ||
+            $t('zodI18n.errors.too_big.string.inclusive', { maximum: 255 }),
+        ]"
+        rows="3"
+        :readonly="props.isReadonly"
+      >
+      </v-textarea>
     </v-card-text>
 
     <v-card-actions>
@@ -200,6 +217,7 @@ const fromInvId = useField('fromInvId');
 const toInvId = useField('toInvId');
 const trfDate = useField<string>('trfDate');
 const progress = useField<Progress>('progress');
+const note = useField('note');
 const { fields, push, remove, replace } = useFieldArray('invTrfItemIds');
 
 const progressList = Object.values(Progress)
@@ -213,14 +231,13 @@ const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   tags: [CACHE_INVENTORIES],
 });
 
-const getTrfNoParam = computed(() => ({
-  date: trfDate.value.value,
-}));
-const variablesTrfNo = computed(() => getTrfNoParam.value);
+// const getTrfNoParam = computed(() => ({
+//   date: trfDate.value.value,
+// }));
 const { isFetching: isFetchingTrfNo, execute: generateInvTrfNo } = useQuery({
   query: GenerateInvTrfNoDocument,
   cachePolicy: 'network-only',
-  variables: variablesTrfNo,
+  // variables: getTrfNoParam,
   onData(data) {
     trfNo.setValue(data.generateInvTrfNo);
   },
@@ -319,13 +336,13 @@ const {
   tags: [CACHE_INV_TRF],
   fetchOnMount: false,
   onData(data) {
-    const invTrf = data.getInvTrf;
-    trfDate.setValue(invTrf.trfDate);
-    trfNo.setValue(invTrf.trfNo);
-    if (invTrf.fromInv) fromInvId.setValue(invTrf.fromInv.id);
-    toInvId.setValue(invTrf.toInv.id);
-    progress.setValue(invTrf.progress);
-    itemIdSelections.value = invTrf.invTrfItems.map((item) => item.id);
+    trfDate.setValue(data.getInvTrf.trfDate);
+    trfNo.setValue(data.getInvTrf.trfNo);
+    if (data.getInvTrf.fromInv) fromInvId.setValue(data.getInvTrf.fromInv.id);
+    toInvId.setValue(data.getInvTrf.toInv.id);
+    progress.setValue(data.getInvTrf.progress);
+    itemIdSelections.value = data.getInvTrf.invTrfItems.map((item) => item.id);
+    note.setValue(data.getInvTrf.note);
   },
 });
 
@@ -333,7 +350,7 @@ if (props.invTrfId) {
   fetchTransfer();
   setFieldValue('updatedBy', userId);
 } else {
-  generateInvTrfNo();
+  generateInvTrfNo({ variables: { date: trfDate.value.value } });
 }
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
@@ -375,6 +392,12 @@ watchEffect(() => {
   if (fromInvId.value.value && toInvId.value.value) {
     variables.fromInvId = fromInvId.value.value as string;
     variables.toInvId = toInvId.value.value as string;
+  }
+});
+
+watch(trfDate.value, (newDate) => {
+  if (!props.invTrfId && newDate) {
+    generateInvTrfNo({ variables: { date: trfDate.value.value } });
   }
 });
 </script>

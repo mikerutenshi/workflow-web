@@ -25,7 +25,7 @@ export class InventoryService {
           create: {
             multiplier: data.priceFormula.multiplier,
             offset: data.priceFormula.offset,
-            discounts: data.priceFormula.discounts,
+            profitMargins: data.priceFormula.profitMargins,
           },
         },
       },
@@ -44,7 +44,7 @@ export class InventoryService {
         ? {
             ...result.priceFormula,
             multiplier: result.priceFormula.multiplier?.toFixed(2) ?? null,
-            discounts: result.priceFormula.discounts.map((disc) =>
+            profitMargins: result.priceFormula.profitMargins.map((disc) =>
               disc.toFixed(4),
             ),
           }
@@ -70,7 +70,7 @@ export class InventoryService {
         ? {
             ...result.priceFormula,
             multiplier: result.priceFormula.multiplier?.toFixed(2) ?? null,
-            discounts: result.priceFormula.discounts.map((disc) =>
+            profitMargins: result.priceFormula.profitMargins.map((disc) =>
               disc.toFixed(4),
             ),
           }
@@ -92,12 +92,12 @@ export class InventoryService {
             update: {
               multiplier: data.priceFormula?.multiplier,
               offset: data.priceFormula?.offset,
-              discounts: data.priceFormula?.discounts,
+              profitMargins: data.priceFormula?.profitMargins,
             },
             create: {
               multiplier: data.priceFormula?.multiplier,
               offset: data.priceFormula?.offset,
-              discounts: data.priceFormula?.discounts,
+              profitMargins: data.priceFormula?.profitMargins,
             },
           },
         },

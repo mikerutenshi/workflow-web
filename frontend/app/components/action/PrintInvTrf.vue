@@ -67,7 +67,7 @@ function createPdf(invTrfModel: InvTrfType) {
 
   const titleX = pageWidth * 0.5;
   const titleY = pageMargin;
-  const title = 'Inventory Transfer Slip';
+  const title = t('label.inv_trf_slip');
   doc.setFont(pageFont, 'bold');
   doc.setFontSize(titleFontSize);
   doc.text(title, titleX, titleY, {
@@ -224,6 +224,27 @@ function createPdf(invTrfModel: InvTrfType) {
         String(totalQty),
         String(formatRupiah(totalPrice)),
       ],
+      // ...(destInv.priceFormula?.profitMargins
+      //   ? [
+      //       [
+      //         {
+      //           content: `Setelah Diskon Toko ${destInv.priceFormula.profitMargins
+      //             .map((disc) => formatDiscount(convertDecimalToPercent(disc)))
+      //             .join(' + ')}`,
+      //           colSpan: 11,
+      //           styles: { halign: 'center' as const },
+      //         },
+      //         String(
+      //           formatRupiah(
+      //             computeDiscounted(
+      //               totalPrice,
+      //               destInv.priceFormula.profitMargins,
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      //     ]
+      //   : []),
     ],
     styles: { font: 'helvetica', fontSize: 9 },
     headStyles: { fillColor: [84, 123, 138] },
@@ -233,16 +254,45 @@ function createPdf(invTrfModel: InvTrfType) {
     },
   });
 
-  doc.setFont(pageFont, 'normal');
-  doc.text(`${t('label.sender_sign')}:`, pageMargin, lastTableY + margin * 1.5);
-  doc.text(
-    `${t('label.receiver_sign')}:`,
-    pageWidth - pageMargin,
-    lastTableY + margin * 1.5,
-    {
-      align: 'right',
-    },
-  );
+  if (invTrfModel.note) {
+    doc.setFont(pageFont, 'italic');
+    const noteY = lastTableY + margin * 1.5;
+    // Wrap long notes to fit page width
+    const maxWidth = pageWidth - pageMargin * 2;
+    const noteText = `${t('label.note')}: ${invTrfModel.note || ''}`;
+    const noteLines = doc.splitTextToSize(noteText, maxWidth);
+    doc.text(noteLines, pageMargin, noteY);
+
+    doc.setFont(pageFont, 'normal');
+    doc.text(
+      `${t('label.sender_sign')}:`,
+      pageMargin,
+      noteY + noteLines.length * margin * 1.2,
+    );
+    doc.text(
+      `${t('label.receiver_sign')}:`,
+      pageWidth - pageMargin,
+      noteY + noteLines.length * margin * 1.2,
+      {
+        align: 'right',
+      },
+    );
+  } else {
+    doc.setFont(pageFont, 'normal');
+    doc.text(
+      `${t('label.sender_sign')}:`,
+      pageMargin,
+      lastTableY + margin * 1.5,
+    );
+    doc.text(
+      `${t('label.receiver_sign')}:`,
+      pageWidth - pageMargin,
+      lastTableY + margin * 1.5,
+      {
+        align: 'right',
+      },
+    );
+  }
 
   doc.save(`${trfNo}.pdf`);
 }

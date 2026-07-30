@@ -44,7 +44,6 @@ export function computePrice(
   productDiscounts: Prisma.Decimal[],
   offset?: number | null,
   multiplier?: Prisma.Decimal | null,
-  discounts?: Prisma.Decimal[] | null,
 ): number | null {
   if (!base) return null;
 
@@ -86,10 +85,6 @@ export function computePrice(
   //   console.log(`finalOffset: ${finalOffset}`);
   //todo if discount is 50% multiplier = 185
   // }
-
-  discounts?.forEach((disc) => {
-    result = result - disc.times(result).toNumber();
-  });
 
   result = Math.ceil(result / 10000) * 10000 - 100;
 

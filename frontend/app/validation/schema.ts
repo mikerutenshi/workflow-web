@@ -107,7 +107,7 @@ export const WorkSchema = z.object({
       quantity: z.number().min(1),
     }),
   ),
-  note: z.string().max(255).trim(),
+  note: z.string().max(255).trim().nullable().optional(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });
@@ -170,7 +170,7 @@ export const InventorySchema = z.object({
       })
       .optional()
       .nullable(),
-    discounts: discounts,
+    profitMargins: discounts,
   }),
 });
 
@@ -182,6 +182,7 @@ export const InvTrfSchema = z.object({
   progress: z.nativeEnum(Progress),
   createdBy: positiveNumberString,
   invTrfItemIds: z.array(positiveNumberString).nonempty(),
+  note: z.string().max(255).trim().nullable().optional(),
   updatedBy: positiveNumberString.optional().nullable(),
 });
 
@@ -221,6 +222,7 @@ export const SaleSchema = z.object({
   saleNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
   date: z.string().datetime(),
   saleItems: z.array(SaleItemSchema).nonempty(),
+  note: z.string().max(255).trim().nullable().optional(),
   createdBy: positiveNumberString,
   updatedBy: positiveNumberString.optional().nullable(),
 });

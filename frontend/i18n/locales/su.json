@@ -190,7 +190,9 @@
     "updated_at": "Diropea Dina",
     "is_in_inventory": "Dina Inventaris",
     "role": "Peran",
-    "wait_for_activation": "Mangga antosan dugi akun anjeun diaktipkeun sateuacan lebet"
+    "wait_for_activation": "Mangga antosan dugi akun anjeun diaktipkeun sateuacan lebet",
+    "profit_margins": "Margin Kauntungan",
+    "inv_trf_slip": "Slip Transfer Inventaris"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",

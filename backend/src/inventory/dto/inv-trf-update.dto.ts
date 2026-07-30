@@ -10,7 +10,7 @@ export class InvTrfUpdateDto extends PartialType(
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  updatedBy: number;
+  updatedBy!: number;
 
   @Field(() => [ID])
   @Transform(({ value }) => {
@@ -21,5 +21,5 @@ export class InvTrfUpdateDto extends PartialType(
   })
   @IsInt({ each: true })
   @Min(1, { each: true })
-  invTrfItemIds: number[];
+  invTrfItemIds!: number[];
 }

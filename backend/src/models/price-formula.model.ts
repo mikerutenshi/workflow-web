@@ -12,5 +12,5 @@ export class PriceFormula {
   offset!: number | null;
 
   @Field(() => [String])
-  discounts!: string[];
+  profitMargins!: string[];
 }

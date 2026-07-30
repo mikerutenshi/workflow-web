@@ -86,30 +86,30 @@
           <v-row>
             <v-col cols="9">
               <v-text-field
-                v-for="(_, index) in priceFormulaModel.discounts"
-                :label="`${$t('label.discount')} ${index + 1}`"
+                v-for="(_, index) in priceFormulaModel.profitMargins"
+                :label="`${$t('label.profit_margins')} ${index + 1}`"
                 v-maska="percentageMask"
                 :key="index"
                 clearable
-                :model-value="priceFormulaModel.discounts[index]"
+                :model-value="priceFormulaModel.profitMargins[index]"
                 @update:model-value="
                   (value) =>
-                    (priceFormulaModel.discounts[index] =
+                    (priceFormulaModel.profitMargins[index] =
                       discMask.unmasked(value))
                 "
                 @click:clear="
                   if (discounts.fields.value.length > 1)
-                    priceFormulaModel.discounts.pop();
+                    priceFormulaModel.profitMargins.pop();
                 "
                 inputmode="numeric"
-                :error-messages="errors['priceFormula.discounts']"
+                :error-messages="errors['priceFormula.profitMargins']"
               />
             </v-col>
             <v-col cols="3">
               <v-btn
                 :icon="mdiPlus"
                 color="primary"
-                @click="priceFormulaModel.discounts.push('')"
+                @click="priceFormulaModel.profitMargins.push('')"
               ></v-btn>
             </v-col>
           </v-row>
@@ -173,7 +173,7 @@ const emit = defineEmits(['form-submit']);
 const priceFormulaModel = reactive({
   offset: '',
   multiplier: '',
-  discounts: [''],
+  profitMargins: [''],
 });
 const offsetUnmasked = ref('');
 const multiplierUnmasked = ref('');
@@ -201,9 +201,9 @@ if (invId) {
             getInventory.priceFormula.offset?.toString() ?? '';
           priceFormulaModel.multiplier =
             getInventory.priceFormula.multiplier ?? '';
-          if (getInventory.priceFormula.discounts.length > 0) {
-            priceFormulaModel.discounts =
-              getInventory.priceFormula.discounts.map((item) =>
+          if (getInventory.priceFormula.profitMargins.length > 0) {
+            priceFormulaModel.profitMargins =
+              getInventory.priceFormula.profitMargins.map((item) =>
                 convertDecimalToPercent(item),
               );
           }
@@ -268,12 +268,12 @@ watch(multiplierUnmasked, (newValue) => {
   multiplier.setValue(newValue);
 });
 watch(
-  () => priceFormulaModel.discounts,
+  () => priceFormulaModel.profitMargins,
   (newDiscounts) => {
     const decimals = newDiscounts
       .filter((item) => item !== '')
       .map((item) => convertPercentToDecimal(item));
-    setFieldValue('priceFormula.discounts', decimals);
+    setFieldValue('priceFormula.profitMargins', decimals);
   },
   { deep: true },
 );

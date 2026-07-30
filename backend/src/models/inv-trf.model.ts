@@ -14,4 +14,6 @@ export class InvTrf extends BaseModel {
   trfDate!: Date;
   @Field(() => Progress)
   progress!: Progress;
+  @Field(() => String, { nullable: true })
+  note?: string | null;
 }

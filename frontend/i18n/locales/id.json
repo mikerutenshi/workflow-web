@@ -190,7 +190,9 @@
     "updated_at": "Dirubah Pada",
     "is_in_inventory": "Ada di Inventaris",
     "role": "Peran",
-    "wait_for_activation": "Harap tunggu hingga akun Anda diaktifkan sebelum masuk."
+    "wait_for_activation": "Harap tunggu hingga akun Anda diaktifkan sebelum masuk.",
+    "profit_margins": "Margin Keuntungan",
+    "inv_trf_slip": "Slip Transfer Inventaris"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
