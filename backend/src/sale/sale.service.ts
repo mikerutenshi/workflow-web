@@ -234,15 +234,14 @@ export class SaleService {
   }
 
   async generateSaleNo(date: Date): Promise<string> {
-    const startOfDay = dayjs(date).startOf('day').toDate();
-    const endOfDay = dayjs(date).endOf('day').toDate();
+    const oneDayMore = dayjs(date).add(1, 'day').toDate();
 
     const lastSale = await this.prisma.sale.findFirst({
       orderBy: { saleNo: 'desc' },
       where: {
         date: {
-          gte: startOfDay,
-          lte: endOfDay,
+          gte: date,
+          lt: oneDayMore,
         },
       },
     });

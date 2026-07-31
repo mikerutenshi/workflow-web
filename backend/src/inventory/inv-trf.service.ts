@@ -3,7 +3,11 @@ import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';
 import { PrismaService } from '@/prisma/prisma.service';
-import { computePrice, generateId } from '@/utils/functions.util';
+import {
+  computePrice,
+  generateId,
+  getStartOfDay,
+} from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
 import { InvTrfItemCreateDto } from './dto/inv-trf-item-create.dto';
@@ -419,15 +423,14 @@ export class InvTrfService {
   }
 
   async generateInvTrfNo(date: Date): Promise<string> {
-    const startOfDay = dayjs(date).startOf('day').toDate();
-    const endOfDay = dayjs(date).endOf('day').toDate();
+    const oneDayMore = dayjs(date).add(1, 'day').toDate();
 
     const lastTrf = await this.prisma.invTrf.findFirst({
       where: {
         workId: null,
         trfDate: {
-          gte: startOfDay,
-          lte: endOfDay,
+          gte: date,
+          lt: oneDayMore,
         },
       },
       orderBy: { trfNo: 'desc' },
@@ -438,15 +441,15 @@ export class InvTrfService {
   }
 
   async generateInvTrfPrdNoOp(tx: Prisma.TransactionClient): Promise<string> {
-    const startOfDay = dayjs().startOf('day').toDate();
-    const endOfDay = dayjs().endOf('day').toDate();
+    const startOfDay = getStartOfDay();
+    const oneDayMore = dayjs(startOfDay).add(1, 'day').toDate();
 
     const lastInvPrd = await tx.invTrf.findFirst({
       where: {
         workId: { not: null },
         trfDate: {
           gte: startOfDay,
-          lte: endOfDay,
+          lt: oneDayMore,
         },
       },
       orderBy: { trfNo: 'desc' },

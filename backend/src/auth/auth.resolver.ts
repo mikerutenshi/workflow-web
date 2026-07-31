@@ -82,7 +82,6 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   async verifyHuman(@Args('token') token: string): Promise<boolean> {
     const result = await this.authService.verityfHuman(token);
-    console.log(`result = ${JSON.stringify(result)}`);
     return result;
   }
 }

@@ -188,7 +188,6 @@ export class AuthService {
         )
         .pipe(
           catchError((error: AxiosError) => {
-            console.log(`Error = ${JSON.stringify(error)}`);
             throw error.response?.data;
           }),
         ),

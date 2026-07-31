@@ -92,7 +92,6 @@ export class LaborCostService {
         return upsertCosts;
       });
     } catch (err) {
-      console.log(`Error -> ${err}`);
       throw err;
     }
   }

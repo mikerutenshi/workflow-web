@@ -1,13 +1,18 @@
 import { InvType, Prisma } from '@/generated/prisma/client';
 import { Operation } from '@/models/operation.enum';
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(timezone);
+dayjs.extend(utc);
+dayjs.tz.setDefault('Asia/Jakarta');
 
 export function generateId(
   op: Operation,
   lastId?: string,
   currentDate?: Date,
 ): string {
-  const today = dayjs(currentDate);
+  const today = dayjs.tz(currentDate);
   const format = 'YYMMDD';
 
   if (!lastId) {
@@ -19,13 +24,6 @@ export function generateId(
     const lastSequence = split[2];
 
     if (lastOp === op) {
-      const lastDateObject = dayjs(lastDate, 'YYMMDD');
-
-      // if (lastDateObject.isBefore(today, 'month')) {
-      //   return `${op}-${today.format(format)}-0001`;
-      // } else {
-      //   return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
-      // }
       return `${op}-${today.format(format)}-${(+lastSequence + 1).toString().padStart(4, '0')}`;
     } else {
       throw Error('Operations do not match');
@@ -33,6 +31,12 @@ export function generateId(
   } else {
     throw Error('Incomplete ID generator parameter');
   }
+}
+
+export function getStartOfDay(): Date {
+  const startOfDay = dayjs.tz().startOf('day').utc().toDate();
+
+  return startOfDay;
 }
 
 export function computePrice(
@@ -78,13 +82,6 @@ export function computePrice(
   }
 
   var result = finalMultiplier.times(base + finalOffset).toNumber();
-
-  // if (sku == 'K01903-D.Brown') {
-  //   console.log(`base: ${base}`);
-  //   console.log(`pricetieroffset: ${priceTierOffset}`);
-  //   console.log(`finalOffset: ${finalOffset}`);
-  //todo if discount is 50% multiplier = 185
-  // }
 
   result = Math.ceil(result / 10000) * 10000 - 100;
 

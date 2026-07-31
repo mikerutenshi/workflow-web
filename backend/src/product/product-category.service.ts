@@ -36,7 +36,6 @@ export class ProductCategoryService {
         id: productCategoryId,
       },
     });
-    console.log(`category: ${JSON.stringify(category)}`);
     if (!category) {
       throw new Error('Product category not found');
     }

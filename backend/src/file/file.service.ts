@@ -64,7 +64,6 @@ export class FileService {
     fileInput: CsvUploadDto,
     onData?: (row: T) => Y,
   ): Promise<Y[]> {
-    console.log(JSON.stringify(fileInput.csvFile));
     if (!fileInput.csvFile) {
       throw new Error('No file provided');
     }
