@@ -149,6 +149,8 @@
               }}</v-list-item-title>
             </v-list-item>
 
+            <v-divider></v-divider>
+
             <v-list-item
               v-if="!item.invTrf"
               :prepend-icon="mdiTrashCan"

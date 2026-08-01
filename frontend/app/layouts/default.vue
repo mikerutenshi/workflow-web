@@ -31,7 +31,7 @@
         {{ $t('btn.print') }}</v-btn
       >
 
-      <v-menu open-on-hover>
+      <v-menu>
         <template #activator="{ props }">
           <v-btn
             v-if="
@@ -56,7 +56,7 @@
         </v-list>
       </v-menu>
 
-      <v-menu open-on-hover>
+      <v-menu>
         <template #activator="{ props }">
           <v-btn
             v-if="
@@ -130,7 +130,7 @@
         </template>
       </v-list>
       <template #append>
-        <h3 v-if="isDev" class="text-center bg-purple">Development</h3>
+        <h3 v-if="isDev" class="text-center bg-red">Development</h3>
         <ActionLogOut></ActionLogOut>
       </template>
     </v-navigation-drawer>

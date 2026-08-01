@@ -68,6 +68,7 @@
               >
                 <v-list-item-title>{{ t('btn.print') }}</v-list-item-title>
               </v-list-item>
+              <v-divider></v-divider>
               <v-list-item
                 :prepend-icon="mdiTrashCan"
                 @click="showDeleteDialog(item.id)"

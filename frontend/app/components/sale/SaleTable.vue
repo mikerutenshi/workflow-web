@@ -56,33 +56,20 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-menu transition="slide-y-transition" open-on-hover>
-            <template v-slot:activator="{ props }">
-              <v-btn
-                :icon="mdiDotsVertical"
-                color="primary"
-                v-bind="props"
-                variant="text"
-              >
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item
-                :prepend-icon="mdiPencil"
-                @click="showDialog(DialogContent.Edit, item.id)"
-              >
-                <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
-              </v-list-item>
-              <v-divider></v-divider>
-              <v-list-item
-                :prepend-icon="mdiTrashCan"
-                @click="deleteItem(item.id)"
-                class="text-error"
-              >
-                <v-list-item-title>{{ t('btn.delete') }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-btn
+            :icon="mdiMagnifyExpand"
+            @click="showDialog(DialogContent.View, item.id)"
+            variant="text"
+          >
+          </v-btn>
+          <v-btn
+            v-if="clearanceLevel <= Role.Superuser"
+            :icon="mdiTrashCan"
+            @click="deleteItem(item.id)"
+            variant="text"
+            class="text-error"
+          >
+          </v-btn>
         </template>
       </v-data-table>
     </v-col>
@@ -93,6 +80,7 @@
       :inventory-id="invId"
       :sale-id="dialog.saleId"
       @form-submit="dialog.isVisible = false"
+      :is-readonly="dialog.isReadonly"
     ></SaleCreateForm>
   </ActionEditItemDialog>
 
@@ -104,9 +92,8 @@
 
 <script setup lang="ts">
 import {
-  mdiDotsVertical,
   mdiMagnify,
-  mdiPencil,
+  mdiMagnifyExpand,
   mdiTrashCan,
   mdiWarehouse,
 } from '@mdi/js';
@@ -117,6 +104,7 @@ import { DeleteSaleDocument, GetSalesDocument } from '~/api/generated/types';
 const { t } = useI18n();
 const adapter = useDate();
 const authStore = useAuthStore();
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 
 enum DialogContent {
   View = 'VIEW',
@@ -217,12 +205,12 @@ function showDialog(content: DialogContent, saleId?: string) {
       dialog.isReadonly = false;
       dialog.isVisible = true;
       break;
-    // case DialogContent.View:
-    //   dialog.content = DialogContent.View;
-    //   dialog.title = t('page.sale_view');
-    //   dialog.isReadonly = true;
-    //   dialog.isVisible = true;
-    //   break;
+    case DialogContent.View:
+      dialog.content = DialogContent.View;
+      dialog.title = t('page.sale_view');
+      dialog.isReadonly = true;
+      dialog.isVisible = true;
+      break;
   }
 }
 

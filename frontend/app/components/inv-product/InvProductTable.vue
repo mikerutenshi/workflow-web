@@ -46,7 +46,7 @@
               ></v-text-field>
             </v-col>
             <v-col class="d-flex justify-center" cols="2">
-              <h4>{{ `Total: ${totalQty}` }}</h4>
+              <h3>{{ `Total: ${$t('label.pairs', totalQty)}` }}</h3>
             </v-col>
           </v-row>
         </template>
@@ -114,8 +114,8 @@
 
         <template v-slot:item.invTrfItems="{ item }">
           <div v-if="item.pendingCount > 0">
-            {{ item.pendingCount }}
             <v-icon :icon="mdiProgressAlert"></v-icon>
+            {{ `${$t('label.transfers', item.pendingCount)}` }}
           </div>
         </template>
 
@@ -295,7 +295,7 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },
   { title: t('label.sku'), key: 'product.sku' },
-  { title: t('label.colors'), key: 'product.productColors', minWidth: '140' },
+  { title: t('label.colors'), key: 'product.productColors' },
   {
     title: t('label.product_category'),
     key: 'product.productGroup.productCategory.name',
@@ -306,10 +306,11 @@ const headers: ReadOnlyHeaders = [
   },
   { title: t('label.price'), key: 'price' },
   { title: t('label.discount'), key: 'discounts' },
-  { title: t('label.sizes'), key: 'invProductSizes', minWidth: '120' },
+  { title: t('label.sizes'), key: 'invProductSizes' },
   {
     title: t('label.pending_trfs'),
     key: 'invTrfItems',
+    maxWidth: '80',
   },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];

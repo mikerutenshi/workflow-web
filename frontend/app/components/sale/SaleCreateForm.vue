@@ -11,6 +11,7 @@
       <ActionPickDate
         v-model="date.value.value"
         :error-messages="date.errorMessage.value"
+        :readonly="isReadonly"
       ></ActionPickDate>
 
       <v-text-field
@@ -23,6 +24,7 @@
 
       <v-col class="d-flex align-center justify-end">
         <v-btn
+          v-if="!isReadonly"
           :prepend-icon="mdiPlus"
           color="primary"
           @click="dialog.isVisible = true"
@@ -123,7 +125,7 @@
               </tr>
             </template>
 
-            <template v-slot:item.actions="{ item }">
+            <template v-slot:item.actions="{ item }" v-if="!isReadonly">
               <v-btn
                 :icon="mdiTrashCan"
                 variant="text"
@@ -136,7 +138,7 @@
       </v-card>
     </v-card-text>
 
-    <v-card-actions>
+    <v-card-actions v-if="!isReadonly">
       <v-spacer></v-spacer>
       <ActionConfirm :loading="isCreating || isUpdating">{{
         submitBtnTitle
@@ -309,14 +311,9 @@ const {
   },
 });
 
-const getSaleNoParam = computed(() => ({
-  date: date.value.value,
-}));
-const variables = computed(() => getSaleNoParam.value);
-const { isFetching: isFetchingSaleNo, execute: fetchSaleNo } = useQuery({
+const { isFetching: isFetchingSaleNo, execute: generateSaleNo } = useQuery({
   query: GenerateSaleNoDocument,
   cachePolicy: 'network-only',
-  variables,
   onData(data) {
     saleNo.setValue(data.generateSaleNo);
   },
@@ -383,10 +380,11 @@ const {
   },
 });
 
-if (props.saleId) {
+if (!props.saleId) {
+  console.log(`Triggered`);
+  generateSaleNo({ variables: { date: date.value.value } });
+} else if (props.saleId) {
   fetchSale();
-} else {
-  fetchSaleNo();
 }
 
 const onSubmit = handleSubmit((data) => {
@@ -451,6 +449,11 @@ watchEffect(() => {
       totalQty: product.totalQty,
     })),
   );
+});
+watch(date.value, (newDate) => {
+  if (!props.saleId && newDate) {
+    generateSaleNo({ variables: { date: date.value.value } });
+  }
 });
 
 function closeDialog() {
