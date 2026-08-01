@@ -22,18 +22,23 @@
         :loading="isFetchingSaleNo"
       />
 
-      <v-col class="d-flex align-center justify-end">
-        <v-btn
-          v-if="!isReadonly"
-          :prepend-icon="mdiPlus"
-          color="primary"
-          @click="dialog.isVisible = true"
-          >{{ $t('btn.add_product') }}</v-btn
-        >
-      </v-col>
-
       <v-card variant="outlined" class="my-4">
-        <v-card-title>{{ $t('label.shopping_cart') }}</v-card-title>
+        <v-card-title>
+          <v-row>
+            <v-col>
+              <span>{{ $t('label.shopping_cart') }}</span>
+            </v-col>
+            <v-col class="d-flex align-center justify-end">
+              <v-btn
+                v-if="!isReadonly"
+                :prepend-icon="mdiCartArrowDown"
+                color="primary"
+                @click="dialog.isVisible = true"
+                >{{ $t('btn.add_product') }}</v-btn
+              >
+            </v-col>
+          </v-row>
+        </v-card-title>
         <v-card-subtitle></v-card-subtitle>
         <v-card-text>
           <v-data-table
@@ -155,7 +160,7 @@
 </template>
 
 <script setup lang="ts">
-import { mdiPlus, mdiTrashCan } from '@mdi/js';
+import { mdiCart, mdiCartArrowDown, mdiPlus, mdiTrashCan } from '@mdi/js';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import {

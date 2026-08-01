@@ -177,6 +177,7 @@
                 <v-list-item-title>{{ $t('label.send_to') }}</v-list-item-title>
               </v-list-item>
               <v-list-item
+                v-if="clearanceLevel <= Role.Planner"
                 :title="$t('btn.inv_product_edit_disc')"
                 :prepend-icon="mdiPercent"
                 @click="
@@ -250,6 +251,7 @@ const pageNo = ref(1);
 const itemsPerPage = ref(25);
 
 const authStore = useAuthStore();
+const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 const selectInvId = ref(authStore.user?.userInventories.at(0)?.id ?? '');
 const itemSelectionObject = shallowRef<InvProductDto | null>(null);
 const invProductsDisplay = computed(() => {
