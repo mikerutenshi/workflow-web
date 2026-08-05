@@ -1,5 +1,5 @@
 <template>
-  <v-btn
+  <v-list-item
     :color="color"
     :loading="loading"
     :disabled="loading || disabled"
@@ -7,8 +7,8 @@
     :prepend-icon="mdiPrinter"
     @click="handleClick"
   >
-    {{ $t('btn.print') }}
-  </v-btn>
+    <v-list-item-title>{{ t('btn.print') }}</v-list-item-title>
+  </v-list-item>
 </template>
 
 <script setup lang="ts">

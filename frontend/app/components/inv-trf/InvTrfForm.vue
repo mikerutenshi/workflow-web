@@ -29,7 +29,7 @@
             auto-select-first
             item-value="id"
             item-title="name"
-            :items="inventories?.getInventories"
+            :items="fromInventories"
             :loading="isFetchingInventories"
             v-model="fromInvId.value.value"
             :error-messages="fromInvId.errorMessage.value"
@@ -149,19 +149,11 @@
       </v-textarea>
     </v-card-text>
 
-    <v-card-actions>
+    <v-card-actions v-if="!props.isReadonly">
       <v-spacer></v-spacer>
-      <template v-if="props.isReadonly">
-        <ActionPrintInvTrf
-          :inv-trf-id="props.invTrfId"
-          :disabled="!props.invTrfId"
-        ></ActionPrintInvTrf>
-      </template>
-      <template v-else>
-        <ActionConfirm :loading="props.invTrfId ? isUpdating : isCreating">{{
-          submitBtnTitle
-        }}</ActionConfirm>
-      </template>
+      <ActionConfirm :loading="props.invTrfId ? isUpdating : isCreating">{{
+        submitBtnTitle
+      }}</ActionConfirm>
     </v-card-actions>
   </v-form>
 </template>
@@ -344,6 +336,24 @@ const {
     itemIdSelections.value = data.getInvTrf.invTrfItems.map((item) => item.id);
     note.setValue(data.getInvTrf.note);
   },
+});
+
+const fromInventories = computed(() => {
+  if (props.isReadonly) {
+    const userInventories = authStore.user?.userInventories ?? [];
+    const result = userInventories.map((inv) => inv);
+    if (!userInventories.find((inv) => inv.id === '1')) {
+      const findFactory = inventories.value?.getInventories.find(
+        (inv) => inv.id === '1',
+      );
+      if (findFactory) {
+        result.push({ id: findFactory.id, name: findFactory.name });
+      }
+      return result;
+    }
+  } else {
+    return authStore.user?.userInventories;
+  }
 });
 
 if (props.invTrfId) {

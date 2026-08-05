@@ -45,39 +45,57 @@
         }}</template>
 
         <template v-slot:item.actions="{ item }">
-          <v-menu transition="slide-y-transition" open-on-hover>
-            <template v-slot:activator="{ props }">
-              <v-btn
-                :icon="mdiDotsVertical"
-                color="primary"
-                v-bind="props"
-                variant="text"
-              >
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item
-                :prepend-icon="mdiPencil"
-                @click="showDialog(DialogContent.Edit, item.id)"
-              >
-                <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                :prepend-icon="mdiPrinter"
-                @click="showDialog(DialogContent.View, item.id)"
-              >
-                <v-list-item-title>{{ t('btn.print') }}</v-list-item-title>
-              </v-list-item>
-              <v-divider></v-divider>
-              <v-list-item
-                :prepend-icon="mdiTrashCan"
-                @click="showDeleteDialog(item.id)"
-                class="text-error"
-              >
-                <v-list-item-title>{{ t('btn.delete') }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <template
+            v-if="
+              item.fromInv &&
+              userInventories.find((inv) => inv.id == item.fromInv?.id)
+            "
+          >
+            <v-menu transition="slide-y-transition" open-on-hover>
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  :icon="mdiDotsVertical"
+                  color="primary"
+                  v-bind="props"
+                  variant="text"
+                >
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  :prepend-icon="mdiPencil"
+                  @click="showDialog(DialogContent.Edit, item.id)"
+                >
+                  <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
+                </v-list-item>
+                <ActionPrintInvTrf
+                  v-if="
+                    userInventories.find((inv) => inv.id == item.fromInv?.id)
+                  "
+                  :inv-trf-id="item.id"
+                >
+                </ActionPrintInvTrf>
+                <v-divider></v-divider>
+                <v-list-item
+                  v-if="
+                    userInventories.find((inv) => inv.id == item.fromInv?.id)
+                  "
+                  :prepend-icon="mdiTrashCan"
+                  @click="showDeleteDialog(item.id)"
+                  class="text-error"
+                >
+                  <v-list-item-title>{{ t('btn.delete') }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+          <v-btn
+            v-else-if="userInventories.find((inv) => inv.id == item.toInv.id)"
+            :icon="mdiMagnifyExpand"
+            @click="showDialog(DialogContent.View, item.id)"
+            variant="text"
+          >
+          </v-btn>
         </template>
       </v-data-table>
     </v-col>
@@ -105,6 +123,7 @@
 import {
   mdiDotsVertical,
   mdiMagnify,
+  mdiMagnifyExpand,
   mdiPencil,
   mdiPrinter,
   mdiTrashCan,
@@ -119,6 +138,8 @@ import {
 } from '~/api/generated/types';
 const { t } = useI18n();
 const adapter = useDate();
+const authStore = useAuthStore();
+const userInventories = authStore.user?.userInventories ?? [];
 
 const pageNo = ref(1);
 const itemsPerPage = ref(10);
@@ -140,7 +161,6 @@ const dialogModel = reactive({
 const selectItemObject = shallowRef<InvTrfDto | null>(null);
 const confirmDeleteDialog = ref(false);
 const {
-  execute: executeFetch,
   data: invTrfsData,
   isFetching: isFetchingInvTrfs,
   error: invTrfsError,
@@ -157,7 +177,6 @@ const {
 } = useMutation(DeleteInvTrfDocument, {
   onData(data) {
     snack.show(t('status.saved'), SnackColor.Success);
-    executeFetch();
   },
   refetchTags: [CACHE_INV_TRFS, CACHE_INV_TRF, CACHE_INV_TRFS_PER_ITEM],
 });
@@ -193,7 +212,6 @@ function showDialog(content: DialogContent, id?: string | undefined) {
 }
 function closeDialog() {
   dialogModel.isVisible = false;
-  executeFetch();
 }
 
 function showDeleteDialog(invTrfId: string) {
