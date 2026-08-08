@@ -834,7 +834,7 @@ input InvTrfUpdateDto {
   toInvId: ID
   trfDate: Date
   progress: Progress
-  invTrfItemIds: [ID!]!
+  invTrfItemIds: [ID!]
   workId: ID
   note: String
   updatedBy: ID!

@@ -186,6 +186,12 @@ export const InvTrfSchema = z.object({
   updatedBy: positiveNumberString.optional().nullable(),
 });
 
+export const InvTrfUpdateProgressSchema = z.object({
+  id: positiveNumberString,
+  progress: z.nativeEnum(Progress),
+  updatedBy: positiveNumberString,
+});
+
 export const InvTrfItemSchema = z.object({
   fromInvId: positiveNumberString,
   toInvId: positiveNumberString,
@@ -198,6 +204,7 @@ export const InvTrfItemSchema = z.object({
       quantity: z.number().min(0),
     }),
   ),
+  totalQty: z.number().min(1),
 });
 
 export const InvProductUpdateDiscSchema = z.object({

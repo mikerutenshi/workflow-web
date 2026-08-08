@@ -36,7 +36,6 @@ export class InvTrfCreateDto {
 
   @Field(() => Progress)
   @IsEnum(Progress)
-  @IsOptional()
   progress!: Progress;
 
   @Field(() => [ID])

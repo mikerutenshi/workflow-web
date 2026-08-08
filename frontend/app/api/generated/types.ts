@@ -289,7 +289,7 @@ export type InvTrfSimpleDto = {
 
 export type InvTrfUpdateDto = {
   fromInvId?: InputMaybe<Scalars['ID']['input']>;
-  invTrfItemIds: Array<Scalars['ID']['input']>;
+  invTrfItemIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   note?: InputMaybe<Scalars['String']['input']>;
   progress?: InputMaybe<Progress>;
   toInvId?: InputMaybe<Scalars['ID']['input']>;

@@ -1,17 +1,21 @@
 <template>
   <v-form @submit.prevent="onSubmit" class="h-100 d-flex flex-column">
     <v-card-text>
-      <v-row v-if="createError || updateError || deleteError">
+      <v-row v-if="createError || updateError || deleteError || errorInvTrf">
         <v-col>
           <v-alert type="error">
-            {{ extractGraphQlError(createError || updateError || deleteError) }}
+            {{
+              extractGraphQlError(
+                createError || updateError || deleteError || errorInvTrf,
+              )
+            }}
           </v-alert>
         </v-col>
       </v-row>
       <ActionPickDate
         v-model="trfDate.value.value"
         :error-messages="trfDate.errorMessage.value"
-        :readonly="props.isReadonly"
+        :readonly="readonlyDisplay"
       ></ActionPickDate>
 
       <v-text-field
@@ -33,7 +37,7 @@
             :loading="isFetchingInventories"
             v-model="fromInvId.value.value"
             :error-messages="fromInvId.errorMessage.value"
-            :readonly="props.isReadonly"
+            :readonly="readonlyDisplay"
           >
           </v-autocomplete>
         </v-col>
@@ -50,7 +54,7 @@
             :loading="isFetchingInventories"
             v-model="toInvId.value.value"
             :error-messages="toInvId.errorMessage.value"
-            :readonly="props.isReadonly"
+            :readonly="readonlyDisplay"
           >
           </v-autocomplete>
         </v-col>
@@ -61,7 +65,13 @@
         :items="progressList"
         v-model="progress.value.value"
         :error-messages="progress.errorMessage.value"
-        :readonly="props.isReadonly"
+        :readonly="
+          (authStore.user?.role.clearanceLevel ?? 99) <= Role.Finance
+            ? false
+            : readonlyDisplay
+              ? true
+              : false
+        "
       >
       </v-select>
 
@@ -81,7 +91,7 @@
           hover
           :page="pageNo"
           :items-per-page="itemsPerPage"
-          :show-select="!props.isReadonly"
+          :show-select="!readonlyDisplay"
         >
           <template #loading>
             <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -137,19 +147,27 @@
         :label="$t('label.note')"
         :error-messages="note.errorMessage.value"
         counter
-        :clearable="!props.isReadonly"
+        :clearable="readonlyDisplay"
         :rules="[
           (v?: string) =>
             (v ?? '').length <= 255 ||
             $t('zodI18n.errors.too_big.string.inclusive', { maximum: 255 }),
         ]"
         rows="3"
-        :readonly="props.isReadonly"
+        :readonly="readonlyDisplay"
       >
       </v-textarea>
     </v-card-text>
 
-    <v-card-actions v-if="!props.isReadonly">
+    <v-card-actions
+      v-if="
+        (authStore.user?.role.clearanceLevel ?? 99) <= Role.Finance
+          ? true
+          : readonlyDisplay
+            ? false
+            : true
+      "
+    >
       <v-spacer></v-spacer>
       <ActionConfirm :loading="props.invTrfId ? isUpdating : isCreating">{{
         submitBtnTitle
@@ -186,6 +204,17 @@ const props = defineProps({
     default: false,
   },
 });
+const readonlyDisplay = computed(() => {
+  if (
+    dataInvTrf.value?.getInvTrf.progress === Progress.Completed ||
+    dataInvTrf.value?.getInvTrf.progress === Progress.InProgress ||
+    props.isReadonly
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+});
 
 const emit = defineEmits(['form-submit']);
 const submitBtnTitle = computed(() =>
@@ -212,11 +241,11 @@ const progress = useField<Progress>('progress');
 const note = useField('note');
 const { fields, push, remove, replace } = useFieldArray('invTrfItemIds');
 
-const progressList = Object.values(Progress)
-  .map((value) => {
+const progressList = getProgresses(authStore.user?.role.clearanceLevel).map(
+  (value) => {
     return { value, title: t(`progress.${value}`) };
-  })
-  .filter((progress) => progress.value !== Progress.Pending);
+  },
+);
 
 const { data: inventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,
@@ -259,6 +288,7 @@ const {
   refetchTags: [
     CACHE_INV_TRFS,
     CACHE_INV_TRF,
+    CACHE_INV_TRF_ITEMS,
     CACHE_INV_PRODUCTS,
     CACHE_INV_TRFS_PER_ITEM,
   ],
@@ -319,14 +349,15 @@ const {
 
 const {
   execute: fetchTransfer,
-  data: invTrfData,
+  data: dataInvTrf,
   isFetching: isFetchingInvTrf,
-  error: invTrfError,
+  error: errorInvTrf,
 } = useQuery({
   variables: { id: props.invTrfId! },
   query: GetInvTrfDocument,
   tags: [CACHE_INV_TRF],
   fetchOnMount: false,
+  cachePolicy: 'network-only',
   onData(data) {
     trfDate.setValue(data.getInvTrf.trfDate);
     trfNo.setValue(data.getInvTrf.trfNo);

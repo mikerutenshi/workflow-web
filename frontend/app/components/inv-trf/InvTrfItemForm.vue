@@ -80,6 +80,21 @@
                 :max="clonedSizeQties[index]?.quantity"
               />
             </template>
+            <template #body.append>
+              <tr>
+                <td>Total</td>
+                <td>
+                  <v-number-input
+                    v-model="totalQty.value.value"
+                    label="Total"
+                    :error-messages="totalQty.errorMessage.value"
+                    readonly
+                    control-variant="hidden"
+                    color="primary"
+                  />
+                </td>
+              </tr>
+            </template>
           </v-data-table>
         </v-card-text>
       </v-card>
@@ -150,6 +165,7 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
 const toInvId = useField<string>('toInvId');
 const productId = useField<string>('productId');
 const discounts = useFieldArray<string>('discounts');
+const totalQty = useField<number>('totalQty');
 const { fields, push, remove, replace } = useFieldArray('invTrfItemSizes');
 
 const { isFetching: isFetchingInventories, error: errorInventories } = useQuery(
@@ -218,7 +234,8 @@ const discMask = new Mask(percentageMask);
 // const discsDisplay = ref(['']);
 
 const onSubmit = handleSubmit((data) => {
-  executeCreate({ data });
+  const { totalQty, ...rest } = data;
+  executeCreate({ data: rest });
 });
 
 watch(
@@ -233,6 +250,10 @@ watch(
             quantity: item.quantity,
           };
         }),
+    );
+    totalQty.value.value = newValues.reduce(
+      (sum, size) => size.quantity + sum,
+      0,
     );
   },
   { immediate: true, deep: true },

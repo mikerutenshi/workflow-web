@@ -12,14 +12,14 @@ export class InvTrfUpdateDto extends PartialType(
   @Min(1)
   updatedBy!: number;
 
-  @Field(() => [ID])
-  @Transform(({ value }) => {
-    if (Array.isArray(value)) {
-      return value.map((v) => parseInt(v, 10));
-    }
-    return [];
-  })
-  @IsInt({ each: true })
-  @Min(1, { each: true })
-  invTrfItemIds!: number[];
+  // @Field(() => [ID])
+  // @Transform(({ value }) => {
+  //   if (Array.isArray(value)) {
+  //     return value.map((v) => parseInt(v, 10));
+  //   }
+  //   return [];
+  // })
+  // @IsInt({ each: true })
+  // @Min(1, { each: true })
+  // invTrfItemIds!: number[];
 }

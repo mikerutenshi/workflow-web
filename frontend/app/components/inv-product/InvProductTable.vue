@@ -255,9 +255,10 @@ const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 const selectInvId = ref(authStore.user?.userInventories.at(0)?.id ?? '');
 const itemSelectionObject = shallowRef<InvProductDto | null>(null);
 const invProductsDisplay = computed(() => {
+  console.log(`data: ${JSON.stringify(dataInvProducts.value?.getInvProducts)}`);
   return dataInvProducts.value?.getInvProducts.map((product) => {
     const pendingCount = product.invTrfItems.filter(
-      (i) => i.progress === Progress.Pending,
+      (i) => i.progress !== Progress.Completed,
     ).length;
 
     return {

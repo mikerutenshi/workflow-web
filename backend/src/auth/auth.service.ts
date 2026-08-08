@@ -68,11 +68,10 @@ export class AuthService {
   async updateUser(id: number, data: UserUpdateDto): Promise<User> {
     return await this.prisma.$transaction(async (tx) => {
       await tx.invToUser.deleteMany({ where: { userId: id } });
-      await Promise.all(
-        data.invIds.map(async (invId) => {
-          await tx.invToUser.create({ data: { userId: id, invId } });
-        }),
-      );
+
+      for (const invId of data.invIds) {
+        await tx.invToUser.create({ data: { userId: id, invId } });
+      }
 
       const result = await this.prisma.user.update({
         where: { id },

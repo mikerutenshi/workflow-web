@@ -24,21 +24,21 @@ export class TaskService {
 
   updateTasks(tasks: TaskUpdateDto[]): Promise<TaskAndArtisanDto[]> {
     return this.prisma.$transaction(async (tx) => {
-      // Update tasks first
       var userId = +tasks.at(0)!.updatedBy;
-      const updatedTasks = await Promise.all(
-        tasks.map((task) =>
-          tx.task.update({
-            where: { id: +task.id },
-            data: {
-              artisanId: task.artisanId !== null ? +task.artisanId : null,
-              doneAt: task.doneAt,
-              updatedBy: +task.updatedBy,
-            },
-            include: { artisan: true },
-          }),
-        ),
-      );
+      const updatedTasks = [];
+
+      for (const task of tasks) {
+        const updatedTask = await tx.task.update({
+          where: { id: +task.id },
+          data: {
+            artisanId: task.artisanId !== null ? +task.artisanId : null,
+            doneAt: task.doneAt,
+            updatedBy: +task.updatedBy,
+          },
+          include: { artisan: true },
+        });
+        updatedTasks.push(updatedTask);
+      }
 
       // Update work progress based on task completion status
       if (tasks.length > 0) {

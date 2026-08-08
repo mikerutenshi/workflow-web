@@ -6,14 +6,19 @@ import { BaseModel } from './base.model';
 export class InvTrf extends BaseModel {
   @Field()
   trfNo!: string;
+
   @Field(() => ID, { nullable: true })
   fromInvId!: number | null;
+
   @Field(() => ID)
   toInvId!: number;
+
   @Field(() => Date)
   trfDate!: Date;
+
   @Field(() => Progress)
   progress!: Progress;
+
   @Field(() => String, { nullable: true })
   note?: string | null;
 }

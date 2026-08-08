@@ -4,7 +4,7 @@ import { InvTxService } from '@/inventory/inv-tx.service';
 import { Operation } from '@/models/operation.enum';
 import { Sale } from '@/models/sale.model';
 import { PrismaService } from '@/prisma/prisma.service';
-import { generateId } from '@/utils/functions.util';
+import { generateId, getStartOfDay } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import dayjs from 'dayjs';
 
@@ -57,32 +57,30 @@ export class SaleService {
         },
       });
 
-      await Promise.all(
-        data.saleItems.map(async (item) => {
-          await this.invProductService.decrementInvProductOp(
-            item.invId,
-            item.productId,
-            item.saleItemSizes,
-            tx,
-          );
+      for (const item of data.saleItems) {
+        await this.invProductService.decrementInvProductOp(
+          item.invId,
+          item.productId,
+          item.saleItemSizes,
+          tx,
+        );
 
-          await this.invTxService.createInvTxOp(
-            {
-              invId: item.invId,
-              productId: item.productId,
-              txNo: saleResult.saleNo,
-              type: TxType.SALE,
-              saleId: saleResult.id,
-              createdBy: data.createdBy,
-              invTxSizes: item.saleItemSizes.map((size) => ({
-                sizeId: size.sizeId,
-                quantity: -size.quantity,
-              })),
-            },
-            tx,
-          );
-        }),
-      );
+        await this.invTxService.createInvTxOp(
+          {
+            invId: item.invId,
+            productId: item.productId,
+            txNo: saleResult.saleNo,
+            type: TxType.SALE,
+            saleId: saleResult.id,
+            createdBy: data.createdBy,
+            invTxSizes: item.saleItemSizes.map((size) => ({
+              sizeId: size.sizeId,
+              quantity: -size.quantity,
+            })),
+          },
+          tx,
+        );
+      }
 
       return saleResult;
     });
@@ -154,30 +152,28 @@ export class SaleService {
       });
 
       if (sale) {
-        await Promise.all(
-          sale.saleItems.map(async (item) => {
-            await this.invProductService.incrementInvProductOp(
-              item.invId,
-              item.productId,
-              item.saleItemSizes,
-              tx,
-            );
-            await this.invTxService.createInvTxOp(
-              {
-                invId: item.invId,
-                productId: item.productId,
-                txNo: sale.saleNo,
-                type: TxType.REVERSION,
-                createdBy: sale.createdBy,
-                invTxSizes: item.saleItemSizes.map((size) => ({
-                  sizeId: size.sizeId,
-                  quantity: size.quantity,
-                })),
-              },
-              tx,
-            );
-          }),
-        );
+        for (const item of sale.saleItems) {
+          await this.invProductService.incrementInvProductOp(
+            item.invId,
+            item.productId,
+            item.saleItemSizes,
+            tx,
+          );
+          await this.invTxService.createInvTxOp(
+            {
+              invId: item.invId,
+              productId: item.productId,
+              txNo: sale.saleNo,
+              type: TxType.REVERSION,
+              createdBy: sale.createdBy,
+              invTxSizes: item.saleItemSizes.map((size) => ({
+                sizeId: size.sizeId,
+                quantity: size.quantity,
+              })),
+            },
+            tx,
+          );
+        }
 
         await tx.sale.delete({
           where: {
@@ -234,13 +230,14 @@ export class SaleService {
   }
 
   async generateSaleNo(date: Date): Promise<string> {
-    const oneDayMore = dayjs(date).add(1, 'day').toDate();
+    const startOfDay = getStartOfDay();
+    const oneDayMore = dayjs(startOfDay).add(1, 'day').toDate();
 
     const lastSale = await this.prisma.sale.findFirst({
       orderBy: { saleNo: 'desc' },
       where: {
         date: {
-          gte: date,
+          gte: startOfDay,
           lt: oneDayMore,
         },
       },

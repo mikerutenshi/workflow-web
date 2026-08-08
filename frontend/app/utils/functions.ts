@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js-light';
 import type { MaskInputOptions } from 'maska';
 import type { CombinedError } from 'villus';
-import { Gender, InvType, type Job } from '~/api/generated/types';
+import { Gender, InvType, Progress, type Job } from '~/api/generated/types';
 
 export function renderJobs(jobs: Job[]): string {
   return jobs
@@ -143,4 +143,21 @@ export function computeDiscounted(initialPrice: number, discounts: string[]) {
   });
 
   return result;
+}
+
+export function getProgresses(clearanceLevel: number = 99): Progress[] {
+  const progresses = Object.values(Progress);
+  if (clearanceLevel > Role.Planner) {
+    return progresses.filter(
+      (item) =>
+        ![
+          Progress.Canceled,
+          Progress.Failed,
+          Progress.OnHold,
+          Progress.Pending,
+        ].includes(item),
+    );
+  } else {
+    return progresses.filter((p) => p !== Progress.Pending);
+  }
 }

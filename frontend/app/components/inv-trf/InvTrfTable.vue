@@ -68,18 +68,10 @@
                 >
                   <v-list-item-title>{{ t('btn.update') }}</v-list-item-title>
                 </v-list-item>
-                <ActionPrintInvTrf
-                  v-if="
-                    userInventories.find((inv) => inv.id == item.fromInv?.id)
-                  "
-                  :inv-trf-id="item.id"
-                >
-                </ActionPrintInvTrf>
+                <ActionPrintInvTrf :inv-trf-id="item.id"> </ActionPrintInvTrf>
                 <v-divider></v-divider>
                 <v-list-item
-                  v-if="
-                    userInventories.find((inv) => inv.id == item.fromInv?.id)
-                  "
+                  v-if="item.progress === Progress.Initiated"
                   :prepend-icon="mdiTrashCan"
                   @click="showDeleteDialog(item.id)"
                   class="text-error"
@@ -89,13 +81,36 @@
               </v-list>
             </v-menu>
           </template>
-          <v-btn
-            v-else-if="userInventories.find((inv) => inv.id == item.toInv.id)"
-            :icon="mdiMagnifyExpand"
-            @click="showDialog(DialogContent.View, item.id)"
-            variant="text"
+          <template
+            v-else-if="
+              item.fromInv &&
+              userInventories.find((inv) => inv.id == item.toInv.id)
+            "
           >
-          </v-btn>
+            <v-menu transition="slide-y-transition" open-on-hover>
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  :icon="mdiDotsVertical"
+                  color="primary"
+                  v-bind="props"
+                  variant="text"
+                >
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  :prepend-icon="mdiMagnifyExpand"
+                  @click="showDialog(DialogContent.View, item.id)"
+                ></v-list-item>
+                <v-list-item
+                  v-if="item.progress !== Progress.Completed"
+                  :prepend-icon="mdiPencil"
+                  @click="showEditProgressDialog(item)"
+                  title="Change status"
+                ></v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
         </template>
       </v-data-table>
     </v-col>
@@ -106,10 +121,19 @@
     v-model="dialogModel.isVisible"
   >
     <InvTrfForm
+      v-if="
+        dialogModel.content === DialogContent.Edit ||
+        dialogModel.content === DialogContent.View
+      "
       @form-submit="closeDialog"
       :inv-trf-id="dialogModel.id"
       :is-readonly="dialogModel.isReadonly"
     ></InvTrfForm>
+    <InvTrfUpdateProgressForm
+      v-if="dialogModel.content === DialogContent.EditProgress"
+      :inv-trf-dto="selectItemObject"
+      @form-submit="closeDialog"
+    ></InvTrfUpdateProgressForm>
   </ActionEditItemDialog>
 
   <ActionConfirmActionDialog
@@ -125,7 +149,6 @@ import {
   mdiMagnify,
   mdiMagnifyExpand,
   mdiPencil,
-  mdiPrinter,
   mdiTrashCan,
 } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
@@ -134,8 +157,15 @@ import type { VDataTable } from 'vuetify/components';
 import {
   DeleteInvTrfDocument,
   GetInvTrfsDocument,
-  type InvTrfDto,
+  Progress,
+  type InvTrfSimpleDto,
 } from '~/api/generated/types';
+
+export type InvTrfTableRow = {
+  id: string;
+  trfNo: string;
+  progress: Progress;
+};
 const { t } = useI18n();
 const adapter = useDate();
 const authStore = useAuthStore();
@@ -148,6 +178,7 @@ enum DialogContent {
   View = 'VIEW',
   None = 'NONE',
   Edit = 'EDIT',
+  EditProgress = 'EDIT_PROGRESS',
   Create = 'CREATE',
 }
 const dialogModel = reactive({
@@ -158,7 +189,7 @@ const dialogModel = reactive({
   isReadonly: false,
 });
 
-const selectItemObject = shallowRef<InvTrfDto | null>(null);
+const selectItemObject = shallowRef<InvTrfTableRow | null>(null);
 const confirmDeleteDialog = ref(false);
 const {
   data: invTrfsData,
@@ -208,6 +239,15 @@ function showDialog(content: DialogContent, id?: string | undefined) {
       dialogModel.isReadonly = true;
       dialogModel.isVisible = true;
       break;
+  }
+}
+
+function showEditProgressDialog(dto: InvTrfTableRow) {
+  if (dto) {
+    selectItemObject.value = dto;
+    dialogModel.content = DialogContent.EditProgress;
+    dialogModel.title = 'Edit Progress';
+    dialogModel.isVisible = true;
   }
 }
 function closeDialog() {

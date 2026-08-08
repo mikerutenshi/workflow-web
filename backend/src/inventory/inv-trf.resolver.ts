@@ -1,3 +1,4 @@
+import { Progress } from '@/generated/prisma/client';
 import { AuthGuard } from '@/guards/auth.guard';
 import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
@@ -11,7 +12,6 @@ import { InvTrfSimpleDto } from './dto/inv-trf-simple.dto';
 import { InvTrfUpdateDto } from './dto/inv-trf-update.dto';
 import { InvTrfDto } from './dto/inv-trf.dto';
 import { InvTrfService } from './inv-trf.service';
-import { Progress } from '@/generated/prisma/client';
 
 @Resolver(() => InvTrf)
 export class InvTrfResolver {
@@ -28,6 +28,14 @@ export class InvTrfResolver {
   ): Promise<InvTrf> {
     return this.service.updateInvTrf(id, data);
   }
+
+  // @Mutation(() => Boolean)
+  // updateInvTrfProgress(
+  //   @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+  //   @Args('data') data: InvTrfUpdateProgressDto,
+  // ): Promise<boolean> {
+  //   return this.service.updateInvTrfProgress(id, data);
+  // }
 
   @Mutation(() => InvTrfItem)
   createInvTrfItem(
@@ -79,7 +87,7 @@ export class InvTrfResolver {
   @UseGuards(AuthGuard)
   deleteInvTrfItem(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.service.deleteInvTrfItem(id);
   }
 
@@ -87,7 +95,7 @@ export class InvTrfResolver {
   @UseGuards(AuthGuard)
   deleteInvTrf(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.service.deleteInvTrf(id);
   }
 }

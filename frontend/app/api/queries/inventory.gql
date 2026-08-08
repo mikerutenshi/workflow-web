@@ -274,6 +274,10 @@ mutation updateInvTrf($id: ID!, $data: InvTrfUpdateDto!) {
   }
 }
 
+# mutation updateInvTrfProgress($id: ID!, $data: InvTrfUpdateProgressDto!) {
+#   updateInvTrfProgress(id: $id, data: $data)
+# }
+
 mutation deleteInvTrf($id: ID!) {
   deleteInvTrf(id: $id)
 }

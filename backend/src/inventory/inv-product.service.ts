@@ -96,45 +96,49 @@ export class InvProductService {
       ],
     });
 
-    return products.map(({ inventory, ...product }) => ({
-      ...product,
-      invProductSizes: product.invProductSizes
-        .map((productSize) => {
-          const pendingQty = product.invTrfItems.reduce(
-            (sum, i) =>
-              sum +
-              i.invTrfItemSizes.reduce(
-                (s, i) =>
-                  i.size.id === productSize.size.id ? s + i.quantity : s,
-                0,
-              ),
-            0,
-          );
+    return products.map(({ inventory, ...product }) => {
+      const pendingTrfItems = product.invTrfItems;
 
-          const finalQty = productSize.quantity - pendingQty;
+      return {
+        ...product,
+        invProductSizes: product.invProductSizes
+          .map((productSize) => {
+            const pendingQty = pendingTrfItems.reduce(
+              (sum, i) =>
+                sum +
+                i.invTrfItemSizes.reduce(
+                  (s, i) =>
+                    i.size.id === productSize.size.id ? s + i.quantity : s,
+                  0,
+                ),
+              0,
+            );
 
-          return {
-            ...productSize,
-            quantity: finalQty,
-          };
-        })
-        .filter((size) => size.quantity > 0),
-      discounts: product.discounts.map((disc) => disc.toFixed(4)),
-      invTrfItems: product.invTrfItems.map((item) => ({
-        ...item,
-        discounts: item.discounts.map((disc) => disc.toFixed(4)),
-      })),
-      price: computePrice(
-        product.product.productGroup.msrp,
-        product.product.productGroup.skuNumeric,
-        product.product.sku,
-        product.product.productGroup.productCategoryId,
-        inventory.type,
-        product.discounts,
-        inventory.priceFormula?.offset,
-        inventory.priceFormula?.multiplier,
-      ),
-    }));
+            const finalQty = productSize.quantity - pendingQty;
+
+            return {
+              ...productSize,
+              quantity: finalQty,
+            };
+          })
+          .filter((size) => size.quantity > 0),
+        discounts: product.discounts.map((disc) => disc.toFixed(4)),
+        invTrfItems: product.invTrfItems.map((item) => ({
+          ...item,
+          discounts: item.discounts.map((disc) => disc.toFixed(4)),
+        })),
+        price: computePrice(
+          product.product.productGroup.msrp,
+          product.product.productGroup.skuNumeric,
+          product.product.sku,
+          product.product.productGroup.productCategoryId,
+          inventory.type,
+          product.discounts,
+          inventory.priceFormula?.offset,
+          inventory.priceFormula?.multiplier,
+        ),
+      };
+    });
   }
 
   async updateInvProduct(
@@ -195,6 +199,7 @@ export class InvProductService {
     tx: Prisma.TransactionClient,
   ): Promise<InvProduct> {
     const { invProductSizes, ...rest } = data;
+    console.log(`data: ${JSON.stringify(data)}`);
 
     const upsertProduct = await tx.invToProduct.upsert({
       where: {
@@ -227,6 +232,7 @@ export class InvProductService {
         },
       },
     });
+    console.log(`result: ${JSON.stringify(result)}`);
     return {
       ...result,
       discounts: result?.discounts.map((disc) => disc.toFixed(4)),
@@ -256,9 +262,21 @@ export class InvProductService {
     }[],
     tx: Prisma.TransactionClient,
   ) {
-    await Promise.all(
-      invProductSizes.map(async (size) => {
-        const result = await tx.invProductToSize.update({
+    for (const size of invProductSizes) {
+      const result = await tx.invProductToSize.update({
+        where: {
+          invId_productId_sizeId: {
+            invId,
+            productId,
+            sizeId: size.sizeId,
+          },
+        },
+        data: {
+          quantity: { decrement: size.quantity },
+        },
+      });
+      if (result.quantity === 0) {
+        await tx.invProductToSize.delete({
           where: {
             invId_productId_sizeId: {
               invId,
@@ -266,23 +284,9 @@ export class InvProductService {
               sizeId: size.sizeId,
             },
           },
-          data: {
-            quantity: { decrement: size.quantity },
-          },
         });
-        if (result.quantity === 0) {
-          await tx.invProductToSize.delete({
-            where: {
-              invId_productId_sizeId: {
-                invId,
-                productId,
-                sizeId: size.sizeId,
-              },
-            },
-          });
-        }
-      }),
-    );
+      }
+    }
   }
 
   async incrementInvProductOp(
@@ -294,26 +298,24 @@ export class InvProductService {
     }[],
     tx: Prisma.TransactionClient,
   ) {
-    await Promise.all(
-      invProductSizes.map(async (size) => {
-        await tx.invProductToSize.upsert({
-          where: {
-            invId_productId_sizeId: {
-              invId: invId,
-              productId: productId,
-              sizeId: size.sizeId,
-            },
-          },
-          update: { quantity: { increment: size.quantity } },
-          create: {
+    for (const size of invProductSizes) {
+      await tx.invProductToSize.upsert({
+        where: {
+          invId_productId_sizeId: {
             invId: invId,
             productId: productId,
             sizeId: size.sizeId,
-            quantity: size.quantity,
           },
-        });
-      }),
-    );
+        },
+        update: { quantity: { increment: size.quantity } },
+        create: {
+          invId: invId,
+          productId: productId,
+          sizeId: size.sizeId,
+          quantity: size.quantity,
+        },
+      });
+    }
   }
 
   async deleteInvProduct(invId: number, productId: number): Promise<Boolean> {

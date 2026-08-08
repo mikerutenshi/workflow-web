@@ -311,7 +311,7 @@ const {
   onError(err) {
     snack.show(extractGraphQlError(err), SnackColor.Error);
   },
-  refetchTags: [CACHE_WORKS],
+  refetchTags: [CACHE_WORKS, CACHE_INV_PRODUCTS],
 });
 
 const {
