@@ -7,6 +7,8 @@
     item-key="id"
     :search="search"
     :height="`calc(100vh - 215px)`"
+    :items-per-page="itemsPerPage"
+    :page="pageNo"
   >
     <template v-slot:item.createdAt="{ item }: { item: any }">
       {{ formatToLocalDate(item.createdAt) }}
@@ -64,6 +66,8 @@ const { data } = useQuery({
 });
 
 const search = ref('');
+const pageNo = ref(1);
+const itemsPerPage = ref(25);
 
 const headers = ref([
   { title: 'ID', key: 'id' },

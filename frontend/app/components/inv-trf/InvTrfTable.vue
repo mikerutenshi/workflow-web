@@ -172,7 +172,7 @@ const authStore = useAuthStore();
 const userInventories = authStore.user?.userInventories ?? [];
 
 const pageNo = ref(1);
-const itemsPerPage = ref(10);
+const itemsPerPage = ref(25);
 const search = ref('');
 enum DialogContent {
   View = 'VIEW',
