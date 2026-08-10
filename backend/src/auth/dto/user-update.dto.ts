@@ -14,6 +14,11 @@ export class UserUpdateDto extends PartialType(UserCreateDto) {
   @IsOptional()
   approvedBy?: number;
 
+  @Field(() => ID)
+  @Transform(({ value }) => parseInt(value, 10))
+  @Min(1)
+  updatedBy!: number;
+
   @Field(() => [ID])
   @Transform(({ value }) => value.map((member: any) => parseInt(member, 10)))
   @Min(1, { each: true })

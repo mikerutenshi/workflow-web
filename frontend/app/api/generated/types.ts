@@ -1247,6 +1247,7 @@ export type UserUpdateDto = {
   lastName?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   roleId?: InputMaybe<Scalars['ID']['input']>;
+  updatedBy: Scalars['ID']['input'];
 };
 
 export type Work = {

@@ -67,6 +67,8 @@ export class AuthService {
 
   async updateUser(id: number, data: UserUpdateDto): Promise<User> {
     return await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({ where: { id } });
+      if (!user) throw Error('User not found');
       await tx.invToUser.deleteMany({ where: { userId: id } });
 
       for (const invId of data.invIds) {
@@ -79,8 +81,13 @@ export class AuthService {
           email: data.email,
           roleId: data.roleId,
           isActive: data.isActive,
-          approvedBy: data.approvedBy,
-          approvedAt: data.isActive ? dayjs().toDate() : null,
+          approvedBy:
+            !user.isActive && data.isActive ? data.approvedBy : user.approvedBy,
+          approvedAt:
+            !user.isActive && data.isActive
+              ? dayjs().toDate()
+              : user.approvedAt,
+          updatedBy: data.updatedBy,
         },
         include: {
           role: true,

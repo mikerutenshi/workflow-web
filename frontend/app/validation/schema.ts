@@ -260,6 +260,6 @@ export const UserSchema = z.object({
   roleId: positiveNumberString,
   isActive: z.boolean(),
   invIds: z.array(positiveNumberString),
-  updatedBy: positiveNumberString.optional().nullable(),
+  updatedBy: positiveNumberString,
   approvedBy: positiveNumberString.optional().nullable(),
 });

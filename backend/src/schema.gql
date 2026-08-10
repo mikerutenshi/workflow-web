@@ -636,6 +636,7 @@ input UserUpdateDto {
   roleId: ID
   isActive: Boolean!
   approvedBy: ID
+  updatedBy: ID!
   invIds: [ID!]!
 }
 
