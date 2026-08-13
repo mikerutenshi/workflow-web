@@ -93,4 +93,7 @@ export const Cities = [
   { id: 'Sawahlunto', title: 'Sawahlunto' },
   { id: 'PadangPanjang', title: 'Padang Panjang' },
   { id: 'Sabang', title: 'Sabang' },
+  { id: 'Purwakarta', title: 'Purwakarta' },
+  { id: 'Subang', title: 'Subang' },
+  { id: 'Ciamis', title: 'Ciamis' },
 ];
