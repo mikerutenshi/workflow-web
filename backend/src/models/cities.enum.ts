@@ -93,4 +93,7 @@ export enum Cities {
   Sawahlunto = 'Sawahlunto',
   PadangPanjang = 'Padang Panjang',
   Sabang = 'Sabang',
+  Purwakarta = 'Purwakarta',
+  Subang = 'Subang',
+  Ciamis = 'Ciamis',
 }
