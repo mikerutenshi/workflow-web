@@ -33,10 +33,12 @@ export function generateId(
   }
 }
 
-export function getStartOfDay(): Date {
-  const startOfDay = dayjs.tz().startOf('day').utc().toDate();
-
-  return startOfDay;
+export function getStartOfDay(date?: Date): Date {
+  if (date) {
+    return dayjs.tz(date).startOf('day').utc().toDate();
+  } else {
+    return dayjs.tz().startOf('day').utc().toDate();
+  }
 }
 
 export function computePrice(

@@ -199,7 +199,6 @@ export class InvProductService {
     tx: Prisma.TransactionClient,
   ): Promise<InvProduct> {
     const { invProductSizes, ...rest } = data;
-    console.log(`data: ${JSON.stringify(data)}`);
 
     const upsertProduct = await tx.invToProduct.upsert({
       where: {
@@ -232,7 +231,6 @@ export class InvProductService {
         },
       },
     });
-    console.log(`result: ${JSON.stringify(result)}`);
     return {
       ...result,
       discounts: result?.discounts.map((disc) => disc.toFixed(4)),

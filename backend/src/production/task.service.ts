@@ -100,7 +100,6 @@ export class TaskService {
         throw new Error('Already transferred');
       }
 
-      const currentDate = dayjs().toISOString();
       const trfNo = await this.invTrfService.generateInvTrfPrdNoOp(tx);
 
       const invTrfItem = await this.invTrfService.createInvTrfItem(

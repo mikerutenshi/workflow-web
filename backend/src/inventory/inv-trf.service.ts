@@ -107,7 +107,6 @@ export class InvTrfService {
 
   updateInvTrf(id: number, data: InvTrfUpdateDto): Promise<InvTrf> {
     const { invTrfItemIds, ...rest } = data;
-    console.log(`updateData: ${JSON.stringify(data)}`);
     return this.prisma.$transaction(async (tx) => {
       const initTrfData = await tx.invTrf.findUniqueOrThrow({
         where: { id },
@@ -467,7 +466,7 @@ export class InvTrfService {
   }
 
   async generateInvTrfNo(date: Date): Promise<string> {
-    const startOfDay = getStartOfDay();
+    const startOfDay = getStartOfDay(date);
     const oneDayMore = dayjs(startOfDay).add(1, 'day').toDate();
 
     const lastTrf = await this.prisma.invTrf.findFirst({
