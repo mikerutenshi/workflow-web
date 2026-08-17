@@ -546,6 +546,7 @@ type Query {
   getInventories: [InventoryDto!]!
   downloadInventories: String!
   getInvProducts(invId: ID!): [InvProductDto!]!
+  downloadInvProducts: String!
   getInvProductPrice(invId: ID!, productId: ID!, discounts: [String!]!): Float!
   getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
   getInvTrfItems(fromInvId: ID!, toInvId: ID!, progress: Progress): [InvTrfItemDto!]!

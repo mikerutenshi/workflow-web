@@ -492,4 +492,56 @@ export class InvProductService {
       throw Error('Product or Inventory not found');
     }
   }
+
+  async downloadInvProducts(): Promise<string> {
+    const invProducts = await this.prisma.invToProduct.findMany({
+      include: {
+        invProductSizes: {
+          include: {
+            size: true,
+          },
+        },
+        product: {
+          include: { productGroup: { include: { productCategory: true } } },
+        },
+      },
+      where: {
+        product: { productGroup: { productCategory: { gender: Gender.MEN } } },
+      },
+      orderBy: {
+        product: {
+          sku: 'asc',
+        },
+      },
+    });
+
+    const nums = ['38', '39', '40', '41', '42', '43', '44', '45'];
+
+    const flatInvProducts = invProducts.map((invProduct) => {
+      const row: Record<string, number | string | null> = {
+        invId: invProduct.invId,
+        productId: invProduct.productId,
+        sku: invProduct.product.sku,
+        category: invProduct.product.productGroup.productCategory.name,
+        gender: invProduct.product.productGroup.productCategory.gender,
+        msrp: invProduct.product.productGroup.msrp,
+      };
+
+      nums.forEach((num) => {
+        const sizeQty = invProduct.invProductSizes.find(
+          (s) => s.size.eu === num,
+        );
+        row[`qty${num}`] = sizeQty?.quantity ?? 0;
+      });
+
+      row.discounts = invProduct.discounts.map((d) => d.toString()).join(';');
+
+      return row;
+    });
+
+    return await this.fileService.downloadObjects(
+      'inv-products.csv',
+      flatInvProducts,
+    );
+  }
 }

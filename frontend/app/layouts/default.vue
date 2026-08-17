@@ -74,6 +74,9 @@
           <v-list-item @click="openInvUploadDialog()">
             <v-list-item-title>Upload</v-list-item-title>
           </v-list-item>
+          <v-list-item @click="downloadProducts()"
+            ><v-list-item-title>Download</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>

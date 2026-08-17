@@ -321,3 +321,7 @@ query getInvProductPrice($invId: ID!, $productId: ID!, $discounts: [String!]!) {
     discounts: $discounts
   )
 }
+
+query downloadInvProducts {
+  downloadInvProducts
+}

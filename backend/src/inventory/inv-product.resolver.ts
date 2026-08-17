@@ -62,6 +62,11 @@ export class InvProductResolver {
     return this.service.updateDiscount(data);
   }
 
+  @Query(() => String)
+  downloadInvProducts(): Promise<string> {
+    return this.service.downloadInvProducts();
+  }
+
   @Query(() => Number)
   getInvProductPrice(
     @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,

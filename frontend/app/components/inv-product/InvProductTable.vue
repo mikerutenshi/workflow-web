@@ -216,6 +216,9 @@
         @form-submit="closeItemFormDialog"
       ></InvProductUpdateDiscForm>
     </template>
+    <template v-else-if="dialog.content === DialogContent.Download">
+      <InvProductDownloadForm />
+    </template>
   </ActionEditItemDialog>
 </template>
 
@@ -239,12 +242,17 @@ import {
 } from '~/api/generated/types';
 import { CACHE_INV_PRODUCTS } from '~/utils/cache-tags';
 
+const { registerDownload, unregisterDownload } = useDownloadProducts();
+onMounted(() => registerDownload(openDownloadDialog));
+onUnmounted(() => unregisterDownload());
+
 enum DialogContent {
   None = 'NONE',
   TrfDetail = 'TRF_DETAIL',
   TxDetail = 'TX_DETAIL',
   Form = 'FORM',
   FormDisc = 'FORM_DISC',
+  Download = 'DOWNLOAD',
 }
 
 const pageNo = ref(1);
@@ -360,6 +368,11 @@ function showUpdateDiscDialog(item: InvProductDto) {
   dialog.title = t('page.inv_product_edit_disc', {
     item: itemSelectionObject.value.product.sku,
   });
+}
+function openDownloadDialog() {
+  dialog.isVisible = true;
+  dialog.content = DialogContent.Download;
+  dialog.title = "Download Inventory's Products";
 }
 
 watchEffect(() => {
