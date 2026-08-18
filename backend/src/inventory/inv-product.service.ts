@@ -522,6 +522,7 @@ export class InvProductService {
         invId: invProduct.invId,
         productId: invProduct.productId,
         sku: invProduct.product.sku,
+        skuNumeric: invProduct.product.productGroup.skuNumeric,
         category: invProduct.product.productGroup.productCategory.name,
         gender: invProduct.product.productGroup.productCategory.gender,
         msrp: invProduct.product.productGroup.msrp,
