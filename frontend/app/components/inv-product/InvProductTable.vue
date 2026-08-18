@@ -306,6 +306,9 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },
   { title: t('label.sku'), key: 'product.sku' },
+  { title: t('label.sizes'), key: 'invProductSizes' },
+  { title: t('label.price'), key: 'price' },
+  { title: t('label.discount'), key: 'discounts' },
   { title: t('label.colors'), key: 'product.productColors' },
   {
     title: t('label.product_category'),
@@ -315,9 +318,6 @@ const headers: ReadOnlyHeaders = [
     title: t('label.gender'),
     key: 'product.productGroup.productCategory.gender',
   },
-  { title: t('label.price'), key: 'price' },
-  { title: t('label.discount'), key: 'discounts' },
-  { title: t('label.sizes'), key: 'invProductSizes' },
   {
     title: t('label.pending_trfs'),
     key: 'invTrfItems',
