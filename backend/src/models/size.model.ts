@@ -4,15 +4,20 @@ import { Gender } from '@/generated/prisma/client';
 @ObjectType()
 export class Size {
   @Field(() => ID)
-  id: number;
+  id!: number;
+
   @Field()
-  eu: string;
+  eu!: string;
+
   @Field(() => String, { nullable: true })
-  us: string | null;
+  us!: string | null;
+
   @Field(() => String, { nullable: true })
-  uk: string | null;
+  uk!: string | null;
+
   @Field(() => String, { nullable: true })
-  jp: string | null;
+  jp!: string | null;
+
   @Field(() => Gender)
-  gender: Gender;
+  gender!: Gender;
 }

@@ -4,13 +4,17 @@ import { SaleItemToSize } from './sale-item-to-size.model';
 @ObjectType()
 export class SaleItem {
   @Field(() => ID)
-  id: number;
+  id!: number;
+
   @Field(() => ID)
-  saleId: number;
+  saleId!: number;
+
   @Field(() => ID)
-  invId: number;
+  invId!: number;
+
   @Field(() => ID)
-  productId: number;
+  productId!: number;
+
   @Field(() => [SaleItemToSize])
-  saleItemSizes: SaleItemToSize[];
+  saleItemSizes!: SaleItemToSize[];
 }

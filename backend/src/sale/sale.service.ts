@@ -1,4 +1,4 @@
-import { TxType } from '@/generated/prisma/client';
+import { Prisma, TxType } from '@/generated/prisma/client';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTxService } from '@/inventory/inv-tx.service';
 import { Operation } from '@/models/operation.enum';
@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 
 import { SaleCreateDto } from './dto/sale-create.dto';
 import { SaleUpdateDto } from './dto/sale-update.dto';
+import { SalePerformanceDto } from './dto/sale-performance-dto';
 
 @Injectable()
 export class SaleService {
@@ -245,5 +246,50 @@ export class SaleService {
     const lastSaleNo = lastSale?.saleNo;
 
     return generateId(Operation.Sale, lastSaleNo, date);
+  }
+
+  async getSalesPerformance(
+    startDate: Date,
+    endDate: Date,
+    invId?: number,
+  ): Promise<SalePerformanceDto[]> {
+    const invIdFilter =
+      invId !== undefined
+        ? Prisma.sql`AND si."invId" = ${invId}`
+        : Prisma.empty;
+
+    const rows = await this.prisma.$queryRaw<SalePerformanceDto[]>`
+      SELECT
+        si."productId",
+        p."sku",
+        pg."name",
+        pc."name",
+        pc."gender",
+        SUM(sis.quantity) AS "totalQuantity"
+      FROM "SaleItemToSize" sis
+      JOIN "SaleItem" si
+        ON si.id = sis."saleItemId"
+      JOIN "Product" p
+        ON p.id = si."productId"
+      JOIN "ProductGroup" pg
+        ON pg.id = p."productGroupId"
+      JOIN "ProductCategory" pc
+        ON pc.id = pg."productCategoryId"
+      JOIN "Sale" sale
+        ON sale.id = si."saleId"
+      -- WHERE si."invId" = 6
+      WHERE sale."date" BETWEEN ${startDate} AND ${endDate}
+        ${invIdFilter}
+      GROUP BY
+        si."productId",
+        p."sku",
+        pg."name",
+        pc."name",
+        pc."gender"
+      ORDER BY
+        "totalQuantity" DESC;
+     `;
+
+    return rows;
   }
 }

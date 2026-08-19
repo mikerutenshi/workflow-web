@@ -8,15 +8,15 @@ export class SaleItemCreateDto {
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  productId: number;
+  productId!: number;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))
   @Min(1)
-  invId: number;
+  invId!: number;
 
   @Field(() => [SaleItemToSizeCreateDto])
   @Type(() => SaleItemToSizeCreateDto)
   @ValidateNested({ each: true })
-  saleItemSizes: SaleItemToSizeCreateDto[];
+  saleItemSizes!: SaleItemToSizeCreateDto[];
 }
