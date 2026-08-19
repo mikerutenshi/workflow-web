@@ -19,7 +19,7 @@
                   </v-alert>
                 </v-col>
               </v-row>
-              <v-select
+              <!-- <v-select
                 :label="$t('auth.request_role')"
                 :items="rolesData?.getRoles"
                 item-title="name"
@@ -36,7 +36,7 @@
                   >
                   </v-list-item>
                 </template>
-              </v-select>
+              </v-select> -->
 
               <v-text-field
                 v-model="email.value.value"
@@ -93,14 +93,14 @@
                 {{ $t('label.wait_for_activation') }}
               </p>
             </v-row>
-            <v-row>
+            <!-- <v-row>
               <v-col>
                 <p>{{ $t('label.role') }}</p>
               </v-col>
               <v-col>
                 <p>{{ createdData?.createUser.role.name }}</p>
               </v-col>
-            </v-row>
+            </v-row> -->
             <v-row>
               <v-col>
                 <p>Email:</p>
@@ -157,6 +157,17 @@ const {
 } = useQuery({
   query: GetRolesDocument,
   tags: [CACHE_ROLES],
+  onData(data) {
+    let maxClearance = 1;
+    let maxId;
+    data.getRoles.forEach((role) => {
+      if (role.clearanceLevel > maxClearance) {
+        maxId = role.id;
+        maxClearance = role.clearanceLevel;
+      }
+    });
+    roleId.setValue(maxId);
+  },
 });
 
 // const snack = useSnackbarStore();

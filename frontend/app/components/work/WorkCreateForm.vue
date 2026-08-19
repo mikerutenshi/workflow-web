@@ -290,8 +290,4 @@ watch(sizeQuantities, (newItems) => {
     })),
   );
 });
-
-watchEffect(() => {
-  console.log(`values ${JSON.stringify(values)}`);
-});
 </script>

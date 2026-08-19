@@ -122,6 +122,4 @@ const onSubmit = handleSubmit((values) => {
 watch(inventories, (newInventories) => {
   invIds.replace(newInventories.map((inventory) => inventory.value));
 });
-
-watchEffect(() => console.log(`values ${JSON.stringify(values)}}`));
 </script>

@@ -386,7 +386,6 @@ const {
 });
 
 if (!props.saleId) {
-  console.log(`Triggered`);
   generateSaleNo({ variables: { date: date.value.value } });
 } else if (props.saleId) {
   fetchSale();

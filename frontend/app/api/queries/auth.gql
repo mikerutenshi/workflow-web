@@ -61,5 +61,6 @@ query getRoles {
     id
     name
     description
+    clearanceLevel
   }
 }
