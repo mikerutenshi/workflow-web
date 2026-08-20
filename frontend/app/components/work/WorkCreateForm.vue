@@ -18,7 +18,7 @@
         :label="$t('label.order_no')"
         v-model="orderNo.value.value"
         :error-messages="orderNo.errorMessage.value"
-        type="number"
+        clearable
       ></v-text-field>
 
       <v-autocomplete
@@ -179,7 +179,6 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   validationSchema,
   initialValues: {
     date: dayjs().toISOString(),
-    orderNo: new Date().toISOString().slice(0, 8).replace(/-/g, ''),
     createdBy: userId,
     workSizes: [],
   },

@@ -205,6 +205,7 @@ export class SaleService {
           },
         },
       },
+      orderBy: [{ saleNo: 'desc' }],
     });
   }
 
