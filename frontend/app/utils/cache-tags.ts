@@ -25,6 +25,7 @@ export const CACHE_INV_TRFS = 'CACHE_INV_TRFS';
 export const CACHE_INV_TRF = 'CACHE_INV_TRF';
 export const CACHE_SALES = 'CACHE_SALES';
 export const CACHE_SALE = 'CACHE_SALE';
+export const CACHE_SALE_PERFORMANCE = 'CACHE_SALE_PERFORMANCE';
 export const CACHE_ME = 'CACHE_ME';
 export const CACHE_ROLES = 'CACHE_ROLES';
 export const CACHE_USERS = 'CACHE_USERS';

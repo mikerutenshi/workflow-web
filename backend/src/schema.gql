@@ -517,9 +517,9 @@ type Sale {
 type SalePerformanceDto {
   productId: ID!
   sku: String!
-  productGroupName: String!
+  productGroupName: String
   productCategoryName: String!
-  gender: String!
+  gender: Gender!
   totalQuantity: Float!
 }
 
@@ -565,7 +565,7 @@ type Query {
   getInvTxs(invId: ID!, productId: ID!): [InvTxDto!]!
   getSales(invId: ID): [Sale!]!
   getSale(id: ID!): Sale!
-  getSalePerformance(startDate: Date!, endDate: Date!, invId: ID): SalePerformanceDto!
+  getSalePerformance(startDate: Date!, endDate: Date!, invId: ID): [SalePerformanceDto!]!
   generateSaleNo(date: Date!): String!
 }
 

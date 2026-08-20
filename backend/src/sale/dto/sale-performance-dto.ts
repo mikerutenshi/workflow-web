@@ -9,13 +9,13 @@ export class SalePerformanceDto {
   @Field()
   sku!: string;
 
-  @Field()
-  productGroupName!: string;
+  @Field(() => String, { nullable: true })
+  productGroupName!: string | null;
 
   @Field()
   productCategoryName!: string;
 
-  @Field()
+  @Field(() => Gender)
   gender!: Gender;
 
   @Field()

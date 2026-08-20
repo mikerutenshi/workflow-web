@@ -44,3 +44,14 @@ query generateSaleNo($date: Date!) {
 mutation deleteSale($id: ID!) {
   deleteSale(id: $id)
 }
+
+query getSalePerformance($startDate: Date!, $endDate: Date!, $invId: ID) {
+  getSalePerformance(startDate: $startDate, endDate: $endDate, invId: $invId) {
+    productId
+    sku
+    productGroupName
+    productCategoryName
+    gender
+    totalQuantity
+  }
+}

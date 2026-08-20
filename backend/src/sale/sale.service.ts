@@ -262,10 +262,10 @@ export class SaleService {
       SELECT
         si."productId",
         p."sku",
-        pg."name",
-        pc."name",
+        pg."name" AS "productGroupName",
+        pc."name" AS "productCategoryName",
         pc."gender",
-        SUM(sis.quantity) AS "totalQuantity"
+        SUM(sis.quantity)::int AS "totalQuantity"
       FROM "SaleItemToSize" sis
       JOIN "SaleItem" si
         ON si.id = sis."saleItemId"

@@ -42,7 +42,7 @@ export class SaleResolver {
     return this.service.getSale(id);
   }
 
-  @Query(() => SalePerformanceDto)
+  @Query(() => [SalePerformanceDto])
   getSalePerformance(
     @Args('startDate', { type: () => Date }) startDate: Date,
     @Args('endDate', { type: () => Date }) endDate: Date,
