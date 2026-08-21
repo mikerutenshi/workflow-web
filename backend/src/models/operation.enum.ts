@@ -5,4 +5,5 @@ export enum Operation {
   Purchase = 'PUR',
   Adjustment = 'ADJ',
   Produce = 'PRD',
+  Work = 'WRK',
 }

@@ -188,6 +188,10 @@ query getPayroll($startDate: Date!, $endDate: Date!) {
   }
 }
 
+query generateOrderNo($date: Date!) {
+  generateOrderNo(date: $date)
+}
+
 query getWorkAuditTrail($id: ID!) {
   getWork(id: $id) {
     date

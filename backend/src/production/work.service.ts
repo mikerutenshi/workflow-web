@@ -1,7 +1,10 @@
 import { WorkAndTasksDto } from '@/production/dto/work-and-tasks.dto';
 import { Work } from '@/models/work.model';
+import { Operation } from '@/models/operation.enum';
 import { PrismaService } from '@/prisma/prisma.service';
+import { generateId, getStartOfDay } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
+import dayjs from 'dayjs';
 import { WorkCreateDto } from './dto/work-create.dto';
 import { WorkUpdateDto } from './dto/work-update.dto';
 
@@ -116,5 +119,23 @@ export class WorkService {
 
     if (!work) throw new Error(`Delete work with ID ${id} failed.`);
     return !!work;
+  }
+
+  async generateOrderNo(date: Date): Promise<string> {
+    const startOfDay = getStartOfDay(date);
+    const oneDayMore = dayjs(startOfDay).add(1, 'day').toDate();
+
+    const lastWork = await this.prisma.work.findFirst({
+      orderBy: { orderNo: 'desc' },
+      where: {
+        date: {
+          gte: startOfDay,
+          lt: oneDayMore,
+        },
+      },
+    });
+    const lastOrderNo = lastWork?.orderNo;
+
+    return generateId(Operation.Work, lastOrderNo, date);
   }
 }

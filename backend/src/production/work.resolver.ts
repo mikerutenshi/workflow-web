@@ -44,4 +44,11 @@ export class WorkResolver {
   ): Promise<WorkAndTasksDto[]> {
     return this.workService.getWorks(startDate, endDate);
   }
+
+  @Query(() => String)
+  generateOrderNo(
+    @Args('date', { type: () => Date }) date: Date,
+  ): Promise<String> {
+    return this.workService.generateOrderNo(date);
+  }
 }

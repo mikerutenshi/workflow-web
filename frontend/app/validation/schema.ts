@@ -16,6 +16,10 @@ const positiveNumberString = z
   .refine((val) => !isNaN(Number(val)))
   .refine((num) => Number(num) > 0);
 
+const orderNoSchema = z
+  .string()
+  .regex(/^([A-Z]{2,3}-[0-9]{6}-[0-9]{4}|[0-9]+)$/);
+
 const discounts = z
   .array(
     z.string().refine((val) => /^\d+(\.\d{1,4})?$/.test(val), {
@@ -99,7 +103,7 @@ export const ProductGroupSchema = z.object({
 
 export const WorkSchema = z.object({
   date: z.string().datetime(),
-  orderNo: positiveNumberString,
+  orderNo: orderNoSchema,
   productId: positiveNumberString,
   workSizes: z.array(
     z.object({

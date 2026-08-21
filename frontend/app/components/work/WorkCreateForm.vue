@@ -18,6 +18,7 @@
         :label="$t('label.order_no')"
         v-model="orderNo.value.value"
         :error-messages="orderNo.errorMessage.value"
+        :loading="isFetchingOrderNo"
         clearable
       ></v-text-field>
 
@@ -105,6 +106,7 @@ import { useRoute, useRouter } from 'vue-router';
 import {
   CreateWorkDocument,
   Gender,
+  GenerateOrderNoDocument,
   GetProductsDocument,
   GetSizesDocument,
   GetWorkDocument,
@@ -186,6 +188,15 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
 const date = useField<string>('date');
 const orderNo = useField('orderNo');
 const productId = useField('productId');
+
+const { isFetching: isFetchingOrderNo, execute: generateOrderNo } = useQuery({
+  query: GenerateOrderNoDocument,
+  cachePolicy: 'network-only',
+  onData(data) {
+    orderNo.setValue(data.generateOrderNo);
+  },
+  fetchOnMount: false,
+});
 const note = useField('note');
 const { fields, push, remove, replace } = useFieldArray('workSizes');
 
@@ -208,6 +219,10 @@ const onSubmit = handleSubmit((data) => {
     executeUpdate({ id: workId.value, data: { ...data, updatedBy: userId } });
   }
 });
+
+if (!workId.value) {
+  generateOrderNo({ variables: { date: date.value.value } });
+}
 
 if (workId.value) {
   useQuery({
@@ -288,5 +303,11 @@ watch(sizeQuantities, (newItems) => {
       quantity: newItem.quantity,
     })),
   );
+});
+
+watch(date.value, (newDate) => {
+  if (!workId.value && newDate) {
+    generateOrderNo({ variables: { date: date.value.value } });
+  }
 });
 </script>

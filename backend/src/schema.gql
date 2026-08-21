@@ -547,6 +547,7 @@ type Query {
   getArtisan(id: ID!): Artisan!
   getWork(id: ID!): WorkAndTasksDto!
   getWorks(startDate: Date!, endDate: Date!): [WorkAndTasksDto!]!
+  generateOrderNo(date: Date!): String!
   getSize(id: ID!): Size!
   getSizes: [Size!]!
   getTasks(workId: ID!): [TaskAndArtisanDto!]!
