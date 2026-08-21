@@ -446,15 +446,15 @@ const navItems = computed(() => {
       clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
     },
     {
-      title: t('nav.inventory_transfers'),
-      route: localePath('/inv-trfs'),
-      icon: mdiTransfer,
-      clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
-    },
-    {
       title: t('nav.sales'),
       route: localePath('/sales'),
       icon: mdiPrinterPos,
+      clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
+    },
+    {
+      title: t('nav.inventory_transfers'),
+      route: localePath('/inv-trfs'),
+      icon: mdiTransfer,
       clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
     },
     {

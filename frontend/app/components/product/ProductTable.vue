@@ -134,6 +134,7 @@ const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 const headers: ReadOnlyHeaders = [
   ...(clearanceLevel === 0 ? [{ title: t('label.id'), key: 'id' }] : []),
   { title: t('label.sku'), key: 'sku' },
+  { title: t('label.colors'), key: 'productColors', minWidth: '140' },
   { title: t('label.product_group'), key: 'productGroup.skuNumeric' },
   { title: t('label.name'), key: 'productGroup.name' },
   {
@@ -141,9 +142,7 @@ const headers: ReadOnlyHeaders = [
     key: 'productGroup.productCategory.name',
   },
   { title: t('label.gender'), key: 'productGroup.productCategory.gender' },
-  { title: t('label.colors'), key: 'productColors', minWidth: '140' },
   { title: t('label.msrp'), key: 'productGroup.msrp' },
-  { title: t('label.created_at'), key: 'createdAt' },
   { title: t('label.updated_at'), key: 'updatedAt' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
 ];

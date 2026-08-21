@@ -132,6 +132,24 @@
             </template>
             <v-list>
               <v-list-item
+                v-if="
+                  item.invProductSizes.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0,
+                  ) > 0
+                "
+                @click="
+                  () => {
+                    const { pendingCount, ...rest } = item;
+                    showItemFormDialog(rest as InvProductDto);
+                  }
+                "
+                :prepend-icon="mdiTransferRight"
+              >
+                <v-list-item-title>{{ $t('label.send_to') }}</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item
                 @click="
                   () => {
                     const { pendingCount, ...rest } = item;
@@ -159,23 +177,6 @@
                 }}</v-list-item-title>
               </v-list-item>
 
-              <v-list-item
-                v-if="
-                  item.invProductSizes.reduce(
-                    (sum, item) => sum + item.quantity,
-                    0,
-                  ) > 0
-                "
-                @click="
-                  () => {
-                    const { pendingCount, ...rest } = item;
-                    showItemFormDialog(rest as InvProductDto);
-                  }
-                "
-                :prepend-icon="mdiTransferRight"
-              >
-                <v-list-item-title>{{ $t('label.send_to') }}</v-list-item-title>
-              </v-list-item>
               <v-list-item
                 v-if="clearanceLevel <= Role.Planner"
                 :title="$t('btn.inv_product_edit_disc')"
@@ -305,10 +306,10 @@ type ReadOnlyHeaders = VDataTable['$props']['headers'];
 const headers: ReadOnlyHeaders = [
   // { title: t('label.id'), key: 'id' },
   { title: t('label.sku'), key: 'product.sku' },
+  { title: t('label.colors'), key: 'product.productColors' },
   { title: t('label.sizes'), key: 'invProductSizes' },
   { title: t('label.price'), key: 'price' },
   { title: t('label.discount'), key: 'discounts' },
-  { title: t('label.colors'), key: 'product.productColors' },
   {
     title: t('label.product_category'),
     key: 'product.productGroup.productCategory.name',
