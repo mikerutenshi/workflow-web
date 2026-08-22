@@ -73,15 +73,19 @@
 
       <v-row>
         <v-col cols="9">
-          <v-select
+          <v-autocomplete
             v-for="(_, index) in colorSelections"
             v-model="colorSelections[index]"
             :label="`${$t('label.select_colors')} ${index + 1}`"
             chips
             :loading="isFetchingColors"
             :items="sortedColors"
+            item-title="name"
+            item-value="id"
+            return-object
             :error-messages="colorIds.errorMessage.value"
             clearable
+            auto-select-first
           >
             <template #item="{ item, props }">
               <v-list-item v-bind="props" :title="item.name">
@@ -105,7 +109,7 @@
                 <span>{{ item.name }}</span>
               </v-chip>
             </template>
-          </v-select>
+          </v-autocomplete>
         </v-col>
         <v-col cols="3">
           <v-btn
