@@ -249,6 +249,7 @@ function createPdf(invTrfModel: InvTrfType) {
     styles: { font: 'helvetica', fontSize: 9 },
     headStyles: { fillColor: [84, 123, 138] },
     footStyles: { fillColor: [84, 123, 138] },
+    showFoot: 'lastPage',
     didDrawPage: (d) => {
       lastTableY = Math.round(d.cursor?.y || 120);
     },
