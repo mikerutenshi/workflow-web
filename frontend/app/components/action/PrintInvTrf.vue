@@ -295,6 +295,21 @@ function createPdf(invTrfModel: InvTrfType) {
     );
   }
 
+  const pageCount = doc.internal.pages.length - 1;
+  doc.setFont(pageFont, 'normal');
+  doc.setFontSize(10);
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.text(
+      `Page ${i} of ${pageCount}`,
+      pageWidth - pageMargin / 2,
+      pageHeight - pageMargin / 2,
+      {
+        align: 'right',
+      },
+    );
+  }
+
   doc.save(`${trfNo}.pdf`);
 }
 </script>
