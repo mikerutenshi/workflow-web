@@ -106,7 +106,7 @@
                   v-if="item.progress !== Progress.Completed"
                   :prepend-icon="mdiPencil"
                   @click="showEditProgressDialog(item)"
-                  title="Change status"
+                  :title="t('btn.change_status')"
                 ></v-list-item>
               </v-list>
             </v-menu>
@@ -246,7 +246,7 @@ function showEditProgressDialog(dto: InvTrfTableRow) {
   if (dto) {
     selectItemObject.value = dto;
     dialogModel.content = DialogContent.EditProgress;
-    dialogModel.title = 'Edit Progress';
+    dialogModel.title = t('page.inv_trf_change_status');
     dialogModel.isVisible = true;
   }
 }

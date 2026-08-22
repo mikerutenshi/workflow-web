@@ -50,7 +50,7 @@
             auto-select-first
             item-value="id"
             item-title="name"
-            :items="inventories?.getInventories"
+            :items="dataInventories?.getInventories"
             :loading="isFetchingInventories"
             v-model="toInvId.value.value"
             :error-messages="toInvId.errorMessage.value"
@@ -81,6 +81,10 @@
         class="mb-4"
       >
         <v-card-title>{{ $t('card.products_to_trf') }}</v-card-title>
+        <v-card-subtitle>
+          {{ $t('label.items_selected', selectedCount) }} ·
+          {{ $t('label.pairs', selectedTotalQty) }}
+        </v-card-subtitle>
         <v-data-table
           :headers="tableHeaders"
           :items="computeTrfItems"
@@ -247,7 +251,7 @@ const progressList = getProgresses(authStore.user?.role.clearanceLevel).map(
   },
 );
 
-const { data: inventories, isFetching: isFetchingInventories } = useQuery({
+const { data: dataInventories, isFetching: isFetchingInventories } = useQuery({
   query: GetInventoriesDocument,
   tags: [CACHE_INVENTORIES],
 });
@@ -328,9 +332,20 @@ const computeTrfItems = computed(() => {
     );
   }
 });
+const selectedCount = computed(() => itemIdSelections.value.length);
+const selectedTotalQty = computed(() => {
+  const items = trfItemsData.value?.getInvTrfItems ?? [];
+  return items
+    .filter((item) => itemIdSelections.value.includes(item.id))
+    .reduce(
+      (sum, item) =>
+        sum + item.invTrfItemSizes.reduce((s, i) => s + (i.quantity ?? 0), 0),
+      0,
+    );
+});
 const computeToInv = computed(() => {
-  const toInv = inventories.value?.getInventories
-    ? inventories.value.getInventories.find(
+  const toInv = dataInventories.value?.getInventories
+    ? dataInventories.value.getInventories.find(
         (inv) => inv.id === toInvId.value.value,
       )
     : null;
@@ -359,6 +374,7 @@ const {
   fetchOnMount: false,
   cachePolicy: 'network-only',
   onData(data) {
+    isProgrammaticTrfDateUpdate = true;
     trfDate.setValue(data.getInvTrf.trfDate);
     trfNo.setValue(data.getInvTrf.trfNo);
     if (data.getInvTrf.fromInv) fromInvId.setValue(data.getInvTrf.fromInv.id);
@@ -371,17 +387,7 @@ const {
 
 const fromInventories = computed(() => {
   if (props.isReadonly) {
-    const userInventories = authStore.user?.userInventories ?? [];
-    const result = userInventories.map((inv) => inv);
-    if (!userInventories.find((inv) => inv.id === '1')) {
-      const findFactory = inventories.value?.getInventories.find(
-        (inv) => inv.id === '1',
-      );
-      if (findFactory) {
-        result.push({ id: findFactory.id, name: findFactory.name });
-      }
-      return result;
-    }
+    return dataInventories.value?.getInventories;
   } else {
     return authStore.user?.userInventories;
   }
@@ -410,6 +416,8 @@ const search = ref('');
 
 const itemIdSelections = ref<string[]>([]);
 
+let isProgrammaticTrfDateUpdate = false;
+
 const onSubmit = handleSubmit((data) => {
   if (!props.invTrfId) {
     executeCreate({ data });
@@ -437,7 +445,11 @@ watchEffect(() => {
 });
 
 watch(trfDate.value, (newDate) => {
-  if (!props.invTrfId && newDate) {
+  if (isProgrammaticTrfDateUpdate) {
+    isProgrammaticTrfDateUpdate = false;
+    return;
+  }
+  if (!props.isReadonly && newDate) {
     generateInvTrfNo({ variables: { date: trfDate.value.value } });
   }
 });

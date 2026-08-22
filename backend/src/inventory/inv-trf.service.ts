@@ -311,7 +311,9 @@ export class InvTrfService {
         productId,
       },
       orderBy: {
-        id: 'desc',
+        invTrf: {
+          trfDate: 'desc',
+        },
       },
     });
 
@@ -347,6 +349,20 @@ export class InvTrfService {
         },
         invTrf: true,
       },
+      orderBy: [
+        {
+          product: {
+            productGroup: {
+              skuNumeric: 'asc',
+            },
+          },
+        },
+        {
+          product: {
+            sku: 'asc',
+          },
+        },
+      ],
     });
 
     return result.map((item) => ({
@@ -407,6 +423,20 @@ export class InvTrfService {
               orderBy: [{ sizeId: 'asc' }],
             },
           },
+          orderBy: [
+            {
+              product: {
+                productGroup: {
+                  skuNumeric: 'asc',
+                },
+              },
+            },
+            {
+              product: {
+                sku: 'asc',
+              },
+            },
+          ],
         },
       },
     });
