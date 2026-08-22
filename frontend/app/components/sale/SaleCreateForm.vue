@@ -32,6 +32,7 @@
               <v-btn
                 v-if="!isReadonly"
                 :prepend-icon="mdiCartArrowDown"
+                variant="tonal"
                 color="primary"
                 @click="dialog.isVisible = true"
                 >{{ $t('btn.add_product') }}</v-btn

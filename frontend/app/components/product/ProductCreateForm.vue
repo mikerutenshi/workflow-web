@@ -55,6 +55,7 @@
           <v-btn
             :prepend-icon="mdiPlus"
             color="primary"
+            variant="tonal"
             @click="dialogForm = true"
             >{{ $t('btn.product_group') }}</v-btn
           >
@@ -71,54 +72,51 @@
         "
       />
 
-      <v-row>
-        <v-col cols="9">
-          <v-autocomplete
-            v-for="(_, index) in colorSelections"
-            v-model="colorSelections[index]"
-            :label="`${$t('label.select_colors')} ${index + 1}`"
-            chips
-            :loading="isFetchingColors"
-            :items="sortedColors"
-            item-title="name"
-            item-value="id"
-            return-object
-            :error-messages="colorIds.errorMessage.value"
-            clearable
-            auto-select-first
-          >
-            <template #item="{ item, props }">
-              <v-list-item v-bind="props" :title="item.name">
-                <template #prepend>
-                  <div
-                    class="color-box"
-                    :style="{ backgroundColor: item.hexCode }"
-                  />
-                </template>
-              </v-list-item>
+      <v-autocomplete
+        v-for="(_, index) in colorSelections"
+        :key="index"
+        v-model="colorSelections[index]"
+        :label="`${$t('label.select_colors')} ${index + 1}`"
+        chips
+        :loading="isFetchingColors"
+        :items="sortedColors"
+        item-title="name"
+        item-value="id"
+        return-object
+        :error-messages="colorIds.errorMessage.value"
+        clearable
+        auto-select-first
+      >
+        <template #item="{ item, props }">
+          <v-list-item v-bind="props" :title="item.name">
+            <template #prepend>
+              <div
+                class="color-box"
+                :style="{ backgroundColor: item.hexCode }"
+              />
             </template>
+          </v-list-item>
+        </template>
 
-            <template #chip="{ item, index }">
-              <v-chip v-if="item.id">
-                <template #prepend>
-                  <div
-                    :style="{ backgroundColor: item.hexCode }"
-                    class="color-box"
-                  ></div>
-                </template>
-                <span>{{ item.name }}</span>
-              </v-chip>
+        <template #chip="{ item }">
+          <v-chip v-if="item.id">
+            <template #prepend>
+              <div
+                :style="{ backgroundColor: item.hexCode }"
+                class="color-box"
+              ></div>
             </template>
-          </v-autocomplete>
-        </v-col>
-        <v-col cols="3">
-          <v-btn
-            :icon="mdiPlus"
-            color="primary"
-            @click="colorSelections.push(placeholderColor)"
-          ></v-btn>
-        </v-col>
-      </v-row>
+            <span>{{ item.name }}</span>
+          </v-chip>
+        </template>
+      </v-autocomplete>
+      <v-btn
+        :prepend-icon="mdiPlus"
+        color="primary"
+        variant="tonal"
+        @click="colorSelections.push(placeholderColor)"
+        >{{ $t('btn.add_color') }}</v-btn
+      >
     </v-card-text>
 
     <v-card-actions>

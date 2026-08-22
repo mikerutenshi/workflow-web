@@ -43,6 +43,7 @@
           <v-btn
             :prepend-icon="mdiPlus"
             color="primary"
+            variant="tonal"
             @click="dialogForm = true"
             >{{ $t('btn.product_category') }}</v-btn
           >

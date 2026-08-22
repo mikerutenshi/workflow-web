@@ -9,33 +9,29 @@
 
   <v-form @submit.prevent="onSubmit">
     <v-card-text>
-      <v-row>
-        <v-col cols="9">
-          <v-text-field
-            v-for="(_, index) in discsDisplay"
-            :label="`${$t('label.discount')} ${index + 1}`"
-            v-maska="percentageMask"
-            :key="index"
-            clearable
-            :model-value="discsDisplay[index]"
-            @update:model-value="
-              (value) => (discsDisplay[index] = discMask.unmasked(value))
-            "
-            @click:clear="
-              if (discounts.fields.value.length > 1) discsDisplay.pop();
-            "
-            inputmode="numeric"
-            :error-messages="errors['discounts']"
-          />
-        </v-col>
-        <v-col cols="3">
-          <v-btn
-            :icon="mdiPlus"
-            color="primary"
-            @click="discsDisplay.push('')"
-          ></v-btn>
-        </v-col>
-      </v-row>
+      <v-text-field
+        v-for="(_, index) in discsDisplay"
+        :key="index"
+        :label="`${$t('label.discount')} ${index + 1}`"
+        v-maska="percentageMask"
+        clearable
+        :model-value="discsDisplay[index]"
+        @update:model-value="
+          (value) => (discsDisplay[index] = discMask.unmasked(value))
+        "
+        @click:clear="
+          if (discounts.fields.value.length > 1) discsDisplay.pop();
+        "
+        inputmode="numeric"
+        :error-messages="errors['discounts']"
+      />
+      <v-btn
+        :prepend-icon="mdiPlus"
+        color="primary"
+        variant="tonal"
+        @click="discsDisplay.push('')"
+        >{{ $t('btn.add_discount') }}</v-btn
+      >
     </v-card-text>
 
     <v-card-actions>

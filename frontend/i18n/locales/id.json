@@ -102,6 +102,9 @@
     "yes": "Iya",
     "no": "Tidak",
     "add_product": "Tambah Sepatu",
+    "add_color": "Tambah Warna",
+    "add_discount": "Tambah Diskon",
+    "add_profit_margin": "Tambah Margin Keuntungan",
     "inv_product_edit_disc": "Ubah Diskon",
     "add_to_inventory": "Tambah ke Inventaris",
     "register": "Daftar"

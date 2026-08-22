@@ -82,37 +82,32 @@
               />
             </v-col>
           </v-row>
-
-          <v-row>
-            <v-col cols="9">
-              <v-text-field
-                v-for="(_, index) in priceFormulaModel.profitMargins"
-                :label="`${$t('label.profit_margins')} ${index + 1}`"
-                v-maska="percentageMask"
-                :key="index"
-                clearable
-                :model-value="priceFormulaModel.profitMargins[index]"
-                @update:model-value="
-                  (value) =>
-                    (priceFormulaModel.profitMargins[index] =
-                      discMask.unmasked(value))
-                "
-                @click:clear="
-                  if (discounts.fields.value.length > 1)
-                    priceFormulaModel.profitMargins.pop();
-                "
-                inputmode="numeric"
-                :error-messages="errors['priceFormula.profitMargins']"
-              />
-            </v-col>
-            <v-col cols="3">
-              <v-btn
-                :icon="mdiPlus"
-                color="primary"
-                @click="priceFormulaModel.profitMargins.push('')"
-              ></v-btn>
-            </v-col>
-          </v-row>
+          <v-text-field
+            v-for="(_, index) in priceFormulaModel.profitMargins"
+            :key="index"
+            :label="`${$t('label.profit_margins')} ${index + 1}`"
+            v-maska="percentageMask"
+            clearable
+            :model-value="priceFormulaModel.profitMargins[index]"
+            @update:model-value="
+              (value) =>
+                (priceFormulaModel.profitMargins[index] =
+                  discMask.unmasked(value))
+            "
+            @click:clear="
+              if (discounts.fields.value.length > 1)
+                priceFormulaModel.profitMargins.pop();
+            "
+            inputmode="numeric"
+            :error-messages="errors['priceFormula.profitMargins']"
+          />
+          <v-btn
+            :prepend-icon="mdiPlus"
+            color="primary"
+            variant="tonal"
+            @click="priceFormulaModel.profitMargins.push('')"
+            >{{ $t('btn.add_profit_margin') }}</v-btn
+          >
         </v-card-text>
       </v-card>
     </v-card-text>

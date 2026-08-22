@@ -102,6 +102,9 @@
     "yes": "Enya",
     "no": "Henteu",
     "add_product": "Tambah Sapatu",
+    "add_color": "Tambah Warna",
+    "add_discount": "Tambah Diskon",
+    "add_profit_margin": "Tambah Margin Kauntungan",
     "inv_product_edit_disc": "Ngarobah Diskon",
     "add_to_inventory": "Tambahkeun kana Inventaris",
     "register": "Daptar"

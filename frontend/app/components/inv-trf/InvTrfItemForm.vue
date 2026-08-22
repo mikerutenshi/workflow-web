@@ -29,37 +29,35 @@
         readonly
       />
 
-      <v-row v-if="toInvId.value.value">
-        <v-col cols="9">
-          <v-text-field
-            v-for="(_, index) in displayModel.discounts"
-            :label="`${$t('label.discount')} ${index + 1}`"
-            v-maska="percentageMask"
-            :key="index"
-            clearable
-            :model-value="displayModel.discounts[index]"
-            @update:model-value="
-              (value) =>
-                (displayModel.discounts[index] = discMask.unmasked(value))
-            "
-            @click:clear="
-              if (discounts.fields.value.length > 1)
-                displayModel.discounts.pop();
-            "
-            inputmode="numeric"
-            :error-messages="errors['discounts']"
-          />
-        </v-col>
-        <v-col cols="3" class="d-flex justify-end align-center">
-          <v-btn
-            :icon="mdiPlus"
-            color="primary"
-            @click="displayModel.discounts.push('')"
-          ></v-btn>
-        </v-col>
-      </v-row>
+      <template v-if="toInvId.value.value">
+        <v-text-field
+          v-for="(_, index) in displayModel.discounts"
+          :key="index"
+          :label="`${$t('label.discount')} ${index + 1}`"
+          v-maska="percentageMask"
+          clearable
+          :model-value="displayModel.discounts[index]"
+          @update:model-value="
+            (value) =>
+              (displayModel.discounts[index] = discMask.unmasked(value))
+          "
+          @click:clear="
+            if (discounts.fields.value.length > 1) displayModel.discounts.pop();
+          "
+          inputmode="numeric"
+          :error-messages="errors['discounts']"
+        />
+        <v-btn
+          class="mb-4"
+          :prepend-icon="mdiPlus"
+          color="primary"
+          variant="tonal"
+          @click="displayModel.discounts.push('')"
+          >{{ $t('btn.add_discount') }}</v-btn
+        >
+      </template>
 
-      <v-card class="mb-4" variant="outlined">
+      <v-card variant="outlined">
         <v-card-title>{{ $t('card.fill_quantities') }}</v-card-title>
         <v-card-subtitle></v-card-subtitle>
         <v-card-text>

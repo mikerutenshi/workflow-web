@@ -102,6 +102,9 @@
     "yes": "Yes",
     "no": "No",
     "add_product": "Add Shoe",
+    "add_color": "Add Color",
+    "add_discount": "Add Discount",
+    "add_profit_margin": "Add Profit Margin",
     "inv_product_edit_disc": "Edit Discount",
     "add_to_inventory": "Add to Inventory",
     "register": "Register"

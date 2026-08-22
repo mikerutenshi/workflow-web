@@ -10,6 +10,24 @@
         v-model="productId.value.value"
         :error-messages="productId.errorMessage.value"
       >
+        <template v-slot:item="{ props, item }">
+          <v-list-item
+            v-bind="props"
+            :title="item.product.sku"
+            :subtitle="
+              [
+                item.product.productGroup.productCategory.name,
+                $t(
+                  renderGender(item.product.productGroup.productCategory.gender),
+                ),
+                item.product.productGroup.name,
+              ]
+                .filter(Boolean)
+                .join(' | ')
+            "
+          >
+          </v-list-item>
+        </template>
       </v-autocomplete>
 
       <v-card class="my-4" variant="outlined">
