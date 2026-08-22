@@ -56,8 +56,8 @@ export class InvTrfResolver {
   getInvTrfItems(
     @Args('fromInvId', { type: () => ID }, ParseIntPipe) fromInvId: number,
     @Args('toInvId', { type: () => ID }, ParseIntPipe) toInvId: number,
-    @Args('progress', { type: () => Progress, nullable: true })
-    progress?: Progress,
+    @Args('progress', { type: () => [Progress], nullable: true })
+    progress?: Progress[],
   ): Promise<InvTrfItemDto[]> {
     return this.service.getInvTrfItems(fromInvId, toInvId, progress);
   }

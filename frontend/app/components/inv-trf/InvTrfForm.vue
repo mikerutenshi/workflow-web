@@ -312,11 +312,11 @@ const {
 const variables = reactive({
   fromInvId: '',
   toInvId: '',
-  progress: undefined as Progress | undefined,
+  progress: undefined as Progress[] | undefined,
 });
 
 if (!props.invTrfId) {
-  variables.progress = Progress.Pending;
+  variables.progress = [Progress.Pending];
 }
 
 const computeTrfItems = computed(() => {
@@ -327,7 +327,7 @@ const computeTrfItems = computed(() => {
   } else {
     return trfItemsData.value?.getInvTrfItems.filter(
       (item) =>
-        item.progress === Progress.Pending ||
+        [Progress.Pending, Progress.Initiated].includes(item.progress) ||
         item.invTrf?.id === props.invTrfId,
     );
   }

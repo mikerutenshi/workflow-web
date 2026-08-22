@@ -147,7 +147,7 @@ query getInvTrfItemTrfs($invId: ID!, $productId: ID!) {
   }
 }
 
-query getInvTrfItems($fromInvId: ID!, $toInvId: ID!, $progress: Progress) {
+query getInvTrfItems($fromInvId: ID!, $toInvId: ID!, $progress: [Progress!]) {
   getInvTrfItems(
     fromInvId: $fromInvId
     toInvId: $toInvId

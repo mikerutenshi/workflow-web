@@ -326,10 +326,14 @@ export class InvTrfService {
   async getInvTrfItems(
     fromInvId: number,
     toInvId: number,
-    progress?: Progress,
+    progress?: Progress[],
   ): Promise<InvTrfItemDto[]> {
     const result = await this.prisma.invTrfItem.findMany({
-      where: { fromInvId, toInvId, progress: progress as Progress },
+      where: {
+        fromInvId,
+        toInvId,
+        progress: progress?.length ? { in: progress } : undefined,
+      },
       include: {
         product: {
           include: {
