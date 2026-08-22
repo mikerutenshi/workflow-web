@@ -9,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import dayjs from 'dayjs';
 
 import { SaleCreateDto } from './dto/sale-create.dto';
+import { SaleDto } from './dto/sale.dto';
 import { SaleUpdateDto } from './dto/sale-update.dto';
 import { SalePerformanceDto } from './dto/sale-performance-dto';
 
@@ -186,30 +187,47 @@ export class SaleService {
     return true;
   }
 
-  getSales(invId?: number): Promise<Sale[]> {
-    return this.prisma.sale.findMany({
-      where: {
-        saleItems: {
-          some: {
-            invId,
+  getSales(
+    invId?: number,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<SaleDto[]> {
+    return this.prisma.sale
+      .findMany({
+        where: {
+          saleItems: {
+            some: {
+              invId,
+            },
           },
+          date:
+            startDate && endDate ? { gte: startDate, lte: endDate } : undefined,
         },
-      },
-      include: {
-        saleItems: {
-          include: {
-            saleItemSizes: {
-              include: { size: true },
-              orderBy: [{ sizeId: 'asc' }],
+        include: {
+          saleItems: {
+            include: {
+              saleItemSizes: {
+                include: { size: true },
+                orderBy: [{ sizeId: 'asc' }],
+              },
+              invProduct: { include: { inventory: true } },
             },
           },
         },
-      },
-      orderBy: [{ saleNo: 'desc' }],
-    });
+        orderBy: [{ saleNo: 'desc' }],
+      })
+      .then((sales) =>
+        sales.map((sale) => ({
+          ...sale,
+          saleItems: sale.saleItems.map(({ invProduct, ...item }) => ({
+            ...item,
+            inventory: invProduct.inventory,
+          })),
+        })),
+      );
   }
 
-  async getSale(id: number): Promise<Sale> {
+  async getSale(id: number): Promise<SaleDto> {
     const sale = await this.prisma.sale.findUnique({
       where: { id },
       include: {
@@ -219,6 +237,7 @@ export class SaleService {
               include: { size: true },
               orderBy: [{ sizeId: 'asc' }],
             },
+            invProduct: { include: { inventory: true } },
           },
         },
       },
@@ -228,7 +247,13 @@ export class SaleService {
       throw new Error(`Sale with ID ${id} not found.`);
     }
 
-    return sale;
+    return {
+      ...sale,
+      saleItems: sale.saleItems.map(({ invProduct, ...item }) => ({
+        ...item,
+        inventory: invProduct.inventory,
+      })),
+    };
   }
 
   async generateSaleNo(date: Date): Promise<string> {

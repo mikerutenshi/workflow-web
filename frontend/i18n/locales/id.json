@@ -162,6 +162,7 @@
     "sender_sign": "Tanda Tangan Pengirim",
     "receiver_sign": "Tanda Tangan Penerima",
     "status": "Status",
+    "inventory": "Gudang",
     "select_inventories": "Pilih Gudang",
     "all_inventories": "Semua Gudang",
     "address": "Alamat",

@@ -162,6 +162,7 @@
     "sender_sign": "Sender's Signature",
     "receiver_sign": "Receiver's Signature",
     "status": "Status",
+    "inventory": "Warehouse",
     "select_inventories": "Select Warehouse",
     "all_inventories": "All Warehouses",
     "address": "Address",

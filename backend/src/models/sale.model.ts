@@ -5,9 +5,11 @@ import { SaleItem } from './sale-item.model';
 @ObjectType()
 export class Sale extends BaseModel {
   @Field()
-  saleNo: string;
+  saleNo!: string;
+
   @Field(() => Date)
   date?: Date;
+
   @Field(() => [SaleItem])
-  saleItems: SaleItem[];
+  saleItems!: SaleItem[];
 }

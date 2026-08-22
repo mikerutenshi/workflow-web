@@ -22,6 +22,12 @@
         :loading="isFetchingSaleNo"
       />
 
+      <v-text-field
+        :label="$t('label.inventory')"
+        :model-value="inventoryName"
+        readonly
+      />
+
       <v-card variant="outlined" class="my-4">
         <v-card-title>
           <v-row>
@@ -198,6 +204,12 @@ const submitBtnTitle = computed(() =>
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
+const inventoryName = computed(
+  () =>
+    authStore.user?.userInventories.find(
+      (inv) => inv.id === props.inventoryId,
+    )?.name ?? '',
+);
 
 const { t } = useI18n();
 const validationSchema = toTypedSchema(SaleSchema);

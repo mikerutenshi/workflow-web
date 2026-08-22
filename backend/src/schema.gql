@@ -514,6 +514,26 @@ type Sale {
   saleItems: [SaleItem!]!
 }
 
+type SaleItemDto {
+  id: ID!
+  saleId: ID!
+  invId: ID!
+  productId: ID!
+  saleItemSizes: [SaleItemToSize!]!
+  inventory: Inventory!
+}
+
+type SaleDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  saleNo: String!
+  date: Date!
+  saleItems: [SaleItemDto!]!
+}
+
 type SalePerformanceDto {
   productId: ID!
   sku: String!
@@ -564,8 +584,8 @@ type Query {
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo(date: Date!): String!
   getInvTxs(invId: ID!, productId: ID!): [InvTxDto!]!
-  getSales(invId: ID): [Sale!]!
-  getSale(id: ID!): Sale!
+  getSales(invId: ID, startDate: Date, endDate: Date): [SaleDto!]!
+  getSale(id: ID!): SaleDto!
   getSalePerformance(startDate: Date!, endDate: Date!, invId: ID): [SalePerformanceDto!]!
   generateSaleNo(date: Date!): String!
 }

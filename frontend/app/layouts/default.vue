@@ -10,7 +10,8 @@
       <v-btn
         v-if="
           currentRouteName &&
-          showCreateBtn(currentRouteName.toString(), clearance)
+          showCreateBtn(currentRouteName.toString(), clearance) &&
+          !(currentRouteName === 'sales' && !saleStore.selectedInventoryId)
         "
         variant="flat"
         class="mr-4"

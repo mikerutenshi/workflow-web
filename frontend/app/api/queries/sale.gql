@@ -1,10 +1,15 @@
-fragment SaleFragment on Sale {
+fragment SaleFragment on SaleDto {
   id
   date
   saleNo
   saleItems {
     id
     productId
+    invId
+    inventory {
+      id
+      name
+    }
     saleItemSizes {
       quantity
       size {
@@ -25,8 +30,8 @@ mutation updateSale($id: ID!, $data: SaleUpdateDto!) {
   }
 }
 
-query getSales($invId: ID) {
-  getSales(invId: $invId) {
+query getSales($invId: ID, $startDate: Date, $endDate: Date) {
+  getSales(invId: $invId, startDate: $startDate, endDate: $endDate) {
     ...SaleFragment
   }
 }

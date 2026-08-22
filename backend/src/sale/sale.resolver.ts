@@ -2,6 +2,7 @@ import { Sale } from '@/models/sale.model';
 import { SaleService } from './sale.service';
 import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 import { SaleCreateDto } from './dto/sale-create.dto';
+import { SaleDto } from './dto/sale.dto';
 import { ParseIntPipe } from '@nestjs/common';
 import { SaleUpdateDto } from './dto/sale-update.dto';
 import { SalePerformanceDto } from './dto/sale-performance-dto';
@@ -23,7 +24,7 @@ export class SaleResolver {
     return this.service.updateSale(id, data);
   }
 
-  @Query(() => [Sale])
+  @Query(() => [SaleDto])
   getSales(
     @Args(
       'invId',
@@ -31,14 +32,18 @@ export class SaleResolver {
       new ParseIntPipe({ optional: true }),
     )
     invId?: number,
-  ): Promise<Sale[]> {
-    return this.service.getSales(invId);
+    @Args('startDate', { type: () => Date, nullable: true })
+    startDate?: Date,
+    @Args('endDate', { type: () => Date, nullable: true })
+    endDate?: Date,
+  ): Promise<SaleDto[]> {
+    return this.service.getSales(invId, startDate, endDate);
   }
 
-  @Query(() => Sale)
+  @Query(() => SaleDto)
   getSale(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Sale> {
+  ): Promise<SaleDto> {
     return this.service.getSale(id);
   }
 
