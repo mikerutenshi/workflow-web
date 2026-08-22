@@ -192,9 +192,9 @@ const productId = useField('productId');
 const { isFetching: isFetchingOrderNo, execute: generateOrderNo } = useQuery({
   query: GenerateOrderNoDocument,
   cachePolicy: 'network-only',
-  onData(data) {
-    orderNo.setValue(data.generateOrderNo);
-  },
+  // onData(data) {
+  //   orderNo.setValue(data.generateOrderNo);
+  // },
   fetchOnMount: false,
 });
 const note = useField('note');
