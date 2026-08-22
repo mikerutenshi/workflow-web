@@ -32,6 +32,22 @@
         v-model="productId.value.value"
         :error-messages="productId.errorMessage.value"
       >
+        <template v-slot:item="{ props, item }">
+          <v-list-item
+            v-bind="props"
+            :title="item.sku"
+            :subtitle="
+              [
+                item.productGroup.productCategory.name,
+                $t(renderGender(item.productGroup.productCategory.gender)),
+                item.productGroup.name,
+              ]
+                .filter(Boolean)
+                .join(' | ')
+            "
+          >
+          </v-list-item>
+        </template>
       </v-autocomplete>
 
       <v-select

@@ -27,15 +27,16 @@
             <template v-slot:item="{ props, item }">
               <v-list-item
                 v-bind="props"
-                :title="
-                  item.name
-                    ? `${item.skuNumeric} / ${item.name}`
-                    : item.skuNumeric
+                :title="item.skuNumeric"
+                :subtitle="
+                  [
+                    item.productCategory.name,
+                    $t(renderGender(item.productCategory.gender)),
+                    item.name,
+                  ]
+                    .filter(Boolean)
+                    .join(' | ')
                 "
-                :subtitle="`
-                    ${item.productCategory.name} |
-                  ${$t(renderGender(item.productCategory.gender))}
-                    `"
               >
                 <template #append>
                   <v-btn
