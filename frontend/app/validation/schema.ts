@@ -239,14 +239,14 @@ export const InvAdjItemSchema = z.object({
     .nonempty(),
 });
 
+// No createdBy/updatedBy: the server takes the actor from the authenticated
+// context so a client cannot claim to have written someone else's count sheet.
 export const InvAdjSchema = z.object({
   adjNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
   invId: positiveNumberString,
   adjDate: z.string().datetime(),
   note: z.string().max(255).trim().nullable().optional(),
-  createdBy: positiveNumberString,
   invAdjItems: z.array(InvAdjItemSchema).nonempty(),
-  updatedBy: positiveNumberString.optional().nullable(),
 });
 
 export const InvProductUpdateDiscSchema = z.object({

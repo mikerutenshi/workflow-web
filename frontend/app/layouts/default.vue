@@ -11,7 +11,7 @@
         v-if="
           currentRouteName &&
           showCreateBtn(currentRouteName.toString(), clearance) &&
-          !(currentRouteName === 'sales' && !saleStore.selectedInventoryId)
+          hasRequiredInventory(currentRouteName.toString())
         "
         variant="flat"
         class="mr-4"
@@ -165,6 +165,7 @@
       <template v-else-if="dialog.content === DialogContent.CreateInvAdj">
         <InvAdjForm
           :inv-adj-id="null"
+          :inventory-id="invAdjStore.selectedInventoryId"
           @form-submit="handleDialogClose"
         ></InvAdjForm>
       </template>
@@ -260,6 +261,7 @@ const { print: printPayroll, isPrinting: isPayrollPrinting } =
 const { download: downloadProducts, isDownloading: isDownloadingProducts } =
   useDownloadProducts();
 const saleStore = useSaleStore();
+const invAdjStore = useInvAdjStore();
 
 enum DialogContent {
   None = 'NONE',
@@ -365,8 +367,10 @@ const createBtns = [
     clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
   },
   {
+    // Sales counts their own storefront; Field is excluded despite outranking
+    // Sales on clearance, matching @RolesAny on the backend.
     routeName: 'inv-adjs',
-    clearances: [Role.Superuser, Role.Finance, Role.Planner],
+    clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
   },
   {
     routeName: 'sales',
@@ -394,6 +398,14 @@ function showCreateBtn(routeName: string, clearanceLevel: number) {
     (btn) =>
       routeName === btn.routeName && btn.clearances.includes(clearanceLevel),
   );
+}
+
+// Some create dialogs are scoped to a single warehouse and cannot open while the
+// screen behind them is showing "All Warehouses".
+function hasRequiredInventory(routeName: string) {
+  if (routeName === 'sales') return !!saleStore.selectedInventoryId;
+  if (routeName === 'inv-adjs') return !!invAdjStore.selectedInventoryId;
+  return true;
 }
 
 const toggleDrawer = () => {
@@ -477,7 +489,7 @@ const navItems = computed(() => {
       title: t('nav.inventory_adjustments'),
       route: localePath('/inv-adjs'),
       icon: mdiClipboardListOutline,
-      clearances: [Role.Superuser, Role.Finance, Role.Planner],
+      clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
     },
     {
       title: t('nav.setting'),

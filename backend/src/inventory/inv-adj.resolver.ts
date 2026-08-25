@@ -1,9 +1,11 @@
-import { User } from '@/generated/prisma/client';
 import { AuthGuard } from '@/guards/auth.guard';
 import { RoleGuard } from '@/guards/role.guard';
-import { Roles } from '@/guards/roles.decorator';
+import { Roles, RolesAny } from '@/guards/roles.decorator';
 import { InvAdj } from '@/models/inv-adj.model';
 import { Role } from '@/models/role.enum';
+// The GraphQL model, not the Prisma one: only this shape declares `role` and
+// `userInventories`, which AuthService.me attaches to the Apollo context.
+import { User } from '@/models/user.model';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Context, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InvAdjCreateDto } from './dto/inv-adj-create.dto';
@@ -15,21 +17,28 @@ import { InvAdjService } from './inv-adj.service';
 export class InvAdjResolver {
   constructor(private service: InvAdjService) {}
 
+  // Counting is done by whoever is standing at the shelf, so Sales drafts too.
+  // Field is deliberately absent despite outranking Sales on clearance, which
+  // is why this is a set rather than a Roles threshold.
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.Planner)
+  @RolesAny(Role.Superuser, Role.Finance, Role.Planner, Role.Sales)
   @Mutation(() => InvAdj)
-  createInvAdj(@Args('data') data: InvAdjCreateDto): Promise<InvAdj> {
-    return this.service.createInvAdj(data);
+  createInvAdj(
+    @Args('data') data: InvAdjCreateDto,
+    @Context('user') user: User,
+  ): Promise<InvAdj> {
+    return this.service.createInvAdj(data, user);
   }
 
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.Planner)
+  @RolesAny(Role.Superuser, Role.Finance, Role.Planner, Role.Sales)
   @Mutation(() => InvAdj)
   updateInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
     @Args('data') data: InvAdjUpdateDto,
+    @Context('user') user: User,
   ): Promise<InvAdj> {
-    return this.service.updateInvAdj(id, data);
+    return this.service.updateInvAdj(id, data, user);
   }
 
   // Posting is the irreversible step that writes stock, so it sits a tier above
@@ -45,17 +54,19 @@ export class InvAdjResolver {
   }
 
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.Planner)
+  @RolesAny(Role.Superuser, Role.Finance, Role.Planner, Role.Sales)
   @Mutation(() => Boolean)
   deleteInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+    @Context('user') user: User,
   ): Promise<boolean> {
-    return this.service.deleteInvAdj(id);
+    return this.service.deleteInvAdj(id, user);
   }
 
   @UseGuards(AuthGuard)
   @Query(() => [InvAdjSimpleDto])
   getInvAdjs(
+    @Context('user') user: User,
     @Args(
       'invId',
       { type: () => ID, nullable: true },
@@ -63,15 +74,16 @@ export class InvAdjResolver {
     )
     invId?: number,
   ): Promise<InvAdjSimpleDto[]> {
-    return this.service.getInvAdjs(invId);
+    return this.service.getInvAdjs(user, invId);
   }
 
   @UseGuards(AuthGuard)
   @Query(() => InvAdjDto)
   getInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
+    @Context('user') user: User,
   ): Promise<InvAdjDto> {
-    return this.service.getInvAdj(id);
+    return this.service.getInvAdj(id, user);
   }
 
   @UseGuards(AuthGuard)

@@ -1,6 +1,8 @@
 import { Prisma, Progress, TxType } from '@/generated/prisma/client';
 import { InvAdj } from '@/models/inv-adj.model';
 import { Operation } from '@/models/operation.enum';
+import { Role } from '@/models/role.enum';
+import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { generateId, getStartOfDay } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
@@ -41,8 +43,10 @@ export class InvAdjService {
    * Creates the count sheet as an INITIATED draft. Deliberately has no stock
    * effect — stock only moves in postInvAdj.
    */
-  async createInvAdj(data: InvAdjCreateDto): Promise<InvAdj> {
+  async createInvAdj(data: InvAdjCreateDto, user: User): Promise<InvAdj> {
     const { invAdjItems, ...rest } = data;
+
+    this.assertInvAllowed(rest.invId, user);
 
     return this.prisma.$transaction(async (tx) => {
       await this.assertProductsExist(
@@ -53,6 +57,7 @@ export class InvAdjService {
       return tx.invAdj.create({
         data: {
           ...rest,
+          createdBy: user.id,
           progress: Progress.INITIATED,
           invAdjItems: { create: this.buildItemsOp(invAdjItems) },
         },
@@ -60,7 +65,11 @@ export class InvAdjService {
     });
   }
 
-  async updateInvAdj(id: number, data: InvAdjUpdateDto): Promise<InvAdj> {
+  async updateInvAdj(
+    id: number,
+    data: InvAdjUpdateDto,
+    user: User,
+  ): Promise<InvAdj> {
     const { invAdjItems, ...rest } = data;
 
     return this.prisma.$transaction(async (tx) => {
@@ -71,6 +80,9 @@ export class InvAdjService {
           `Adjustment ${initial.adjNo} has already been posted and cannot be changed. Create a new adjustment to correct it.`,
         );
       }
+
+      this.assertOwned(initial, user);
+      if (rest.invId !== undefined) this.assertInvAllowed(rest.invId, user);
 
       await this.assertProductsExist(
         invAdjItems.map((item) => item.productId),
@@ -84,6 +96,7 @@ export class InvAdjService {
         where: { id },
         data: {
           ...rest,
+          updatedBy: user.id,
           invAdjItems: { create: this.buildItemsOp(invAdjItems) },
         },
       });
@@ -215,7 +228,7 @@ export class InvAdjService {
     });
   }
 
-  async deleteInvAdj(id: number): Promise<boolean> {
+  async deleteInvAdj(id: number, user: User): Promise<boolean> {
     const adj = await this.prisma.invAdj.findUniqueOrThrow({ where: { id } });
 
     if (adj.progress === Progress.COMPLETED) {
@@ -224,13 +237,31 @@ export class InvAdjService {
       );
     }
 
+    this.assertOwned(adj, user);
+
     await this.prisma.invAdj.delete({ where: { id } });
     return true;
   }
 
-  async getInvAdjs(invId?: number): Promise<InvAdjSimpleDto[]> {
+  async getInvAdjs(user: User, invId?: number): Promise<InvAdjSimpleDto[]> {
+    const allowed = this.allowedInvIds(user);
+
+    // A restricted caller's own filter is intersected with what they may see,
+    // so passing another warehouse's id yields nothing rather than everything.
+    const invIdFilter =
+      allowed === null
+        ? invId !== undefined
+          ? invId
+          : undefined
+        : {
+            in:
+              invId !== undefined
+                ? allowed.filter((id) => id === invId)
+                : allowed,
+          };
+
     const adjs = await this.prisma.invAdj.findMany({
-      where: invId !== undefined ? { invId } : undefined,
+      where: invIdFilter !== undefined ? { invId: invIdFilter } : undefined,
       include: {
         inventory: true,
         invAdjItems: { include: { invAdjItemSizes: true } },
@@ -253,8 +284,8 @@ export class InvAdjService {
     }));
   }
 
-  getInvAdj(id: number): Promise<InvAdjDto> {
-    return this.prisma.invAdj.findUniqueOrThrow({
+  async getInvAdj(id: number, user: User): Promise<InvAdjDto> {
+    const adj = await this.prisma.invAdj.findUniqueOrThrow({
       where: { id },
       include: {
         inventory: true,
@@ -276,6 +307,38 @@ export class InvAdjService {
         },
       },
     });
+
+    this.assertInvAllowed(adj.invId, user);
+    return adj;
+  }
+
+  /**
+   * The inventory ids this user may act on, or null when unrestricted. Planner
+   * and above see every warehouse; below that, only their own assignments.
+   */
+  private allowedInvIds(user: User): number[] | null {
+    return user.role.clearanceLevel <= Role.Planner
+      ? null
+      : user.userInventories.map((inv) => inv.id);
+  }
+
+  private assertInvAllowed(invId: number, user: User) {
+    const allowed = this.allowedInvIds(user);
+    if (allowed !== null && !allowed.includes(invId)) {
+      throw Error(`You do not have access to this warehouse.`);
+    }
+  }
+
+  /**
+   * Below Planner, a count sheet belongs to whoever created it — one store's
+   * staff must not be able to rewrite another's count.
+   */
+  private assertOwned(adj: { adjNo: string; createdBy: number }, user: User) {
+    if (user.role.clearanceLevel > Role.Planner && adj.createdBy !== user.id) {
+      throw Error(
+        `Adjustment ${adj.adjNo} was created by someone else and cannot be changed by you.`,
+      );
+    }
   }
 
   private buildItemsOp(invAdjItems: InvAdjItemCreateDto[]) {

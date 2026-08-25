@@ -340,6 +340,7 @@ query getInvAdjs($invId: ID) {
     note
     itemCount
     totalVariance
+    createdBy
     inventory {
       id
       name

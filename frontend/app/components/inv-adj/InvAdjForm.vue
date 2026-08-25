@@ -24,17 +24,17 @@
         :loading="isFetchingAdjNo"
       />
 
-      <v-autocomplete
+      <!--
+        Readonly by design: the warehouse is chosen by the table's filter, which
+        is also what gates the New button, so a sheet can never be counted
+        against a warehouse the list is not showing.
+      -->
+      <v-text-field
         :label="$t('label.inventory')"
-        auto-select-first
-        item-value="id"
-        item-title="name"
-        :items="userInventories"
-        v-model="invId.value.value"
+        :model-value="inventoryName"
         :error-messages="invId.errorMessage.value"
-        :readonly="isReadonly || !!props.invAdjId"
-      >
-      </v-autocomplete>
+        readonly
+      />
 
       <v-textarea
         :label="$t('label.note')"
@@ -119,6 +119,12 @@ const props = defineProps({
     type: [String, null] as PropType<string | null>,
     required: true,
   },
+  /** Seeds a new sheet from the table's warehouse filter. Ignored when editing:
+   *  getInvAdj supplies the warehouse the sheet was already counted against. */
+  inventoryId: {
+    type: [String, null] as PropType<string | null>,
+    default: null,
+  },
   isReadonly: { type: Boolean, default: false },
 });
 const emit = defineEmits(['form-submit']);
@@ -128,7 +134,6 @@ const submitBtnTitle = computed(() =>
 );
 
 const authStore = useAuthStore();
-const userId = authStore.user?.id || '';
 const userInventories = authStore.user?.userInventories ?? [];
 
 const validationSchema = toTypedSchema(InvAdjSchema);
@@ -136,8 +141,7 @@ const { handleSubmit, errors, setFieldValue, values } = useForm({
   validationSchema,
   initialValues: {
     adjDate: dayjs().toISOString(),
-    invId: userInventories.at(0)?.id ?? '',
-    createdBy: userId,
+    invId: props.inventoryId ?? userInventories.at(0)?.id ?? '',
   },
 });
 
@@ -145,6 +149,17 @@ const adjNo = useField<string>('adjNo');
 const adjDate = useField<string>('adjDate');
 const invId = useField<string>('invId');
 const note = useField<string>('note');
+
+// Resolved from the fetched document first: a user may be entitled to read a
+// sheet for a warehouse that is not in their own userInventories (Finance, for
+// instance, can have none assigned), which the local lookup alone would miss.
+const fetchedInventoryName = ref('');
+const inventoryName = computed(
+  () =>
+    fetchedInventoryName.value ||
+    userInventories.find((inv) => inv.id === invId.value.value)?.name ||
+    '',
+);
 
 // The item rows are edited as a plain array and mirrored into the form so the
 // child component can own its own row-building logic.
@@ -193,6 +208,7 @@ const { error: errorInvAdj, execute: fetchInvAdj } = useQuery({
     adjDate.setValue(adj.adjDate);
     adjNo.setValue(adj.adjNo);
     invId.setValue(adj.invId);
+    fetchedInventoryName.value = adj.inventory.name;
     note.setValue(adj.note ?? '');
     items.value = adj.invAdjItems.map((item) => ({
       productId: item.productId,
@@ -252,15 +268,13 @@ watch(adjDate.value, (newDate) => {
   }
 });
 
+// createdBy/updatedBy are set server-side from the authenticated context, so
+// there is nothing actor-shaped to strip out of the payload here.
 const onSubmit = handleSubmit((data) => {
   if (!props.invAdjId) {
     executeCreate({ data });
   } else {
-    const { createdBy, ...updateData } = { ...data, updatedBy: userId };
-    executeUpdate({ id: props.invAdjId, data: updateData });
+    executeUpdate({ id: props.invAdjId, data });
   }
-});
-watchEffect(() => {
-  console.log(`values ${JSON.stringify(values)}`);
 });
 </script>

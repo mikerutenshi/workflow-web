@@ -89,7 +89,7 @@
 
               <template v-if="item.progress !== Progress.Completed">
                 <v-list-item
-                  v-if="clearanceLevel <= Role.Planner"
+                  v-if="canModify(item)"
                   :prepend-icon="mdiPencil"
                   @click="showDialog(DialogContent.Edit, item.id)"
                   :title="t('btn.update')"
@@ -105,7 +105,7 @@
                 <v-divider></v-divider>
 
                 <v-list-item
-                  v-if="clearanceLevel <= Role.Planner"
+                  v-if="canModify(item)"
                   :prepend-icon="mdiTrashCan"
                   @click="showDeleteDialog(item.id)"
                   class="text-error"
@@ -173,12 +173,35 @@ const adapter = useDate();
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 
+// Mirrors assertOwned in inv-adj.service.ts: below Planner a count sheet may
+// only be changed by whoever created it, so one store cannot rewrite another's.
+function canModify(item: { createdBy: string }) {
+  return (
+    clearanceLevel <= Role.Planner || item.createdBy === authStore.user?.id
+  );
+}
+
 const ALL_INVENTORIES = '';
 const inventoryOptions = computed(() => [
   { id: ALL_INVENTORIES, name: t('label.all_inventories') },
   ...(authStore.user?.userInventories ?? []),
 ]);
-const selectInvId = ref<string>(ALL_INVENTORIES);
+// Defaults to a real warehouse so the app-bar New button is usable on arrival;
+// "All Warehouses" is a deliberate choice that hides it.
+const selectInvId = ref<string>(
+  authStore.user?.userInventories.at(0)?.id ?? ALL_INVENTORIES,
+);
+
+// A count sheet targets exactly one warehouse, so the layout needs to know which
+// one this table is showing to gate the New button and seed the create form.
+const invAdjStore = useInvAdjStore();
+watch(
+  selectInvId,
+  (id) => {
+    invAdjStore.selectedInventoryId = id === ALL_INVENTORIES ? null : id;
+  },
+  { immediate: true },
+);
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);

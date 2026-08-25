@@ -35,11 +35,9 @@ export class InvAdjCreateDto {
   @MaxLength(255)
   note?: string | null;
 
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  createdBy!: number;
+  // createdBy is intentionally absent: it is taken from the authenticated
+  // context, so a client cannot claim to be someone else. Ownership of a draft
+  // decides who may edit it.
 
   @Field(() => [InvAdjItemCreateDto])
   @Type(() => InvAdjItemCreateDto)
