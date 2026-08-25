@@ -73,6 +73,8 @@
             :headers="sizeHeaders"
             :items="sizeQuantities"
             editable
+            density="compact"
+            :items-per-page="-1"
             hide-default-footer
           >
             <template #item.quantity="{ item, index }">
@@ -80,6 +82,8 @@
                 v-model="item.quantity"
                 :label="$t('label.quantity')"
                 :min="1"
+                density="compact"
+                hide-details="auto"
                 :error-messages="
                   (errors as any)[`workSizes[${index}].quantity`]
                 "

@@ -4,7 +4,6 @@ import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 import { SaleCreateDto } from './dto/sale-create.dto';
 import { SaleDto } from './dto/sale.dto';
 import { ParseIntPipe } from '@nestjs/common';
-import { SaleUpdateDto } from './dto/sale-update.dto';
 import { SalePerformanceDto } from './dto/sale-performance-dto';
 
 @Resolver(() => Sale)
@@ -14,14 +13,6 @@ export class SaleResolver {
   @Mutation(() => Sale)
   createSale(@Args('data') data: SaleCreateDto): Promise<Sale> {
     return this.service.createSale(data);
-  }
-
-  @Mutation(() => Sale)
-  updateSale(
-    @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Args('data') data: SaleUpdateDto,
-  ): Promise<Sale> {
-    return this.service.updateSale(id, data);
   }
 
   @Query(() => [SaleDto])

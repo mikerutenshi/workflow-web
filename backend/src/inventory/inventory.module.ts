@@ -7,6 +7,8 @@ import { InvTrfService } from './inv-trf.service';
 import { InvTrfResolver } from './inv-trf.resolver';
 import { InvTxService } from './inv-tx.service';
 import { InvTxResolver } from './inv-tx.resolver';
+import { InvAdjService } from './inv-adj.service';
+import { InvAdjResolver } from './inv-adj.resolver';
 import { PrismaModule } from '@/prisma/prisma.module';
 import { FileModule } from '@/file/file.module';
 
@@ -20,6 +22,8 @@ import { FileModule } from '@/file/file.module';
     InvTrfService,
     InvTxResolver,
     InvTxService,
+    InvAdjResolver,
+    InvAdjService,
   ],
   exports: [InvProductService, InvTrfService, InvTxService],
   imports: [PrismaModule, FileModule],

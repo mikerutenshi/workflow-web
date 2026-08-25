@@ -142,6 +142,20 @@ enum Progress {
   FAILED
 }
 
+type InvTrf {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  trfNo: String!
+  fromInvId: ID
+  toInvId: ID!
+  trfDate: Date!
+  progress: Progress!
+  note: String
+}
+
 type Product {
   id: ID!
   createdBy: ID!
@@ -208,28 +222,32 @@ type ProductDto {
   productColors: [ColorToProductWithColor!]!
 }
 
+type InvProductTrfItemDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  invTrfId: ID
+  fromInvId: ID
+  toInvId: ID!
+  productId: ID!
+  invTrfItemSizes: [InvTrfItemToSize!]!
+  progress: Progress!
+  discounts: [String!]!
+  fromInv: Inventory
+  toInv: Inventory!
+  invTrf: InvTrf
+}
+
 type InvProductDto {
   invId: ID!
   productId: ID!
   invProductSizes: [InvProductToSize!]!
   discounts: [String!]!
   product: ProductDto!
-  invTrfItems: [InvTrfItem!]!
+  invTrfItems: [InvProductTrfItemDto!]!
   price: Int
-}
-
-type InvTrf {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  trfNo: String!
-  fromInvId: ID
-  toInvId: ID!
-  trfDate: Date!
-  progress: Progress!
-  note: String
 }
 
 type InvTrfItemTrfDto {
@@ -337,6 +355,7 @@ type InvTxDto {
   type: TxType!
   saleId: ID
   trfId: ID
+  adjId: ID
   txNo: String!
   txDate: Date!
   progress: Progress!
@@ -349,6 +368,77 @@ enum TxType {
   PRODUCTION
   ADJUSTMENT
   REVERSION
+}
+
+type InvAdj {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  adjNo: String!
+  invId: ID!
+  adjDate: Date!
+  progress: Progress!
+  note: String
+}
+
+type InvAdjItemToSize {
+  invAdjItemId: ID!
+  sizeId: ID!
+  systemQty: Float!
+  countedQty: Float!
+  size: Size!
+}
+
+type InvAdjItemDto {
+  id: ID!
+  invAdjId: ID!
+  productId: ID!
+  reason: AdjReason!
+  note: String
+  invAdjItemSizes: [InvAdjItemToSize!]!
+  product: Product!
+}
+
+enum AdjReason {
+  COUNT_CORRECTION
+  LOST
+  DAMAGED
+  FOUND
+  UNDOCUMENTED
+  INITIAL_STOCK
+}
+
+type InvAdjDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  adjNo: String!
+  invId: ID!
+  adjDate: Date!
+  progress: Progress!
+  note: String
+  inventory: Inventory!
+  invAdjItems: [InvAdjItemDto!]!
+}
+
+type InvAdjSimpleDto {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  adjNo: String!
+  invId: ID!
+  adjDate: Date!
+  progress: Progress!
+  note: String
+  inventory: Inventory!
+  itemCount: Int!
+  totalVariance: Int!
 }
 
 type ProductGroupGetDto {
@@ -584,6 +674,9 @@ type Query {
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo(date: Date!): String!
   getInvTxs(invId: ID!, productId: ID!): [InvTxDto!]!
+  getInvAdjs(invId: ID): [InvAdjSimpleDto!]!
+  getInvAdj(id: ID!): InvAdjDto!
+  generateInvAdjNo(date: Date!): String!
   getSales(invId: ID, startDate: Date, endDate: Date): [SaleDto!]!
   getSale(id: ID!): SaleDto!
   getSalePerformance(startDate: Date!, endDate: Date!, invId: ID): [SalePerformanceDto!]!
@@ -639,8 +732,11 @@ type Mutation {
   createInvTrfItem(data: InvTrfItemCreateDto!): InvTrfItem!
   deleteInvTrfItem(id: ID!): Boolean!
   deleteInvTrf(id: ID!): Boolean!
+  createInvAdj(data: InvAdjCreateDto!): InvAdj!
+  updateInvAdj(id: ID!, data: InvAdjUpdateDto!): InvAdj!
+  postInvAdj(id: ID!): InvAdj!
+  deleteInvAdj(id: ID!): Boolean!
   createSale(data: SaleCreateDto!): Sale!
-  updateSale(id: ID!, data: SaleUpdateDto!): Sale!
   deleteSale(id: ID!): Boolean!
 }
 
@@ -888,6 +984,37 @@ input InvTrfItemSizeCreateDto {
   quantity: Float!
 }
 
+input InvAdjCreateDto {
+  adjNo: String!
+  invId: ID!
+  adjDate: Date!
+  note: String
+  createdBy: ID!
+  invAdjItems: [InvAdjItemCreateDto!]!
+}
+
+input InvAdjItemCreateDto {
+  productId: ID!
+  reason: AdjReason!
+  note: String
+  invAdjItemSizes: [InvAdjItemSizeCreateDto!]!
+}
+
+input InvAdjItemSizeCreateDto {
+  sizeId: ID!
+  systemQty: Float!
+  countedQty: Float!
+}
+
+input InvAdjUpdateDto {
+  adjNo: String
+  invId: ID
+  adjDate: Date
+  note: String
+  invAdjItems: [InvAdjItemCreateDto!]!
+  updatedBy: ID!
+}
+
 input SaleCreateDto {
   saleNo: String!
   date: Date!
@@ -904,12 +1031,4 @@ input SaleItemCreateDto {
 input SaleItemToSizeCreateDto {
   sizeId: ID!
   quantity: Float!
-}
-
-input SaleUpdateDto {
-  saleNo: String
-  date: Date
-  createdBy: ID
-  saleItems: [SaleItemCreateDto!]!
-  updatedBy: ID!
 }

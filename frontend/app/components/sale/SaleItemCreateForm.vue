@@ -18,7 +18,9 @@
               [
                 item.product.productGroup.productCategory.name,
                 $t(
-                  renderGender(item.product.productGroup.productCategory.gender),
+                  renderGender(
+                    item.product.productGroup.productCategory.gender,
+                  ),
                 ),
                 item.product.productGroup.name,
               ]
@@ -38,6 +40,8 @@
             :headers="table.headers"
             :items="table.items"
             hide-default-footer
+            :items-per-page="-1"
+            density="compact"
           >
             <template #item.sellQty="{ item, index }">
               <v-number-input
@@ -48,6 +52,8 @@
                 :error-messages="
                   (errors as any)[`saleItemSizes[${index}].quantity`]
                 "
+                density="compact"
+                hide-details="auto"
               />
             </template>
             <template #body.append>
@@ -62,6 +68,8 @@
                     readonly
                     control-variant="hidden"
                     color="primary"
+                    density="compact"
+                    hide-details="auto"
                   />
                 </td>
               </tr>

@@ -22,6 +22,9 @@ export class InvTx extends BaseModel {
 
   @Field(() => ID, { nullable: true })
   trfId?: number | null;
+
+  @Field(() => ID, { nullable: true })
+  adjId?: number | null;
 }
 
 @ObjectType()

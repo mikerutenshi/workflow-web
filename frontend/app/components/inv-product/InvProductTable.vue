@@ -156,7 +156,7 @@
                     showItemTrfDialog(rest as InvProductDto);
                   }
                 "
-                :prepend-icon="mdiFileDocumentArrowRightOutline"
+                :prepend-icon="mdiHistory"
               >
                 <v-list-item-title>{{
                   $t('label.show_trf_detail')
@@ -170,7 +170,7 @@
                     showItemTxDialog(rest as InvProductDto);
                   }
                 "
-                :prepend-icon="mdiFileDocumentArrowRightOutline"
+                :prepend-icon="mdiHistory"
               >
                 <v-list-item-title>{{
                   $t('label.show_tx_detail')
@@ -180,7 +180,7 @@
               <v-list-item
                 v-if="clearanceLevel <= Role.Planner"
                 :title="$t('btn.inv_product_edit_disc')"
-                :prepend-icon="mdiPercent"
+                :prepend-icon="mdiSale"
                 @click="
                   () => {
                     const { pendingCount, ...rest } = item;
@@ -227,16 +227,17 @@
 import {
   mdiDotsVertical,
   mdiFileDocumentArrowRightOutline,
+  mdiHistory,
   mdiMagnify,
-  mdiPercent,
   mdiProgressAlert,
+  mdiSale,
+  mdiSaleOutline,
   mdiTransferRight,
   mdiWarehouse,
 } from '@mdi/js';
 import { useQuery } from 'villus';
 import type { VDataTable } from 'vuetify/components';
 import {
-  GetInventoriesDocument,
   GetInvProductsDocument,
   Progress,
   type InvProductDto,

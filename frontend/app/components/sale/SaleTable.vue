@@ -141,7 +141,6 @@ const inventoryItems = computed(() => [
 enum DialogContent {
   View = 'VIEW',
   None = 'NONE',
-  Edit = 'EDIT',
   Create = 'CREATE',
 }
 const dialog = reactive({
@@ -239,12 +238,6 @@ function showDialog(
   dialog.inventoryId = invId ?? null;
 
   switch (content) {
-    case DialogContent.Edit:
-      dialog.content = DialogContent.Edit;
-      dialog.title = t('page.sale_edit');
-      dialog.isReadonly = false;
-      dialog.isVisible = true;
-      break;
     case DialogContent.View:
       dialog.content = DialogContent.View;
       dialog.title = t('page.sale_view');

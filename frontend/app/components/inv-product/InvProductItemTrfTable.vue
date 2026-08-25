@@ -62,8 +62,9 @@
         <v-btn
           v-if="item.progress === Progress.Pending"
           color="primary"
-          :icon="mdiDeleteOutline"
+          :icon="mdiTrashCan"
           variant="text"
+          class="text-error"
           :loading="isDeleting"
           @click="executeDelete({ id: item.id })"
         ></v-btn>
@@ -73,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { mdiDeleteOutline } from '@mdi/js';
+import { mdiTrashCan } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';

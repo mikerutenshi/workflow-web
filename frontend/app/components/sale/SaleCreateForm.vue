@@ -29,31 +29,25 @@
       />
 
       <v-card variant="outlined" class="my-4">
-        <v-card-title>
-          <v-row>
-            <v-col>
-              <span>{{ $t('label.shopping_cart') }}</span>
-            </v-col>
-            <v-col class="d-flex align-center justify-end">
-              <v-btn
-                v-if="!isReadonly"
-                :prepend-icon="mdiCartArrowDown"
-                variant="tonal"
-                color="primary"
-                @click="dialog.isVisible = true"
-                >{{ $t('btn.add_product') }}</v-btn
-              >
-            </v-col>
-          </v-row>
-        </v-card-title>
+        <v-card-title>{{ $t('label.shopping_cart') }}</v-card-title>
         <v-card-subtitle></v-card-subtitle>
         <v-card-text>
+          <v-btn
+            v-if="!isReadonly"
+            class="mb-4"
+            :prepend-icon="mdiCartArrowDown"
+            variant="tonal"
+            color="primary"
+            @click="dialog.isVisible = true"
+            >{{ $t('btn.add_product') }}</v-btn
+          >
           <v-data-table
             :headers="table.headers"
             :items="displayInvProducts"
             v-model="table.productIds"
             item-value="productId"
             hide-default-footer
+            :items-per-page="-1"
           >
             <template v-slot:item.product.productColors="{ item }">
               <div style="display: flex; flex-wrap: wrap; gap: 8px">
@@ -141,6 +135,7 @@
               <v-btn
                 :icon="mdiTrashCan"
                 variant="text"
+                class="text-error"
                 @click="removeCartItem(item.productId)"
               >
               </v-btn>
@@ -152,9 +147,7 @@
 
     <v-card-actions v-if="!isReadonly">
       <v-spacer></v-spacer>
-      <ActionConfirm :loading="isCreating || isUpdating">{{
-        submitBtnTitle
-      }}</ActionConfirm>
+      <ActionConfirm :loading="isCreating">{{ submitBtnTitle }}</ActionConfirm>
     </v-card-actions>
   </v-form>
 
@@ -175,7 +168,6 @@ import {
   GenerateSaleNoDocument,
   GetInvProductsDocument,
   GetSaleDocument,
-  UpdateSaleDocument,
   type GetInvProductsQuery,
 } from '~/api/generated/types';
 import type { SaleItem } from '~/models/sale.model';
@@ -198,17 +190,14 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['form-submit']);
-const submitBtnTitle = computed(() =>
-  props.saleId ? t('btn.update') : t('btn.create'),
-);
+const submitBtnTitle = computed(() => t('btn.create'));
 
 const authStore = useAuthStore();
 const userId = authStore.user?.id || '';
 const inventoryName = computed(
   () =>
-    authStore.user?.userInventories.find(
-      (inv) => inv.id === props.inventoryId,
-    )?.name ?? '',
+    authStore.user?.userInventories.find((inv) => inv.id === props.inventoryId)
+      ?.name ?? '',
 );
 
 const { t } = useI18n();
@@ -352,18 +341,6 @@ const {
 });
 
 const {
-  isFetching: isUpdating,
-  execute: updateSale,
-  error: errorUpdate,
-} = useMutation(UpdateSaleDocument, {
-  onData() {
-    emit('form-submit');
-    snack.show(t('status.saved'), SnackColor.Success);
-  },
-  refetchTags: [CACHE_SALES, CACHE_SALE],
-});
-
-const {
   execute: fetchSale,
   data: dataSale,
   isFetching: isFetchingSale,
@@ -414,23 +391,12 @@ const onSubmit = handleSubmit((data) => {
     })),
   }));
 
-  if (props.saleId) {
-    updateSale({
-      id: props.saleId,
-      data: {
-        ...data,
-        updatedBy: userId,
-        saleItems,
-      },
-    });
-  } else {
-    createSale({
-      data: {
-        ...data,
-        saleItems,
-      },
-    });
-  }
+  createSale({
+    data: {
+      ...data,
+      saleItems,
+    },
+  });
 });
 
 watch(

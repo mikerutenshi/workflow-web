@@ -66,6 +66,7 @@ export class InvProductService {
             },
             fromInv: true,
             toInv: true,
+            invTrf: true,
           },
           where: {
             progress: { not: Progress.COMPLETED },
@@ -285,6 +286,24 @@ export class InvProductService {
         });
       }
     }
+  }
+
+  /**
+   * Ensures the InvToProduct parent row exists without touching an existing
+   * row's discounts. Unlike upsertInvProductOp, which overwrites discounts on
+   * the destination (intentional for transfers), this is safe to call against
+   * an already-stocked product.
+   */
+  async ensureInvProductOp(
+    invId: number,
+    productId: number,
+    tx: Prisma.TransactionClient,
+  ) {
+    await tx.invToProduct.upsert({
+      where: { invId_productId: { invId, productId } },
+      update: {},
+      create: { invId, productId, discounts: [] },
+    });
   }
 
   async incrementInvProductOp(

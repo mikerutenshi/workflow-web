@@ -3,17 +3,9 @@
     <v-card class="mx-auto">
       <v-card-title
         :class="actionType === 'DELETE' ? 'bg-error' : 'bg-primary'"
-        >{{
-          actionType === 'DELETE'
-            ? $t('page.delete_confirm')
-            : $t('page.transfer_confirm')
-        }}</v-card-title
+        >{{ $t(CONFIRM_COPY[actionType].title) }}</v-card-title
       >
-      <v-card-text>{{
-        actionType === 'DELETE'
-          ? $t('label.delete_confirm')
-          : $t('label.transfer_confirm')
-      }}</v-card-text>
+      <v-card-text>{{ $t(CONFIRM_COPY[actionType].text) }}</v-card-text>
       <v-card-actions>
         <v-btn :loading="loading" @click="handleConfirm">{{
           $t('btn.yes')
@@ -26,6 +18,14 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue';
+
+type ConfirmAction = 'DELETE' | 'TRANSFER' | 'ADJUST';
+
+const CONFIRM_COPY: Record<ConfirmAction, { title: string; text: string }> = {
+  DELETE: { title: 'page.delete_confirm', text: 'label.delete_confirm' },
+  TRANSFER: { title: 'page.transfer_confirm', text: 'label.transfer_confirm' },
+  ADJUST: { title: 'page.post_adj_confirm', text: 'label.post_adj_confirm' },
+};
 
 const dialog = defineModel({
   type: Boolean,
@@ -42,9 +42,10 @@ const props = defineProps({
     default: false,
   },
   actionType: {
-    type: String as PropType<'DELETE' | 'TRANSFER'>,
+    type: String as PropType<ConfirmAction>,
     default: 'DELETE',
-    validator: (value: string) => ['DELETE', 'TRANSFER'].includes(value),
+    validator: (value: string) =>
+      ['DELETE', 'TRANSFER', 'ADJUST'].includes(value),
   },
 });
 const emit = defineEmits(['confirm']);

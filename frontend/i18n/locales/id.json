@@ -28,7 +28,8 @@
     "setting": "Pengaturan",
     "setting_inventories": "Gudang",
     "setting_colors": "Warna",
-    "setting_users": "Pengguna"
+    "setting_users": "Pengguna",
+    "inventory_adjustments": "Penyesuaian Stok"
   },
   "page": {
     "artisan_create": "Buat Perajin Baru",
@@ -69,7 +70,6 @@
     "inv_trf_change_status": "Ubah Status Transfer Inventaris",
     "sales": "Penjualan",
     "sale_create": "Buat Penjualan Baru",
-    "sale_edit": "Ubah Penjualan",
     "sale_view": "Lihat Penjualan",
     "trf_detail_for": "Riwayat Transfer untuk {item}",
     "tx_detail_for": "Riwayat Transaksi untuk {item}",
@@ -80,7 +80,12 @@
     "add_to_cart": "Tambahkan ke Keranjang",
     "inv_product_edit_disc": "Ubah Diskon untuk {item}",
     "register_new_user": "Daftar Sebagai Pengguna Baru",
-    "register_success": "Pendaftaran Berhasil"
+    "register_success": "Pendaftaran Berhasil",
+    "inventory_adjustments": "Penyesuaian Stok",
+    "inv_adj_create": "Buat Penyesuaian Stok Baru",
+    "inv_adj_edit": "Ubah Penyesuaian Stok",
+    "inv_adj_view": "Lihat Penyesuaian Stok",
+    "post_adj_confirm": "Konfirmasi Posting Penyesuaian"
   },
   "btn": {
     "setting-products": "Sepatu Baru",
@@ -107,7 +112,10 @@
     "add_profit_margin": "Tambah Margin Keuntungan",
     "inv_product_edit_disc": "Ubah Diskon",
     "add_to_inventory": "Tambah ke Inventaris",
-    "register": "Daftar"
+    "register": "Daftar",
+    "inv-adjs": "Penyesuaian Stok Baru",
+    "add_counted_item": "Tambah Sepatu Terhitung",
+    "post_adjustment": "Posting Penyesuaian"
   },
   "label": {
     "id": "ID",
@@ -204,13 +212,27 @@
     "role": "Peran",
     "wait_for_activation": "Harap tunggu hingga akun Anda diaktifkan sebelum masuk.",
     "profit_margins": "Margin Keuntungan",
-    "inv_trf_slip": "Slip Transfer Inventaris"
+    "inv_trf_slip": "Slip Transfer Inventaris",
+    "adj_no": "No. Penyesuaian",
+    "adj_date": "Tanggal Hitung",
+    "system_qty": "Sistem",
+    "counted_qty": "Terhitung",
+    "variance": "Selisih",
+    "total_variance": "Total Selisih",
+    "items_counted": "Kosong|Satu Sepatu Terhitung|{count} Sepatu Terhitung",
+    "reason": "Alasan",
+    "not_stocked_here": "Belum ada di gudang ini — akan ditambahkan",
+    "pending_trf_warning": "{count} pasang sedang dipesan oleh transfer yang berjalan dan tidak dihitung di kolom Sistem, walaupun mungkin masih ada secara fisik. Jangan hitung barang tersebut, atau selesaikan transfernya dahulu.",
+    "post_adj_confirm": "Apakah anda yakin akan posting penyesuaian ini? Stok akan berubah dan tidak dapat dibatalkan.",
+    "show_adj_detail": "Lihat Detail Penyesuaian",
+    "pending_trf_nos": "Transfer: {trfNos}"
   },
   "card": {
     "fill_quantities": "Isi Jumlah Sepatu",
     "fill_artisans": "Isi Nama Perajin",
     "choose_products": "Pilih Sepatu",
-    "products_to_trf": "Sepatu untuk Ditransfer"
+    "products_to_trf": "Sepatu untuk Ditransfer",
+    "count_sheet": "Lembar Hitung"
   },
   "jobs": {
     "draw_upper": "Gurat Upper",
@@ -265,7 +287,9 @@
       "invalid_enum_value": "Nilai di luar daftar. Diharapkan {options}",
       "repeat_password_mismatch": "Password yang diulang tidak sama",
       "date_outside_range": "Tanggal di luar rentang yang diterima",
-      "decimal_number": "Harus berupa angka dengan maksimal 4 digit di belakang koma"
+      "decimal_number": "Harus berupa angka dengan maksimal 4 digit di belakang koma",
+      "not_a_number": "Harus berupa angka",
+      "required_selection": "Silakan pilih salah satu"
     },
     "types": {
       "object": "Tipe harus berupa objek",
@@ -290,5 +314,21 @@
     "COMPLETED": "Selesai",
     "CANCELED": "Dibatalkan",
     "FAILED": "Gagal"
+  },
+  "adj_reason": {
+    "COUNT_CORRECTION": "Koreksi Hitung",
+    "LOST": "Hilang",
+    "DAMAGED": "Rusak",
+    "FOUND": "Ditemukan",
+    "UNDOCUMENTED": "Belum Tercatat",
+    "INITIAL_STOCK": "Stok Awal"
+  },
+  "tx_type": {
+    "SALE": "Penjualan",
+    "TRANSFER_IN": "Transfer Masuk",
+    "TRANSFER_OUT": "Transfer Keluar",
+    "PRODUCTION": "Produksi",
+    "ADJUSTMENT": "Penyesuaian",
+    "REVERSION": "Pembatalan"
   }
 }

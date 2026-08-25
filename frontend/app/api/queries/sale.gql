@@ -24,12 +24,6 @@ mutation createSale($data: SaleCreateDto!) {
   }
 }
 
-mutation updateSale($id: ID!, $data: SaleUpdateDto!) {
-  updateSale(id: $id, data: $data) {
-    id
-  }
-}
-
 query getSales($invId: ID, $startDate: Date, $endDate: Date) {
   getSales(invId: $invId, startDate: $startDate, endDate: $endDate) {
     ...SaleFragment

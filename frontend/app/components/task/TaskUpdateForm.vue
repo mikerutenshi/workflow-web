@@ -21,7 +21,9 @@
             :headers="taskHeaders"
             :items="displayForm"
             hide-default-footer
+            :items-per-page="-1"
             editable
+            density="compact"
           >
             <template v-slot:item.type="{ item }">
               {{ $t(renderJob(item.type)) }}
@@ -32,6 +34,7 @@
                 :label="$t('label.done_at')"
                 v-model="item.doneAt"
                 variant="outlined"
+                density="compact"
                 :error-messages="(errors as any)[`tasks[${index}].doneAt`]"
               ></ActionPickDate>
             </template>
@@ -56,6 +59,7 @@
                 :loading="isFetchingArtisans"
                 v-model="item.artisan"
                 clearable
+                density="compact"
                 return-object
                 :error-messages="(errors as any)[`tasks[${index}].artisanId`]"
               >

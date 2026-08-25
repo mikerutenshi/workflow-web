@@ -132,9 +132,9 @@
             </template>
           </v-list-item>
         </template>
+        <h3 v-if="isDev" class="text-center bg-red">Development</h3>
       </v-list>
       <template #append>
-        <h3 v-if="isDev" class="text-center bg-red">Development</h3>
         <ActionLogOut></ActionLogOut>
       </template>
     </v-navigation-drawer>
@@ -161,6 +161,12 @@
           :inv-trf-id="null"
           @form-submit="handleDialogClose"
         ></InvTrfForm>
+      </template>
+      <template v-else-if="dialog.content === DialogContent.CreateInvAdj">
+        <InvAdjForm
+          :inv-adj-id="null"
+          @form-submit="handleDialogClose"
+        ></InvAdjForm>
       </template>
       <template v-else-if="dialog.content === DialogContent.CreateSale">
         <SaleCreateForm
@@ -213,6 +219,7 @@ import {
   mdiAccountWrench,
   mdiCalculator,
   mdiCashMultiple,
+  mdiClipboardListOutline,
   mdiCogs,
   mdiFactory,
   mdiFileCabinet,
@@ -260,6 +267,7 @@ enum DialogContent {
   CreateProduct = 'CREATE_PRODUCT',
   CreateArtisan = 'CREATE_ARTISAN',
   CreateInvTrf = 'CREATE_INV_TRF',
+  CreateInvAdj = 'CREATE_INV_ADJ',
   CreateSale = 'CREATE_SALE',
   CreateInventory = 'CREATE_INVENTORY',
   CreateColor = 'CREATE_COLOR',
@@ -270,6 +278,7 @@ enum DialogContent {
 const createRouteToContent: Record<string, DialogContent> = {
   works: DialogContent.CreateWork,
   'inv-trfs': DialogContent.CreateInvTrf,
+  'inv-adjs': DialogContent.CreateInvAdj,
   sales: DialogContent.CreateSale,
   'setting-products': DialogContent.CreateProduct,
   'setting-artisans': DialogContent.CreateArtisan,
@@ -292,6 +301,8 @@ const dialogTitle = computed(() => {
       return t('page.artisan_create');
     case DialogContent.CreateInvTrf:
       return t('page.inv_trf_create');
+    case DialogContent.CreateInvAdj:
+      return t('page.inv_adj_create');
     case DialogContent.CreateSale:
       return t('page.sale_create');
     case DialogContent.CreateInventory:
@@ -352,6 +363,10 @@ const createBtns = [
   {
     routeName: 'inv-trfs',
     clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
+  },
+  {
+    routeName: 'inv-adjs',
+    clearances: [Role.Superuser, Role.Finance, Role.Planner],
   },
   {
     routeName: 'sales',
@@ -457,6 +472,12 @@ const navItems = computed(() => {
       route: localePath('/inv-trfs'),
       icon: mdiTransfer,
       clearances: [Role.Superuser, Role.Finance, Role.Planner, Role.Sales],
+    },
+    {
+      title: t('nav.inventory_adjustments'),
+      route: localePath('/inv-adjs'),
+      icon: mdiClipboardListOutline,
+      clearances: [Role.Superuser, Role.Finance, Role.Planner],
     },
     {
       title: t('nav.setting'),

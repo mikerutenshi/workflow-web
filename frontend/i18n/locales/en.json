@@ -28,7 +28,8 @@
     "setting": "Setting",
     "setting_inventories": "Warehouses",
     "setting_colors": "Colors",
-    "setting_users": "Users"
+    "setting_users": "Users",
+    "inventory_adjustments": "Stock Adjustments"
   },
   "page": {
     "artisan_create": "Create a New Artisan",
@@ -69,7 +70,6 @@
     "inv_trf_change_status": "Change Inventory Transfer Status",
     "sales": "Sales",
     "sale_create": "Create a New Sale",
-    "sale_edit": "Edit a Sale",
     "sale_view": "View a Sale",
     "trf_detail_for": "Transfer History for {item}",
     "tx_detail_for": "Transaction History for {item}",
@@ -80,7 +80,12 @@
     "add_to_cart": "Add to Cart",
     "inv_product_edit_disc": "Edit Discount for {item}",
     "register_new_user": "Register as a New User",
-    "register_success": "Registration Successful"
+    "register_success": "Registration Successful",
+    "inventory_adjustments": "Stock Adjustments",
+    "inv_adj_create": "Create a New Stock Adjustment",
+    "inv_adj_edit": "Edit a Stock Adjustment",
+    "inv_adj_view": "View a Stock Adjustment",
+    "post_adj_confirm": "Post Adjustment Confirmation"
   },
   "btn": {
     "setting-products": "New Shoe",
@@ -107,7 +112,10 @@
     "add_profit_margin": "Add Profit Margin",
     "inv_product_edit_disc": "Edit Discount",
     "add_to_inventory": "Add to Inventory",
-    "register": "Register"
+    "register": "Register",
+    "inv-adjs": "New Stock Adjustment",
+    "add_counted_item": "Add Counted Shoe",
+    "post_adjustment": "Post Adjustment"
   },
   "label": {
     "id": "ID",
@@ -204,13 +212,27 @@
     "role": "Role",
     "wait_for_activation": "Please wait for your account to be activated before logging in",
     "profit_margins": "Profit Margins",
-    "inv_trf_slip": "Inventory Transfer Slip"
+    "inv_trf_slip": "Inventory Transfer Slip",
+    "adj_no": "Adjustment No.",
+    "adj_date": "Count Date",
+    "system_qty": "System",
+    "counted_qty": "Counted",
+    "variance": "Variance",
+    "total_variance": "Total Variance",
+    "items_counted": "None|One Shoe Counted|{count} Shoes Counted",
+    "reason": "Reason",
+    "not_stocked_here": "Not yet stocked here — it will be added",
+    "pending_trf_warning": "{count} pair(s) are reserved by transfers in progress and are excluded from the System column, though they may still be physically present. Exclude them from your count, or complete the transfers first.",
+    "post_adj_confirm": "Are you sure you want to post this adjustment? Stock will be changed and this cannot be undone.",
+    "show_adj_detail": "Show Adjustment Detail",
+    "pending_trf_nos": "Transfers: {trfNos}"
   },
   "card": {
     "fill_quantities": "Enter Shoe Quantity",
     "fill_artisans": "Enter Artisan",
     "choose_products": "Choose Shoes",
-    "products_to_trf": "Shoes To Transfer"
+    "products_to_trf": "Shoes To Transfer",
+    "count_sheet": "Count Sheet"
   },
   "jobs": {
     "draw_upper": "Draw Upper",
@@ -265,7 +287,9 @@
       "invalid_enum_value": "Value is outside of list. Expected {options}",
       "repeat_password_mismatch": "Repeated password do not match",
       "date_outside_range": "Date is out of accepted range",
-      "decimal_number": "Must be a number with up to 4 decimal places"
+      "decimal_number": "Must be a number with up to 4 decimal places",
+      "not_a_number": "Must be a number",
+      "required_selection": "Please make a selection"
     },
     "types": {
       "object": "Type should be object",
@@ -290,5 +314,21 @@
     "COMPLETED": "Completed",
     "CANCELED": "Canceled",
     "FAILED": "Failed"
+  },
+  "adj_reason": {
+    "COUNT_CORRECTION": "Count Correction",
+    "LOST": "Lost",
+    "DAMAGED": "Damaged",
+    "FOUND": "Found",
+    "UNDOCUMENTED": "Undocumented",
+    "INITIAL_STOCK": "Initial Stock"
+  },
+  "tx_type": {
+    "SALE": "Sale",
+    "TRANSFER_IN": "Transfer In",
+    "TRANSFER_OUT": "Transfer Out",
+    "PRODUCTION": "Production",
+    "ADJUSTMENT": "Adjustment",
+    "REVERSION": "Reversion"
   }
 }

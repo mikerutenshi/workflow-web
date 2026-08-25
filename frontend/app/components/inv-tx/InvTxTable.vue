@@ -26,6 +26,14 @@
         {{ adapter.format(item.txDate, 'fullDateTime12h') }}
       </template>
 
+      <template v-slot:item.progress="{ item }">
+        {{ $t(`progress.${item.progress}`) }}
+      </template>
+
+      <template v-slot:item.type="{ item }">
+        {{ $t(`tx_type.${item.type}`) }}
+      </template>
+
       <template v-slot:item.invTxSizes="{ item }">
         <v-table density="compact">
           <tbody>
@@ -85,6 +93,7 @@ const {
   variables: invId && productId ? { invId, productId } : undefined,
   query: GetInvTxsDocument,
   cachePolicy: 'network-only',
+  tags: [CACHE_INV_TXS],
 });
 const headers = [
   { title: t('label.tx_no'), key: 'txNo' },

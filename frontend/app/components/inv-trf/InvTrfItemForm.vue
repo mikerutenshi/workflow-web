@@ -65,6 +65,8 @@
             :headers="tableHeaders"
             :items="displayModel.sizeAndQties"
             editable
+            density="compact"
+            :items-per-page="-1"
             hide-default-footer
           >
             <template #item.quantity="{ item, index }">
@@ -76,6 +78,8 @@
                 "
                 :min="0"
                 :max="clonedSizeQties[index]?.quantity"
+                density="compact"
+                hide-details="auto"
               />
             </template>
             <template #body.append>
@@ -89,6 +93,8 @@
                     readonly
                     control-variant="hidden"
                     color="primary"
+                    density="compact"
+                    hide-details="auto"
                   />
                 </td>
               </tr>

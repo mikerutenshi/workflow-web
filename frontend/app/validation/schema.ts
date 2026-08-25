@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import { Cities } from '#imports';
 import { Provinces } from '#imports';
-import { InvType, Job, Gender, Progress } from '~/api/generated/types';
+import {
+  AdjReason,
+  InvType,
+  Job,
+  Gender,
+  Progress,
+} from '~/api/generated/types';
 
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
@@ -10,11 +16,18 @@ import { InvType, Job, Gender, Progress } from '~/api/generated/types';
 //     z.config(z.locales.id());
 //   }
 // }
+// Both refines emit ZodIssueCode.custom, which nuxt-zod-i18n resolves through
+// error.params.i18n. Without a key it falls back to zodI18n.errors.custom,
+// which no locale defines -- and vue-i18n then renders that key verbatim.
 const positiveNumberString = z
   .string()
   .trim()
-  .refine((val) => !isNaN(Number(val)))
-  .refine((num) => Number(num) > 0);
+  .refine((val) => !isNaN(Number(val)), {
+    params: { i18n: 'zodI18n.errors.not_a_number' },
+  })
+  .refine((num) => Number(num) > 0, {
+    params: { i18n: 'zodI18n.errors.required_selection' },
+  });
 
 const orderNoSchema = z
   .string()
@@ -209,6 +222,31 @@ export const InvTrfItemSchema = z.object({
     }),
   ),
   totalQty: z.number().min(1),
+});
+
+export const InvAdjItemSchema = z.object({
+  productId: positiveNumberString,
+  reason: z.nativeEnum(AdjReason),
+  note: z.string().max(255).trim().nullable().optional(),
+  invAdjItemSizes: z
+    .array(
+      z.object({
+        sizeId: positiveNumberString,
+        systemQty: z.number().min(0),
+        countedQty: z.number().min(0),
+      }),
+    )
+    .nonempty(),
+});
+
+export const InvAdjSchema = z.object({
+  adjNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
+  invId: positiveNumberString,
+  adjDate: z.string().datetime(),
+  note: z.string().max(255).trim().nullable().optional(),
+  createdBy: positiveNumberString,
+  invAdjItems: z.array(InvAdjItemSchema).nonempty(),
+  updatedBy: positiveNumberString.optional().nullable(),
 });
 
 export const InvProductUpdateDiscSchema = z.object({

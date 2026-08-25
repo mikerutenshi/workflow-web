@@ -1,4 +1,5 @@
 import {
+  AdjReason,
   Gender,
   InvType,
   Job,
@@ -90,3 +91,4 @@ registerEnumType(Gender, { name: 'Gender' });
 registerEnumType(Progress, { name: 'Progress' });
 registerEnumType(InvType, { name: 'InvType' });
 registerEnumType(TxType, { name: 'TxType' });
+registerEnumType(AdjReason, { name: 'AdjReason' });

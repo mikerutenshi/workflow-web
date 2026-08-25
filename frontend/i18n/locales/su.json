@@ -28,7 +28,8 @@
     "setting": "Setélan",
     "setting_inventories": "Gudang",
     "setting_colors": "Warna",
-    "setting_users": "Pamaké"
+    "setting_users": "Pamaké",
+    "inventory_adjustments": "Panyaluyuan Stok"
   },
   "page": {
     "artisan_create": "Nyieun Pangrajin Anyar",
@@ -69,7 +70,6 @@
     "inv_trf_change_status": "Ngarobah Status Mindahkeun Inventaris",
     "sales": "Jualan",
     "sale_create": "Nyieun Jualan Anyar",
-    "sale_edit": "Ngarobah Jualan",
     "sale_view": "Nempo Jualan",
     "trf_detail_for": "Riwayat Transfer pikeun {item}",
     "tx_detail_for": "Riwayat Transaksi pikeun {item}",
@@ -80,7 +80,12 @@
     "add_to_cart": "Tambahkeun kana Karanjang",
     "inv_product_edit_disc": "Ngarobah Diskon pikeun {item}",
     "register_new_user": "Ngadaptar Salaku Pamaké Anyar",
-    "register_success": "Pendaptaran Sukses"
+    "register_success": "Pendaptaran Sukses",
+    "inventory_adjustments": "Panyaluyuan Stok",
+    "inv_adj_create": "Nyieun Panyaluyuan Stok Anyar",
+    "inv_adj_edit": "Ngarobah Panyaluyuan Stok",
+    "inv_adj_view": "Nempo Panyaluyuan Stok",
+    "post_adj_confirm": "Konfirmasi Posting Panyaluyuan"
   },
   "btn": {
     "setting-products": "Sapatu Anyar",
@@ -107,7 +112,10 @@
     "add_profit_margin": "Tambah Margin Kauntungan",
     "inv_product_edit_disc": "Ngarobah Diskon",
     "add_to_inventory": "Tambahkeun kana Inventaris",
-    "register": "Daptar"
+    "register": "Daptar",
+    "inv-adjs": "Panyaluyuan Stok Anyar",
+    "add_counted_item": "Tambah Sapatu nu Diitung",
+    "post_adjustment": "Posting Panyaluyuan"
   },
   "label": {
     "id": "ID",
@@ -204,13 +212,27 @@
     "role": "Peran",
     "wait_for_activation": "Mangga antosan dugi akun anjeun diaktipkeun sateuacan lebet",
     "profit_margins": "Margin Kauntungan",
-    "inv_trf_slip": "Slip Transfer Inventaris"
+    "inv_trf_slip": "Slip Transfer Inventaris",
+    "adj_no": "No. Panyaluyuan",
+    "adj_date": "Tanggal Ngitung",
+    "system_qty": "Sistem",
+    "counted_qty": "Diitung",
+    "variance": "Bedana",
+    "total_variance": "Total Bedana",
+    "items_counted": "Kosong|Hiji Sapatu Diitung|{count} Sapatu Diitung",
+    "reason": "Alesan",
+    "not_stocked_here": "Acan aya di gudang ieu — bakal ditambahkeun",
+    "pending_trf_warning": "{count} pasang keur dipesen ku transfer nu keur lumangsung sarta teu diitung dina kolom Sistem, sanajan bisa jadi masih aya sacara fisik. Ulah diitung, atawa réngsékeun heula transferna.",
+    "post_adj_confirm": "Anjeun yakin hoyong posting panyaluyuan ieu? Stok bakal robah sarta teu tiasa dibolaykeun.",
+    "show_adj_detail": "Nempo Detil Panyaluyuan",
+    "pending_trf_nos": "Transfer: {trfNos}"
   },
   "card": {
     "fill_quantities": "Eusian Jumlah Sapatu",
     "fill_artisans": "Eusian Nu Ngagawékeun",
     "choose_products": "Milih Sapatu",
-    "products_to_trf": "Sapatu Pikeun Mindahkeun"
+    "products_to_trf": "Sapatu Pikeun Mindahkeun",
+    "count_sheet": "Lembar Itungan"
   },
   "jobs": {
     "draw_upper": "Gurat Upper",
@@ -265,7 +287,9 @@
       "invalid_enum_value": "Nilai di luar daptar. Diharapkeun {options}",
       "repeat_password_mismatch": "Sandi anu diulang teu sarua",
       "date_outside_range": "tanggal kaluar tina rentang anu ditarima",
-      "decimal_number": "Harus berupa angka dengan maksimal 4 digit di belakang koma"
+      "decimal_number": "Harus berupa angka dengan maksimal 4 digit di belakang koma",
+      "not_a_number": "Kudu mangrupa angka",
+      "required_selection": "Mangga pilih salah sahiji"
     },
     "types": {
       "object": "Jenisna kudu obyék",
@@ -290,5 +314,21 @@
     "COMPLETED": "Réngsé",
     "CANCELED": "Dibatalkeun",
     "FAILED": "Gagal"
+  },
+  "adj_reason": {
+    "COUNT_CORRECTION": "Koréksi Itungan",
+    "LOST": "Leungit",
+    "DAMAGED": "Ruksak",
+    "FOUND": "Kapanggih",
+    "UNDOCUMENTED": "Acan Kacatet",
+    "INITIAL_STOCK": "Stok Awal"
+  },
+  "tx_type": {
+    "SALE": "Jualan",
+    "TRANSFER_IN": "Transfer Asup",
+    "TRANSFER_OUT": "Transfer Kaluar",
+    "PRODUCTION": "Produksi",
+    "ADJUSTMENT": "Panyaluyuan",
+    "REVERSION": "Pambatalan"
   }
 }

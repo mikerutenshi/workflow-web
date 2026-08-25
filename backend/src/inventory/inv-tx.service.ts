@@ -27,6 +27,7 @@ export class InvTxService {
         type: data.type,
         saleId: data.saleId,
         trfId: data.trfId,
+        adjId: data.adjId,
         createdBy: data.createdBy,
       },
       include: {
@@ -44,6 +45,7 @@ export class InvTxService {
         },
         sale: true,
         invTrf: true,
+        invAdj: true,
       },
       where: {
         invId,
@@ -55,13 +57,21 @@ export class InvTxService {
     });
     return txs.map((t) => ({
       ...t,
-      txNo: t.saleId ? (t.sale?.saleNo ?? t.txNo) : (t.invTrf?.trfNo ?? t.txNo),
+      txNo: t.saleId
+        ? (t.sale?.saleNo ?? t.txNo)
+        : t.trfId
+          ? (t.invTrf?.trfNo ?? t.txNo)
+          : (t.invAdj?.adjNo ?? t.txNo),
       txDate: t.saleId
         ? (t.sale?.date ?? t.createdAt)
-        : (t.invTrf?.trfDate ?? t.createdAt),
+        : t.trfId
+          ? (t.invTrf?.trfDate ?? t.createdAt)
+          : (t.invAdj?.adjDate ?? t.createdAt),
       progress: t.saleId
         ? Progress.COMPLETED
-        : (t.invTrf?.progress ?? Progress.COMPLETED),
+        : t.trfId
+          ? (t.invTrf?.progress ?? Progress.COMPLETED)
+          : (t.invAdj?.progress ?? Progress.COMPLETED),
     }));
   }
 }

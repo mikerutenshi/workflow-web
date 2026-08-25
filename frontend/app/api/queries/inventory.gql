@@ -82,6 +82,10 @@ query getInvProducts($invId: ID!) {
         }
         quantity
       }
+      invTrf {
+        id
+        trfNo
+      }
     }
     discounts
     price
@@ -302,6 +306,7 @@ query getInvTxs($invId: ID!, $productId: ID!) {
     type
     saleId
     trfId
+    adjId
     invTxSizes {
       size {
         ...Size
@@ -324,4 +329,81 @@ query getInvProductPrice($invId: ID!, $productId: ID!, $discounts: [String!]!) {
 
 query downloadInvProducts {
   downloadInvProducts
+}
+
+query getInvAdjs($invId: ID) {
+  getInvAdjs(invId: $invId) {
+    id
+    adjNo
+    adjDate
+    progress
+    note
+    itemCount
+    totalVariance
+    inventory {
+      id
+      name
+      type
+    }
+  }
+}
+
+query getInvAdj($id: ID!) {
+  getInvAdj(id: $id) {
+    id
+    adjNo
+    adjDate
+    progress
+    note
+    invId
+    inventory {
+      id
+      name
+      type
+    }
+    invAdjItems {
+      id
+      productId
+      reason
+      note
+      product {
+        id
+        sku
+      }
+      invAdjItemSizes {
+        size {
+          ...Size
+        }
+        systemQty
+        countedQty
+      }
+    }
+  }
+}
+
+query generateInvAdjNo($date: Date!) {
+  generateInvAdjNo(date: $date)
+}
+
+mutation createInvAdj($data: InvAdjCreateDto!) {
+  createInvAdj(data: $data) {
+    id
+  }
+}
+
+mutation updateInvAdj($id: ID!, $data: InvAdjUpdateDto!) {
+  updateInvAdj(id: $id, data: $data) {
+    id
+  }
+}
+
+mutation postInvAdj($id: ID!) {
+  postInvAdj(id: $id) {
+    id
+    progress
+  }
+}
+
+mutation deleteInvAdj($id: ID!) {
+  deleteInvAdj(id: $id)
 }

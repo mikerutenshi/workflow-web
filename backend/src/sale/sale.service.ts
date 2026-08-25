@@ -10,7 +10,6 @@ import dayjs from 'dayjs';
 
 import { SaleCreateDto } from './dto/sale-create.dto';
 import { SaleDto } from './dto/sale.dto';
-import { SaleUpdateDto } from './dto/sale-update.dto';
 import { SalePerformanceDto } from './dto/sale-performance-dto';
 
 @Injectable()
@@ -90,50 +89,8 @@ export class SaleService {
     return txResult;
   }
 
-  updateSale(id: number, dto: SaleUpdateDto): Promise<Sale> {
-    return this.prisma.sale.update({
-      where: { id },
-      data: {
-        saleNo: dto.saleNo,
-        date: dto.date,
-        updatedBy: dto.updatedBy,
-        saleItems: {
-          deleteMany: {},
-          create: dto.saleItems.map((item) => ({
-            invProduct: {
-              connect: {
-                invId_productId: {
-                  invId: item.invId,
-                  productId: item.productId,
-                },
-              },
-            },
-            saleItemSizes: {
-              create: item.saleItemSizes.map((size) => ({
-                size: {
-                  connect: { id: size.sizeId },
-                },
-                quantity: size.quantity,
-              })),
-            },
-          })),
-        },
-      },
-      include: {
-        saleItems: {
-          include: {
-            saleItemSizes: {
-              include: { size: true },
-              orderBy: [{ sizeId: 'asc' }],
-            },
-          },
-        },
-      },
-    });
-  }
-
   async deleteSale(id: number): Promise<Boolean> {
-    this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async (tx) => {
       // const saleItems = await tx.saleItem.findMany({
       //   where: { saleId: id },
       //   include: { saleItemSizes: true },

@@ -130,6 +130,7 @@ model Product {
   invProducts         InvToProduct[]
   // productsale         ProductToSale[]
   invTrfItems         InvTrfItem[]
+  invAdjItems         InvAdjItem[]
 
   productGroup        ProductGroup    @relation(fields: [productGroupId], references: [id])
 }
@@ -226,6 +227,7 @@ model Size {
   sizeInvTrfItems     InvTrfItemToSize[]
   sizeSaleItems       SaleItemToSize[]
   sizeInvTxs          InvTxToSize[]
+  sizeInvAdjItems     InvAdjItemToSize[]
 
   @@unique([eu, gender])
   @@unique([us, gender])
@@ -259,6 +261,7 @@ model Inventory {
   toTrfs            InvTrf[] @relation( "ToInventory")
   fromTrfItems      InvTrfItem[] @relation("FromInventory")
   toTrfItems        InvTrfItem[] @relation("ToInventory")
+  invAdjs           InvAdj[]
 }
 
 model InvToProduct {
@@ -351,8 +354,9 @@ model InvTx {
   productId         Int
   invTxSizes        InvTxToSize[]
   type              TxType
-  saleId            Int?            
-  trfId             Int?            
+  saleId            Int?
+  trfId             Int?
+  adjId             Int?
 
   createdBy         Int
   updatedBy         Int?
@@ -361,6 +365,7 @@ model InvTx {
 
   sale              Sale?           @relation(fields: [saleId], references: [id], onDelete: SetNull)
   invTrf            InvTrf?         @relation(fields: [trfId], references: [id], onDelete: SetNull)
+  invAdj            InvAdj?         @relation(fields: [adjId], references: [id], onDelete: SetNull)
   @@index([createdAt(sort: Desc)])
 }
 
@@ -371,6 +376,62 @@ enum TxType {
   PRODUCTION
   ADJUSTMENT
   REVERSION
+}
+
+enum AdjReason {
+  COUNT_CORRECTION
+  LOST
+  DAMAGED
+  FOUND
+  UNDOCUMENTED
+  INITIAL_STOCK
+}
+
+model InvAdj {
+  id                Int             @id @default(autoincrement())
+  adjNo             String          @unique
+  invId             Int
+  adjDate           DateTime        @default(now())
+  progress          Progress        @default(INITIATED)
+  note              String?
+  invAdjItems       InvAdjItem[]
+
+  inventory         Inventory       @relation(fields: [invId], references: [id])
+
+  createdBy         Int
+  updatedBy         Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  invTx             InvTx[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model InvAdjItem {
+  id                Int             @id @default(autoincrement())
+  invAdjId          Int
+  productId         Int
+  reason            AdjReason
+  note              String?
+  invAdjItemSizes   InvAdjItemToSize[]
+
+  invAdj            InvAdj          @relation(fields: [invAdjId], references: [id], onDelete: Cascade)
+  product           Product         @relation(fields: [productId], references: [id])
+
+  @@unique([invAdjId, productId])
+}
+
+model InvAdjItemToSize {
+  @@id([invAdjItemId, sizeId])
+  invAdjItemId      Int
+  sizeId            Int
+
+  systemQty         Int
+  countedQty        Int
+
+  invAdjItem        InvAdjItem      @relation(fields: [invAdjItemId], references: [id], onDelete: Cascade)
+  size              Size            @relation(fields: [sizeId], references: [id])
 }
 
 model InvTxToSize {

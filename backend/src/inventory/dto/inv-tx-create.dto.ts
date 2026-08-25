@@ -8,6 +8,7 @@ export class InvTxCreateDto {
   type: TxType;
   saleId?: number;
   trfId?: number;
+  adjId?: number;
   createdBy: number;
 }
 
