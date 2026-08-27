@@ -1,4 +1,5 @@
 import { AuthGuard } from '@/guards/auth.guard';
+import { CurrentUser } from '@/guards/current-user.decorator';
 import { RoleGuard } from '@/guards/role.guard';
 import { Roles, RolesAny } from '@/guards/roles.decorator';
 import { InvAdj } from '@/models/inv-adj.model';
@@ -7,7 +8,7 @@ import { Role } from '@/models/role.enum';
 // `userInventories`, which AuthService.me attaches to the Apollo context.
 import { User } from '@/models/user.model';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
-import { Args, Context, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InvAdjCreateDto } from './dto/inv-adj-create.dto';
 import { InvAdjUpdateDto } from './dto/inv-adj-update.dto';
 import { InvAdjDto, InvAdjSimpleDto } from './dto/inv-adj.dto';
@@ -25,7 +26,7 @@ export class InvAdjResolver {
   @Mutation(() => InvAdj)
   createInvAdj(
     @Args('data') data: InvAdjCreateDto,
-    @Context('user') user: User,
+    @CurrentUser() user: User,
   ): Promise<InvAdj> {
     return this.service.createInvAdj(data, user);
   }
@@ -36,7 +37,7 @@ export class InvAdjResolver {
   updateInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
     @Args('data') data: InvAdjUpdateDto,
-    @Context('user') user: User,
+    @CurrentUser() user: User,
   ): Promise<InvAdj> {
     return this.service.updateInvAdj(id, data, user);
   }
@@ -48,7 +49,7 @@ export class InvAdjResolver {
   @Mutation(() => InvAdj)
   postInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Context('user') user: User,
+    @CurrentUser() user: User,
   ): Promise<InvAdj> {
     return this.service.postInvAdj(id, user.id);
   }
@@ -58,7 +59,7 @@ export class InvAdjResolver {
   @Mutation(() => Boolean)
   deleteInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Context('user') user: User,
+    @CurrentUser() user: User,
   ): Promise<boolean> {
     return this.service.deleteInvAdj(id, user);
   }
@@ -66,7 +67,7 @@ export class InvAdjResolver {
   @UseGuards(AuthGuard)
   @Query(() => [InvAdjSimpleDto])
   getInvAdjs(
-    @Context('user') user: User,
+    @CurrentUser() user: User,
     @Args(
       'invId',
       { type: () => ID, nullable: true },
@@ -81,7 +82,7 @@ export class InvAdjResolver {
   @Query(() => InvAdjDto)
   getInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-    @Context('user') user: User,
+    @CurrentUser() user: User,
   ): Promise<InvAdjDto> {
     return this.service.getInvAdj(id, user);
   }

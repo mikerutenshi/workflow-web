@@ -1,4 +1,7 @@
 import { AuthGuard } from '@/guards/auth.guard';
+import { RoleGuard } from '@/guards/role.guard';
+import { Roles } from '@/guards/roles.decorator';
+import { Role } from '@/models/role.enum';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ArtisanService } from './artisan.service';
@@ -9,10 +12,17 @@ import { Artisan } from '@/models/artisan.model';
 export class ArtisanResolver {
   constructor(private artisanService: ArtisanService) {}
 
+  // Planner and Field can browse artisans, but only Finance and above maintain
+  // the roster -- see the `setting-artisans` entry in the layout's createBtns.
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Finance)
   @Mutation(() => Artisan)
   createArtisan(@Args('data') data: ArtisanCreateDto): Promise<Artisan> {
     return this.artisanService.createArtisan(data);
   }
+
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Finance)
   @Mutation(() => Artisan)
   updateArtisan(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -27,6 +37,7 @@ export class ArtisanResolver {
     return this.artisanService.getArtisans();
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => Artisan)
   getArtisan(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -34,8 +45,9 @@ export class ArtisanResolver {
     return this.artisanService.getArtisan(id);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Finance)
   @Mutation(() => Boolean)
-  @UseGuards(AuthGuard)
   deleteArtisan(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
   ): Promise<Boolean> {

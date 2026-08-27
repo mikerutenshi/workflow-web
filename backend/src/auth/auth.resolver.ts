@@ -3,6 +3,10 @@ import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Context, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Request } from 'express';
 import { AuthGuard } from '../guards/auth.guard';
+import { RoleGuard } from '@/guards/role.guard';
+// Aliased: Role in this file is already the GraphQL object type imported above.
+import { Roles } from '@/guards/roles.decorator';
+import { Role as RoleLevel } from '@/models/role.enum';
 import { AuthService } from './auth.service';
 import { LogInDto } from './dto/logIn.dto';
 import { RoleDto } from './dto/role.dto';
@@ -14,7 +18,9 @@ import { User } from '@/models/user.model';
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(AuthGuard)
+  // Roles carry clearanceLevel, so minting one is a privilege operation.
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(RoleLevel.Superuser)
   @Mutation(() => Role)
   createRole(@Args('data') data: RoleDto): Promise<Role> {
     return this.authService.createRole(data);
@@ -30,7 +36,11 @@ export class AuthResolver {
     return this.authService.createUser(data);
   }
 
-  @UseGuards(AuthGuard)
+  // UserUpdateDto extends PartialType(UserCreateDto), so roleId and isActive
+  // are client-settable -- AuthGuard alone let any logged-in user hand
+  // themselves a Superuser role. Matches the Superuser-only users setting page.
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(RoleLevel.Superuser)
   @Mutation(() => User)
   updateUser(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -39,7 +49,8 @@ export class AuthResolver {
     return this.authService.updateUser(id, data);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(RoleLevel.Superuser)
   @Query(() => [User])
   getUsers(): Promise<User[]> {
     const users = this.authService.getUsers();

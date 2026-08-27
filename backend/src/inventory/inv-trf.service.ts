@@ -3,6 +3,7 @@ import { InvTrfItem } from '@/models/inv-trf-item.model';
 import { InvTrf } from '@/models/inv-trf.model';
 import { Operation } from '@/models/operation.enum';
 import { Role } from '@/models/role.enum';
+import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import {
   computePrice,
@@ -105,7 +106,7 @@ export class InvTrfService {
     }
   }
 
-  updateInvTrf(id: number, data: InvTrfUpdateDto): Promise<InvTrf> {
+  updateInvTrf(id: number, data: InvTrfUpdateDto, user: User): Promise<InvTrf> {
     const { invTrfItemIds, ...rest } = data;
     return this.prisma.$transaction(async (tx) => {
       const initTrfData = await tx.invTrf.findUniqueOrThrow({
@@ -113,11 +114,9 @@ export class InvTrfService {
         include: { invTrfItems: { include: { invTrfItemSizes: true } } },
       });
 
-      const user = await tx.user.findUniqueOrThrow({
-        where: { id: data.updatedBy },
-        include: { role: { select: { clearanceLevel: true } } },
-      });
-
+      // Clearance comes from the authenticated user, never from data.updatedBy:
+      // that field is client-supplied, so looking it up here let any caller
+      // borrow a Finance user's privileges just by naming their id.
       if (
         initTrfData.progress === Progress.COMPLETED &&
         data.progress !== Progress.COMPLETED &&
@@ -186,7 +185,7 @@ export class InvTrfService {
               type: TxType.TRANSFER_IN,
               saleId: undefined,
               trfId: id,
-              createdBy: data.updatedBy,
+              createdBy: user.id,
             },
             tx,
           );
@@ -203,7 +202,7 @@ export class InvTrfService {
               type: TxType.TRANSFER_OUT,
               saleId: undefined,
               trfId: id,
-              createdBy: data.updatedBy,
+              createdBy: user.id,
             },
             tx,
           );
@@ -264,7 +263,7 @@ export class InvTrfService {
               type: TxType.REVERSION,
               saleId: undefined,
               trfId: id,
-              createdBy: data.updatedBy,
+              createdBy: user.id,
             },
             tx,
           );
@@ -281,7 +280,7 @@ export class InvTrfService {
               type: TxType.REVERSION,
               saleId: undefined,
               trfId: id,
-              createdBy: data.updatedBy,
+              createdBy: user.id,
             },
             tx,
           );

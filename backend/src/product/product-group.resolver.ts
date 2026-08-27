@@ -3,20 +3,28 @@ import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductGroupCreateDto } from './dto/product-group-create.dto';
 import { ProductGroupGetDto } from './dto/product-group-get.dto';
 import { ProductGroupService } from './product-group.service';
-import { ParseIntPipe } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 import { ProductGroupUpdateDto } from './dto/product-group-update.dto';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RoleGuard } from '@/guards/role.guard';
+import { Roles } from '@/guards/roles.decorator';
+import { Role } from '@/models/role.enum';
 
 @Resolver(() => ProductGroup)
 export class ProductGroupResolver {
   constructor(private productGroupService: ProductGroupService) {}
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => ProductGroup)
   createProductGroup(
     @Args('data') data: ProductGroupCreateDto,
   ): Promise<ProductGroup> {
     return this.productGroupService.createProductGroup(data);
   }
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => ProductGroup)
   updateProductGroup(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -35,6 +43,8 @@ export class ProductGroupResolver {
     return this.productGroupService.getProductGroup(id);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
   deleteProductGroup(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -47,11 +57,15 @@ export class ProductGroupResolver {
     return this.productGroupService.downloadProductGroups();
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
   uploadProductGroupMsrps(@Args('data') data: CsvUploadDto): Promise<boolean> {
     return this.productGroupService.uploadProductGroupMsrps(data);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
   uploadNewProductGroups(@Args('data') data: CsvUploadDto): Promise<boolean> {
     return this.productGroupService.uploadNewProductGroups(data);

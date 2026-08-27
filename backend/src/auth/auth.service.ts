@@ -152,33 +152,44 @@ export class AuthService {
   }
 
   async me(accessToken: string): Promise<User | null> {
-    if (accessToken) {
-      const data = this.jwtService.decode(accessToken, { json: true }) as {
-        sub: unknown;
-      };
-      if (data?.sub && !isNaN(Number(data.sub))) {
-        const user = await this.prisma.user.findUnique({
-          where: { id: Number(data.sub) },
-          include: {
-            role: true,
-            userInventories: {
-              include: {
-                inventory: true,
-              },
-            },
-          },
-        });
+    if (!accessToken) return null;
 
-        if (!user) throw new Error('User not found');
-        return {
-          ...user,
-          userInventories: user.userInventories.map(
-            (member) => member.inventory,
-          ),
-        };
-      }
+    // verifyAsync, never decode: decode reads the payload without checking the
+    // signature, so any hand-written token would authenticate as its own `sub`.
+    let sub: unknown;
+    try {
+      ({ sub } = await this.jwtService.verifyAsync<{ sub: unknown }>(
+        accessToken,
+      ));
+    } catch {
+      // Forged, tampered with, or expired. This runs on every request via the
+      // Apollo context factory, so fail to anonymous rather than throwing -- a
+      // throw here would break logging in for anyone holding a stale cookie.
+      return null;
     }
-    return null;
+
+    if (!sub || isNaN(Number(sub))) return null;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: Number(sub) },
+      include: {
+        role: true,
+        userInventories: {
+          include: {
+            inventory: true,
+          },
+        },
+      },
+    });
+
+    // A validly signed token for a deleted user means anonymous, not an error
+    // on every request the holder makes.
+    if (!user) return null;
+
+    return {
+      ...user,
+      userInventories: user.userInventories.map((member) => member.inventory),
+    };
   }
 
   async verityfHuman(token: string): Promise<boolean> {

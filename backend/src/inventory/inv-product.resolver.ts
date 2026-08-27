@@ -2,16 +2,22 @@ import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 import { InvProductService } from './inv-product.service';
 import { InvProduct } from '@/models/inv-product.model';
 import { InvProductCreateDto } from './dto/inv-product-create.dto';
-import { ParseIntPipe } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { InvProductUpdateDto } from './dto/inv-product-update.dto';
 import { InvProductDto } from './dto/inv-product.dto';
 import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 import { InvProductUpdateDiscDto } from './dto/inv-product-update-disc.dto';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RoleGuard } from '@/guards/role.guard';
+import { Roles } from '@/guards/roles.decorator';
+import { Role } from '@/models/role.enum';
 
 @Resolver(() => InvProduct)
 export class InvProductResolver {
   constructor(private service: InvProductService) {}
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => InvProduct)
   createInvProduct(
     @Args('data') data: InvProductCreateDto,
@@ -26,6 +32,8 @@ export class InvProductResolver {
     return this.service.getInvProducts(invId);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => InvProduct)
   updateInvProduct(
     @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
@@ -35,6 +43,8 @@ export class InvProductResolver {
     return this.service.updateInvProduct(invId, productId, data);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
   deleteInvProduct(
     @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
@@ -43,11 +53,15 @@ export class InvProductResolver {
     return this.service.deleteInvProduct(invId, productId);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
   uploadNewInvProducts(@Args('data') data: CsvUploadDto): Promise<boolean> {
     return this.service.uploadNewInvProducts(data);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
   uploadInvProductDiscounts(
     @Args('data') data: CsvUploadDto,
@@ -55,6 +69,8 @@ export class InvProductResolver {
     return this.service.uploadInvProductDiscounts(data);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => InvProduct)
   updateInvProductDisc(
     @Args('data') data: InvProductUpdateDiscDto,
