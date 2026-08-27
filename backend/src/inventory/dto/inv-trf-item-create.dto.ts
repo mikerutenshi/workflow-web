@@ -12,6 +12,8 @@ import {
 import { InvTrfItemSizeCreateDto } from './inv-trf-item-size-create.dto';
 import { Progress } from '@/generated/prisma/client';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else.
 @InputType()
 export class InvTrfItemCreateDto {
   @Field(() => ID, { nullable: true })
@@ -44,9 +46,4 @@ export class InvTrfItemCreateDto {
   @IsArray()
   @IsDecimal({ decimal_digits: '4' }, { each: true })
   discounts!: string[];
-
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @Min(1)
-  createdBy!: number;
 }

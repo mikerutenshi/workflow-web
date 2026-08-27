@@ -34,10 +34,11 @@ export class SizeResolver {
   @Mutation(() => Boolean)
   deleteSize(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.sizeService.deleteSize(id);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => Size)
   getSize(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -45,6 +46,7 @@ export class SizeResolver {
     return this.sizeService.getSize(id);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => [Size])
   getSizes(): Promise<Size[]> {
     return this.sizeService.getSizes();

@@ -245,7 +245,7 @@ export class InvProductService {
       sizeId: number;
       quantity: number;
     }[],
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.prisma.$transaction(async (tx) => {
       await this.decrementInvProductOp(invId, productId, invProductSizes, tx);
       return true;
@@ -335,7 +335,7 @@ export class InvProductService {
     }
   }
 
-  async deleteInvProduct(invId: number, productId: number): Promise<Boolean> {
+  async deleteInvProduct(invId: number, productId: number): Promise<boolean> {
     const invProduct = await this.prisma.invToProduct.delete({
       where: { invId_productId: { invId, productId } },
     });

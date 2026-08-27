@@ -2,9 +2,6 @@ import { Color } from '@/models/color.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ColorCreateDto } from './dto/color-create.dto';
-import { join } from 'path';
-import { createWriteStream } from 'fs';
-import { mkdir } from 'fs/promises';
 import * as csv from 'fast-csv';
 import { FileService } from '@/file/file.service';
 
@@ -50,7 +47,7 @@ export class ColorService {
     });
   }
 
-  async deleteColor(id: number): Promise<Boolean> {
+  async deleteColor(id: number): Promise<boolean> {
     const color = await this.prisma.color.delete({
       where: {
         id: id,

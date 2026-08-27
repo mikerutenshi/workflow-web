@@ -1,13 +1,7 @@
-import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
-import { Transform } from 'class-transformer';
-import { IsInt, Min } from 'class-validator';
+import { InputType, PartialType } from '@nestjs/graphql';
 import { ProductGroupCreateDto } from './product-group-create.dto';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else.
 @InputType()
-export class ProductGroupUpdateDto extends PartialType(ProductGroupCreateDto) {
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  updatedBy!: number;
-}
+export class ProductGroupUpdateDto extends PartialType(ProductGroupCreateDto) {}

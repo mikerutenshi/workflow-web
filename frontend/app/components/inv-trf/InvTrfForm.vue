@@ -226,7 +226,6 @@ const submitBtnTitle = computed(() =>
 );
 
 const authStore = useAuthStore();
-const userId = authStore.user?.id || '';
 
 const validationSchema = toTypedSchema(InvTrfSchema);
 const { handleSubmit, values, errors, setFieldValue } = useForm({
@@ -234,7 +233,6 @@ const { handleSubmit, values, errors, setFieldValue } = useForm({
   initialValues: {
     trfDate: dayjs().toISOString(),
     progress: Progress.Initiated,
-    createdBy: userId,
   },
 });
 const trfNo = useField('trfNo');
@@ -395,7 +393,6 @@ const fromInventories = computed(() => {
 
 if (props.invTrfId) {
   fetchTransfer();
-  setFieldValue('updatedBy', userId);
 } else {
   generateInvTrfNo({ variables: { date: trfDate.value.value } });
 }
@@ -422,11 +419,7 @@ const onSubmit = handleSubmit((data) => {
   if (!props.invTrfId) {
     executeCreate({ data });
   } else {
-    const { createdBy, ...updateData } = {
-      ...data,
-      updatedBy: data.updatedBy || userId,
-    };
-    executeUpdate({ id: props.invTrfId, data: updateData });
+    executeUpdate({ id: props.invTrfId, data });
   }
 });
 const deleteInvTrf = (id: string) => {

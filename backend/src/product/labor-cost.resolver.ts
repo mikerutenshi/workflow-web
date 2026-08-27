@@ -3,9 +3,11 @@ import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { LaborCostService } from './labor-cost.service';
 import { LaborCostUpsertDto } from './dto/labor-cost-upsert.dto';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { CurrentUser } from '@/guards/current-user.decorator';
 import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
+import { User } from '@/models/user.model';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
 import { LaborCostUpdateDto } from './dto/labor-cost-update.dto';
 
@@ -21,16 +23,18 @@ export class LaborCostResolver {
     productGroupId: number,
     @Args('data', { type: () => [LaborCostUpsertDto] })
     data: LaborCostUpsertDto[],
+    @CurrentUser() user: User,
   ): Promise<LaborCost[]> {
-    return this.laborCostService.upsertLaborCosts(productGroupId, data);
+    return this.laborCostService.upsertLaborCosts(productGroupId, data, user);
   }
 
   @Mutation(() => Boolean)
   updateLaborCosts(
     @Args('data')
     data: LaborCostUpdateDto,
-  ): Promise<Boolean> {
-    return this.laborCostService.updateLaborCosts(data);
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return this.laborCostService.updateLaborCosts(data, user);
   }
 
   @Query(() => [LaborCostGetDto])

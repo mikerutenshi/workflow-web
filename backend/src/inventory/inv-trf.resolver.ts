@@ -34,8 +34,11 @@ export class InvTrfResolver {
   @UseGuards(AuthGuard, RoleGuard)
   @RolesAny(...CAN_TRANSFER)
   @Mutation(() => InvTrf)
-  createInvTrf(@Args('data') data: InvTrfCreateDto): Promise<InvTrf> {
-    return this.service.createInvTrf(data);
+  createInvTrf(
+    @Args('data') data: InvTrfCreateDto,
+    @CurrentUser() user: User,
+  ): Promise<InvTrf> {
+    return this.service.createInvTrf(data, user.id);
   }
 
   // Takes the actor from the context: the service reads clearance off it to
@@ -65,8 +68,9 @@ export class InvTrfResolver {
   @Mutation(() => InvTrfItem)
   createInvTrfItem(
     @Args('data') data: InvTrfItemCreateDto,
+    @CurrentUser() user: User,
   ): Promise<InvTrfItem> {
-    return this.service.createInvTrfItem(data);
+    return this.service.createInvTrfItem(data, user.id);
   }
 
   @UseGuards(AuthGuard)

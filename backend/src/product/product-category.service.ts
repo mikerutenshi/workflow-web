@@ -42,7 +42,7 @@ export class ProductCategoryService {
     return category;
   }
 
-  async deleteProductCategory(id: number): Promise<Boolean> {
+  async deleteProductCategory(id: number): Promise<boolean> {
     const productCategory = await this.prisma.productCategory.delete({
       where: { id },
     });

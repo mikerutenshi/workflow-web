@@ -1,17 +1,11 @@
-import { Field, ID, InputType, OmitType, PartialType } from '@nestjs/graphql';
-import { Transform } from 'class-transformer';
-import { IsInt, Min } from 'class-validator';
+import { InputType, PartialType } from '@nestjs/graphql';
 import { InvTrfCreateDto } from './inv-trf-create.dto';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else. InvTrfCreateDto no
+// longer carries createdBy, so this no longer needs to omit it.
 @InputType()
-export class InvTrfUpdateDto extends PartialType(
-  OmitType(InvTrfCreateDto, ['createdBy']),
-) {
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @Min(1)
-  updatedBy!: number;
-
+export class InvTrfUpdateDto extends PartialType(InvTrfCreateDto) {
   // @Field(() => [ID])
   // @Transform(({ value }) => {
   //   if (Array.isArray(value)) {

@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   async getRoles(): Promise<Role[]> {
-    let roles = await this.prisma.role.findMany();
+    const roles = await this.prisma.role.findMany();
     roles.shift();
     return roles;
   }
@@ -48,7 +48,7 @@ export class AuthService {
         firstName: data.firstName,
         lastName: data.lastName,
         roleId: data.roleId,
-        createdBy: data.createdBy,
+        createdBy: null,
         approvedAt: null,
       },
       include: {
@@ -65,7 +65,11 @@ export class AuthService {
     };
   }
 
-  async updateUser(id: number, data: UserUpdateDto): Promise<User> {
+  async updateUser(
+    id: number,
+    data: UserUpdateDto,
+    actor: User,
+  ): Promise<User> {
     return await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({ where: { id } });
       if (!user) throw Error('User not found');
@@ -81,13 +85,15 @@ export class AuthService {
           email: data.email,
           roleId: data.roleId,
           isActive: data.isActive,
+          // Still only stamped on the inactive -> active transition; the
+          // difference is that the approver is now the caller, not the payload.
           approvedBy:
-            !user.isActive && data.isActive ? data.approvedBy : user.approvedBy,
+            !user.isActive && data.isActive ? actor.id : user.approvedBy,
           approvedAt:
             !user.isActive && data.isActive
               ? dayjs().toDate()
               : user.approvedAt,
-          updatedBy: data.updatedBy,
+          updatedBy: actor.id,
         },
         include: {
           role: true,

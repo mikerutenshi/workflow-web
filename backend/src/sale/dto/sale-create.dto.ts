@@ -1,14 +1,15 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
-import { Transform, Type } from 'class-transformer';
+import { Field, InputType } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsDate,
   Matches,
-  Min,
   ValidateNested,
 } from 'class-validator';
 import { SaleItemCreateDto } from './sale-item-create.dto';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else.
 @InputType()
 export class SaleCreateDto {
   @Field()
@@ -20,11 +21,6 @@ export class SaleCreateDto {
   @Field(() => Date)
   @IsDate()
   date!: Date;
-
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @Min(1)
-  createdBy!: number;
 
   @Field(() => [SaleItemCreateDto])
   @Type(() => SaleItemCreateDto)

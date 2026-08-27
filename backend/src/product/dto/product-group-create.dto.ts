@@ -10,6 +10,8 @@ import {
   Min,
 } from 'class-validator';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else.
 @InputType()
 export class ProductGroupCreateDto {
   @Field()
@@ -36,10 +38,4 @@ export class ProductGroupCreateDto {
   @Min(100000)
   @Max(3000000)
   msrp?: number | null;
-
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  createdBy!: number;
 }

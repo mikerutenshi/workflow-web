@@ -1,7 +1,9 @@
 import { AuthGuard } from '@/guards/auth.guard';
+import { CurrentUser } from '@/guards/current-user.decorator';
 import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
+import { User } from '@/models/user.model';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ArtisanService } from './artisan.service';
@@ -17,8 +19,11 @@ export class ArtisanResolver {
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(Role.Finance)
   @Mutation(() => Artisan)
-  createArtisan(@Args('data') data: ArtisanCreateDto): Promise<Artisan> {
-    return this.artisanService.createArtisan(data);
+  createArtisan(
+    @Args('data') data: ArtisanCreateDto,
+    @CurrentUser() user: User,
+  ): Promise<Artisan> {
+    return this.artisanService.createArtisan(data, user);
   }
 
   @UseGuards(AuthGuard, RoleGuard)
@@ -27,8 +32,9 @@ export class ArtisanResolver {
   updateArtisan(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
     @Args('data') data: ArtisanCreateDto,
+    @CurrentUser() user: User,
   ): Promise<Artisan> {
-    return this.artisanService.updateArtisan(id, data);
+    return this.artisanService.updateArtisan(id, data, user);
   }
 
   @UseGuards(AuthGuard)
@@ -50,7 +56,7 @@ export class ArtisanResolver {
   @Mutation(() => Boolean)
   deleteArtisan(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.artisanService.deleteArtisan(id);
   }
 }

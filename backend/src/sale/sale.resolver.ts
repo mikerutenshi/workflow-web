@@ -7,8 +7,10 @@ import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { SalePerformanceDto } from './dto/sale-performance-dto';
 import { AuthGuard } from '@/guards/auth.guard';
 import { RoleGuard } from '@/guards/role.guard';
+import { CurrentUser } from '@/guards/current-user.decorator';
 import { RolesAny } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
+import { User } from '@/models/user.model';
 
 @Resolver(() => Sale)
 export class SaleResolver {
@@ -17,8 +19,11 @@ export class SaleResolver {
   @UseGuards(AuthGuard, RoleGuard)
   @RolesAny(Role.Superuser, Role.Finance, Role.Planner, Role.Sales)
   @Mutation(() => Sale)
-  createSale(@Args('data') data: SaleCreateDto): Promise<Sale> {
-    return this.service.createSale(data);
+  createSale(
+    @Args('data') data: SaleCreateDto,
+    @CurrentUser() user: User,
+  ): Promise<Sale> {
+    return this.service.createSale(data, user);
   }
 
   @UseGuards(AuthGuard)
@@ -65,7 +70,7 @@ export class SaleResolver {
   @Query(() => String)
   generateSaleNo(
     @Args('date', { type: () => Date }) date: Date,
-  ): Promise<String> {
+  ): Promise<string> {
     return this.service.generateSaleNo(date);
   }
 
@@ -74,7 +79,7 @@ export class SaleResolver {
   @Mutation(() => Boolean)
   deleteSale(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.service.deleteSale(id);
   }
 }

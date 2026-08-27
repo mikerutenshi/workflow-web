@@ -1,5 +1,6 @@
 import { WorkAndTasksDto } from '@/production/dto/work-and-tasks.dto';
 import { Work } from '@/models/work.model';
+import { User } from '@/models/user.model';
 import { Operation } from '@/models/operation.enum';
 import { PrismaService } from '@/prisma/prisma.service';
 import { generateId, getStartOfDay } from '@/utils/functions.util';
@@ -12,11 +13,12 @@ import { WorkUpdateDto } from './dto/work-update.dto';
 export class WorkService {
   constructor(private prisma: PrismaService) {}
 
-  async createWork(data: WorkCreateDto): Promise<Work> {
+  async createWork(data: WorkCreateDto, user: User): Promise<Work> {
     return this.prisma.$transaction(async (tx) => {
       const createdWork = await tx.work.create({
         data: {
           ...data,
+          createdBy: user.id,
           workSizes: data.workSizes
             ? {
                 create: data.workSizes.map((size) => ({
@@ -47,7 +49,7 @@ export class WorkService {
               workId: createdWork.id,
               type: laborCost.type,
               laborCostId: laborCost.id,
-              createdBy: data.createdBy,
+              createdBy: user.id,
             },
           });
         }
@@ -57,11 +59,12 @@ export class WorkService {
     });
   }
 
-  updateWork(id: number, data: WorkUpdateDto): Promise<Work> {
+  updateWork(id: number, data: WorkUpdateDto, user: User): Promise<Work> {
     return this.prisma.work.update({
       where: { id },
       data: {
         ...data,
+        updatedBy: user.id,
         workSizes: {
           deleteMany: { workId: id },
           create: data.workSizes.map((size) => ({
@@ -114,7 +117,7 @@ export class WorkService {
     });
   }
 
-  async deleteWork(id: number): Promise<Boolean> {
+  async deleteWork(id: number): Promise<boolean> {
     const work = await this.prisma.work.delete({ where: { id } });
 
     if (!work) throw new Error(`Delete work with ID ${id} failed.`);

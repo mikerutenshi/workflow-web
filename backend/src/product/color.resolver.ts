@@ -19,11 +19,13 @@ export class ColorResolver {
     return this.colorService.createColor(data);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => [Color])
   getColors(): Promise<Color[]> {
     return this.colorService.getColors();
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => Color)
   getColor(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -46,10 +48,11 @@ export class ColorResolver {
   @Mutation(() => Boolean)
   deleteColor(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.colorService.deleteColor(id);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => String)
   downloadColors(): Promise<string> {
     return this.colorService.downloadColors();

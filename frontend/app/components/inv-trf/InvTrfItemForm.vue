@@ -155,7 +155,6 @@ const sizeQuantities = reactive<
 const priceModel = ref(invProduct?.price);
 
 const authStore = useAuthStore();
-const userId = authStore.user?.id || '';
 
 const validationSchema = toTypedSchema(InvTrfItemSchema);
 const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
@@ -163,7 +162,6 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   initialValues: {
     fromInvId: invProduct?.invId,
     productId: invProduct?.productId,
-    createdBy: userId,
   },
 });
 const toInvId = useField<string>('toInvId');

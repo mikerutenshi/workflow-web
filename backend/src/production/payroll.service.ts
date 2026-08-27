@@ -54,7 +54,7 @@ export class PayrollService {
       orderBy: { firstName: 'asc' },
     });
 
-    let payroll: PayrollGetDto = new PayrollGetDto();
+    const payroll: PayrollGetDto = new PayrollGetDto();
 
     payroll.artisans = artisans.map((artisan) => {
       return {

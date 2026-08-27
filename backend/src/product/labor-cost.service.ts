@@ -1,5 +1,6 @@
 import { Job } from '@/generated/prisma/client';
 import { LaborCost } from '@/models/labor-cost.model';
+import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { LaborCostGetDto } from './dto/labor-cost-get.dto';
@@ -13,88 +14,88 @@ export class LaborCostService {
   async upsertLaborCosts(
     productGroupId: number,
     data: LaborCostUpsertDto[],
+    user: User,
   ): Promise<LaborCost[]> {
-    try {
-      return this.prisma.$transaction(async (tx) => {
-        const upsertCosts = [];
+    return this.prisma.$transaction(async (tx) => {
+      const upsertCosts = [];
 
-        if (data.length == 0) {
-          await tx.task.deleteMany({
-            where: { work: { product: { productGroupId } } },
-          });
-          await tx.laborCost.deleteMany({ where: { productGroupId } });
-        } else {
-          let databaseCosts = await tx.laborCost.findMany({
-            where: { productGroupId },
-          });
+      if (data.length == 0) {
+        await tx.task.deleteMany({
+          where: { work: { product: { productGroupId } } },
+        });
+        await tx.laborCost.deleteMany({ where: { productGroupId } });
+      } else {
+        const databaseCosts = await tx.laborCost.findMany({
+          where: { productGroupId },
+        });
 
-          for (const databaseCost of databaseCosts) {
-            let found = data.find((item) => item.type === databaseCost.type);
-            if (!found) {
-              await tx.task.deleteMany({
-                where: { laborCostId: databaseCost.id },
-              });
-              await tx.laborCost.delete({ where: { id: databaseCost.id } });
-            }
+        for (const databaseCost of databaseCosts) {
+          const found = data.find((item) => item.type === databaseCost.type);
+          if (!found) {
+            await tx.task.deleteMany({
+              where: { laborCostId: databaseCost.id },
+            });
+            await tx.laborCost.delete({ where: { id: databaseCost.id } });
           }
+        }
 
-          for (const item of data) {
-            const now = new Date();
+        for (const item of data) {
+          const now = new Date();
 
-            const newCost = await tx.laborCost.upsert({
+          const newCost = await tx.laborCost.upsert({
+            where: {
+              productGroupId_type: {
+                productGroupId: productGroupId,
+                type: item.type,
+              },
+            },
+            create: {
+              type: item.type,
+              cost: item.cost,
+              productGroupId: productGroupId,
+              createdBy: user.id,
+            },
+            update: {
+              cost: item.cost,
+              updatedBy: user.id,
+              updatedAt: now,
+            },
+          });
+
+          const relWorks = await tx.work.findMany({
+            where: { product: { productGroupId } },
+          });
+
+          for (const work of relWorks) {
+            await tx.task.upsert({
               where: {
-                productGroupId_type: {
-                  productGroupId: productGroupId,
+                workId_type: {
+                  workId: work.id,
                   type: item.type,
                 },
               },
               create: {
+                workId: work.id,
                 type: item.type,
-                cost: item.cost,
-                productGroupId: productGroupId,
-                createdBy: Number(item.createdBy) ?? 0,
+                laborCostId: newCost.id,
+                createdBy: user.id,
               },
-              update: {
-                cost: item.cost,
-                updatedBy: Number(item.updatedBy) ?? 0,
-                updatedAt: now,
-              },
+              update: {},
             });
-
-            const relWorks = await tx.work.findMany({
-              where: { product: { productGroupId } },
-            });
-
-            for (const work of relWorks) {
-              await tx.task.upsert({
-                where: {
-                  workId_type: {
-                    workId: work.id,
-                    type: item.type,
-                  },
-                },
-                create: {
-                  workId: work.id,
-                  type: item.type,
-                  laborCostId: newCost.id,
-                  createdBy: Number(item.createdBy) ?? 0,
-                },
-                update: {},
-              });
-            }
-
-            upsertCosts.push(newCost);
           }
-        }
 
-        return upsertCosts;
-      });
-    } catch (err) {
-      throw err;
-    }
+          upsertCosts.push(newCost);
+        }
+      }
+
+      return upsertCosts;
+    });
   }
 
-  async updateLaborCosts(data: LaborCostUpdateDto): Promise<boolean> {
+  async updateLaborCosts(
+    data: LaborCostUpdateDto,
+    user: User,
+  ): Promise<boolean> {
     const jobTypes: { key: keyof LaborCostUpdateDto; type: Job }[] = [
       { key: 'drawUpper', type: Job.DRAW_UPPER },
       { key: 'drawLining', type: Job.DRAW_LINING },
@@ -104,85 +105,80 @@ export class LaborCostService {
       { key: 'last', type: Job.LAST },
     ];
 
-    try {
-      await this.prisma.$transaction(async (tx) => {
-        for (const { key, type } of jobTypes) {
-          const cost = data[key];
+    await this.prisma.$transaction(async (tx) => {
+      for (const { key, type } of jobTypes) {
+        const cost = data[key];
 
-          if (cost != null && cost !== undefined) {
-            const newCost = await tx.laborCost.upsert({
+        if (cost != null && cost !== undefined) {
+          const newCost = await tx.laborCost.upsert({
+            where: {
+              productGroupId_type: {
+                productGroupId: data.productGroupId,
+                type,
+              },
+            },
+            update: {
+              productGroupId: data.productGroupId,
+              updatedBy: user.id,
+              type,
+              cost,
+            },
+            create: {
+              productGroupId: data.productGroupId,
+              createdBy: user.id,
+              type,
+              cost,
+            },
+          });
+
+          const relatedWorks = await tx.work.findMany({
+            where: { product: { productGroupId: data.productGroupId } },
+          });
+
+          for (const work of relatedWorks) {
+            await tx.task.upsert({
               where: {
-                productGroupId_type: {
-                  productGroupId: data.productGroupId,
-                  type,
-                },
-              },
-              update: {
-                productGroupId: data.productGroupId,
-                createdBy: data.createdBy,
-                updatedBy: data.updatedBy,
-                type,
-                cost,
-              },
-              create: {
-                productGroupId: data.productGroupId,
-                createdBy: data.createdBy,
-                type,
-                cost,
-              },
-            });
-
-            const relatedWorks = await tx.work.findMany({
-              where: { product: { productGroupId: data.productGroupId } },
-            });
-
-            for (const work of relatedWorks) {
-              await tx.task.upsert({
-                where: {
-                  workId_type: {
-                    workId: work.id,
-                    type: type,
-                  },
-                },
-                create: {
+                workId_type: {
                   workId: work.id,
                   type: type,
-                  laborCostId: newCost.id,
-                  createdBy: data.createdBy,
                 },
-                update: {},
-              });
-            }
-          } else {
-            const laborCost = await tx.laborCost.findFirst({
-              select: { id: true },
+              },
+              create: {
+                workId: work.id,
+                type: type,
+                laborCostId: newCost.id,
+                createdBy: user.id,
+              },
+              update: {},
+            });
+          }
+        } else {
+          const laborCost = await tx.laborCost.findFirst({
+            select: { id: true },
+            where: {
+              productGroupId: data.productGroupId,
+              type,
+            },
+          });
+          const laborCostId = laborCost?.id;
+
+          if (laborCostId) {
+            await tx.task.deleteMany({
               where: {
-                productGroupId: data.productGroupId,
-                type,
+                laborCostId,
+                artisanId: null,
               },
             });
-            const laborCostId = laborCost?.id;
 
-            if (laborCostId) {
-              await tx.task.deleteMany({
-                where: {
-                  laborCostId,
-                  artisanId: null,
-                },
-              });
-
-              await tx.laborCost.delete({
-                where: {
-                  id: laborCostId,
-                },
-              });
-            }
+            await tx.laborCost.delete({
+              where: {
+                id: laborCostId,
+              },
+            });
           }
         }
-      });
-    } catch (err) {
-      throw err;
-    }
+      }
+    });
     return true;
   }
 

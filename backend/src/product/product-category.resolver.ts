@@ -31,11 +31,13 @@ export class ProductCategoryResolver {
     return this.productCategoryService.updateProductCategory(id, data);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => [ProductCategory])
   getProductCategories() {
     return this.productCategoryService.getProductCategories();
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => ProductCategory)
   getProductCategory(@Args('id', { type: () => ID }, ParseIntPipe) id: number) {
     return this.productCategoryService.getProductCategory(id);
@@ -46,7 +48,7 @@ export class ProductCategoryResolver {
   @Mutation(() => Boolean)
   deleteProductCategory(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.productCategoryService.deleteProductCategory(id);
   }
 }

@@ -26,7 +26,7 @@ export class InventoryResolver {
   @Mutation(() => Boolean)
   deleteInventory(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.service.deleteInventory(id);
   }
 
@@ -40,6 +40,7 @@ export class InventoryResolver {
     return this.service.updateInventory(id, data);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => InventoryDto)
   getInventory(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -47,11 +48,13 @@ export class InventoryResolver {
     return this.service.getInventory(id);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => [InventoryDto])
   getInventories(): Promise<InventoryDto[]> {
     return this.service.getInventories();
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => String)
   downloadInventories(): Promise<string> {
     return this.service.downloadInventories();

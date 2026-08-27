@@ -15,10 +15,4 @@ export class ProductGroupUploadMsrpDto {
   @Min(100000)
   @Max(3000000)
   msrp!: number;
-
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  updatedBy!: number;
 }

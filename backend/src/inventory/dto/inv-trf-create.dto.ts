@@ -12,6 +12,8 @@ import {
   Min,
 } from 'class-validator';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else.
 @InputType()
 export class InvTrfCreateDto {
   @Field()
@@ -60,9 +62,4 @@ export class InvTrfCreateDto {
   @MaxLength(255)
   @IsOptional()
   note!: string | null;
-
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @Min(1)
-  createdBy!: number;
 }

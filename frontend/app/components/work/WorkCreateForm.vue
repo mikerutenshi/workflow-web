@@ -194,14 +194,12 @@ const {
 });
 const authStore = useAuthStore();
 const snack = useSnackbarStore();
-const userId = authStore.user?.id || '';
 
 const validationSchema = toTypedSchema(WorkSchema);
 const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   validationSchema,
   initialValues: {
     date: dayjs().toISOString(),
-    createdBy: userId,
     workSizes: [],
   },
 });
@@ -236,7 +234,7 @@ const onSubmit = handleSubmit((data) => {
   if (!workId.value) {
     executeCreate({ data });
   } else {
-    executeUpdate({ id: workId.value, data: { ...data, updatedBy: userId } });
+    executeUpdate({ id: workId.value, data });
   }
 });
 
@@ -255,7 +253,6 @@ if (workId.value) {
         date: work.date,
         orderNo: work.orderNo,
         productId: work.productId,
-        updatedBy: userId,
       });
       workSizes.value = work.workSizes.map((item) => ({
         id: item.size.id,

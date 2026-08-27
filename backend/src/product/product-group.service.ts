@@ -1,6 +1,7 @@
 import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 import { FileService } from '@/file/file.service';
 import { ProductGroup } from '@/models/product-group.model';
+import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import * as csv from 'fast-csv';
@@ -16,14 +17,17 @@ export class ProductGroupService {
     private fileService: FileService,
   ) {}
 
-  async createProductGroup(data: ProductGroupCreateDto): Promise<ProductGroup> {
+  async createProductGroup(
+    data: ProductGroupCreateDto,
+    user: User,
+  ): Promise<ProductGroup> {
     return await this.prisma.productGroup.create({
       data: {
         skuNumeric: data.skuNumeric,
         productCategoryId: data.productCategoryId,
         name: data.name,
         msrp: data.msrp,
-        createdBy: data.createdBy,
+        createdBy: user.id,
       },
     });
   }
@@ -31,8 +35,12 @@ export class ProductGroupService {
   updateProductGroup(
     id: number,
     data: ProductGroupUpdateDto,
+    user: User,
   ): Promise<ProductGroup> {
-    return this.prisma.productGroup.update({ where: { id }, data });
+    return this.prisma.productGroup.update({
+      where: { id },
+      data: { ...data, updatedBy: user.id },
+    });
   }
 
   async getProductGroups(): Promise<ProductGroupGetDto[]> {
@@ -62,7 +70,7 @@ export class ProductGroupService {
     return result;
   }
 
-  async deleteProductGroup(id: number): Promise<Boolean> {
+  async deleteProductGroup(id: number): Promise<boolean> {
     const productGroup = await this.prisma.productGroup.delete({
       where: { id },
     });
@@ -78,7 +86,10 @@ export class ProductGroupService {
     return await this.fileService.downloadObjects('product-groups.csv', groups);
   }
 
-  async uploadProductGroupMsrps(data: CsvUploadDto): Promise<boolean> {
+  async uploadProductGroupMsrps(
+    data: CsvUploadDto,
+    user: User,
+  ): Promise<boolean> {
     const rows =
       await this.fileService.readObjects<ProductGroupUploadMsrpDto>(data);
     const validateRows = await Promise.all(
@@ -94,7 +105,7 @@ export class ProductGroupService {
         .map((row) =>
           this.prisma.productGroup.update({
             where: { id: Number(row.id) },
-            data: { msrp: Number(row.msrp) },
+            data: { msrp: Number(row.msrp), updatedBy: user.id },
           }),
         ),
     );
@@ -102,7 +113,10 @@ export class ProductGroupService {
     return true;
   }
 
-  async uploadNewProductGroups(data: CsvUploadDto): Promise<boolean> {
+  async uploadNewProductGroups(
+    data: CsvUploadDto,
+    user: User,
+  ): Promise<boolean> {
     const rows =
       await this.fileService.readObjects<ProductGroupCreateDto>(data);
 
@@ -114,7 +128,7 @@ export class ProductGroupService {
     );
 
     await this.prisma.productGroup.createMany({
-      data: validateRows,
+      data: validateRows.map((row) => ({ ...row, createdBy: user.id })),
       skipDuplicates: true,
     });
 

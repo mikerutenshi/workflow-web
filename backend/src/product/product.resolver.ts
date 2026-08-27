@@ -1,4 +1,5 @@
 import { AuthGuard } from '@/guards/auth.guard';
+import { CurrentUser } from '@/guards/current-user.decorator';
 import { Product } from '@/models/product.model';
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
@@ -8,6 +9,7 @@ import { ProductService } from './product.service';
 import { RoleGuard } from '@/guards/role.guard';
 import { Roles } from '@/guards/roles.decorator';
 import { Role } from '@/models/role.enum';
+import { User } from '@/models/user.model';
 import { ProductUpdateDto } from './dto/product-update.dto';
 import { CsvUploadDto } from '@/file/dto/csv-upload.dto';
 
@@ -18,8 +20,11 @@ export class ProductResolver {
   @UseGuards(RoleGuard)
   @Roles(Role.Planner)
   @Mutation(() => Product)
-  createProduct(@Args('data') data: ProductCreateDto): Promise<Product> {
-    return this.productService.createProduct(data);
+  createProduct(
+    @Args('data') data: ProductCreateDto,
+    @CurrentUser() user: User,
+  ): Promise<Product> {
+    return this.productService.createProduct(data, user);
   }
   @UseGuards(RoleGuard)
   @Roles(Role.Planner)
@@ -27,8 +32,9 @@ export class ProductResolver {
   updateProduct(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
     @Args('data') data: ProductUpdateDto,
+    @CurrentUser() user: User,
   ): Promise<Product> {
-    return this.productService.updateProduct(id, data);
+    return this.productService.updateProduct(id, data, user);
   }
 
   @UseGuards(AuthGuard)
@@ -37,6 +43,7 @@ export class ProductResolver {
     return this.productService.getProducts();
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => ProductDto)
   getProduct(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -50,17 +57,23 @@ export class ProductResolver {
   @UseGuards(AuthGuard)
   deleteProduct(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.productService.deleteProduct(id);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => String)
   downloadProducts(): Promise<string> {
     return this.productService.downloadProducts();
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.Planner)
   @Mutation(() => Boolean)
-  uploadNewProducts(@Args('data') data: CsvUploadDto): Promise<boolean> {
-    return this.productService.uploadNewProducts(data);
+  uploadNewProducts(
+    @Args('data') data: CsvUploadDto,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return this.productService.uploadNewProducts(data, user);
   }
 }

@@ -9,6 +9,10 @@ import {
   Progress,
 } from '~/api/generated/types';
 
+// No schema in this file declares createdBy/updatedBy/approvedBy: the server
+// takes the actor from the authenticated context, so sending one is both
+// pointless and rejected as an unknown input field.
+
 // export function setZodLocale(locale: string) {
 //   if (locale == "en") {
 //     z.config(z.locales.en());
@@ -69,14 +73,10 @@ export const ArtisanSchema = z.object({
   firstName: z.string().min(1).trim(),
   lastName: z.string().trim().optional().nullable(),
   jobs: z.nativeEnum(Job).array(),
-  createdBy: positiveNumberString,
-  updatedBy: positiveNumberString.optional().nullable(),
 });
 
 export const LaborCostSchema = z.object({
   productGroupId: positiveNumberString,
-  createdBy: positiveNumberString,
-  updatedBy: positiveNumberString,
   drawUpper: z.number().min(100).optional().nullable(),
   drawLining: z.number().min(100).optional().nullable(),
   stitchUpper: z.number().min(100).optional().nullable(),
@@ -91,8 +91,6 @@ export const ProductSchema = z.object({
     .string()
     .regex(/^[A-Z]{1,2}[A-Za-z0-9]{5,7}-[a-zA-Z.\s]+(\/[a-zA-Z.\s]*)*$/),
   colorIds: z.array(positiveNumberString),
-  createdBy: positiveNumberString,
-  updatedBy: positiveNumberString.optional(),
 });
 
 export const ColorSchema = z.object({
@@ -110,8 +108,6 @@ export const ProductGroupSchema = z.object({
   productCategoryId: positiveNumberString,
   name: z.string().min(1).trim().optional().nullable(),
   msrp: z.number().min(100000).max(3000000).optional().nullable(),
-  createdBy: positiveNumberString,
-  updatedBy: positiveNumberString.optional(),
 });
 
 export const WorkSchema = z.object({
@@ -125,8 +121,6 @@ export const WorkSchema = z.object({
     }),
   ),
   note: z.string().max(255).trim().nullable().optional(),
-  createdBy: positiveNumberString,
-  updatedBy: positiveNumberString.optional().nullable(),
 });
 
 export function createTaskSchema(
@@ -141,7 +135,6 @@ export function createTaskSchema(
           id: positiveNumberString,
           artisanId: positiveNumberString.optional().nullable(),
           doneAt: z.string().datetime().optional().nullable(),
-          updatedBy: positiveNumberString,
           isValidDate: z.boolean(),
         })
         .array(),
@@ -154,7 +147,6 @@ export function createTaskSchema(
             id: positiveNumberString,
             artisanId: positiveNumberString.optional().nullable(),
             doneAt: z.string().datetime().optional().nullable(),
-            updatedBy: positiveNumberString,
             isValidDate: z.boolean(),
           })
           .superRefine((data, ctx) => {
@@ -197,22 +189,18 @@ export const InvTrfSchema = z.object({
   fromInvId: positiveNumberString,
   toInvId: positiveNumberString,
   progress: z.nativeEnum(Progress),
-  createdBy: positiveNumberString,
   invTrfItemIds: z.array(positiveNumberString).nonempty(),
   note: z.string().max(255).trim().nullable().optional(),
-  updatedBy: positiveNumberString.optional().nullable(),
 });
 
 export const InvTrfUpdateProgressSchema = z.object({
   id: positiveNumberString,
   progress: z.nativeEnum(Progress),
-  updatedBy: positiveNumberString,
 });
 
 export const InvTrfItemSchema = z.object({
   fromInvId: positiveNumberString,
   toInvId: positiveNumberString,
-  createdBy: positiveNumberString,
   productId: positiveNumberString,
   discounts: discounts,
   invTrfItemSizes: z.array(
@@ -239,8 +227,6 @@ export const InvAdjItemSchema = z.object({
     .nonempty(),
 });
 
-// No createdBy/updatedBy: the server takes the actor from the authenticated
-// context so a client cannot claim to have written someone else's count sheet.
 export const InvAdjSchema = z.object({
   adjNo: z.string().regex(/^[A-Z]{2,3}-[0-9]{6}-[0-9]{4}$/),
   invId: positiveNumberString,
@@ -272,8 +258,6 @@ export const SaleSchema = z.object({
   date: z.string().datetime(),
   saleItems: z.array(SaleItemSchema).nonempty(),
   note: z.string().max(255).trim().nullable().optional(),
-  createdBy: positiveNumberString,
-  updatedBy: positiveNumberString.optional().nullable(),
 });
 
 // const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
@@ -302,6 +286,4 @@ export const UserSchema = z.object({
   roleId: positiveNumberString,
   isActive: z.boolean(),
   invIds: z.array(positiveNumberString),
-  updatedBy: positiveNumberString,
-  approvedBy: positiveNumberString.optional().nullable(),
 });

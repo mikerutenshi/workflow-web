@@ -99,12 +99,11 @@ const { handleSubmit, errors, values } = useForm({
     roleId: props.user?.role.id,
     isActive: props.user?.isActive,
     invIds: props.user?.userInventories.map((inv) => inv.id),
-    updatedBy: userStored?.id,
   },
 });
 const roleId = useField('roleId');
 const isActive = useField('isActive');
-const approvedBy = useField('approvedBy');
+
 const invIds = useFieldArray('invIds');
 const inventories: Ref<{ value: string; title: string }[]> = ref(
   props.user?.userInventories.map((inventory) => ({
@@ -113,9 +112,6 @@ const inventories: Ref<{ value: string; title: string }[]> = ref(
   })) ?? [],
 );
 const onSubmit = handleSubmit((values) => {
-  if (values.isActive && !props.user?.isActive && userStored) {
-    values.approvedBy = userStored.id;
-  }
   if (props.user) executeUpdate({ id: props.user.id, data: values });
 });
 

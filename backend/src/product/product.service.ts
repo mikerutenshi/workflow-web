@@ -1,5 +1,6 @@
 import { Gender } from '@/generated/prisma/enums';
 import { Product } from '@/models/product.model';
+import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ProductCreateDto } from './dto/product-create.dto';
@@ -16,7 +17,7 @@ export class ProductService {
     private fileService: FileService,
   ) {}
 
-  createProduct(data: ProductCreateDto): Promise<Product> {
+  createProduct(data: ProductCreateDto, user: User): Promise<Product> {
     return this.prisma.$transaction(async (tx) => {
       let order = 1;
 
@@ -24,7 +25,7 @@ export class ProductService {
         data: {
           sku: data.sku,
           productGroupId: data.productGroupId,
-          createdBy: data.createdBy,
+          createdBy: user.id,
           productColors: {
             create: data.colorIds.map((colorId) => ({
               color: { connect: { id: colorId } },
@@ -45,7 +46,11 @@ export class ProductService {
     });
   }
 
-  updateProduct(id: number, data: ProductUpdateDto): Promise<Product> {
+  updateProduct(
+    id: number,
+    data: ProductUpdateDto,
+    user: User,
+  ): Promise<Product> {
     return this.prisma.$transaction(async (tx) => {
       let order = 1;
 
@@ -54,6 +59,7 @@ export class ProductService {
         data: {
           sku: data.sku,
           productGroupId: data.productGroupId,
+          updatedBy: user.id,
           productColors: {
             deleteMany: { productId: id },
             create: data.colorIds?.map((colorId) => ({
@@ -124,7 +130,7 @@ export class ProductService {
     return result;
   }
 
-  async deleteProduct(id: number): Promise<Boolean> {
+  async deleteProduct(id: number): Promise<boolean> {
     await this.prisma.product.delete({
       where: {
         id: id,
@@ -168,7 +174,7 @@ export class ProductService {
     return await this.fileService.downloadObjects('products.csv', flatProducts);
   }
 
-  async uploadNewProducts(data: CsvUploadDto): Promise<boolean> {
+  async uploadNewProducts(data: CsvUploadDto, user: User): Promise<boolean> {
     const rows: ProductCreateDto[] = await this.fileService.readObjects<
       ProductUploadDto,
       ProductCreateDto
@@ -176,7 +182,6 @@ export class ProductService {
       const product: ProductCreateDto = {
         sku: row.sku,
         productGroupId: row.productGroupId,
-        createdBy: row.createdBy,
         colorIds: [],
       };
       if (row.colorId1) product.colorIds.push(row.colorId1);
@@ -203,7 +208,7 @@ export class ProductService {
               data: {
                 sku: validatedRow.sku,
                 productGroupId: validatedRow.productGroupId,
-                createdBy: validatedRow.createdBy,
+                createdBy: user.id,
                 productColors: {
                   create: validatedRow.colorIds.map((colorId) => ({
                     color: { connect: { id: colorId } },

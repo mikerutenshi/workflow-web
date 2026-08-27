@@ -18,7 +18,7 @@
       <v-row>
         <v-col>
           <h4>Create New Product Groups</h4>
-          <p>Columns: skuNumeric, productCategoryId, createdBy</p>
+          <p>Columns: skuNumeric, productCategoryId</p>
           <v-file-input
             accept=".csv"
             :model-value="files[0]"
@@ -33,8 +33,7 @@
         <v-col>
           <h4>Create New Products</h4>
           <p>
-            Columns: sku, productGroupId, colorId1, colorId2, colorId3,
-            colorId4, createdBy
+            Columns: sku, productGroupId, colorId1, colorId2, colorId3, colorId4
           </p>
           <v-file-input
             accept=".csv"
@@ -49,7 +48,7 @@
       <v-row>
         <v-col>
           <h4>Update Products' MSRP</h4>
-          <p>Columns: id, msrp, updatedBy</p>
+          <p>Columns: id, msrp</p>
           <v-file-input
             accept=".csv"
             :model-value="files[2]"

@@ -175,7 +175,6 @@ import { ProductSchema } from '~/validation/schema';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
-const userId = authStore.user?.id ?? '';
 
 const route = useRoute();
 const props = defineProps({
@@ -191,7 +190,6 @@ const selectionId = ref('');
 const validationSchema = toTypedSchema(ProductSchema);
 const { handleSubmit, values, setValues, setFieldValue } = useForm({
   validationSchema,
-  initialValues: { createdBy: userId },
 });
 const productGroupId = useField('productGroupId');
 const colorIds = useField('colorIds');
@@ -244,7 +242,7 @@ const onSubmit = handleSubmit((data) => {
   } else {
     executeUpdate({
       id: productId,
-      data: { updatedBy: data.updatedBy!, ...data },
+      data,
     });
   }
 });
@@ -296,8 +294,6 @@ if (productId) {
       setValues({
         sku: product.sku,
         productGroupId: product.productGroup.id,
-        createdBy: product.createdBy,
-        updatedBy: userId,
       });
       // msrpMasked.value = product.productGroup.msrp?.toString() ?? '';
       const ids = product.productColors.map((productColor) => {

@@ -3,6 +3,7 @@ import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTxService } from '@/inventory/inv-tx.service';
 import { Operation } from '@/models/operation.enum';
 import { Sale } from '@/models/sale.model';
+import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { generateId, getStartOfDay } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
@@ -20,11 +21,12 @@ export class SaleService {
     private invTxService: InvTxService,
   ) {}
 
-  async createSale(data: SaleCreateDto): Promise<Sale> {
+  async createSale(data: SaleCreateDto, user: User): Promise<Sale> {
     const txResult = this.prisma.$transaction(async (tx) => {
       const saleResult = await tx.sale.create({
         data: {
           ...data,
+          createdBy: user.id,
           saleItems: {
             create: data.saleItems.map((item) => ({
               invProduct: {
@@ -73,7 +75,7 @@ export class SaleService {
             txNo: saleResult.saleNo,
             type: TxType.SALE,
             saleId: saleResult.id,
-            createdBy: data.createdBy,
+            createdBy: user.id,
             invTxSizes: item.saleItemSizes.map((size) => ({
               sizeId: size.sizeId,
               quantity: -size.quantity,
@@ -89,7 +91,7 @@ export class SaleService {
     return txResult;
   }
 
-  async deleteSale(id: number): Promise<Boolean> {
+  async deleteSale(id: number): Promise<boolean> {
     await this.prisma.$transaction(async (tx) => {
       // const saleItems = await tx.saleItem.findMany({
       //   where: { saleId: id },

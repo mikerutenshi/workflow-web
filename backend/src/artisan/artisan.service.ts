@@ -2,31 +2,35 @@ import { Artisan } from '@/models/artisan.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ArtisanCreateDto } from './dto/artisan-create.dto';
+import { User } from '@/models/user.model';
 
 @Injectable()
 export class ArtisanService {
   constructor(private prisma: PrismaService) {}
 
-  async createArtisan(data: ArtisanCreateDto): Promise<Artisan> {
+  async createArtisan(data: ArtisanCreateDto, user: User): Promise<Artisan> {
     return await this.prisma.artisan.create({
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
         jobs: data.jobs,
-        createdBy: data.createdBy,
+        createdBy: user.id,
       },
     });
   }
 
-  async updateArtisan(id: number, data: ArtisanCreateDto): Promise<Artisan> {
+  async updateArtisan(
+    id: number,
+    data: ArtisanCreateDto,
+    user: User,
+  ): Promise<Artisan> {
     return await this.prisma.artisan.update({
       where: { id: id },
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
         jobs: data.jobs,
-        createdBy: data.createdBy,
-        updatedBy: data.updatedBy,
+        updatedBy: user.id,
       },
     });
   }
@@ -46,7 +50,7 @@ export class ArtisanService {
     return artisan;
   }
 
-  async deleteArtisan(id: number): Promise<Boolean> {
+  async deleteArtisan(id: number): Promise<boolean> {
     await this.prisma.artisan.delete({
       where: {
         id: id,

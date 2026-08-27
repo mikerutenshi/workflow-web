@@ -1,15 +1,9 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Job } from '@/generated/prisma/client';
-import { Transform } from 'class-transformer';
-import {
-  IsArray,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  Matches,
-  Min,
-} from 'class-validator';
+import { IsArray, IsEnum, IsOptional, Matches } from 'class-validator';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else.
 @InputType()
 export class ArtisanCreateDto {
   @Field()
@@ -23,15 +17,4 @@ export class ArtisanCreateDto {
   @IsArray()
   @IsEnum(Job, { each: true })
   jobs: Job[];
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  createdBy: number;
-  @Field(() => ID, { nullable: true })
-  @IsOptional()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  updatedBy: number | undefined;
 }

@@ -133,14 +133,10 @@ const dialogForm = ref(false);
 const selectionId = ref('');
 
 const authStore = useAuthStore();
-const userId = authStore.user?.id ?? '';
 
 const validationSchema = toTypedSchema(ProductGroupSchema);
 const { handleSubmit, setValues, values } = useForm({
   validationSchema,
-  initialValues: {
-    createdBy: userId,
-  },
 });
 const skuNumeric = useField('skuNumeric');
 const name = useField('name');
@@ -196,7 +192,7 @@ const onSubmit = handleSubmit((data) => {
   if (productGroupId) {
     executeUpdate({
       id: productGroupId,
-      data: { updatedBy: data.updatedBy!, ...data },
+      data,
     });
   } else {
     executeCreate({ data });
@@ -214,7 +210,6 @@ if (productGroupId) {
         name: pg.name,
         productCategoryId: pg.productCategory.id,
         msrp: pg.msrp,
-        updatedBy: userId,
       });
     },
     onError(err) {

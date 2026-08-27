@@ -114,7 +114,6 @@ const route = useRoute();
 const workId = ref((route.params.id as string) || props.workId);
 const authStore = useAuthStore();
 const snack = useSnackbarStore();
-const userId = authStore.user?.id || '';
 const { data: artisansData, isFetching: isFetchingArtisans } = useQuery({
   query: GetArtisansDocument,
   tags: [CACHE_ARTISANS],
@@ -151,7 +150,6 @@ const displayForm = reactive([
       updatedBy?: string | null | undefined;
     } | null,
     doneAt: '',
-    updatedBy: '',
   },
 ]);
 const form = computed<TaskUpdateDto[]>(() => {
@@ -159,7 +157,6 @@ const form = computed<TaskUpdateDto[]>(() => {
     id: item.id,
     artisanId: item.artisan?.id ?? null,
     doneAt: item.doneAt === '' ? null : item.doneAt,
-    updatedBy: userId,
   }));
   return result;
 });
@@ -204,7 +201,6 @@ const onSubmit = handleSubmit((values) => {
     data: values.tasks.map((item) => ({
       id: item.id,
       doneAt: item.doneAt,
-      updatedBy: item.updatedBy,
       artisanId: item.artisanId,
     })),
   });
@@ -251,7 +247,6 @@ if (workId.value) {
               }
             : null,
           doneAt: task.doneAt,
-          updatedBy: userId,
         })),
       );
     },
@@ -277,7 +272,6 @@ watch(form, (newValues) => {
     newValues.map((item) => ({
       id: item.id,
       doneAt: item.doneAt,
-      updatedBy: item.updatedBy,
       artisanId: item.artisanId ?? undefined,
       isValidDate:
         minDate.value !== '' && maxDate.value !== ''

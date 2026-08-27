@@ -18,7 +18,6 @@ export type Scalars = {
 };
 
 export type AddToInventoryDto = {
-  createdBy: Scalars['ID']['input'];
   productId: Scalars['ID']['input'];
   progress: Progress;
   workId: Scalars['ID']['input'];
@@ -47,11 +46,9 @@ export type Artisan = {
 };
 
 export type ArtisanCreateDto = {
-  createdBy: Scalars['ID']['input'];
   firstName: Scalars['String']['input'];
   jobs: Array<Job>;
   lastName?: InputMaybe<Scalars['String']['input']>;
-  updatedBy?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type ArtisanWithTasks = {
@@ -282,7 +279,6 @@ export type InvTrf = {
 };
 
 export type InvTrfCreateDto = {
-  createdBy: Scalars['ID']['input'];
   fromInvId?: InputMaybe<Scalars['ID']['input']>;
   invTrfItemIds: Array<Scalars['ID']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
@@ -331,7 +327,6 @@ export type InvTrfItem = {
 };
 
 export type InvTrfItemCreateDto = {
-  createdBy: Scalars['ID']['input'];
   discounts: Array<Scalars['String']['input']>;
   fromInvId?: InputMaybe<Scalars['ID']['input']>;
   invTrfItemSizes: Array<InvTrfItemSizeCreateDto>;
@@ -419,7 +414,6 @@ export type InvTrfUpdateDto = {
   toInvId?: InputMaybe<Scalars['ID']['input']>;
   trfDate?: InputMaybe<Scalars['Date']['input']>;
   trfNo?: InputMaybe<Scalars['String']['input']>;
-  updatedBy: Scalars['ID']['input'];
   workId?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -533,7 +527,6 @@ export type LaborCostGetDto = {
 };
 
 export type LaborCostUpdateDto = {
-  createdBy: Scalars['ID']['input'];
   drawLining?: InputMaybe<Scalars['Float']['input']>;
   drawUpper?: InputMaybe<Scalars['Float']['input']>;
   last?: InputMaybe<Scalars['Float']['input']>;
@@ -541,15 +534,12 @@ export type LaborCostUpdateDto = {
   stitchInsole?: InputMaybe<Scalars['Float']['input']>;
   stitchOutsole?: InputMaybe<Scalars['Float']['input']>;
   stitchUpper?: InputMaybe<Scalars['Float']['input']>;
-  updatedBy: Scalars['ID']['input'];
 };
 
 export type LaborCostUpsertDto = {
   cost: Scalars['Float']['input'];
-  createdBy: Scalars['ID']['input'];
   productGroupId: Scalars['ID']['input'];
   type: Job;
-  updatedBy: Scalars['ID']['input'];
 };
 
 export type LogInDto = {
@@ -941,7 +931,6 @@ export type ProductCategoryCreateDto = {
 
 export type ProductCreateDto = {
   colorIds: Array<Scalars['ID']['input']>;
-  createdBy: Scalars['ID']['input'];
   productGroupId: Scalars['ID']['input'];
   sku: Scalars['String']['input'];
 };
@@ -973,7 +962,6 @@ export type ProductGroup = {
 };
 
 export type ProductGroupCreateDto = {
-  createdBy: Scalars['ID']['input'];
   msrp?: InputMaybe<Scalars['Float']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   productCategoryId: Scalars['ID']['input'];
@@ -995,12 +983,10 @@ export type ProductGroupGetDto = {
 };
 
 export type ProductGroupUpdateDto = {
-  createdBy?: InputMaybe<Scalars['ID']['input']>;
   msrp?: InputMaybe<Scalars['Float']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   productCategoryId?: InputMaybe<Scalars['ID']['input']>;
   skuNumeric?: InputMaybe<Scalars['String']['input']>;
-  updatedBy: Scalars['ID']['input'];
 };
 
 export type ProductGroupWithCategory = {
@@ -1019,10 +1005,8 @@ export type ProductGroupWithCategory = {
 
 export type ProductUpdateDto = {
   colorIds?: InputMaybe<Array<Scalars['ID']['input']>>;
-  createdBy?: InputMaybe<Scalars['ID']['input']>;
   productGroupId?: InputMaybe<Scalars['ID']['input']>;
   sku?: InputMaybe<Scalars['String']['input']>;
-  updatedBy: Scalars['ID']['input'];
 };
 
 export type ProductWithCategoryDto = {
@@ -1269,7 +1253,6 @@ export type Sale = {
 };
 
 export type SaleCreateDto = {
-  createdBy: Scalars['ID']['input'];
   date: Scalars['Date']['input'];
   saleItems: Array<SaleItemCreateDto>;
   saleNo: Scalars['String']['input'];
@@ -1384,7 +1367,6 @@ export type TaskUpdateDto = {
   artisanId?: InputMaybe<Scalars['ID']['input']>;
   doneAt?: InputMaybe<Scalars['Date']['input']>;
   id: Scalars['ID']['input'];
-  updatedBy: Scalars['ID']['input'];
 };
 
 export type TaskWithWork = {
@@ -1431,7 +1413,6 @@ export type User = {
 };
 
 export type UserCreateDto = {
-  createdBy?: InputMaybe<Scalars['ID']['input']>;
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
   lastName?: InputMaybe<Scalars['String']['input']>;
@@ -1440,8 +1421,6 @@ export type UserCreateDto = {
 };
 
 export type UserUpdateDto = {
-  approvedBy?: InputMaybe<Scalars['ID']['input']>;
-  createdBy?: InputMaybe<Scalars['ID']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   firstName?: InputMaybe<Scalars['String']['input']>;
   invIds: Array<Scalars['ID']['input']>;
@@ -1449,7 +1428,6 @@ export type UserUpdateDto = {
   lastName?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   roleId?: InputMaybe<Scalars['ID']['input']>;
-  updatedBy: Scalars['ID']['input'];
 };
 
 export type Work = {
@@ -1485,7 +1463,6 @@ export type WorkAndTasksDto = {
 };
 
 export type WorkCreateDto = {
-  createdBy: Scalars['ID']['input'];
   date: Scalars['Date']['input'];
   note?: InputMaybe<Scalars['String']['input']>;
   orderNo: Scalars['String']['input'];
@@ -1494,12 +1471,10 @@ export type WorkCreateDto = {
 };
 
 export type WorkUpdateDto = {
-  createdBy?: InputMaybe<Scalars['ID']['input']>;
   date?: InputMaybe<Scalars['Date']['input']>;
   note?: InputMaybe<Scalars['String']['input']>;
   orderNo?: InputMaybe<Scalars['String']['input']>;
   productId?: InputMaybe<Scalars['ID']['input']>;
-  updatedBy: Scalars['ID']['input'];
   workSizes: Array<SizeToWorkCreateDto>;
 };
 

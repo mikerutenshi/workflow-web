@@ -83,7 +83,7 @@ export function computePrice(
     finalMultiplier = finalMultiplier.add(0.15);
   }
 
-  var result = finalMultiplier.times(base + finalOffset).toNumber();
+  let result = finalMultiplier.times(base + finalOffset).toNumber();
 
   result = Math.ceil(result / 10000) * 10000 - 100;
 

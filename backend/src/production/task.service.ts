@@ -1,14 +1,11 @@
 import { Progress, TxType } from '@/generated/prisma/client';
+import { User } from '@/models/user.model';
 import { InvProductService } from '@/inventory/inv-product.service';
 import { InvTrfService } from '@/inventory/inv-trf.service';
 import { InvTxService } from '@/inventory/inv-tx.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { TaskAndArtisanDto } from '@/production/dto/task-and-artisan.dto';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AddToInventoryDto } from './dto/add-to=inventory.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import dayjs from 'dayjs';
@@ -22,9 +19,11 @@ export class TaskService {
     private invTxService: InvTxService,
   ) {}
 
-  updateTasks(tasks: TaskUpdateDto[]): Promise<TaskAndArtisanDto[]> {
+  updateTasks(
+    tasks: TaskUpdateDto[],
+    user: User,
+  ): Promise<TaskAndArtisanDto[]> {
     return this.prisma.$transaction(async (tx) => {
-      var userId = +tasks.at(0)!.updatedBy;
       const updatedTasks = [];
 
       for (const task of tasks) {
@@ -33,7 +32,7 @@ export class TaskService {
           data: {
             artisanId: task.artisanId !== null ? +task.artisanId : null,
             doneAt: task.doneAt,
-            updatedBy: +task.updatedBy,
+            updatedBy: user.id,
           },
           include: { artisan: true },
         });
@@ -81,7 +80,10 @@ export class TaskService {
     });
   }
 
-  async addToInventory(addToInventory: AddToInventoryDto): Promise<boolean> {
+  async addToInventory(
+    addToInventory: AddToInventoryDto,
+    user: User,
+  ): Promise<boolean> {
     const factory = await this.prisma.inventory.findFirst({
       where: { type: 'FACTORY' },
     });
@@ -113,8 +115,8 @@ export class TaskService {
           })),
           discounts: [],
           progress: Progress.COMPLETED,
-          createdBy: addToInventory.createdBy,
         },
+        user.id,
         tx,
       );
       const invTrf = await this.invTrfService.createInvTrf(
@@ -126,9 +128,9 @@ export class TaskService {
           progress: Progress.COMPLETED,
           invTrfItemIds: [invTrfItem.id],
           workId: addToInventory.workId,
-          createdBy: addToInventory.createdBy,
           note: 'Automatically generated from production',
         },
+        user.id,
         tx,
       );
 
@@ -152,7 +154,7 @@ export class TaskService {
           txNo: invTrf.trfNo,
           type: TxType.PRODUCTION,
           trfId: invTrf.id,
-          createdBy: addToInventory.createdBy,
+          createdBy: user.id,
           invTxSizes: addToInventory!.workSizes.map((s) => ({
             sizeId: s.id,
             quantity: s.quantity,

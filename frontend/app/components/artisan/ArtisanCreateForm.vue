@@ -75,7 +75,6 @@ const props = defineProps({
 const emit = defineEmits(['form-submit']);
 const artisanId = (route.params.id as string) || props.artisanId;
 const authStore = useAuthStore();
-const userId = authStore.user?.id ?? '';
 const jobOptions = computed(() =>
   (Object.keys(JOBS) as Array<keyof typeof JOBS>).map((key) => ({
     id: key,
@@ -85,9 +84,6 @@ const jobOptions = computed(() =>
 const validationSchema = toTypedSchema(ArtisanSchema);
 const { handleSubmit, setValues } = useForm({
   validationSchema,
-  initialValues: {
-    createdBy: userId,
-  },
 });
 const firstName = useField('firstName');
 const lastName = useField('lastName');
@@ -143,11 +139,6 @@ if (artisanId) {
             ? (artisan.jobs as [Job, ...Job[]])
             : [Job.DrawUpper],
         );
-
-        setValues({
-          createdBy: artisan.createdBy,
-          updatedBy: artisan.updatedBy,
-        });
       }
     },
   });
@@ -161,7 +152,6 @@ const onSubmit = handleSubmit((values) => {
         ...values,
         jobs: values.jobs as Job[],
         lastName: values.lastName === '' ? null : values.lastName,
-        updatedBy: userId,
       },
     });
   } else {

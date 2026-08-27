@@ -2,26 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Artisan {
-  id: ID!
-  createdBy: ID!
-  updatedBy: ID
-  createdAt: Date!
-  updatedAt: Date!
-  firstName: String!
-  lastName: String
-  jobs: [Job!]!
-}
-
-enum Job {
-  DRAW_UPPER
-  DRAW_LINING
-  STITCH_UPPER
-  STITCH_OUTSOLE
-  STITCH_INSOLE
-  LAST
-}
-
 type Role {
   id: ID!
   name: String!
@@ -59,6 +39,26 @@ type User {
   createdBy: ID
   updatedAt: Date!
   updatedBy: ID
+}
+
+type Artisan {
+  id: ID!
+  createdBy: ID!
+  updatedBy: ID
+  createdAt: Date!
+  updatedAt: Date!
+  firstName: String!
+  lastName: String
+  jobs: [Job!]!
+}
+
+enum Job {
+  DRAW_UPPER
+  DRAW_LINING
+  STITCH_UPPER
+  STITCH_OUTSOLE
+  STITCH_INSOLE
+  LAST
 }
 
 type PriceFormula {
@@ -751,7 +751,6 @@ input UserCreateDto {
   password: String!
   firstName: String!
   lastName: String
-  createdBy: ID
   roleId: ID!
 }
 
@@ -760,11 +759,8 @@ input UserUpdateDto {
   password: String
   firstName: String
   lastName: String
-  createdBy: ID
   roleId: ID
   isActive: Boolean!
-  approvedBy: ID
-  updatedBy: ID!
   invIds: [ID!]!
 }
 
@@ -781,16 +777,13 @@ input ColorCreateDto {
 input ProductCreateDto {
   sku: String!
   productGroupId: ID!
-  createdBy: ID!
   colorIds: [ID!]!
 }
 
 input ProductUpdateDto {
   sku: String
   productGroupId: ID
-  createdBy: ID
   colorIds: [ID!]
-  updatedBy: ID!
 }
 
 input CsvUploadDto {
@@ -811,7 +804,6 @@ input ProductGroupCreateDto {
   productCategoryId: ID!
   name: String
   msrp: Float
-  createdBy: ID!
 }
 
 input ProductGroupUpdateDto {
@@ -819,22 +811,16 @@ input ProductGroupUpdateDto {
   productCategoryId: ID
   name: String
   msrp: Float
-  createdBy: ID
-  updatedBy: ID!
 }
 
 input LaborCostUpsertDto {
   type: Job!
   cost: Float!
   productGroupId: ID!
-  createdBy: ID!
-  updatedBy: ID!
 }
 
 input LaborCostUpdateDto {
   productGroupId: ID!
-  createdBy: ID!
-  updatedBy: ID!
   drawUpper: Float
   drawLining: Float
   stitchUpper: Float
@@ -847,8 +833,6 @@ input ArtisanCreateDto {
   firstName: String!
   lastName: String
   jobs: [Job!]!
-  createdBy: ID!
-  updatedBy: ID
 }
 
 input WorkCreateDto {
@@ -857,7 +841,6 @@ input WorkCreateDto {
   productId: ID!
   workSizes: [SizeToWorkCreateDto!]!
   note: String
-  createdBy: ID!
 }
 
 input SizeToWorkCreateDto {
@@ -871,8 +854,6 @@ input WorkUpdateDto {
   productId: ID
   workSizes: [SizeToWorkCreateDto!]!
   note: String
-  createdBy: ID
-  updatedBy: ID!
 }
 
 input SizeCreateDto {
@@ -887,14 +868,12 @@ input TaskUpdateDto {
   artisanId: ID
   doneAt: Date
   id: ID!
-  updatedBy: ID!
 }
 
 input AddToInventoryDto {
   productId: ID!
   progress: Progress!
   workSizes: [SizeToWorkCreateDto!]!
-  createdBy: ID!
   workId: ID!
 }
 
@@ -954,7 +933,6 @@ input InvTrfCreateDto {
   invTrfItemIds: [ID!]!
   workId: ID
   note: String
-  createdBy: ID!
 }
 
 input InvTrfUpdateDto {
@@ -966,7 +944,6 @@ input InvTrfUpdateDto {
   invTrfItemIds: [ID!]
   workId: ID
   note: String
-  updatedBy: ID!
 }
 
 input InvTrfItemCreateDto {
@@ -976,7 +953,6 @@ input InvTrfItemCreateDto {
   invTrfItemSizes: [InvTrfItemSizeCreateDto!]!
   progress: Progress
   discounts: [String!]!
-  createdBy: ID!
 }
 
 input InvTrfItemSizeCreateDto {
@@ -1016,7 +992,6 @@ input InvAdjUpdateDto {
 input SaleCreateDto {
   saleNo: String!
   date: Date!
-  createdBy: ID!
   saleItems: [SaleItemCreateDto!]!
 }
 

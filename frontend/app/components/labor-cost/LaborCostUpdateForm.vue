@@ -111,7 +111,6 @@ const route = useRoute();
 const productGroupId =
   (route.params.id as string) || props.productGroupId || '';
 const authStore = useAuthStore();
-const userId = authStore.user?.id ?? '';
 
 const header = reactive({
   skuNumeric: '',
@@ -132,7 +131,6 @@ const { handleSubmit, setValues, values } = useForm({
   validationSchema,
   initialValues: {
     productGroupId,
-    updatedBy: userId,
   },
 });
 
@@ -158,9 +156,6 @@ useQuery({
     header.skuNumeric = data.getLaborCost.skuNumeric;
     header.productCategory = data.getLaborCost.productCategory.name;
     header.gender = data.getLaborCost.productCategory.gender;
-    setValues({
-      createdBy: data.getLaborCost.laborCosts?.[0]?.createdBy ?? userId,
-    });
 
     const laborCosts = data.getLaborCost.laborCosts ?? [];
 

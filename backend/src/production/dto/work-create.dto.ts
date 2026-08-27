@@ -12,6 +12,8 @@ import {
 } from 'class-validator';
 import { SizeToWorkCreateDto } from './size-to-work-create.dto';
 
+// The actor is taken from the authenticated context, never from the payload,
+// so a client cannot claim to have acted as someone else.
 @InputType()
 export class WorkCreateDto {
   @Field(() => Date)
@@ -38,9 +40,4 @@ export class WorkCreateDto {
   @MaxLength(255)
   @IsOptional()
   note!: string | null;
-
-  @Field(() => ID)
-  @Transform(({ value }) => parseInt(value, 10))
-  @Min(1)
-  createdBy!: number;
 }

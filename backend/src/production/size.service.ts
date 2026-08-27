@@ -28,7 +28,7 @@ export class SizeService {
     return size;
   }
 
-  async deleteSize(id: number): Promise<Boolean> {
+  async deleteSize(id: number): Promise<boolean> {
     const size = this.prisma.size.delete({ where: { id } });
 
     if (!size) throw new Error(`Delete size with ID ${id} failed.`);

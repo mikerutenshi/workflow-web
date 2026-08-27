@@ -288,6 +288,7 @@
       "repeat_password_mismatch": "Sandi anu diulang teu sarua",
       "date_outside_range": "tanggal kaluar tina rentang anu ditarima",
       "decimal_number": "Harus berupa angka dengan maksimal 4 digit di belakang koma",
+      "custom": "Nilai teu valid",
       "not_a_number": "Kudu mangrupa angka",
       "required_selection": "Mangga pilih salah sahiji"
     },

@@ -25,6 +25,7 @@ export class InvProductResolver {
     return this.service.createInvProduct(data);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => [InvProductDto])
   getInvProducts(
     @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
@@ -49,7 +50,7 @@ export class InvProductResolver {
   deleteInvProduct(
     @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,
     @Args('productId', { type: () => ID }, ParseIntPipe) productId: number,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return this.service.deleteInvProduct(invId, productId);
   }
 
@@ -78,11 +79,13 @@ export class InvProductResolver {
     return this.service.updateDiscount(data);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => String)
   downloadInvProducts(): Promise<string> {
     return this.service.downloadInvProducts();
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => Number)
   getInvProductPrice(
     @Args('invId', { type: () => ID }, ParseIntPipe) invId: number,

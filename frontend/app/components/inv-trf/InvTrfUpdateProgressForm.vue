@@ -47,7 +47,6 @@ const { handleSubmit, values } = useForm({
   initialValues: {
     id: props.invTrfDto?.id,
     progress: props.invTrfDto?.progress,
-    updatedBy: authStore.user?.id,
   },
 });
 
@@ -86,7 +85,6 @@ const onSubmit = handleSubmit((data) => {
     id: data.id,
     data: {
       progress: data.progress,
-      updatedBy: data.updatedBy,
     },
   });
 });

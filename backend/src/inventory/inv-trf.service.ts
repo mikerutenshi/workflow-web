@@ -32,6 +32,7 @@ export class InvTrfService {
 
   async createInvTrfItem(
     data: InvTrfItemCreateDto,
+    userId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<InvTrfItem> {
     const prisma = tx ?? this.prisma;
@@ -39,6 +40,7 @@ export class InvTrfService {
     const { discounts, ...rest } = await prisma.invTrfItem.create({
       data: {
         ...data,
+        createdBy: userId,
         invTrfItemSizes: {
           create: data.invTrfItemSizes.map((item) => ({
             size: { connect: { id: item.sizeId } },
@@ -61,6 +63,7 @@ export class InvTrfService {
 
   async createInvTrf(
     data: InvTrfCreateDto,
+    userId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<InvTrf> {
     const { invTrfItemIds, ...rest } = data;
@@ -76,6 +79,7 @@ export class InvTrfService {
       const result = await tx.invTrf.create({
         data: {
           ...rest,
+          createdBy: userId,
           invTrfItems: {
             connect: invTrfItemIds.map((id) => ({ id })),
           },
@@ -95,6 +99,7 @@ export class InvTrfService {
         const result = await tx.invTrf.create({
           data: {
             ...rest,
+            createdBy: userId,
             invTrfItems: {
               connect: invTrfItemIds.map((id) => ({ id })),
             },

@@ -1,7 +1,6 @@
 export class ProductUploadDto {
   sku: string;
   productGroupId: number;
-  createdBy: number;
   colorId1: number;
   colorId2: number;
   colorId3: number;

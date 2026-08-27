@@ -3,6 +3,7 @@ import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Context, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Request } from 'express';
 import { AuthGuard } from '../guards/auth.guard';
+import { CurrentUser } from '@/guards/current-user.decorator';
 import { RoleGuard } from '@/guards/role.guard';
 // Aliased: Role in this file is already the GraphQL object type imported above.
 import { Roles } from '@/guards/roles.decorator';
@@ -45,8 +46,9 @@ export class AuthResolver {
   updateUser(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
     @Args('data') data: UserUpdateDto,
+    @CurrentUser() actor: User,
   ): Promise<User> {
-    return this.authService.updateUser(id, data);
+    return this.authService.updateUser(id, data, actor);
   }
 
   @UseGuards(AuthGuard, RoleGuard)

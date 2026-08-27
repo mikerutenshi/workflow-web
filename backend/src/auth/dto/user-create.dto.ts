@@ -9,6 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 
+// No createdBy: registration is unauthenticated, so the service writes null.
 @InputType()
 export class UserCreateDto {
   @Field()
@@ -27,13 +28,6 @@ export class UserCreateDto {
   @IsOptional()
   @Matches(/^[A-Za-z]+(\s[A-Za-z]+)*$/)
   lastName?: string;
-
-  @Field(() => ID, { nullable: true })
-  @IsOptional()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  createdBy!: number | null;
 
   @Field(() => ID)
   @Transform(({ value }) => parseInt(value, 10))

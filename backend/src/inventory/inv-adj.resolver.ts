@@ -64,7 +64,8 @@ export class InvAdjResolver {
     return this.service.deleteInvAdj(id, user);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
+  @RolesAny(Role.Superuser, Role.Finance, Role.Planner, Role.Sales)
   @Query(() => [InvAdjSimpleDto])
   getInvAdjs(
     @CurrentUser() user: User,
@@ -78,7 +79,8 @@ export class InvAdjResolver {
     return this.service.getInvAdjs(user, invId);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
+  @RolesAny(Role.Superuser, Role.Finance, Role.Planner, Role.Sales)
   @Query(() => InvAdjDto)
   getInvAdj(
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
@@ -87,7 +89,8 @@ export class InvAdjResolver {
     return this.service.getInvAdj(id, user);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
+  @RolesAny(Role.Superuser, Role.Finance, Role.Planner, Role.Sales)
   @Query(() => String)
   generateInvAdjNo(
     @Args('date', { type: () => Date }) date: Date,

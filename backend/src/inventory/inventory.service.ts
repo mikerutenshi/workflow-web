@@ -104,7 +104,7 @@ export class InventoryService {
       },
     });
   }
-  async deleteInventory(id: number): Promise<Boolean> {
+  async deleteInventory(id: number): Promise<boolean> {
     const inventory = await this.prisma.inventory.delete({
       where: { id },
     });

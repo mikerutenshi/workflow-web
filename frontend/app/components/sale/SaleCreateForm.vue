@@ -193,7 +193,6 @@ const emit = defineEmits(['form-submit']);
 const submitBtnTitle = computed(() => t('btn.create'));
 
 const authStore = useAuthStore();
-const userId = authStore.user?.id || '';
 const inventoryName = computed(
   () =>
     authStore.user?.userInventories.find((inv) => inv.id === props.inventoryId)
@@ -206,7 +205,6 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   validationSchema,
   initialValues: {
     date: dayjs().toISOString(),
-    createdBy: userId,
   },
 });
 

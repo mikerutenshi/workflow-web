@@ -288,6 +288,7 @@
       "repeat_password_mismatch": "Repeated password do not match",
       "date_outside_range": "Date is out of accepted range",
       "decimal_number": "Must be a number with up to 4 decimal places",
+      "custom": "Invalid value",
       "not_a_number": "Must be a number",
       "required_selection": "Please make a selection"
     },
