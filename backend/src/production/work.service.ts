@@ -131,6 +131,11 @@ export class WorkService {
     const lastWork = await this.prisma.work.findFirst({
       orderBy: { orderNo: 'desc' },
       where: {
+        // Order numbers typed in from the external system (plain digits)
+        // share this column. Excluding them keeps the descending string
+        // sort a true sequence sort, and stops generateId being handed a
+        // shape it rejects.
+        orderNo: { startsWith: `${Operation.Work}-` },
         date: {
           gte: startOfDay,
           lt: oneDayMore,

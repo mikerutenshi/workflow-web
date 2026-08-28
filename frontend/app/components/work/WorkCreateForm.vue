@@ -217,7 +217,13 @@ const {
   query: GenerateOrderNoDocument,
   cachePolicy: 'network-only',
   onData(data) {
-    // orderNo.setValue(data.generateOrderNo);
+    const current = orderNo.value.value as string | undefined;
+    // Fill an empty field, or replace a number we generated earlier (the
+    // date watcher below refetches on every change). Never overwrite one
+    // the user typed in from the external system.
+    if (!current || /^[A-Z]{2,3}-/.test(current)) {
+      orderNo.setValue(data.generateOrderNo);
+    }
   },
   fetchOnMount: false,
 });
