@@ -17,7 +17,9 @@
       <v-text-field
         :label="$t('label.order_no')"
         v-model="orderNo.value.value"
-        :error-messages="orderNo.errorMessage.value"
+        :error-messages="
+          orderNo.errorMessage.value || errorGenerateOrderNo?.message
+        "
         :loading="isFetchingOrderNo"
         clearable
       ></v-text-field>
@@ -207,12 +209,16 @@ const date = useField<string>('date');
 const orderNo = useField('orderNo');
 const productId = useField('productId');
 
-const { isFetching: isFetchingOrderNo, execute: generateOrderNo } = useQuery({
+const {
+  isFetching: isFetchingOrderNo,
+  execute: generateOrderNo,
+  error: errorGenerateOrderNo,
+} = useQuery({
   query: GenerateOrderNoDocument,
   cachePolicy: 'network-only',
-  // onData(data) {
-  //   orderNo.setValue(data.generateOrderNo);
-  // },
+  onData(data) {
+    // orderNo.setValue(data.generateOrderNo);
+  },
   fetchOnMount: false,
 });
 const note = useField('note');

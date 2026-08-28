@@ -28,7 +28,7 @@
       </v-row>
       <v-text-field
         :label="$t('jobs.draw_upper')"
-        v-maska="options"
+        v-maska="priceMask"
         v-model="priceModel.drawUpper"
         inputmode="number"
         clearable
@@ -36,7 +36,7 @@
       />
       <v-text-field
         :label="$t('jobs.draw_lining')"
-        v-maska="options"
+        v-maska="priceMask"
         v-model="priceModel.drawLining"
         inputmode="number"
         clearable
@@ -44,7 +44,7 @@
       />
       <v-text-field
         :label="$t('jobs.stitch_upper')"
-        v-maska="options"
+        v-maska="priceMask"
         v-model="priceModel.stitchUpper"
         inputmode="number"
         clearable
@@ -52,7 +52,7 @@
       />
       <v-text-field
         :label="$t('jobs.stitch_outsole')"
-        v-maska="options"
+        v-maska="priceMask"
         v-model="priceModel.stitchOutsole"
         inputmode="number"
         clearable
@@ -60,7 +60,7 @@
       />
       <v-text-field
         :label="$t('jobs.stitch_insole')"
-        v-maska="options"
+        v-maska="priceMask"
         v-model="priceModel.stitchInsole"
         inputmode="number"
         clearable
@@ -68,7 +68,7 @@
       />
       <v-text-field
         :label="$t('jobs.last')"
-        v-maska="options"
+        v-maska="priceMask"
         v-model="priceModel.last"
         inputmode="number"
         clearable
@@ -87,7 +87,6 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { type MaskInputOptions } from 'maska';
 import { useMutation, useQuery } from 'villus';
 import { useRoute } from 'vue-router';
 import {
@@ -214,12 +213,6 @@ const {
     snack.show(t('status.saved'), SnackColor.Success);
   },
 });
-
-const options: MaskInputOptions = {
-  number: { locale: 'us' },
-  postProcess: (val) => (val ? `Rp ${val}` : ''),
-  reversed: true,
-};
 
 watch(
   () => priceModel.drawUpper,

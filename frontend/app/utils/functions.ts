@@ -3,6 +3,13 @@ import type { MaskInputOptions } from 'maska';
 import type { CombinedError } from 'villus';
 import { Gender, InvType, Progress, type Job } from '~/api/generated/types';
 
+// Must be a real BCP-47 tag. maska hands this straight to Intl.NumberFormat,
+// which silently falls back to the DEVICE locale for anything it cannot resolve.
+// The previous value 'us' did exactly that: on an id-ID device '.' became the
+// group separator, so maska stripped the decimal point out of everything typed
+// and a 12.5% discount round-tripped as 1250%.
+const MASK_LOCALE = 'en-US';
+
 export function renderJobs(jobs: Job[]): string {
   return jobs
     .map((key) => {
@@ -24,7 +31,7 @@ export function formatRupiah(
 ): string | undefined {
   if (amount === undefined || amount === null) return undefined;
 
-  let result = new Intl.NumberFormat('en-US', {
+  let result = new Intl.NumberFormat(MASK_LOCALE, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
@@ -89,13 +96,13 @@ export function extractGraphQlError(error?: CombinedError | null): string {
 }
 
 export const priceMask: MaskInputOptions = {
-  number: { locale: 'us' },
+  number: { locale: MASK_LOCALE },
   postProcess: (val) => (val ? `Rp ${val}` : ''),
   reversed: true,
 };
 
 export const priceOffsetMask: MaskInputOptions = {
-  number: { locale: 'us' },
+  number: { locale: MASK_LOCALE },
   postProcess: (val: string) => {
     var result = val;
 
@@ -114,12 +121,12 @@ export const priceOffsetMask: MaskInputOptions = {
 };
 
 export const multiplierMask: MaskInputOptions = {
-  number: { locale: 'us', fraction: 2 },
+  number: { locale: MASK_LOCALE, fraction: 2 },
   postProcess: (val) => (val ? `x ${val}` : ''),
 };
 
 export const percentageMask: MaskInputOptions = {
-  number: { locale: 'us', fraction: 2 },
+  number: { locale: MASK_LOCALE, fraction: 2 },
   postProcess: (val) => (val ? `${val} %` : ''),
 };
 
