@@ -33,7 +33,7 @@
       >
 
       <v-btn
-        v-if="currentRouteName == 'works' && clearance <= Role.Field"
+        v-if="currentRouteName == 'works' && clearance <= Role.Planner"
         variant="flat"
         class="mr-4"
         @click="printWorks()"
