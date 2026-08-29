@@ -87,7 +87,15 @@ export class WorkService {
           orderBy: [{ sizeId: 'asc' }],
         },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
-        product: true,
+        product: {
+          include: {
+            productGroup: {
+              include: {
+                productCategory: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!work) {
@@ -104,7 +112,15 @@ export class WorkService {
           orderBy: [{ sizeId: 'asc' }],
         },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
-        product: true,
+        product: {
+          include: {
+            productGroup: {
+              include: {
+                productCategory: true,
+              },
+            },
+          },
+        },
         invTrf: true,
       },
       where: {

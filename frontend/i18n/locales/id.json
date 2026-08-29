@@ -148,6 +148,7 @@
     "job": "Tugas",
     "payable": "Pembayaran",
     "cost": "Biaya",
+    "subtotal": "Subtotal",
     "total": "Total",
     "total_payable": "Total Pembayaran",
     "total_quantity": "Total Pekerjaan",

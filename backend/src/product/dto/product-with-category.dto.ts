@@ -1,10 +1,9 @@
 import { Product } from '@/models/product.model';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { ProductGroupWithCategory } from '../../models/product-group-with-category.model';
-import { ObjectType, Field } from '@nestjs/graphql';
-import { ColorToProductWithColor } from '../../models/color-to-product-with-color.model';
 
 @ObjectType()
 export class ProductWithCategoryDto extends Product {
   @Field(() => ProductGroupWithCategory)
-  productGroup: ProductGroupWithCategory;
+  productGroup!: ProductGroupWithCategory;
 }

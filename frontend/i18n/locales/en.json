@@ -148,6 +148,7 @@
     "job": "Task",
     "payable": "Amount Payable",
     "cost": "Cost",
+    "subtotal": "Subtotal",
     "total": "Total",
     "total_payable": "Total Amount Payable",
     "total_quantity": "Total Quantity Worked",

@@ -224,6 +224,7 @@ import {
 } from '@mdi/js';
 import dayjs from 'dayjs';
 import { jsPDF } from 'jspdf';
+import autoTable, { type RowInput } from 'jspdf-autotable';
 import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -469,6 +470,25 @@ const TASK_COLUMNS = Object.keys(Job).length;
 const CONTENT_BLOCK_HEIGHT = 21.8; // header cap top (+2.7) to the rule (+24.5)
 const HEADER_CAP_TOP = 2.7; // content origin down to that cap top (+5 baseline, 2.3 cap)
 
+// Plain codepoint ordering: skuNumeric values are zero-padded and some carry
+// an "ST" suffix, so ICU collation buys nothing over a straight compare.
+const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+// Quantities per EU size, merged across however many orders are handed in --
+// one work order for a detail row, a whole product group for a subtotal.
+const sizeTotals = (works: WorkData[]) => {
+  const totals = new Map<string, number>();
+  for (const work of works)
+    for (const { size, quantity } of work.workSizes)
+      totals.set(size.eu, (totals.get(size.eu) ?? 0) + quantity);
+  return [...totals]
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([eu, quantity]) => `${eu}: ${quantity}`)
+    .join('    ');
+};
+const renderSizes = (work: WorkData) => sizeTotals([work]);
+const pairsOf = (work: WorkData) =>
+  work.workSizes.reduce((pairs, size) => pairs + size.quantity, 0);
+
 function printSlips() {
   // Only orders this app issued, and only those with work still outstanding:
   // external order numbers are printed by the system that issued them, and a
@@ -484,11 +504,7 @@ function printSlips() {
     return;
   }
 
-  const totalPairs = slips.reduce(
-    (sum, work) =>
-      sum + work.workSizes.reduce((pairs, size) => pairs + size.quantity, 0),
-    0,
-  );
+  const totalPairs = slips.reduce((sum, work) => sum + pairsOf(work), 0);
 
   const doc = new jsPDF(); // A4 portrait in mm, matching PrintInvTrf
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -498,6 +514,107 @@ function printSlips() {
   const stripHeight = (pageHeight - margin * 2) / STRIPS_PER_PAGE;
   const cellWidth = contentWidth / TASK_COLUMNS;
   const right = margin + contentWidth;
+
+  // Page 1 is a materials list for whoever pulls stock for the run: the same
+  // batch as the strips, but ordered by product number instead of by date, so
+  // the same shoe in different colourways sits together. It is meant to be
+  // taken off the top of the stack before the rest is cut up.
+  const materials = [...slips].sort(
+    (a, b) =>
+      compare(
+        a.product.productGroup.skuNumeric,
+        b.product.productGroup.skuNumeric,
+      ) ||
+      compare(a.product.sku, b.product.sku) ||
+      compare(a.orderNo, b.orderNo),
+  );
+
+  // materials is already in skuNumeric order, so a change of key closes a run.
+  // Each run gets a subtotal: its sizes summed across every order in the group,
+  // which is the figure whoever pulls stock actually reads. Colourways keep
+  // their own rows -- a product number often spans several, and the leather is
+  // not interchangeable -- so only the subtotal combines them.
+  const groups: { skuNumeric: string; works: WorkData[] }[] = [];
+  for (const work of materials) {
+    const key = work.product.productGroup.skuNumeric;
+    const run = groups.at(-1);
+    if (run?.skuNumeric === key) run.works.push(work);
+    else groups.push({ skuNumeric: key, works: [work] });
+  }
+
+  const subtotalRows = new Set<number>();
+  const materialsBody: RowInput[] = [];
+  for (const group of groups) {
+    for (const work of group.works) {
+      materialsBody.push([
+        adapter.format(work.date, 'normalDateWithWeekday'),
+        work.orderNo,
+        work.product.sku,
+        renderSizes(work),
+        String(pairsOf(work)),
+      ]);
+    }
+    // Emitted even for a one-order group: the shaded row is what gets scanned
+    // for, so it should never be sometimes-there.
+    subtotalRows.add(materialsBody.length);
+    materialsBody.push([
+      {
+        content: `${group.skuNumeric} ${t('label.subtotal')}`,
+        colSpan: 3,
+        styles: { halign: 'right' as const },
+      },
+      sizeTotals(group.works),
+      String(group.works.reduce((sum, work) => sum + pairsOf(work), 0)),
+    ]);
+  }
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.text(t('page.works'), margin, margin + 6);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text(
+    `${t('label.start_date')}: ${adapter.format(form.startDate, 'fullDate')}` +
+      ` | ${t('label.end_date')}: ${adapter.format(form.endDate, 'fullDate')}`,
+    margin,
+    margin + 13,
+  );
+
+  autoTable(doc, {
+    theme: 'grid',
+    startY: margin + 18,
+    margin: { top: margin, left: margin, right: margin, bottom: 15 },
+    head: [
+      [
+        t('label.date'),
+        t('label.order_no'),
+        t('label.sku'),
+        t('label.sizes'),
+        t('label.quantity'),
+      ],
+    ],
+    body: materialsBody,
+    foot: [
+      [
+        '',
+        '',
+        '',
+        { content: t('label.total'), styles: { halign: 'right' as const } },
+        String(t('label.pairs', totalPairs)),
+      ],
+    ],
+    didParseCell: (data) => {
+      if (data.section === 'body' && subtotalRows.has(data.row.index)) {
+        data.cell.styles.fontStyle = 'bold';
+        data.cell.styles.fillColor = [235, 238, 240];
+      }
+    },
+    styles: { font: 'helvetica', fontSize: 9 },
+    headStyles: { fillColor: [84, 123, 138] },
+    footStyles: { fillColor: [84, 123, 138] },
+    columnStyles: { 4: { halign: 'right' as const } },
+  });
+
+  doc.addPage();
 
   slips.forEach((work, index) => {
     const slot = index % STRIPS_PER_PAGE;
@@ -516,22 +633,12 @@ function printSlips() {
     doc.text(work.orderNo, pageWidth / 2, top + 5, { align: 'center' });
     doc.text(work.product.sku, right, top + 5, { align: 'right' });
 
-    const sizes = [...work.workSizes].sort(
-      (a, b) => Number(a.size.eu) - Number(b.size.eu),
-    );
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    doc.text(
-      sizes.map((s) => `${s.size.eu}: ${s.quantity}`).join('    '),
-      margin,
-      top + 11,
-    );
-    doc.text(
-      `${t('label.total')}: ${sizes.reduce((sum, s) => sum + s.quantity, 0)}`,
-      right,
-      top + 11,
-      { align: 'right' },
-    );
+    doc.text(renderSizes(work), margin, top + 11);
+    doc.text(`${t('label.total')}: ${pairsOf(work)}`, right, top + 11, {
+      align: 'right',
+    });
 
     work.tasks.slice(0, TASK_COLUMNS).forEach((task, column) => {
       const x = margin + column * cellWidth;

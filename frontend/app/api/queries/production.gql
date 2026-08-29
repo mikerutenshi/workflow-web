@@ -42,6 +42,9 @@ fragment WorkAndTasks on WorkAndTasksDto {
   }
   product {
     sku
+    productGroup {
+      skuNumeric
+    }
   }
   progress
   note

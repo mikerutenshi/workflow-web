@@ -574,7 +574,7 @@ type WorkAndTasksDto {
   note: String
   workSizes: [SizeToWork!]!
   tasks: [TaskAndArtisanDto!]!
-  product: Product!
+  product: ProductWithCategoryDto!
   invTrf: InvTrf
 }
 
