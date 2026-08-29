@@ -224,6 +224,7 @@ const { execute, data, isFetching, error } = useQuery({
 });
 
 const { t } = useI18n();
+const snack = useSnackbarStore();
 const headers = [
   { title: t('label.order_no'), key: 'work.orderNo' },
   { title: t('label.product'), key: 'work.product.sku' },
@@ -267,6 +268,15 @@ const { current } = useTheme();
 const primary = current.value.colors.primary;
 
 function downloadPdf() {
+  const artisans = data.value?.getPayroll.artisans;
+
+  // Nobody worked in this range -- bail before loading the logo and building
+  // a doc, or the payslip PDF comes out as a single blank page.
+  if (!artisans?.length) {
+    snack.show(t('status.nothing_to_print'), SnackColor.Info);
+    return Promise.resolve();
+  }
+
   return new Promise<void>((resolve, reject) => {
     const img = new Image();
     img.src = ic_borsa;
@@ -282,138 +292,133 @@ function downloadPdf() {
       const subtitleFontSize = 15;
       const contentFontSize = 12;
       const pageFont = 'times';
-      const artisans = data.value?.getPayroll.artisans;
+      artisans.forEach((artisan, index) => {
+        if (index > 0) {
+          doc.addPage();
+        }
+        const imgWidth = 13;
 
-      if (artisans) {
-        artisans.forEach((artisan, index) => {
-          if (index > 0) {
-            doc.addPage();
-          }
-          const imgWidth = 13;
+        doc.setFont(pageFont, 'normal');
+        doc.setFontSize(subtitleFontSize);
+        const comp = 'PT Ansulindo Kharisma Lestari';
+        const textWidth = doc.getTextWidth(comp);
 
-          doc.setFont(pageFont, 'normal');
-          doc.setFontSize(subtitleFontSize);
-          const comp = 'PT Ansulindo Kharisma Lestari';
-          const textWidth = doc.getTextWidth(comp);
+        const imgX = (pageWidth - (imgWidth + textWidth + margin / 2)) / 2;
+        doc.addImage(img, 'PNG', imgX, pageMargin, imgWidth, imgWidth);
 
-          const imgX = (pageWidth - (imgWidth + textWidth + margin / 2)) / 2;
-          doc.addImage(img, 'PNG', imgX, pageMargin, imgWidth, imgWidth);
+        const compX = imgX + imgWidth + margin / 2;
+        const compY = pageMargin + margin * 0.6;
+        doc.text(comp, compX, compY);
+        doc.setFontSize(contentFontSize);
+        doc.text(
+          'Jl. Kopo Jaya I No. 3\nBandung, 40224',
+          compX,
+          compY + margin,
+        );
 
-          const compX = imgX + imgWidth + margin / 2;
-          const compY = pageMargin + margin * 0.6;
-          doc.text(comp, compX, compY);
-          doc.setFontSize(contentFontSize);
-          doc.text(
-            'Jl. Kopo Jaya I No. 3\nBandung, 40224',
-            compX,
-            compY + margin,
-          );
-
-          doc.setFont(pageFont, 'bold');
-          doc.setFontSize(titleFontSize);
-          const titleY = 48;
-          doc.text(t('label.payslip'), pageWidth / 2, titleY, {
-            align: 'center',
-          });
-
-          const name =
-            artisan.firstName +
-            (artisan.lastName ? ` ${artisan.lastName}` : '');
-          const quantity = t('label.pairs', artisan.quantityPerArtisan);
-          const payable = formatRupiah(artisan.payablePerArtisan);
-
-          const tBody =
-            artisan.tasks.map((task) => {
-              return [
-                String(task.work.orderNo),
-                String(task.work.product.sku),
-                String(t(renderJob(task.type))),
-                String(adapter.format(task.doneAt, 'normalDateWithWeekday')),
-                String(t('label.pairs', task.quantityPerTask)),
-                String(formatRupiah(task.costPerTask)),
-                String(formatRupiah(task.payablePerTask)),
-              ];
-            }) ?? [];
-
-          const dateY = titleY + margin;
-          doc.setFont(pageFont, 'normal');
-          doc.setFontSize(12);
-          doc.text(
-            `${t('label.start_date')}: ${adapter.format(
-              form.startDate,
-              'fullDate',
-            )} | ${t('label.end_date')}: ${adapter.format(
-              form.endDate,
-              'fullDate',
-            )} | ${t('label.pay_date')}: ${adapter.format(now, 'fullDate')}`,
-            pageWidth / 2,
-            dateY,
-            { align: 'center' },
-          );
-          const nameY = dateY + margin * 2;
-          const labelNamePosition = `${t('label.name')}:\n${t('label.jobs')}:`;
-          doc.text(labelNamePosition, pageMargin, nameY);
-          doc.setFont(pageFont, 'bold');
-          doc.text(
-            `${name}\n${artisan.jobs.map((job) => t(renderJob(job))).join(', ')}`,
-            doc.getTextWidth(labelNamePosition),
-            nameY,
-          );
-
-          const totalY = nameY;
-
-          const qtyPayable = `${quantity}\n${payable}`;
-          const labelQtyPayable = `${t('label.total_quantity')}:\n${t('label.total_payable')}:`;
-          doc.setFont(pageFont, 'bold');
-          doc.text(qtyPayable, pageWidth - pageMargin, totalY, {
-            align: 'right',
-          });
-          doc.setFont(pageFont, 'normal');
-          const amtWidth = doc.getTextWidth(qtyPayable);
-          doc.text(labelQtyPayable, pageWidth - amtWidth, totalY, {
-            align: 'right',
-          });
-
-          const tableY = nameY + margin * 2;
-          let lastTableY = 0;
-          autoTable(doc, {
-            theme: 'grid',
-            startY: tableY,
-            head: [
-              [
-                t('label.order_no'),
-                t('label.product'),
-                t('label.job'),
-                t('label.done_at'),
-                t('label.quantity'),
-                t('label.cost'),
-                t('label.payable'),
-              ],
-            ],
-            body: tBody,
-            styles: { font: 'helvetica', fontSize: 9 },
-            headStyles: { fillColor: [84, 123, 138] },
-            didDrawPage: (d) => {
-              lastTableY = Math.round(d.cursor?.y || 120);
-            },
-          });
-
-          doc.setFont(pageFont, 'normal');
-          doc.text(
-            `${t('label.checker_sign')}:`,
-            pageMargin,
-            lastTableY + margin * 2,
-          );
-          doc.text(
-            `${t('label.artisan_sign')}:`,
-            pageWidth - pageMargin,
-            lastTableY + margin * 2,
-            {
-              align: 'right',
-            },
-          );
+        doc.setFont(pageFont, 'bold');
+        doc.setFontSize(titleFontSize);
+        const titleY = 48;
+        doc.text(t('label.payslip'), pageWidth / 2, titleY, {
+          align: 'center',
         });
-      }
+
+        const name =
+          artisan.firstName + (artisan.lastName ? ` ${artisan.lastName}` : '');
+        const quantity = t('label.pairs', artisan.quantityPerArtisan);
+        const payable = formatRupiah(artisan.payablePerArtisan);
+
+        const tBody =
+          artisan.tasks.map((task) => {
+            return [
+              String(task.work.orderNo),
+              String(task.work.product.sku),
+              String(t(renderJob(task.type))),
+              String(adapter.format(task.doneAt, 'normalDateWithWeekday')),
+              String(t('label.pairs', task.quantityPerTask)),
+              String(formatRupiah(task.costPerTask)),
+              String(formatRupiah(task.payablePerTask)),
+            ];
+          }) ?? [];
+
+        const dateY = titleY + margin;
+        doc.setFont(pageFont, 'normal');
+        doc.setFontSize(12);
+        doc.text(
+          `${t('label.start_date')}: ${adapter.format(
+            form.startDate,
+            'fullDate',
+          )} | ${t('label.end_date')}: ${adapter.format(
+            form.endDate,
+            'fullDate',
+          )} | ${t('label.pay_date')}: ${adapter.format(now, 'fullDate')}`,
+          pageWidth / 2,
+          dateY,
+          { align: 'center' },
+        );
+        const nameY = dateY + margin * 2;
+        const labelNamePosition = `${t('label.name')}:\n${t('label.jobs')}:`;
+        doc.text(labelNamePosition, pageMargin, nameY);
+        doc.setFont(pageFont, 'bold');
+        doc.text(
+          `${name}\n${artisan.jobs.map((job) => t(renderJob(job))).join(', ')}`,
+          doc.getTextWidth(labelNamePosition),
+          nameY,
+        );
+
+        const totalY = nameY;
+
+        const qtyPayable = `${quantity}\n${payable}`;
+        const labelQtyPayable = `${t('label.total_quantity')}:\n${t('label.total_payable')}:`;
+        doc.setFont(pageFont, 'bold');
+        doc.text(qtyPayable, pageWidth - pageMargin, totalY, {
+          align: 'right',
+        });
+        doc.setFont(pageFont, 'normal');
+        const amtWidth = doc.getTextWidth(qtyPayable);
+        doc.text(labelQtyPayable, pageWidth - amtWidth, totalY, {
+          align: 'right',
+        });
+
+        const tableY = nameY + margin * 2;
+        let lastTableY = 0;
+        autoTable(doc, {
+          theme: 'grid',
+          startY: tableY,
+          head: [
+            [
+              t('label.order_no'),
+              t('label.product'),
+              t('label.job'),
+              t('label.done_at'),
+              t('label.quantity'),
+              t('label.cost'),
+              t('label.payable'),
+            ],
+          ],
+          body: tBody,
+          styles: { font: 'helvetica', fontSize: 9 },
+          headStyles: { fillColor: [84, 123, 138] },
+          didDrawPage: (d) => {
+            lastTableY = Math.round(d.cursor?.y || 120);
+          },
+        });
+
+        doc.setFont(pageFont, 'normal');
+        doc.text(
+          `${t('label.checker_sign')}:`,
+          pageMargin,
+          lastTableY + margin * 2,
+        );
+        doc.text(
+          `${t('label.artisan_sign')}:`,
+          pageWidth - pageMargin,
+          lastTableY + margin * 2,
+          {
+            align: 'right',
+          },
+        );
+      });
 
       const pageCount = doc.internal.pages.length - 1;
       doc.setFont(pageFont, 'normal');
