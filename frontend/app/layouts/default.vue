@@ -32,6 +32,17 @@
         {{ $t('btn.print') }}</v-btn
       >
 
+      <v-btn
+        v-if="currentRouteName == 'works' && clearance <= Role.Field"
+        variant="flat"
+        class="mr-4"
+        @click="printWorks()"
+        :prepend-icon="mdiPrinter"
+        :loading="isWorkPrinting"
+      >
+        {{ $t('btn.print') }}</v-btn
+      >
+
       <v-menu>
         <template #activator="{ props }">
           <v-btn
@@ -258,6 +269,7 @@ const clearance = computed(() => authStore.user?.role.clearanceLevel ?? 99);
 
 const { print: printPayroll, isPrinting: isPayrollPrinting } =
   usePayrollPrint();
+const { print: printWorks, isPrinting: isWorkPrinting } = useWorkPrint();
 const { download: downloadProducts, isDownloading: isDownloadingProducts } =
   useDownloadProducts();
 const saleStore = useSaleStore();

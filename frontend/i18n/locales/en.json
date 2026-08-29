@@ -148,6 +148,7 @@
     "job": "Task",
     "payable": "Amount Payable",
     "cost": "Cost",
+    "total": "Total",
     "total_payable": "Total Amount Payable",
     "total_quantity": "Total Quantity Worked",
     "total_quantity_sold": "Total Quantity Sold",
@@ -305,7 +306,8 @@
   "status": {
     "saved": "Saved",
     "deleted": "Deleted",
-    "failed": "Failed"
+    "failed": "Failed",
+    "nothing_to_print": "Nothing to print"
   },
   "progress": {
     "INITIATED": "Initiated",

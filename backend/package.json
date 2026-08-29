@@ -22,6 +22,7 @@
     "db:push": "dotenv -e .env.development -- prisma db push",
     "db:push:reset": "dotenv -e .env.development -- prisma db push --force-reset",
     "db:seed": "dotenv -e .env.development -- prisma db seed",
+    "db:seed:print-demo": "dotenv -e .env.development -- ts-node prisma/seed-print-demo.ts",
     "migrate:diff": "dotenv -e .env.development -- prisma migrate diff --from-schema prisma/schema.prisma --to-migrations prisma/migrations --script > down.sql",
     "migrate:dev": "dotenv -e .env.development -- prisma migrate dev --name ${name}",
     "migrate:deploy": "prisma migrate deploy"

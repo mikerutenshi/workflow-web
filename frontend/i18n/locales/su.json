@@ -148,6 +148,7 @@
     "job": "Tugas",
     "payable": "Nu Kudu Dibayar",
     "cost": "Ongkos",
+    "total": "Total",
     "total_payable": "Total Nu Kudu Dibayar",
     "total_quantity": "Total Jumlah Digawé",
     "total_quantity_sold": "Total Jumlah Terjual",
@@ -305,7 +306,8 @@
   "status": {
     "saved": "Disimpen",
     "deleted": "Dipupus",
-    "failed": "Teu hasil"
+    "failed": "Teu hasil",
+    "nothing_to_print": "Teu aya nu dicitak"
   },
   "progress": {
     "INITIATED": "Dimulai",

@@ -223,6 +223,7 @@ import {
   mdiTrashCan,
 } from '@mdi/js';
 import dayjs from 'dayjs';
+import { jsPDF } from 'jspdf';
 import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -230,6 +231,7 @@ import {
   AddToInventoryDocument,
   DeleteWorkDocument,
   GetWorksDocument,
+  Job,
   Progress,
   type AddToInventoryDto,
   type GetWorksQuery,
@@ -447,4 +449,135 @@ watch(
     }
   },
 );
+
+const { registerPrint, unregisterPrint } = useWorkPrint();
+onMounted(() => registerPrint(printSlips));
+onUnmounted(() => unregisterPrint());
+
+// One A4 sheet holds 8 equal-height strips meant to be guillotine-cut apart, so
+// every strip is drawn at a fixed offset rather than flowed: a work order with
+// one size and three tasks must occupy exactly as much paper as one with seven
+// sizes and six, or the cuts stop lining up through a stack.
+const STRIPS_PER_PAGE = 8;
+// Fixed at the width of the Job enum. Sizing the columns to each order's own
+// task count would misalign the strips, and clamping to the observed maximum
+// would silently drop a task from the printout.
+const TASK_COLUMNS = Object.keys(Job).length;
+// The ink in a strip runs from the header's cap top down to the write-on rule.
+// Centring that block in its band leaves equal whitespace above and below; it
+// used to sit 2.7mm under the cut line above it, which left nothing to cut into.
+const CONTENT_BLOCK_HEIGHT = 21.8; // header cap top (+2.7) to the rule (+24.5)
+const HEADER_CAP_TOP = 2.7; // content origin down to that cap top (+5 baseline, 2.3 cap)
+
+function printSlips() {
+  // Only orders this app issued, and only those with work still outstanding:
+  // external order numbers are printed by the system that issued them, and a
+  // finished order needs no slip. The printout follows the toolbar date range.
+  const slips = (computedWorks.value ?? []).filter(
+    (work) =>
+      work.orderNo.startsWith(`${Operation.Work}-`) &&
+      work.tasks.some((task) => !task.doneAt),
+  );
+
+  if (!slips.length) {
+    snack.show(t('status.nothing_to_print'), SnackColor.Info);
+    return;
+  }
+
+  const totalPairs = slips.reduce(
+    (sum, work) =>
+      sum + work.workSizes.reduce((pairs, size) => pairs + size.quantity, 0),
+    0,
+  );
+
+  const doc = new jsPDF(); // A4 portrait in mm, matching PrintInvTrf
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 10;
+  const contentWidth = pageWidth - margin * 2;
+  const stripHeight = (pageHeight - margin * 2) / STRIPS_PER_PAGE;
+  const cellWidth = contentWidth / TASK_COLUMNS;
+  const right = margin + contentWidth;
+
+  slips.forEach((work, index) => {
+    const slot = index % STRIPS_PER_PAGE;
+    if (index > 0 && slot === 0) doc.addPage();
+    const stripTop = margin + slot * stripHeight;
+    const top =
+      stripTop + (stripHeight - CONTENT_BLOCK_HEIGHT) / 2 - HEADER_CAP_TOP;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text(
+      adapter.format(work.date, 'normalDateWithWeekday'),
+      margin,
+      top + 5,
+    );
+    doc.text(work.orderNo, pageWidth / 2, top + 5, { align: 'center' });
+    doc.text(work.product.sku, right, top + 5, { align: 'right' });
+
+    const sizes = [...work.workSizes].sort(
+      (a, b) => Number(a.size.eu) - Number(b.size.eu),
+    );
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text(
+      sizes.map((s) => `${s.size.eu}: ${s.quantity}`).join('    '),
+      margin,
+      top + 11,
+    );
+    doc.text(
+      `${t('label.total')}: ${sizes.reduce((sum, s) => sum + s.quantity, 0)}`,
+      right,
+      top + 11,
+      { align: 'right' },
+    );
+
+    work.tasks.slice(0, TASK_COLUMNS).forEach((task, column) => {
+      const x = margin + column * cellWidth;
+
+      doc.setFontSize(6.5);
+      doc.setTextColor(120);
+      doc.text(t(renderJob(task.type)), x, top + 18.5);
+      doc.setTextColor(0);
+
+      const artisan = task.artisan
+        ? `${task.artisan.firstName} ${task.artisan.lastName ?? ''}`.trim()
+        : '';
+      doc.setFontSize(8);
+      if (artisan) {
+        doc.text(artisan, x, top + 24);
+      } else {
+        // Nobody assigned yet -- leave a rule for the floor to write the name on.
+        doc.line(x, top + 24.5, x + cellWidth - 4, top + 24.5);
+      }
+    });
+
+    doc.setLineDashPattern([1, 1], 0);
+    doc.line(margin, stripTop + stripHeight, right, stripTop + stripHeight);
+    doc.setLineDashPattern([], 0);
+  });
+
+  // Numbered in the bottom margin, below the last cut guide, so the label
+  // never lands on a strip -- it leaves with the offcut. Same wording as
+  // PrintInvTrf and the payroll summary.
+  const pageCount = doc.internal.pages.length - 1;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(120);
+  for (let page = 1; page <= pageCount; page++) {
+    doc.setPage(page);
+    doc.text(
+      `${t('label.total')}: ${t('label.pairs', totalPairs)}`,
+      margin,
+      pageHeight - margin / 2,
+    );
+    doc.text(`Page ${page} of ${pageCount}`, right, pageHeight - margin / 2, {
+      align: 'right',
+    });
+  }
+
+  const stamp = (iso: string) => dayjs(iso).format('YYYYMMDD');
+  doc.save(`works-${stamp(form.startDate)}-${stamp(form.endDate)}.pdf`);
+}
 </script>

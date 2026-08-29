@@ -148,6 +148,7 @@
     "job": "Tugas",
     "payable": "Pembayaran",
     "cost": "Biaya",
+    "total": "Total",
     "total_payable": "Total Pembayaran",
     "total_quantity": "Total Pekerjaan",
     "total_quantity_sold": "Total Jumlah Terjual",
@@ -305,7 +306,8 @@
   "status": {
     "saved": "Disimpan",
     "deleted": "Dihapus",
-    "failed": "Gagal"
+    "failed": "Gagal",
+    "nothing_to_print": "Tidak ada yang dicetak"
   },
   "progress": {
     "INITIATED": "Dimulai",
