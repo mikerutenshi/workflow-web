@@ -1,4 +1,5 @@
 import { WorkAndTasksDto } from '@/production/dto/work-and-tasks.dto';
+import { Tag } from '@/models/tag.model';
 import { Work } from '@/models/work.model';
 import { User } from '@/models/user.model';
 import { Operation } from '@/models/operation.enum';
@@ -9,19 +10,37 @@ import dayjs from 'dayjs';
 import { WorkCreateDto } from './dto/work-create.dto';
 import { WorkUpdateDto } from './dto/work-update.dto';
 
+// TagToWork has no payload of its own, so the join is flattened away before it
+// reaches GraphQL, matching how auth.service.ts unwraps userInventories.
+function flattenTags<T extends { workTags: { tag: Tag }[] }>(
+  work: T,
+): Omit<T, 'workTags'> & { tags: Tag[] } {
+  const { workTags, ...rest } = work;
+  return { ...rest, tags: workTags.map((member) => member.tag) };
+}
+
 @Injectable()
 export class WorkService {
   constructor(private prisma: PrismaService) {}
 
   async createWork(data: WorkCreateDto, user: User): Promise<Work> {
+    // tagIds is not a column -- it has to leave the spread below, or Prisma
+    // rejects it as an unknown argument.
+    const { tagIds, ...rest } = data;
+
     return this.prisma.$transaction(async (tx) => {
       const createdWork = await tx.work.create({
         data: {
-          ...data,
+          ...rest,
           createdBy: user.id,
-          workSizes: data.workSizes
+          workTags: {
+            create: tagIds.map((tagId) => ({
+              tag: { connect: { id: tagId } },
+            })),
+          },
+          workSizes: rest.workSizes
             ? {
-                create: data.workSizes.map((size) => ({
+                create: rest.workSizes.map((size) => ({
                   size: { connect: { id: size.id } },
                   quantity: size.quantity,
                 })),
@@ -60,16 +79,24 @@ export class WorkService {
   }
 
   updateWork(id: number, data: WorkUpdateDto, user: User): Promise<Work> {
+    const { tagIds, ...rest } = data;
+
     return this.prisma.work.update({
       where: { id },
       data: {
-        ...data,
+        ...rest,
         updatedBy: user.id,
         workSizes: {
           deleteMany: { workId: id },
-          create: data.workSizes.map((size) => ({
+          create: rest.workSizes.map((size) => ({
             size: { connect: { id: size.id } },
             quantity: size.quantity,
+          })),
+        },
+        workTags: {
+          deleteMany: { workId: id },
+          create: tagIds.map((tagId) => ({
+            tag: { connect: { id: tagId } },
           })),
         },
       },
@@ -86,6 +113,10 @@ export class WorkService {
           },
           orderBy: [{ sizeId: 'asc' }],
         },
+        workTags: {
+          include: { tag: true },
+          orderBy: { tag: { name: 'asc' } },
+        },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: {
           include: {
@@ -101,15 +132,19 @@ export class WorkService {
     if (!work) {
       throw new Error(`Work with ID ${id} not found.`);
     }
-    return work;
+    return flattenTags(work);
   }
 
-  getWorks(startDate: Date, endDate: Date): Promise<WorkAndTasksDto[]> {
-    return this.prisma.work.findMany({
+  async getWorks(startDate: Date, endDate: Date): Promise<WorkAndTasksDto[]> {
+    const works = await this.prisma.work.findMany({
       include: {
         workSizes: {
           include: { size: true },
           orderBy: [{ sizeId: 'asc' }],
+        },
+        workTags: {
+          include: { tag: true },
+          orderBy: { tag: { name: 'asc' } },
         },
         tasks: { include: { artisan: true }, orderBy: { type: 'asc' } },
         product: {
@@ -131,6 +166,8 @@ export class WorkService {
       },
       orderBy: [{ date: 'desc' }, { orderNo: 'desc' }],
     });
+
+    return works.map(flattenTags);
   }
 
   async deleteWork(id: number): Promise<boolean> {

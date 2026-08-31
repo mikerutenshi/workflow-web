@@ -486,6 +486,12 @@ type SizeToWork {
   size: Size!
 }
 
+type Tag {
+  id: ID!
+  name: String!
+  archived: Boolean!
+}
+
 type ProductWithCategoryDto {
   id: ID!
   createdBy: ID!
@@ -573,6 +579,7 @@ type WorkAndTasksDto {
   progress: Progress!
   note: String
   workSizes: [SizeToWork!]!
+  tags: [Tag!]!
   tasks: [TaskAndArtisanDto!]!
   product: ProductWithCategoryDto!
   invTrf: InvTrf
@@ -662,6 +669,8 @@ type Query {
   getSizes: [Size!]!
   getTasks(workId: ID!): [TaskAndArtisanDto!]!
   getPayroll(startDate: Date!, endDate: Date!): PayrollGetDto!
+  getTags: [Tag!]!
+  getTag(id: ID!): Tag!
   getInventory(id: ID!): InventoryDto!
   getInventories: [InventoryDto!]!
   downloadInventories: String!
@@ -718,6 +727,9 @@ type Mutation {
   deleteSize(id: ID!): Boolean!
   updateTasks(data: [TaskUpdateDto!]!): [TaskAndArtisanDto!]!
   addToInventory(data: AddToInventoryDto!): Boolean!
+  createTag(data: TagCreateDto!): Tag!
+  updateTag(id: ID!, data: TagCreateDto!): Tag!
+  deleteTag(id: ID!): Boolean!
   createInventory(data: InventoryCreateDto!): Inventory!
   deleteInventory(id: ID!): Boolean!
   updateInventory(id: ID!, data: InventoryUpdateDto!): Inventory!
@@ -841,6 +853,7 @@ input WorkCreateDto {
   productId: ID!
   workSizes: [SizeToWorkCreateDto!]!
   note: String
+  tagIds: [ID!]!
 }
 
 input SizeToWorkCreateDto {
@@ -854,6 +867,7 @@ input WorkUpdateDto {
   productId: ID
   workSizes: [SizeToWorkCreateDto!]!
   note: String
+  tagIds: [ID!]!
 }
 
 input SizeCreateDto {
@@ -875,6 +889,11 @@ input AddToInventoryDto {
   progress: Progress!
   workSizes: [SizeToWorkCreateDto!]!
   workId: ID!
+}
+
+input TagCreateDto {
+  name: String!
+  archived: Boolean! = false
 }
 
 input InventoryCreateDto {

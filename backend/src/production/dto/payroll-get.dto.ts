@@ -1,7 +1,7 @@
 import { Artisan } from '@/models/artisan.model';
 import { Product } from '@/models/product.model';
 import { Task } from '@/models/task.model';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, OmitType } from '@nestjs/graphql';
 import { WorkDto } from './work.dto';
 import { ProductGroupWithCategory } from '@/models/product-group-with-category.model';
 import { ProductWithCategoryDto } from '@/product/dto/product-with-category.dto';
@@ -20,8 +20,11 @@ import { ProductWithCategoryDto } from '@/product/dto/product-with-category.dto'
 //   productGroup: ProductGroupWithLaborCosts;
 // }
 
+// Payroll wants WorkDto's sizes and scalars but not its tags: tags are planning
+// information for production, and inheriting them would force every payroll query
+// to join TagToWork for a field the payslip never shows.
 @ObjectType()
-class WorkWithProduct extends WorkDto {
+class WorkWithProduct extends OmitType(WorkDto, ['tags'] as const) {
   @Field(() => ProductWithCategoryDto)
   product: ProductWithCategoryDto;
 }

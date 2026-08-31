@@ -23,6 +23,56 @@
           ></ActionPickDate>
         </v-col>
         <v-col>
+          <v-select
+            v-model="selectedTagIds"
+            :label="$t('label.select_tags')"
+            :prepend-inner-icon="mdiTagMultiple"
+            :items="availableTags"
+            item-title="name"
+            item-value="id"
+            multiple
+            chips
+            clearable
+            hide-details
+            density="compact"
+          >
+            <template #menu-header>
+              <div
+                class="d-flex align-center justify-space-between px-4 py-1 bg-surface-light"
+              >
+                <span class="text-body-2">{{ $t('label.show_archived') }}</span>
+                <v-switch
+                  v-model="showArchivedTags"
+                  :aria-label="$t('label.show_archived')"
+                  color="primary"
+                  density="compact"
+                  hide-details
+                  inset
+                  class="flex-grow-0"
+                ></v-switch>
+              </div>
+            </template>
+
+            <template v-slot:item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+                :title="item.name"
+                :subtitle="item.archived ? $t('label.archived') : undefined"
+              >
+                <template #prepend="{ isSelected }">
+                  <v-checkbox-btn
+                    :model-value="isSelected"
+                    :ripple="false"
+                    tabindex="-1"
+                    aria-hidden
+                    @click.prevent
+                  ></v-checkbox-btn>
+                </template>
+              </v-list-item>
+            </template>
+          </v-select>
+        </v-col>
+        <v-col>
           <v-text-field
             v-model="search"
             :label="$t('label.search')"
@@ -41,6 +91,14 @@
     <template v-slot:item.date="{ item }">
       {{ adapter.format(item.date, 'normalDateWithWeekday') }}
     </template>
+    <template v-slot:item.tags="{ item }">
+      <div class="tag-chips">
+        <v-chip v-for="tag in item.tags" :key="tag.id" size="small">
+          {{ tag.name }}
+        </v-chip>
+      </div>
+    </template>
+
     <template v-slot:item.sizes="{ item }">
       <v-table density="compact">
         <tbody>
@@ -206,8 +264,11 @@
 <style scoped lang="sass">
 .v-chip.v-chip--disabled
   opacity: 1
-.v-chip
-  max-width: 80px
+.tag-chips
+  display: flex
+  flex-wrap: wrap
+  gap: 4px
+  padding: 4px 0
 </style>
 
 <script setup lang="ts">
@@ -216,6 +277,7 @@ import {
   mdiDotsVertical,
   mdiMagnify,
   mdiPencil,
+  mdiTagMultiple,
   mdiTimerSand,
   mdiTimerSandComplete,
   mdiTimerSandEmpty,
@@ -231,13 +293,14 @@ import type { VDataTable } from 'vuetify/components';
 import {
   AddToInventoryDocument,
   DeleteWorkDocument,
+  GetTagsDocument,
   GetWorksDocument,
   Job,
   Progress,
   type AddToInventoryDto,
   type GetWorksQuery,
 } from '~/api/generated/types';
-import { CACHE_WORKS } from '~/utils/cache-tags';
+import { CACHE_TAGS, CACHE_WORKS } from '~/utils/cache-tags';
 
 type ReadOnlyHeaders = VDataTable['$props']['headers'];
 enum DialogContent {
@@ -330,24 +393,58 @@ const {
   refetchTags: [CACHE_WORKS],
 });
 
+const { data: tagsData } = useQuery({
+  query: GetTagsDocument,
+  tags: [CACHE_TAGS],
+});
+
+// Persisted like the date range above it, so a reload does not silently widen
+// the table (and the printout) back out to every order.
+const selectedTagIds = ref<string[]>(
+  JSON.parse(sessionStorage.getItem('workTableTags') ?? '[]'),
+);
+
+watch(selectedTagIds, (ids) => {
+  sessionStorage.setItem('workTableTags', JSON.stringify(ids));
+});
+
+// Transient view state, deliberately not persisted -- unlike the selection above.
+const showArchivedTags = ref(false);
+
+// Archived tags are hidden, except any currently selected. Without that carve-out
+// a tag archived *after* being picked would leave the item list while staying in
+// the persisted model, and v-select would render its chip as the bare id.
+const availableTags = computed(() => {
+  const selected = new Set(selectedTagIds.value);
+  return (tagsData.value?.getTags ?? []).filter(
+    (tag) => showArchivedTags.value || !tag.archived || selected.has(tag.id),
+  );
+});
+
 const computedWorks = computed(() => {
-  return data.value?.getWorks.map((work) => {
-    var displayProgress = Progress.Initiated;
+  return data.value?.getWorks
+    .filter(
+      (work) =>
+        !selectedTagIds.value.length ||
+        work.tags.some((tag) => selectedTagIds.value.includes(tag.id)),
+    )
+    .map((work) => {
+      var displayProgress = Progress.Initiated;
 
-    if (work.progress !== Progress.Initiated) {
-      displayProgress = work.progress;
-    } else {
-      if (work.tasks.every((task) => task.doneAt === null)) {
-        displayProgress = Progress.Initiated;
-      } else if (work.tasks.every((task) => task.doneAt)) {
-        displayProgress = Progress.Completed;
+      if (work.progress !== Progress.Initiated) {
+        displayProgress = work.progress;
       } else {
-        displayProgress = Progress.InProgress;
+        if (work.tasks.every((task) => task.doneAt === null)) {
+          displayProgress = Progress.Initiated;
+        } else if (work.tasks.every((task) => task.doneAt)) {
+          displayProgress = Progress.Completed;
+        } else {
+          displayProgress = Progress.InProgress;
+        }
       }
-    }
 
-    return { ...work, displayProgress };
-  });
+      return { ...work, displayProgress };
+    });
 });
 
 const search = ref('');
@@ -359,6 +456,7 @@ const headers: ReadOnlyHeaders = [
   { title: t('label.sizes'), key: 'sizes' },
   { title: t('label.status'), key: 'progress' },
   { title: t('label.tasks'), key: 'tasks' },
+  { title: t('label.tags'), key: 'tags', sortable: false, maxWidth: '120' },
   { title: t('label.note'), key: 'note', maxWidth: '120' },
   { title: t('label.is_in_inventory'), key: 'invTrf', maxWidth: '120' },
   { title: '', key: 'actions', sortable: false, align: 'end' },
@@ -486,6 +584,10 @@ const sizeTotals = (works: WorkData[]) => {
     .join('    ');
 };
 const renderSizes = (work: WorkData) => sizeTotals([work]);
+// Who the run is for, for whoever pulls the stock. Only the materials list
+// carries this -- the cut strips downstream are fixed geometry.
+const renderTags = (work: WorkData) =>
+  work.tags.map((tag) => tag.name).join(', ');
 const pairsOf = (work: WorkData) =>
   work.workSizes.reduce((pairs, size) => pairs + size.quantity, 0);
 
@@ -552,6 +654,7 @@ function printSlips() {
         work.product.sku,
         renderSizes(work),
         String(pairsOf(work)),
+        renderTags(work),
       ]);
     }
     // Emitted even for a one-order group: the shaded row is what gets scanned
@@ -565,6 +668,7 @@ function printSlips() {
       },
       sizeTotals(group.works),
       String(group.works.reduce((sum, work) => sum + pairsOf(work), 0)),
+      '',
     ]);
   }
   doc.setFont('helvetica', 'bold');
@@ -590,6 +694,7 @@ function printSlips() {
         t('label.sku'),
         t('label.sizes'),
         t('label.quantity'),
+        t('label.tags'),
       ],
     ],
     body: materialsBody,
@@ -600,6 +705,7 @@ function printSlips() {
         '',
         { content: t('label.total'), styles: { halign: 'right' as const } },
         String(t('label.pairs', totalPairs)),
+        '',
       ],
     ],
     didParseCell: (data) => {

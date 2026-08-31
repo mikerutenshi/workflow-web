@@ -1,3 +1,9 @@
+fragment Tag on Tag {
+  id
+  name
+  archived
+}
+
 fragment Size on Size {
   id
   eu
@@ -37,6 +43,9 @@ fragment WorkAndTasks on WorkAndTasksDto {
     }
     quantity
   }
+  tags {
+    ...Tag
+  }
   tasks {
     ...TaskAndArtisan
   }
@@ -68,12 +77,43 @@ fragment Work on WorkAndTasksDto {
     }
     quantity
   }
+  tags {
+    ...Tag
+  }
   product {
     sku
   }
   note
   createdBy
   updatedBy
+}
+
+mutation createTag($data: TagCreateDto!) {
+  createTag(data: $data) {
+    ...Tag
+  }
+}
+
+mutation updateTag($id: ID!, $data: TagCreateDto!) {
+  updateTag(id: $id, data: $data) {
+    ...Tag
+  }
+}
+
+mutation deleteTag($id: ID!) {
+  deleteTag(id: $id)
+}
+
+query getTags {
+  getTags {
+    ...Tag
+  }
+}
+
+query getTag($id: ID!) {
+  getTag(id: $id) {
+    ...Tag
+  }
 }
 
 mutation createSize($data: SizeCreateDto!) {

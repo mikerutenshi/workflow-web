@@ -95,6 +95,97 @@
         </v-card-text>
       </v-card>
 
+      <v-row>
+        <v-col>
+          <v-autocomplete
+            :label="$t('label.select_tags')"
+            multiple
+            chips
+            closable-chips
+            clearable
+            auto-select-first
+            item-title="name"
+            item-value="id"
+            return-object
+            :items="availableTags"
+            :loading="isFetchingTags"
+            v-model="selectedTags"
+            v-model:search="tagSearch"
+            :error-messages="errors['tagIds']"
+          >
+            <template v-slot:item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+                :title="item.name"
+                :subtitle="item.archived ? $t('label.archived') : undefined"
+              >
+                <template #prepend="{ isSelected }">
+                  <v-checkbox-btn
+                    :model-value="isSelected"
+                    :ripple="false"
+                    tabindex="-1"
+                    aria-hidden
+                    @click.prevent
+                  ></v-checkbox-btn>
+                </template>
+
+                <template #append>
+                  <v-btn
+                    color="primary"
+                    :icon="mdiPencil"
+                    size="small"
+                    variant="text"
+                    @click.stop="showTagDialog(item.id)"
+                  ></v-btn>
+                </template>
+              </v-list-item>
+            </template>
+
+            <template #menu-header>
+              <div
+                class="d-flex align-center justify-space-between px-4 py-1 bg-surface-light"
+              >
+                <span class="text-body-2">{{ $t('label.show_archived') }}</span>
+                <v-switch
+                  v-model="showArchivedTags"
+                  :aria-label="$t('label.show_archived')"
+                  color="primary"
+                  density="compact"
+                  hide-details
+                  inset
+                  class="flex-grow-0"
+                ></v-switch>
+              </div>
+            </template>
+
+            <template #no-data>
+              <v-list-item
+                v-if="tagSearch"
+                :prepend-icon="mdiPlus"
+                :title="$t('btn.add_tag')"
+                :subtitle="tagSearch"
+                base-color="primary"
+                @click="showTagDialog(null, tagSearch)"
+              ></v-list-item>
+            </template>
+          </v-autocomplete>
+        </v-col>
+        <v-col
+          cols="12"
+          lg="3"
+          xl="2"
+          class="d-flex justify-end align-center ga-2"
+        >
+          <v-btn
+            :prepend-icon="mdiPlus"
+            color="primary"
+            variant="tonal"
+            @click="showTagDialog(null)"
+            >{{ $t('btn.add_tag') }}</v-btn
+          >
+        </v-col>
+      </v-row>
+
       <v-textarea
         v-model="note.value.value"
         :label="$t('label.note')"
@@ -118,9 +209,22 @@
       }}</ActionConfirm>
     </v-card-actions>
   </v-form>
+
+  <ActionEditItemDialog
+    :dialogTitle="tagDialog.id ? $t('page.tag_edit') : $t('page.tag_create')"
+    v-model="tagDialog.isVisible"
+  >
+    <TagCreateForm
+      :key="tagDialog.key"
+      :tag-id="tagDialog.id"
+      :initial-name="tagDialog.name"
+      @form-submit="handleTagSaved"
+    ></TagCreateForm>
+  </ActionEditItemDialog>
 </template>
 
 <script setup lang="ts">
+import { mdiPencil, mdiPlus } from '@mdi/js';
 import { useAuthStore } from '#imports';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
@@ -131,9 +235,11 @@ import {
   GenerateOrderNoDocument,
   GetProductsDocument,
   GetSizesDocument,
+  GetTagsDocument,
   GetWorkDocument,
   UpdateWorkDocument,
   type Size,
+  type TagFragment,
 } from '~/api/generated/types';
 import { WorkSchema } from '~/validation/schema';
 
@@ -156,6 +262,78 @@ const { data: sizesData, isFetching: isFetchingSizes } = useQuery({
   query: GetSizesDocument,
   tags: [CACHE_SIZES],
 });
+const { data: tagsData, isFetching: isFetchingTags } = useQuery({
+  query: GetTagsDocument,
+  tags: [CACHE_TAGS],
+});
+
+const selectedTags = ref<TagFragment[]>([]);
+const tagSearch = ref('');
+
+// Tags are managed from here rather than a settings screen, so archived ones
+// have to stay reachable: without this toggle, archiving would be a one-way
+// door with no way back to un-archive.
+const showArchivedTags = ref(false);
+
+// Archived tags are hidden, except any this work already carries -- dropping
+// those from the list would deselect them, and the next save would strip them
+// off a work order that is meant to keep its history.
+const availableTags = computed(() => {
+  const attached = new Set(selectedTags.value.map((tag) => tag.id));
+  return (tagsData.value?.getTags ?? []).filter(
+    (tag) => showArchivedTags.value || !tag.archived || attached.has(tag.id),
+  );
+});
+
+// `key` remounts TagCreateForm so it re-reads initialName and the fetched tag;
+// vee-validate seeds initialValues once per instance.
+const tagDialog = reactive<{
+  isVisible: boolean;
+  id: string | null;
+  name: string;
+  key: number;
+}>({
+  isVisible: false,
+  id: null,
+  name: '',
+  key: 0,
+});
+
+function showTagDialog(id: string | null, name = '') {
+  tagDialog.id = id;
+  tagDialog.name = name;
+  tagDialog.key += 1;
+  tagDialog.isVisible = true;
+}
+
+function handleTagSaved(tag?: TagFragment) {
+  tagDialog.isVisible = false;
+
+  // No payload means it was deleted. A tag attached to a saved work order
+  // cannot be deleted, but one picked in a form that has not been submitted yet
+  // can -- and leaving it selected would fail the save on a missing foreign key.
+  if (!tag) {
+    if (tagDialog.id) {
+      const deletedId = tagDialog.id;
+      selectedTags.value = selectedTags.value.filter(
+        (item) => item.id !== deletedId,
+      );
+    }
+    return;
+  }
+
+  // Select a tag the moment it is created, so the picker does not send the user
+  // hunting for what they just typed. An edit refreshes the copy already held.
+  const existing = selectedTags.value.findIndex((item) => item.id === tag.id);
+  if (existing >= 0) {
+    selectedTags.value = selectedTags.value.map((item) =>
+      item.id === tag.id ? { ...tag } : item,
+    );
+  } else if (!tagDialog.id) {
+    selectedTags.value = [...selectedTags.value, { ...tag }];
+  }
+  tagSearch.value = '';
+}
 
 const computeSizeList = computed(() => {
   const product = productsData.value?.getProducts.find(
@@ -203,6 +381,7 @@ const { handleSubmit, setValues, setFieldValue, values, errors } = useForm({
   initialValues: {
     date: dayjs().toISOString(),
     workSizes: [],
+    tagIds: [],
   },
 });
 const date = useField<string>('date');
@@ -288,6 +467,7 @@ if (workId.value) {
           });
         }
       });
+      selectedTags.value = work.tags.map((tag) => ({ ...tag }));
       note.setValue(work.note);
     },
   });
@@ -331,6 +511,13 @@ watch(sizeQuantities, (newItems) => {
       id: newItem.id,
       quantity: newItem.quantity,
     })),
+  );
+});
+
+watch(selectedTags, (tags) => {
+  setFieldValue(
+    'tagIds',
+    tags.map((tag) => tag.id),
   );
 });
 

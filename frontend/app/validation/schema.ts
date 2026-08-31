@@ -93,6 +93,11 @@ export const ProductSchema = z.object({
   colorIds: z.array(positiveNumberString),
 });
 
+export const TagSchema = z.object({
+  name: z.string().min(1).max(60).trim(),
+  archived: z.boolean(),
+});
+
 export const ColorSchema = z.object({
   name: z.string().min(1).trim(),
   hexCode: z.string().min(1).trim(),
@@ -121,6 +126,7 @@ export const WorkSchema = z.object({
     }),
   ),
   note: z.string().max(255).trim().nullable().optional(),
+  tagIds: z.array(positiveNumberString),
 });
 
 export function createTaskSchema(

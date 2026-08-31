@@ -182,6 +182,7 @@ model Work {
   orderNo           String          @unique
   productId         Int             
   workSizes         SizeToWork[]
+  workTags          TagToWork[]
   tasks             Task[]
   progress          Progress        @default(INITIATED)       
   note              String?          
@@ -243,6 +244,26 @@ model SizeToWork {
 
   work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
   size              Size            @relation(fields: [sizeId], references: [id])
+}
+
+model Tag {
+  id                Int             @id @default(autoincrement())
+  name              String          @unique
+  archived          Boolean         @default(false)
+
+  tagWorks          TagToWork[]
+}
+
+// The tag side is deliberately left at the default Restrict: a tag records who a
+// past run was produced for, so deleting one still attached would rewrite that
+// history. Retire a used tag with archived instead -- see TagService.deleteTag.
+model TagToWork {
+  @@id([workId, tagId])
+  workId            Int
+  tagId             Int
+
+  work              Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
+  tag               Tag             @relation(fields: [tagId], references: [id])
 }
 
 model Inventory {

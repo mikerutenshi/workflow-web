@@ -2,6 +2,7 @@ import { Field, ID, InputType } from '@nestjs/graphql';
 import { Transform, Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
+  IsArray,
   IsDate,
   IsOptional,
   IsString,
@@ -46,4 +47,12 @@ export class WorkCreateDto {
   @MaxLength(255)
   @IsOptional()
   note!: string | null;
+
+  // Empty is allowed -- not every run is spoken for. GraphQL delivers ID as a
+  // string, hence the parse, matching invIds in auth/dto/user-update.dto.ts.
+  @Field(() => [ID])
+  @Transform(({ value }) => value.map((member: any) => parseInt(member, 10)))
+  @IsArray()
+  @Min(1, { each: true })
+  tagIds!: number[];
 }
