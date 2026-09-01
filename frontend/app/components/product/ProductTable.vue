@@ -77,13 +77,37 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-btn
+      <v-menu
         v-if="clearanceLevel <= Role.Planner"
-        color="primary"
-        :icon="mdiPencil"
-        variant="text"
-        @click="openEditProductDialog(item.id)"
-      ></v-btn>
+        transition="slide-y-transition"
+        open-on-hover
+      >
+        <template v-slot:activator="{ props }">
+          <v-btn
+            :icon="mdiDotsVertical"
+            color="primary"
+            v-bind="props"
+            variant="text"
+          >
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            :prepend-icon="mdiPencil"
+            @click="openEditProductDialog(item.id)"
+          >
+            <v-list-item-title>{{ t('btn.edit_product') }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            :prepend-icon="mdiShoeFormal"
+            @click="openEditGroupDialog(item.productGroup.id)"
+          >
+            <v-list-item-title>{{
+              t('btn.edit_product_group')
+            }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </template>
   </v-data-table>
 
@@ -93,6 +117,11 @@
       :product-id="dialog.productId"
       @form-submit="handleDialogClose"
     ></ProductCreateForm>
+    <ProductGroupCreateForm
+      v-if="dialog.content === DialogContent.EditGroup"
+      :product-group-id="dialog.productGroupId"
+      @form-submit="handleDialogClose"
+    ></ProductGroupCreateForm>
     <ProductDownloadForm
       v-if="dialog.content === DialogContent.Download"
     ></ProductDownloadForm>
@@ -100,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { mdiMagnify, mdiPencil } from '@mdi/js';
+import { mdiDotsVertical, mdiMagnify, mdiPencil, mdiShoeFormal } from '@mdi/js';
 import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -154,9 +183,11 @@ enum DialogContent {
   Download = 'DOWNLOAD',
   None = 'NONE',
   Edit = 'EDIT',
+  EditGroup = 'EDIT_GROUP',
 }
 const dialog = reactive({
   productId: '',
+  productGroupId: '',
   isVisible: false,
   content: DialogContent.None,
   title: '',
@@ -167,8 +198,15 @@ function openEditProductDialog(productId: string) {
   dialog.content = DialogContent.Edit;
   dialog.title = t('page.product_edit');
 }
+function openEditGroupDialog(productGroupId: string) {
+  dialog.productGroupId = productGroupId;
+  dialog.isVisible = true;
+  dialog.content = DialogContent.EditGroup;
+  dialog.title = t('page.product_group_edit');
+}
 function handleDialogClose() {
   dialog.productId = '';
+  dialog.productGroupId = '';
   dialog.isVisible = false;
   dialog.content = DialogContent.None;
   dialog.title = '';

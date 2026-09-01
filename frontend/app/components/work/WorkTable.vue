@@ -36,10 +36,8 @@
             hide-details
             density="compact"
           >
-            <template #menu-header>
-              <div
-                class="d-flex align-center justify-space-between px-4 py-1 bg-surface-light"
-              >
+            <template #menu-footer>
+              <div class="d-flex align-center justify-space-between px-4 py-1">
                 <span class="text-body-2">{{ $t('label.show_archived') }}</span>
                 <v-switch
                   v-model="showArchivedTags"

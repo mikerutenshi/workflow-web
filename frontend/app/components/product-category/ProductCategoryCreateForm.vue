@@ -86,8 +86,8 @@ const {
   error: createError,
   isFetching: isCreating,
 } = useMutation(CreatePrdouctCategoryDocument, {
-  onData() {
-    emit('form-submit');
+  onData(data) {
+    emit('form-submit', data.createProductCategory.id);
     snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_CATEGORIES],
@@ -97,8 +97,8 @@ const {
   error: updateError,
   isFetching: isUpdating,
 } = useMutation(UpdateProductCategoryDocument, {
-  onData() {
-    emit('form-submit');
+  onData(data) {
+    emit('form-submit', data.updateProductCategory.id);
     snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_CATEGORIES, CACHE_PRODUCT_CATEGORY],
@@ -110,8 +110,10 @@ const {
 } = useMutation(DeleteProductCategoryDocument, {
   refetchTags: [CACHE_PRODUCT_CATEGORIES],
   onData(data) {
-    emit('form-submit');
-    snack.show(t('status.deleted'), SnackColor.Success);
+    if (data.deleteProductCategory) {
+      emit('form-submit', null);
+      snack.show(t('status.deleted'), SnackColor.Success);
+    }
   },
 });
 const onSubmit = handleSubmit((data) => {

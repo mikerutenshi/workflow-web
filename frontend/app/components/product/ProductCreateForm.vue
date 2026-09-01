@@ -44,14 +44,27 @@
                     :icon="mdiPencil"
                     size="small"
                     variant="text"
-                    @click="showDialogWithId(item.id)"
+                    @click.stop="showDialogWithId(item.id)"
                   ></v-btn>
                 </template>
               </v-list-item>
             </template>
           </v-autocomplete>
         </v-col>
-        <v-col cols="12" lg="3" xl="2" class="d-flex justify-end align-center">
+        <v-col
+          cols="12"
+          lg="3"
+          xl="2"
+          class="d-flex justify-end align-center ga-2"
+        >
+          <v-btn
+            :aria-label="$t('btn.edit_product_group')"
+            :disabled="!productGroupId.value.value"
+            :icon="mdiPencil"
+            color="primary"
+            variant="tonal"
+            @click="showDialogWithId(String(productGroupId.value.value))"
+          ></v-btn>
           <v-btn
             :prepend-icon="mdiPlus"
             color="primary"
@@ -320,10 +333,20 @@ function showDialogWithId(id: string) {
   dialogForm.value = true;
   selectionId.value = id;
 }
-function handleDialogClose() {
-  if (dialogForm) dialogForm.value = false;
+function handleDialogClose(groupId?: string | null) {
+  const editedId = selectionId.value;
+  dialogForm.value = false;
   selectionId.value = '';
-  if (productGroupId) productGroupId.setValue(undefined);
+  executeFetchProductGroups();
+
+  if (groupId) {
+    productGroupId.setValue(groupId);
+  } else if (
+    groupId === null &&
+    editedId === String(productGroupId.value.value ?? '')
+  ) {
+    productGroupId.setValue(undefined);
+  }
 }
 
 watch(

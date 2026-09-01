@@ -31,7 +31,7 @@
                     :icon="mdiPencil"
                     size="small"
                     variant="text"
-                    @click="showDialogWithId(item.id)"
+                    @click.stop="showDialogWithId(item.id)"
                   ></v-btn>
                 </template>
               </v-list-item>
@@ -39,7 +39,20 @@
           </v-select>
         </v-col>
 
-        <v-col cols="12" lg="3" xl="2" class="d-flex align-center justify-end">
+        <v-col
+          cols="12"
+          lg="3"
+          xl="2"
+          class="d-flex align-center justify-end ga-2"
+        >
+          <v-btn
+            :aria-label="$t('btn.edit_product_category')"
+            :disabled="!productCategoryId.value.value"
+            :icon="mdiPencil"
+            color="primary"
+            variant="tonal"
+            @click="showDialogWithId(String(productCategoryId.value.value))"
+          ></v-btn>
           <v-btn
             :prepend-icon="mdiPlus"
             color="primary"
@@ -149,8 +162,8 @@ const {
   error: createError,
   isFetching: isCreating,
 } = useMutation(CreateProductGroupDocument, {
-  onData() {
-    emit('form-submit');
+  onData(data) {
+    emit('form-submit', data.createProductGroup.id);
     snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_GROUPS],
@@ -160,8 +173,8 @@ const {
   error: updateError,
   isFetching: isUpdating,
 } = useMutation(UpdateProductGroupDocument, {
-  onData() {
-    emit('form-submit');
+  onData(data) {
+    emit('form-submit', data.updateProductGroup.id);
     snack.show(t('status.saved'), SnackColor.Success);
   },
   refetchTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCT_GROUP, CACHE_PRODUCTS],
@@ -180,10 +193,10 @@ const {
   isFetching: isDeleting,
   error: deleteError,
 } = useMutation(DeleteProductGroupDocument, {
-  refetchTags: [CACHE_PRODUCT_GROUPS],
+  refetchTags: [CACHE_PRODUCT_GROUPS, CACHE_PRODUCTS],
   onData(data) {
     if (data.deleteProductGroup) {
-      emit('form-submit');
+      emit('form-submit', null);
       snack.show(t('status.deleted'), SnackColor.Success);
     }
   },
@@ -223,10 +236,27 @@ function showDialogWithId(id: string) {
   dialogForm.value = true;
   selectionId.value = id;
 }
-function handleDialogClose() {
-  if (dialogForm) dialogForm.value = false;
+function handleDialogClose(categoryId?: string | null) {
+  const editedId = selectionId.value;
+  dialogForm.value = false;
   selectionId.value = '';
   executeFetchProductCategory();
-  if (productCategoryId) productCategoryId.setValue(undefined);
+
+  if (categoryId) {
+    productCategoryId.setValue(categoryId);
+  } else if (
+    categoryId === null &&
+    editedId === String(productCategoryId.value.value ?? '')
+  ) {
+    productCategoryId.setValue(undefined);
+  }
 }
+
+// Closing with the X leaves selectionId set otherwise, so the next "+ New"
+// click would reopen the form in edit mode. Mirrors ProductCreateForm.
+watch(dialogForm, (isOpen) => {
+  if (!isOpen) {
+    handleDialogClose();
+  }
+});
 </script>
