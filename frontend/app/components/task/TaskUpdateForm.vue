@@ -216,8 +216,8 @@ const submitBtnTitle = computed(() =>
 
 const taskHeaders = ref([
   { title: t('label.task'), key: 'type', sortable: false },
-  { title: t('label.artisan'), key: 'artisan', sortable: false },
-  { title: t('label.done_at'), key: 'doneAt', sortable: false },
+  { title: t('label.artisan'), key: 'artisan', sortable: false, minWidth: 200 },
+  { title: t('label.done_at'), key: 'doneAt', sortable: false, minWidth: 200 },
 ]);
 
 if (workId.value) {

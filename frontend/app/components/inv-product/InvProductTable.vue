@@ -23,7 +23,7 @@
       >
         <template #top>
           <v-row class="mx-4 my-2">
-            <v-col cols="4">
+            <v-col cols="6" md="4">
               <v-select
                 :label="$t('label.select_inventories')"
                 :prepend-inner-icon="mdiWarehouse"
@@ -35,7 +35,7 @@
                 density="compact"
               ></v-select>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="6" md="4">
               <v-text-field
                 v-model="search"
                 :label="$t('label.search')"
@@ -45,7 +45,7 @@
                 density="compact"
               ></v-text-field>
             </v-col>
-            <v-col class="d-flex align-center" cols="2">
+            <v-col class="d-flex align-center" cols="6" md="2">
               <v-switch
                 v-model="hideZeroQty"
                 :label="$t('label.hide_zero_qty')"
@@ -56,7 +56,7 @@
                 class="flex-grow-0"
               ></v-switch>
             </v-col>
-            <v-col class="d-flex justify-center" cols="2">
+            <v-col class="d-flex justify-center" cols="6" md="2">
               <h3>{{ `Total: ${$t('label.pairs', totalQty)}` }}</h3>
             </v-col>
           </v-row>
