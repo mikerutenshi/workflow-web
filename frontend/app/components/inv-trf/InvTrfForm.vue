@@ -101,9 +101,10 @@
             <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
           </template>
 
-          <template #item.progress="{ item }">{{
-            $t(`progress.${item.progress}`)
-          }}</template>
+          <template #item.progress="{ item }">
+            <v-icon :icon="renderProgressIcon(item.progress)"></v-icon>
+            <span>{{ $t(`progress.${item.progress}`) }}</span>
+          </template>
 
           <template #item.discounts="{ item }">{{
             item.discounts

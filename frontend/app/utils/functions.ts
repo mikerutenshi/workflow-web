@@ -1,3 +1,12 @@
+import {
+  mdiAlertCircle,
+  mdiCancel,
+  mdiTimerSand,
+  mdiTimerSandComplete,
+  mdiTimerSandEmpty,
+  mdiTimerSandFull,
+  mdiTimerSandPaused,
+} from '@mdi/js';
 import dayjs from 'dayjs';
 import Decimal from 'decimal.js-light';
 import type { MaskInputOptions } from 'maska';
@@ -182,4 +191,20 @@ export function getProgresses(clearanceLevel: number = 99): Progress[] {
   } else {
     return progresses.filter((p) => p !== Progress.Pending);
   }
+}
+
+const PROGRESS_ICON: Record<Progress, string> = {
+  [Progress.Initiated]: mdiTimerSandEmpty,
+  [Progress.Pending]: mdiTimerSandFull,
+  [Progress.InProgress]: mdiTimerSand,
+  [Progress.OnHold]: mdiTimerSandPaused,
+  [Progress.Completed]: mdiTimerSandComplete,
+  // The terminal failures break out of the hourglass on purpose: drawn inside it
+  // they read as work still running.
+  [Progress.Canceled]: mdiCancel,
+  [Progress.Failed]: mdiAlertCircle,
+};
+
+export function renderProgressIcon(progress: Progress): string {
+  return PROGRESS_ICON[progress];
 }

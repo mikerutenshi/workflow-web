@@ -145,15 +145,7 @@
     </template>
 
     <template v-slot:item.progress="{ item }">
-      <v-icon
-        :icon="
-          item.displayProgress === Progress.Initiated
-            ? mdiTimerSandEmpty
-            : item.displayProgress === Progress.Completed
-              ? mdiTimerSandComplete
-              : mdiTimerSand
-        "
-      ></v-icon>
+      <v-icon :icon="renderProgressIcon(item.displayProgress)"></v-icon>
       <span>{{ $t(`progress.${item.displayProgress}`) }}</span>
     </template>
 
@@ -276,9 +268,6 @@ import {
   mdiMagnify,
   mdiPencil,
   mdiTagMultiple,
-  mdiTimerSand,
-  mdiTimerSandComplete,
-  mdiTimerSandEmpty,
   mdiTransferRight,
   mdiTrashCan,
 } from '@mdi/js';

@@ -54,9 +54,10 @@
         </v-table>
       </template>
 
-      <template #item.progress="{ item }">{{
-        $t(`progress.${item.progress}`)
-      }}</template>
+      <template #item.progress="{ item }">
+        <v-icon :icon="renderProgressIcon(item.progress)"></v-icon>
+        <span>{{ $t(`progress.${item.progress}`) }}</span>
+      </template>
 
       <template v-slot:item.actions="{ item }">
         <v-btn

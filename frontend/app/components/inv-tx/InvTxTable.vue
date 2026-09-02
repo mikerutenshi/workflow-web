@@ -27,7 +27,8 @@
       </template>
 
       <template v-slot:item.progress="{ item }">
-        {{ $t(`progress.${item.progress}`) }}
+        <v-icon :icon="renderProgressIcon(item.progress)"></v-icon>
+        <span>{{ $t(`progress.${item.progress}`) }}</span>
       </template>
 
       <template v-slot:item.type="{ item }">

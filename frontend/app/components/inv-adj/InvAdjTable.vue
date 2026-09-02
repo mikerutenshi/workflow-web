@@ -55,9 +55,10 @@
           {{ adapter.format(item.adjDate, 'fullDateTime12h') }}
         </template>
 
-        <template #item.progress="{ item }">{{
-          $t(`progress.${item.progress}`)
-        }}</template>
+        <template #item.progress="{ item }">
+          <v-icon :icon="renderProgressIcon(item.progress)"></v-icon>
+          <span>{{ $t(`progress.${item.progress}`) }}</span>
+        </template>
 
         <template #item.itemCount="{ item }">{{
           $t('label.items_counted', item.itemCount)
