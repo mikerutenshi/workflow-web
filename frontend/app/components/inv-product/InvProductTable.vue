@@ -23,7 +23,7 @@
       >
         <template #top>
           <v-row class="mx-4 my-2">
-            <v-col cols="5">
+            <v-col cols="4">
               <v-select
                 :label="$t('label.select_inventories')"
                 :prepend-inner-icon="mdiWarehouse"
@@ -35,7 +35,7 @@
                 density="compact"
               ></v-select>
             </v-col>
-            <v-col cols="5">
+            <v-col cols="4">
               <v-text-field
                 v-model="search"
                 :label="$t('label.search')"
@@ -44,6 +44,17 @@
                 single-line
                 density="compact"
               ></v-text-field>
+            </v-col>
+            <v-col class="d-flex align-center" cols="2">
+              <v-switch
+                v-model="hideZeroQty"
+                :label="$t('label.hide_zero_qty')"
+                color="primary"
+                density="compact"
+                hide-details
+                inset
+                class="flex-grow-0"
+              ></v-switch>
             </v-col>
             <v-col class="d-flex justify-center" cols="2">
               <h3>{{ `Total: ${$t('label.pairs', totalQty)}` }}</h3>
@@ -98,14 +109,7 @@
               <tr>
                 <td><i>Total</i></td>
                 <td>
-                  <i>
-                    {{
-                      item.invProductSizes.reduce(
-                        (sum, size) => sum + size.quantity,
-                        0,
-                      )
-                    }}
-                  </i>
+                  <i>{{ item.totalQuantity }}</i>
                 </td>
               </tr>
             </tbody>
@@ -132,15 +136,10 @@
             </template>
             <v-list>
               <v-list-item
-                v-if="
-                  item.invProductSizes.reduce(
-                    (sum, item) => sum + item.quantity,
-                    0,
-                  ) > 0
-                "
+                v-if="item.totalQuantity > 0"
                 @click="
                   () => {
-                    const { pendingCount, ...rest } = item;
+                    const { pendingCount, totalQuantity, ...rest } = item;
                     showItemFormDialog(rest as InvProductDto);
                   }
                 "
@@ -152,7 +151,7 @@
               <v-list-item
                 @click="
                   () => {
-                    const { pendingCount, ...rest } = item;
+                    const { pendingCount, totalQuantity, ...rest } = item;
                     showItemTrfDialog(rest as InvProductDto);
                   }
                 "
@@ -166,7 +165,7 @@
               <v-list-item
                 @click="
                   () => {
-                    const { pendingCount, ...rest } = item;
+                    const { pendingCount, totalQuantity, ...rest } = item;
                     showItemTxDialog(rest as InvProductDto);
                   }
                 "
@@ -183,7 +182,7 @@
                 :prepend-icon="mdiSale"
                 @click="
                   () => {
-                    const { pendingCount, ...rest } = item;
+                    const { pendingCount, totalQuantity, ...rest } = item;
                     showUpdateDiscDialog(rest as InvProductDto);
                   }
                 "
@@ -226,12 +225,10 @@
 <script setup lang="ts">
 import {
   mdiDotsVertical,
-  mdiFileDocumentArrowRightOutline,
   mdiHistory,
   mdiMagnify,
   mdiProgressAlert,
   mdiSale,
-  mdiSaleOutline,
   mdiTransferRight,
   mdiWarehouse,
 } from '@mdi/js';
@@ -259,22 +256,30 @@ enum DialogContent {
 
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
+const hideZeroQty = ref(true);
 
 const authStore = useAuthStore();
 const clearanceLevel = authStore.user?.role.clearanceLevel ?? 99;
 const selectInvId = ref(authStore.user?.userInventories.at(0)?.id ?? '');
 const itemSelectionObject = shallowRef<InvProductDto | null>(null);
 const invProductsDisplay = computed(() => {
-  return dataInvProducts.value?.getInvProducts.map((product) => {
-    const pendingCount = product.invTrfItems.filter(
-      (i) => i.progress !== Progress.Completed,
-    ).length;
+  return dataInvProducts.value?.getInvProducts
+    .map((product) => {
+      const pendingCount = product.invTrfItems.filter(
+        (i) => i.progress !== Progress.Completed,
+      ).length;
+      const totalQuantity = product.invProductSizes.reduce(
+        (sum, size) => sum + (size.quantity ?? 0),
+        0,
+      );
 
-    return {
-      ...product,
-      pendingCount,
-    };
-  });
+      return {
+        ...product,
+        pendingCount,
+        totalQuantity,
+      };
+    })
+    .filter((product) => !hideZeroQty.value || product.totalQuantity > 0);
 });
 const totalQty = computed(() => {
   const data = dataInvProducts.value?.getInvProducts;

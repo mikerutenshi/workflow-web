@@ -148,6 +148,7 @@
     "all_tags": "All Tags",
     "archived": "Archived",
     "show_archived": "Show Archived",
+    "hide_zero_qty": "Hide Empty Stock",
     "select_jobs": "Select Jobs",
     "gender": "Gender",
     "colors": "Color",
