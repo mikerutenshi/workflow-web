@@ -187,8 +187,8 @@ query getInvTrfItems($fromInvId: ID!, $toInvId: ID!, $progress: [Progress!]) {
   }
 }
 
-query getInvTrfs {
-  getInvTrfs {
+query getInvTrfs($startDate: Date, $endDate: Date) {
+  getInvTrfs(startDate: $startDate, endDate: $endDate) {
     id
     trfNo
     work {

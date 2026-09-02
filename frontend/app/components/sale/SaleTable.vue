@@ -253,8 +253,7 @@ function deleteItem(saleId: string) {
 }
 
 function manageDates(newDates: string[] | string) {
-  salesVariables.value.startDate = newDates[0] ?? '';
-  salesVariables.value.endDate = newDates[newDates.length - 1] ?? '';
+  Object.assign(salesVariables.value, toDateRange(newDates));
   fetchSales();
 }
 </script>

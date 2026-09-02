@@ -462,8 +462,7 @@ const headers: ReadOnlyHeaders = [
 
 const confirmActionDialog = ref(false);
 function manageDates(newDates: string[] | string) {
-  form.startDate = newDates[0] ?? '';
-  form.endDate = newDates[newDates.length - 1] ?? '';
+  Object.assign(form, toDateRange(newDates));
 
   sessionStorage.setItem(
     'workTableDates',

@@ -389,8 +389,15 @@ export class InvTrfService {
     }));
   }
 
-  async getInvTrfs(): Promise<InvTrfSimpleDto[]> {
+  async getInvTrfs(
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<InvTrfSimpleDto[]> {
     const data = await this.prisma.invTrf.findMany({
+      where: {
+        trfDate:
+          startDate && endDate ? { gte: startDate, lte: endDate } : undefined,
+      },
       include: {
         fromInv: true,
         toInv: true,

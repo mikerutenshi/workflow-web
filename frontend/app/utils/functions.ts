@@ -1,7 +1,22 @@
+import dayjs from 'dayjs';
 import Decimal from 'decimal.js-light';
 import type { MaskInputOptions } from 'maska';
 import type { CombinedError } from 'villus';
 import { Gender, InvType, Progress, type Job } from '~/api/generated/types';
+
+// The date picker hands back midnight-local dates, but every backend range filter is an
+// inclusive `lte`/BETWEEN against a timestamp column — so an un-normalized upper bound
+// silently drops everything recorded after 00:00 on the final day of the range.
+export function toDateRange(dates: string[] | string) {
+  const list = Array.isArray(dates) ? dates : [dates];
+
+  return {
+    startDate: dayjs(list[0]).startOf('day').toISOString(),
+    endDate: dayjs(list[list.length - 1])
+      .endOf('day')
+      .toISOString(),
+  };
+}
 
 // Must be a real BCP-47 tag. maska hands this straight to Intl.NumberFormat,
 // which silently falls back to the DEVICE locale for anything it cannot resolve.

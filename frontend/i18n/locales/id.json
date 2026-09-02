@@ -322,6 +322,11 @@
     "failed": "Gagal",
     "nothing_to_print": "Tidak ada yang dicetak"
   },
+  "trf_type": {
+    "ALL": "Semua Tipe",
+    "TRF": "Transfer",
+    "PRD": "Produksi"
+  },
   "progress": {
     "INITIATED": "Dimulai",
     "PENDING": "Menunggu",

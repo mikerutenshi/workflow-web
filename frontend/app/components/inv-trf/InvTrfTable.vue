@@ -11,7 +11,7 @@
     <v-col class="d-flex flex-column">
       <v-data-table
         :headers="headers"
-        :items="invTrfsData?.getInvTrfs"
+        :items="invTrfs"
         :search="search"
         :loading="isFetchingInvTrfs"
         item-value="id"
@@ -22,15 +22,38 @@
         :items-per-page="itemsPerPage"
       >
         <template #top>
-          <v-text-field
-            v-model="search"
-            :label="$t('label.search')"
-            :prepend-inner-icon="mdiMagnify"
-            hide-details
-            density="compact"
-            single-line
-            class="mx-4 my-2"
-          ></v-text-field>
+          <v-row class="mx-4 my-2">
+            <v-col cols="12" sm="4">
+              <ActionPickDate
+                v-model="dates"
+                @update:model-value="manageDates"
+                multiple="range"
+                :hide-details="true"
+                density="compact"
+              ></ActionPickDate>
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-select
+                v-model="trfType"
+                :label="$t('label.type')"
+                :items="trfTypeItems"
+                item-title="title"
+                item-value="value"
+                density="compact"
+                hide-details
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-text-field
+                v-model="search"
+                :label="$t('label.search')"
+                :prepend-inner-icon="mdiMagnify"
+                hide-details
+                density="compact"
+                single-line
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </template>
         <template #loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -151,6 +174,7 @@ import {
   mdiPencil,
   mdiTrashCan,
 } from '@mdi/js';
+import dayjs from 'dayjs';
 import { useMutation, useQuery } from 'villus';
 import { useDate } from 'vuetify';
 import type { VDataTable } from 'vuetify/components';
@@ -174,6 +198,35 @@ const userInventories = authStore.user?.userInventories ?? [];
 const pageNo = ref(1);
 const itemsPerPage = ref(25);
 const search = ref('');
+
+const now = dayjs();
+const findStart = now.startOf('month');
+const findEnd = now.endOf('month');
+
+const dates = ref<string[]>([]);
+let currentDate = findStart.clone();
+while (currentDate.isBefore(findEnd)) {
+  dates.value.push(currentDate.format('YYYY-MM-DD'));
+  currentDate = currentDate.add(1, 'day');
+}
+
+const invTrfsVariables = ref({
+  startDate: findStart.toISOString(),
+  endDate: findEnd.toISOString(),
+});
+
+function manageDates(newDates: string[] | string) {
+  Object.assign(invTrfsVariables.value, toDateRange(newDates));
+}
+
+const trfType = ref<'ALL' | 'TRF' | 'PRD'>('TRF');
+const trfTypeItems = computed(() =>
+  (['ALL', 'TRF', 'PRD'] as const).map((value) => ({
+    value,
+    title: t(`trf_type.${value}`),
+  })),
+);
+
 enum DialogContent {
   View = 'VIEW',
   None = 'NONE',
@@ -197,8 +250,16 @@ const {
   error: invTrfsError,
 } = useQuery({
   query: GetInvTrfsDocument,
+  variables: invTrfsVariables,
   tags: [CACHE_INV_TRFS],
 });
+
+const invTrfs = computed(() =>
+  invTrfsData.value?.getInvTrfs.filter(
+    (trf) =>
+      trfType.value === 'ALL' || trf.trfNo.startsWith(`${trfType.value}-`),
+  ),
+);
 
 const snack = useSnackbarStore();
 const {

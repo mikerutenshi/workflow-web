@@ -679,7 +679,7 @@ type Query {
   getInvProductPrice(invId: ID!, productId: ID!, discounts: [String!]!): Float!
   getInvTrfItemTrfs(invId: ID!, productId: ID!): [InvTrfItemTrfDto!]!
   getInvTrfItems(fromInvId: ID!, toInvId: ID!, progress: [Progress!]): [InvTrfItemDto!]!
-  getInvTrfs: [InvTrfSimpleDto!]!
+  getInvTrfs(startDate: Date, endDate: Date): [InvTrfSimpleDto!]!
   getInvTrf(id: ID!): InvTrfDto!
   generateInvTrfNo(date: Date!): String!
   getInvTxs(invId: ID!, productId: ID!): [InvTxDto!]!

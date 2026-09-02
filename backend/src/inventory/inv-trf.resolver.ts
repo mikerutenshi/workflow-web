@@ -95,8 +95,13 @@ export class InvTrfResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => [InvTrfSimpleDto])
-  getInvTrfs(): Promise<InvTrfSimpleDto[]> {
-    return this.service.getInvTrfs();
+  getInvTrfs(
+    @Args('startDate', { type: () => Date, nullable: true })
+    startDate?: Date,
+    @Args('endDate', { type: () => Date, nullable: true })
+    endDate?: Date,
+  ): Promise<InvTrfSimpleDto[]> {
+    return this.service.getInvTrfs(startDate, endDate);
   }
 
   @UseGuards(AuthGuard)

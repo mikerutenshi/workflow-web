@@ -161,8 +161,7 @@ const totalQuantitySold = computed(() => {
 });
 
 function manageDates(newDates: string[] | string) {
-  form.startDate = newDates[0] ?? '';
-  form.endDate = newDates[newDates.length - 1] ?? '';
+  Object.assign(form, toDateRange(newDates));
   execute();
 }
 

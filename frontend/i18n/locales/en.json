@@ -322,6 +322,11 @@
     "failed": "Failed",
     "nothing_to_print": "Nothing to print"
   },
+  "trf_type": {
+    "ALL": "All Types",
+    "TRF": "Transfer",
+    "PRD": "Production"
+  },
   "progress": {
     "INITIATED": "Initiated",
     "PENDING": "Pending",

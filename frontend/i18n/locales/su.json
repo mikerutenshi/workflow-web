@@ -322,6 +322,11 @@
     "failed": "Teu hasil",
     "nothing_to_print": "Teu aya nu dicitak"
   },
+  "trf_type": {
+    "ALL": "Sadaya Jinis",
+    "TRF": "Transfer",
+    "PRD": "Produksi"
+  },
   "progress": {
     "INITIATED": "Dimulai",
     "PENDING": "Ngantosan",
