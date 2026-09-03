@@ -313,7 +313,17 @@
   },
   "error": {
     "sku_format_detail": "This is the proper format: A12345-D.Brown/White",
-    "nonempty": "Should choose at least 1"
+    "nonempty": "Should choose at least 1",
+    "db": {
+      "duplicate": "This already exists. Please use a different value.",
+      "in_use": "This record is still linked to other data, so it can't be saved or deleted.",
+      "not_found": "This record no longer exists. It may have been changed or deleted by someone else.",
+      "required_field": "A required value is missing.",
+      "value_too_long": "One of the values is too long.",
+      "conflict_retry": "The system was busy. Please try again.",
+      "unavailable": "Can't reach the database right now. Please try again shortly.",
+      "unknown": "Something went wrong while saving. Please try again."
+    }
   },
   "N/A": "N/A",
   "status": {

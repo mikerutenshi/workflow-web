@@ -313,7 +313,17 @@
   },
   "error": {
     "sku_format_detail": "Format yang benar: A12345-D.Brown/White",
-    "nonempty": "Harus memilih minimal 1"
+    "nonempty": "Harus memilih minimal 1",
+    "db": {
+      "duplicate": "Data ini sudah ada. Silakan gunakan nilai yang berbeda.",
+      "in_use": "Data ini masih terhubung dengan data lain, jadi tidak bisa disimpan atau dihapus.",
+      "not_found": "Data ini sudah tidak ada. Mungkin sudah diubah atau dihapus oleh orang lain.",
+      "required_field": "Ada isian wajib yang belum diisi.",
+      "value_too_long": "Salah satu isian terlalu panjang.",
+      "conflict_retry": "Sistem sedang sibuk. Silakan coba lagi.",
+      "unavailable": "Tidak dapat terhubung ke basis data saat ini. Silakan coba lagi sebentar.",
+      "unknown": "Terjadi kesalahan saat menyimpan. Silakan coba lagi."
+    }
   },
   "N/A": "N/A",
   "status": {

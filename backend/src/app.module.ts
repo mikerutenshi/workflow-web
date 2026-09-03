@@ -26,6 +26,8 @@ import { SaleModule } from './sale/sale.module';
 import { DateScalar } from './scalars/date.scalar';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
+import { unwrapResolverError } from '@apollo/server/errors';
+import { mapPrismaError } from './utils/prisma-error.util';
 
 const currentEnv = process.env.NODE_ENV || 'production';
 let envFilePath;
@@ -70,6 +72,30 @@ if (currentEnv == 'production') {
         context: async ({ req }: { req: Request }) => {
           const user = await authenticateUserByRequest(authService, req);
           return { req, user };
+        },
+        // Prisma failures are not caught anywhere in the services, so without this
+        // the client renders raw ORM text -- "Foreign key constraint violated on
+        // the constraint: ColorToProduct_colorId_fkey". Rewrite just those; a
+        // service throwing a plain Error means the message was written for the
+        // user already and has to survive untouched.
+        formatError: (formatted, error) => {
+          const mapped = mapPrismaError(unwrapResolverError(error));
+
+          if (!mapped) return formatted;
+
+          return {
+            ...formatted,
+            message: mapped.message,
+            extensions: {
+              ...formatted.extensions,
+              code: mapped.code,
+              // The client prefers originalError.message over message, so leaving
+              // these would show the raw text anyway. Only cleared on this branch:
+              // ValidationPipe carries its field errors in originalError.
+              originalError: undefined,
+              stacktrace: undefined,
+            },
+          };
         },
       }),
     }),

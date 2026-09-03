@@ -93,16 +93,37 @@ export function parseGender(title: string): Gender {
 //   return utcDate ? new Date(utcDate).toLocaleDateString() : '-';
 // }
 
-interface VillusError {
-  message: string;
-  graphQLErrors?: Array<{
-    message: string;
-    extensions?: {
-      originalError?: {
-        message?: string;
-      };
-    };
-  }>;
+// The backend rewrites Prisma failures into these codes (DbErrorCode in
+// backend/src/utils/prisma-error.util.ts) so raw ORM text never reaches a user.
+// Same code -> i18n key indirection as JOBS/renderJobs above.
+const DB_ERROR_KEYS: Record<string, string> = {
+  DUPLICATE: 'error.db.duplicate',
+  IN_USE: 'error.db.in_use',
+  NOT_FOUND: 'error.db.not_found',
+  REQUIRED_FIELD: 'error.db.required_field',
+  VALUE_TOO_LONG: 'error.db.value_too_long',
+  CONFLICT_RETRY: 'error.db.conflict_retry',
+  DB_UNAVAILABLE: 'error.db.unavailable',
+  DB_ERROR: 'error.db.unknown',
+};
+
+// Called from templates and from onError callbacks alike, so there is no reliable
+// setup context for useI18n() -- go through the Nuxt instance instead. A failed
+// lookup falls back to the message the backend sent rather than throwing mid-render.
+function translateDbError(code: string, fallback: string): string {
+  const key = DB_ERROR_KEYS[code];
+
+  if (!key) return fallback;
+
+  try {
+    const translated = useNuxtApp().$i18n.t(key);
+
+    // vue-i18n echoes the key back when a locale is missing it. Showing
+    // "error.db.duplicate" to a user is worse than the English sentence.
+    return translated === key ? fallback : translated;
+  } catch {
+    return fallback;
+  }
 }
 
 export function extractGraphQlError(error?: CombinedError | null): string {
@@ -110,11 +131,16 @@ export function extractGraphQlError(error?: CombinedError | null): string {
 
   return (
     error.graphqlErrors
-      ?.flatMap(
-        (e) =>
+      ?.flatMap((e) => {
+        const message =
           (e.extensions?.originalError as { message?: string })?.message ||
-          e.message,
-      )
+          e.message;
+        const code = e.extensions?.code;
+
+        return typeof code === 'string'
+          ? translateDbError(code, message)
+          : message;
+      })
       .join(', ') || error.message
   );
 }

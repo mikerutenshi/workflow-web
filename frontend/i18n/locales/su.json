@@ -313,7 +313,17 @@
   },
   "error": {
     "sku_format_detail": "Format anu leres: A12345-D.Coklat/Putih",
-    "nonempty": "Kudu milih sahenteuna 1"
+    "nonempty": "Kudu milih sahenteuna 1",
+    "db": {
+      "duplicate": "Data ieu tos aya. Mangga anggo niléy anu sanés.",
+      "in_use": "Data ieu masih nyambung sareng data sanés, janten teu tiasa disimpen atawa dihapus.",
+      "not_found": "Data ieu tos teu aya. Panginten tos dirobih atawa dihapus ku nu sanés.",
+      "required_field": "Aya eusian wajib anu can dieusian.",
+      "value_too_long": "Salah sahiji eusian kapanjangan.",
+      "conflict_retry": "Sistem nuju sibuk. Mangga cobian deui.",
+      "unavailable": "Teu tiasa nyambung ka pangkalan data ayeuna. Mangga cobian deui sakedap.",
+      "unknown": "Aya kalepatan nalika nyimpen. Mangga cobian deui."
+    }
   },
   "N/A": "N/A",
   "status": {
