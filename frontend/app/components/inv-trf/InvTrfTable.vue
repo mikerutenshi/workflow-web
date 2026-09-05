@@ -32,7 +32,7 @@
                 density="compact"
               ></ActionPickDate>
             </v-col>
-            <v-col cols="12" sm="4">
+            <v-col cols="6" sm="4">
               <v-select
                 v-model="trfType"
                 :label="$t('label.type')"
@@ -43,7 +43,7 @@
                 hide-details
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="4">
+            <v-col cols="6" sm="4">
               <v-text-field
                 v-model="search"
                 :label="$t('label.search')"

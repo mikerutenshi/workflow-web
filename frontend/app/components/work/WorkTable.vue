@@ -13,7 +13,7 @@
   >
     <template #top>
       <v-row class="mx-4 my-2">
-        <v-col>
+        <v-col cols="12" sm="4">
           <ActionPickDate
             v-model="dates"
             @update:model-value="manageDates"
@@ -22,7 +22,7 @@
             density="compact"
           ></ActionPickDate>
         </v-col>
-        <v-col>
+        <v-col cols="6" sm="4">
           <v-select
             v-model="selectedTagIds"
             :label="$t('label.select_tags')"
@@ -70,7 +70,7 @@
             </template>
           </v-select>
         </v-col>
-        <v-col>
+        <v-col cols="6" sm="4">
           <v-text-field
             v-model="search"
             :label="$t('label.search')"

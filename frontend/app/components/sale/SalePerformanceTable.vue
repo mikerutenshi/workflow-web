@@ -46,7 +46,7 @@
                 density="compact"
               ></ActionPickDate>
             </v-col>
-            <v-col cols="12" sm="4">
+            <v-col cols="6" sm="4">
               <v-select
                 :label="$t('label.select_inventories')"
                 :prepend-inner-icon="mdiWarehouse"
@@ -58,7 +58,7 @@
                 hide-details
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="4">
+            <v-col cols="6" sm="4">
               <v-text-field
                 v-model="table.search"
                 :label="$t('label.search')"
