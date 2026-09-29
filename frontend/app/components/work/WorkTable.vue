@@ -584,7 +584,7 @@ function printSlips() {
   const slips = (computedWorks.value ?? []).filter(
     (work) =>
       work.orderNo.startsWith(`${Operation.Work}-`) &&
-      work.tasks.some((task) => !task.doneAt),
+      work.tasks.every((task) => !task.doneAt),
   );
 
   if (!slips.length) {
