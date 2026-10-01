@@ -5,7 +5,7 @@ import { Operation } from '@/models/operation.enum';
 import { Sale } from '@/models/sale.model';
 import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
-import { generateId, getStartOfDay } from '@/utils/functions.util';
+import { generateId } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import dayjs from 'dayjs';
 
@@ -216,17 +216,11 @@ export class SaleService {
   }
 
   async generateSaleNo(date: Date): Promise<string> {
-    const startOfDay = getStartOfDay(date);
-    const oneDayMore = dayjs(startOfDay).add(1, 'day').toDate();
+    const prefix = `${Operation.Sale}-${dayjs.tz(date).format('YYMMDD')}-`;
 
     const lastSale = await this.prisma.sale.findFirst({
       orderBy: { saleNo: 'desc' },
-      where: {
-        date: {
-          gte: startOfDay,
-          lt: oneDayMore,
-        },
-      },
+      where: { saleNo: { startsWith: prefix } },
     });
     const lastSaleNo = lastSale?.saleNo;
 

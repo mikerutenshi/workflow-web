@@ -5,11 +5,7 @@ import { Operation } from '@/models/operation.enum';
 import { Role } from '@/models/role.enum';
 import { User } from '@/models/user.model';
 import { PrismaService } from '@/prisma/prisma.service';
-import {
-  computePrice,
-  generateId,
-  getStartOfDay,
-} from '@/utils/functions.util';
+import { computePrice, generateId } from '@/utils/functions.util';
 import { Injectable } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { InvTrfCreateDto } from './dto/inv-trf-create.dto';
@@ -511,41 +507,25 @@ export class InvTrfService {
   }
 
   async generateInvTrfNo(date: Date): Promise<string> {
-    const startOfDay = getStartOfDay(date);
-    const oneDayMore = dayjs(startOfDay).add(1, 'day').toDate();
+    const prefix = `${Operation.Transfer}-${dayjs.tz(date).format('YYMMDD')}-`;
 
     const lastTrf = await this.prisma.invTrf.findFirst({
-      where: {
-        workId: null,
-        trfDate: {
-          gte: startOfDay,
-          lt: oneDayMore,
-        },
-      },
+      where: { trfNo: { startsWith: prefix } },
       orderBy: { trfNo: 'desc' },
     });
-    const lastTrfNo = lastTrf?.trfNo;
 
-    return generateId(Operation.Transfer, lastTrfNo, date);
+    return generateId(Operation.Transfer, lastTrf?.trfNo, date);
   }
 
   async generateInvTrfPrdNoOp(tx: Prisma.TransactionClient): Promise<string> {
-    const startOfDay = getStartOfDay();
-    const oneDayMore = dayjs(startOfDay).add(1, 'day').toDate();
+    const prefix = `${Operation.Produce}-${dayjs.tz().format('YYMMDD')}-`;
 
     const lastInvPrd = await tx.invTrf.findFirst({
-      where: {
-        workId: { not: null },
-        trfDate: {
-          gte: startOfDay,
-          lt: oneDayMore,
-        },
-      },
+      where: { trfNo: { startsWith: prefix } },
       orderBy: { trfNo: 'desc' },
     });
-    const lastNo = lastInvPrd?.trfNo;
 
-    return generateId(Operation.Produce, lastNo);
+    return generateId(Operation.Produce, lastInvPrd?.trfNo);
   }
 
   async deleteInvTrfItem(id: number): Promise<boolean> {
